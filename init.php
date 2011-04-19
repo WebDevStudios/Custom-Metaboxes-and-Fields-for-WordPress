@@ -140,7 +140,7 @@ class cmb_Meta_Box {
 					echo '<input class="cmb_text_medium" type="text" name="', $field['id'], '" id="', $field['id'], '" value="', $meta ? $meta : $field['std'], '" /><span class="cmb_metabox_description">', $field['desc'], '</span>';
 					break;
 				case 'text_date':
-					echo '<input class="cmb_text_small cmb_datepicker" type="text" name="', $field['id'], '" id="', $field['id'], '" value="', $meta ? $meta : $field['std'], '" /><span class="cmb_metabox_description">', $field['desc'], '</span>';
+					echo '<input class="cmb_text_small cmb_datepicker" type="text" name="', $field['id'], '" id="', $field['id'], '" value="', $meta ? date( 'm\/d\/Y', $meta ) : $field['std'], '" /><span class="cmb_metabox_description">', $field['desc'], '</span>';
 					break;
 				case 'text_money':
 					echo '$ <input class="cmb_text_money" type="text" name="', $field['id'], '" id="', $field['id'], '" value="', $meta ? $meta : $field['std'], '" /><span class="cmb_metabox_description">', $field['desc'], '</span>';
@@ -287,6 +287,10 @@ class cmb_Meta_Box {
 
 			if ( ($field['type'] == 'textarea') || ($field['type'] == 'textarea_small') ) {
 				$new = htmlspecialchars($new);
+			}
+			
+			if ( $field['type'] == 'text_date' ) {
+				$new = strtotime( $new );
 			}
 
 			// validate meta value
