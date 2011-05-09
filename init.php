@@ -208,7 +208,7 @@ class cmb_Meta_Box {
 				case 'taxonomy-select':
 					echo '<select name="', $field['id'], '" id="', $field['id'], '">';
 					$names= wp_get_object_terms($post->ID, $field['taxonomy'] );
-					$terms = get_terms( $field['taxonomy'] );
+					$terms = get_terms( $field['taxonomy'], 'hide_empty=0' );
 					foreach ($terms as $term ) {
 					if (!is_wp_error($names) && !empty($names) && !strcmp($term->slug, $names[0]->slug)) 
 					echo '<option value="' . $term->slug . '" selected>' . $term->name . '</option>';
@@ -220,7 +220,7 @@ class cmb_Meta_Box {
 				
 				case 'taxonomy-radio':
 					$names= wp_get_object_terms($post->ID, $field['taxonomy'] );
-					$terms = get_terms( $field['taxonomy'] );
+					$terms = get_terms( $field['taxonomy'], 'hide_empty=0' );
 					foreach ($terms as $term ) {
 					if (!is_wp_error($names) && !empty($names) && !strcmp($term->slug, $names[0]->slug)) 
 					echo '<p><input type="radio" name="', $field['id'], '" value="'. $term->slug . '" checked>' . $term->name . '</p>';
