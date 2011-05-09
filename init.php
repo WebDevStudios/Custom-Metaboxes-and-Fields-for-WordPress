@@ -4,7 +4,6 @@ Script Name: 	Custom Metaboxes and Fields
 Contributors: 	Andrew Norcross (@norcross / andrewnorcross.com)
 				Jared Atchison (@jaredatch / jaredatchison.com)
 				Bill Erickson (@billerickson / billerickson.net)
-				Chris Olbekson (@chris_olbekson / c3mdigital.com)
 Description: 	This will create metaboxes with custom fields that will blow your mind.
 Version: 		0.4
 */
