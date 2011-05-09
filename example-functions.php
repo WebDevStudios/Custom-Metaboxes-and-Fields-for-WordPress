@@ -60,6 +60,20 @@ $meta_boxes[] = array(
 	        'type' => 'title'
 	    ),
 		array(
+			'name' => 'Test Taxonomy Radio',
+			'desc' => 'Description Goes Here',
+			'id' => $prefix.'text_taxonomy_radio',
+			'taxonomy' => '', //Enter Taxonomy Slug
+			'type' => 'taxonomy-radio',	
+			),
+		array(
+			'name' => 'Test Taxonomy Select',
+			'desc' => 'Description Goes Here',
+			'id' => $prefix.'text_taxonomy_select',
+			'taxonomy' => '', //Enter Taxonomy Slug
+			'type' => 'taxonomy-select',	
+			),
+		array(
 		       'name' => 'Test Select',
 		       'desc' => 'field description (optional)',
 		       'id' => $prefix . 'test_select',
