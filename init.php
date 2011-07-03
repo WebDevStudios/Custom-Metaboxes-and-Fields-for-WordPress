@@ -247,7 +247,34 @@ class cmb_Meta_Box {
 								echo 'File: <strong>', $title, '</strong>&nbsp;&nbsp;&nbsp; (<a href="', $meta, '" target="_blank" rel="external">Download</a> / <a href="# class="remove_file_button" rel="', $field['id'], '">Remove</a>)';
 							}	
 						}
-					echo '</div>'; 
+					        echo '</div>';
+				        break;
+                case 'file_audio':
+					echo '<input id="upload_file" type="text" size="40" class="', $field['id'], '" name="', $field['id'], '" value="', $meta, '" />';
+					echo '<input class="upload_button button" type="button" value="Embed Audio Clip" />';
+					echo '<p class="cmb_metabox_description">', $field['desc'], '</p>';
+					echo '<div id="', $field['id'], '_status" class="cmb_upload_status">';
+						if ( $meta != '' ) {
+							$check_audio = preg_match( '/(^.*\.mp3|ogg|mp4|ico*)/i', $meta );
+							if ( $check_audio ) {
+								echo '<div class="audio_status">';
+								echo '<p id="admin-audio-' .$post->ID. '">No File</p>';
+								echo '<script type="text/javascript">
+						        AudioPlayer.embed("admin-audio-'.$post->ID.'", { soundFile: "', $meta, '"});
+						        </script>';
+								echo '<a href="#" class="remove_file_button" rel="', $field['id'], '">Remove Audio Clip</a>';
+								echo '<br />To add this audio clip to your post use the [audio] shortcode';
+								echo '</div>';
+							} else {
+								$parts = explode( "/", $meta );
+								for( $i = 0; $i < sizeof( $parts ); ++$i ) {
+									$title = $parts[$i];
+								}
+								echo 'File: <strong>', $title, '</strong>&nbsp;&nbsp;&nbsp; (<a href="', $meta, '" target="_blank" rel="external">Download</a> / <a href="# class="remove_file_button" rel="', $field['id'], '">Remove</a>)';
+
+							}
+						}
+					echo '</div>';
 				break;
 			}
 			echo '</td>','</tr>';
@@ -318,6 +345,22 @@ class cmb_Meta_Box {
 	}
 }
 
+/**
+* The [audio] shortcode
+*/
+
+add_shortcode('audio', 'cmb_audio_shortcode');
+function cmb_audio_shortcode( $atts ) {
+global $post; global $prefix;
+$sound_file = get_post_meta( $post->ID, $prefix.'audio_embed', true );
+//For shortcode to work you must use the id: $prefix.'audio_embed' for your audio metabox
+return	'<div class="swf-audio">
+		<p id="audio'.$post->ID.'">Unable to load player</p>
+	    <script type="text/javascript">
+	        AudioPlayer.embed("audio'.$post->ID.'", { soundFile:"'.$sound_file.'" });
+	        </script>
+	</div>';
+   }
 
 /**
  * Adding scripts and styles
@@ -326,11 +369,13 @@ class cmb_Meta_Box {
 function cmb_scripts( $hook ) {
   	if ( $hook == 'post.php' OR $hook == 'post-new.php' OR $hook == 'page-new.php' OR $hook == 'page.php' ) {
 		wp_register_script( 'cmb-scripts', get_bloginfo('stylesheet_directory').'/lib/metabox/jquery.cmbScripts.js', array('jquery','media-upload','thickbox'));
+        wp_register_script( 'cmb-audio-player', get_bloginfo( 'stylesheet_directory').'/lib/metabox/audioplayer.js', true );
 		wp_enqueue_script( 'jquery' );
 		wp_enqueue_script( 'jquery-ui-core' ); // Make sure and use elements form the 1.7.3 UI - not 1.8.9
 		wp_enqueue_script( 'media-upload' );
 		wp_enqueue_script( 'thickbox' );
 		wp_enqueue_script( 'cmb-scripts' );
+        wp_enqueue_script( 'cmb-audio-player' );
 		wp_enqueue_style( 'thickbox' );
 		wp_enqueue_style( 'jquery-custom-ui' );
 		add_action( 'admin_head', 'cmb_styles_inline' );
@@ -348,6 +393,10 @@ function editor_admin_head() {
   wp_tiny_mce();
 }
 
+add_action( 'template_redirect', 'cmb_audio_js_fe' ); //Adds the audio.js script to the frontend
+function cmb_audio_js_fe() {
+    wp_enqueue_script( 'cmb-audio-player', get_bloginfo( 'stylesheet_directory').'/lib/metabox/audioplayer.js', true );
+}
 
 add_action('admin_init', 'editor_admin_init');
 add_action('admin_head', 'editor_admin_head');
@@ -397,6 +446,7 @@ function cmb_styles_inline() {
 		table.cmb_metabox .meta_mce textarea {width:100%;}
 		table.cmb_metabox .cmb_upload_status {  margin: 10px 0 0 0;}
 		table.cmb_metabox .cmb_upload_status .img_status {  position: relative; }
+        table.cmb_metabox .cmb_upload_status .audio_status { position: relative; margin-left: -15px; }
 		table.cmb_metabox .cmb_upload_status .img_status img { border:1px solid #DFDFDF; background: #FAFAFA; max-width:350px; padding: 5px; -moz-border-radius: 2px; border-radius: 2px;}
 		table.cmb_metabox .cmb_upload_status .img_status .remove_file_button { text-indent: -9999px; background: url(<?php bloginfo('stylesheet_directory'); ?>/lib/metabox/images/ico-delete.png); width: 16px; height: 16px; position: absolute; top: -5px; left: -5px;}
 	</style>

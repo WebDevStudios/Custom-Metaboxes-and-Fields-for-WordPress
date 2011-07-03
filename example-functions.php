@@ -115,6 +115,13 @@ $meta_boxes[] = array(
 	        'id' => $prefix . 'test_wysiwyg',
 	        'type' => 'wysiwyg'
 	    ),
+        array(
+            'name' => 'Test Audio',
+            'desc' => 'Upload an audio file.',
+            'id' => $prefix .'audio_embed',  //Must use This id to enable Audio Shortcode
+            'type' => 'file_audio'
+        ),
+
 		array(
 	        'name' => 'Test Image',
 	        'desc' => 'Upload an image or enter an URL.',
