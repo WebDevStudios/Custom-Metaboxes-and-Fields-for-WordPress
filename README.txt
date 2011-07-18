@@ -2,9 +2,11 @@
 Contributors:	Andrew Norcross (@norcross / andrewnorcross.com)
 				Jared Atchison (@jaredatch / jaredatchison.com)
 				Bill Erickson (@billerickson / billerickson.net)
-Version: 0.5
+				Stefan Crain (@stefan_crain / stefancrain.com)
+				
+Version: 0.51
 Requires at least: 3.0
-Tested up to: 3.2
+Tested up to: 3.2.1
  
 == Description ==
 

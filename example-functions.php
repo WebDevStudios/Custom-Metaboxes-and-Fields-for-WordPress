@@ -123,6 +123,14 @@ $meta_boxes[] = array(
 			)
 	    ),
 		array(
+			'name' => 'Test Taxonomy Multi Checkbox',
+			'desc' => 'field description (optional)',
+			'id' => $prefix . 'test_multicheckbox',
+			'type' => 'taxonomy_multicheck',
+			'taxonomy' => '', //Enter Taxonomy Slug
+		),
+	
+		array(
 	        'name' => 'Test wysiwyg',
 	        'desc' => 'field description (optional)',
 	        'id' => $prefix . 'test_wysiwyg',

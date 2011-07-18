@@ -4,8 +4,10 @@ Script Name: 	Custom Metaboxes and Fields
 Contributors: 	Andrew Norcross (@norcross / andrewnorcross.com)
 				Jared Atchison (@jaredatch / jaredatchison.com)
 				Bill Erickson (@billerickson / billerickson.net)
+				Stefan Crain (@stefan_crain / stefancrain.com)
+				
 Description: 	This will create metaboxes with custom fields that will blow your mind.
-Version: 		0.5
+Version: 		0.51
 */
 
 /**
@@ -192,7 +194,22 @@ class cmb_Meta_Box {
 					}
 					echo '</ul>';
 					echo '<span class="cmb_metabox_description">', $field['desc'], '</span>';					
-					break;		
+					break;
+				case 'taxonomy_multicheck': 	// i tr 
+					echo '<ul>';
+					$names = wp_get_object_terms( $post->ID, $field['taxonomy'] );
+					$terms = get_terms( $field['taxonomy'], 'hide_empty=0' );
+					foreach ($terms as $term) {
+						echo '<li><input type="checkbox" name="', $field['id'], '[]" id="', $field['id'], '" value="', $term->name , '"'; 
+						foreach ($names as $name) {
+							if ( $term->slug == $name->slug ){ echo ' checked="checked" ';};
+						}
+						echo' /><label>', $term->name , '</label></li>';
+					}
+
+					echo '</ul>';
+					echo '<span class="cmb_metabox_description">', $field['desc'], '</span>';					
+					break;	
 				case 'title':
 					echo '<h5 class="cmb_metabox_title">', $field['name'], '</h5>';
 					echo '<p class="cmb_metabox_description">', $field['desc'], '</p>';
@@ -320,7 +337,9 @@ class cmb_Meta_Box {
 			if ( ($field['type'] == 'textarea') || ($field['type'] == 'textarea_small') ) {
 				$new = htmlspecialchars( $new );
 			}
-			
+			if ( $field['type'] == 'taxonomy_multicheck' ) {
+				$new = wp_set_object_terms( $post_id, $new, $field['taxonomy'] );
+			}
 			if ( $field['type'] == 'text_date_timestamp' ) {
 				$new = strtotime( $new );
 			}
@@ -373,7 +392,7 @@ function cmb_scripts( $hook ) {
 }
 add_action( 'admin_enqueue_scripts', 'cmb_scripts', 10, 1 );
 
-function editor_admin_init() {
+function editor_admin_init( $hook ) {
 	if ( $hook == 'post.php' OR $hook == 'post-new.php' OR $hook == 'page-new.php' OR $hook == 'page.php' ) {
 		wp_enqueue_script( 'word-count' );
 		wp_enqueue_script( 'post' );
@@ -381,7 +400,7 @@ function editor_admin_init() {
 	}
 }
 
-function editor_admin_head() {
+function editor_admin_head( $hook ) {
 	if ( $hook == 'post.php' OR $hook == 'post-new.php' OR $hook == 'page-new.php' OR $hook == 'page.php' ) {
   		wp_tiny_mce();
 	}
