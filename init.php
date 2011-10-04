@@ -130,9 +130,11 @@ class cmb_Meta_Box {
 		echo '<table class="form-table cmb_metabox">';
 
 		foreach ( $this->_meta_box['fields'] as $field ) {
-			// Set up blank values for empty ones
+			// Set up blank or default values for empty ones
 			if ( !isset($field['desc']) ) $field['desc'] = '';
 			if ( !isset($field['std']) ) $field['std'] = '';
+			if ($field['type']=='file' && !isset($field['allow'])) $field['allow'] = array('url','attachment');
+			if ($field['type']=='file' && !isset($field['save']))  $field['save']  = array('url');
 			
 			$meta = get_post_meta( $post->ID, $field['id'], 'multicheck' != $field['type'] /* If multicheck this can be multiple values */ );
 
@@ -268,8 +270,11 @@ class cmb_Meta_Box {
 							}
 						break;
 				case 'file':
-					echo '<input id="upload_file" type="text" size="45" class="', $field['id'], '" name="', $field['id'], '" value="', $meta, '" />';
+					$input_type_url = "hidden";
+					if ($field['allow']=="url" || (is_array($field['allow']) && in_array("url",$field['allow']))) {$input_type_url="text";}
+					echo '<input class="upload_file" type="' . $input_type_url . '" size="45" id="', $field['id'], '" name="', $field['id'], '" value="', $meta, '" />';
 					echo '<input class="upload_button button" type="button" value="Upload File" />';
+					echo '<input class="upload_file_id" type="hidden" id="', $field['id'], '_id" name="', $field['id'], '_id" value="', get_post_meta( $post->ID, $field['id'] . "_id",true), '" />';					
 					echo '<p class="cmb_metabox_description">', $field['desc'], '</p>';
 					echo '<div id="', $field['id'], '_status" class="cmb_upload_status">';	
 						if ( $meta != '' ) { 
@@ -342,7 +347,7 @@ class cmb_Meta_Box {
 			
 			if ( $field['type'] == 'text_date_timestamp' ) {
 				$new = strtotime( $new );
-			}
+			}		
 			
 			$new = apply_filters('cmb_validate_' . $field['type'], $new, $post_id, $field);			
 			
@@ -371,8 +376,25 @@ class cmb_Meta_Box {
 			} elseif ( '' == $new && $old ) {
 				delete_post_meta( $post_id, $name, $old );
 			}
+
+			if ($field['type']=='file') {
+				$name = $field['id'] . "_id";
+				$old = get_post_meta( $post_id, $name, 'multicheck' != $field['type'] /* If multicheck this can be multiple values */ );
+				if (is_array($field['save']) && in_array('id',$field['save'] )) {
+					$new = isset( $_POST[$name] ) ? $_POST[$name] : null;
+				} else {
+					$new = "";
+				}
+
+				if ( $new && $new != $old ) {
+					update_post_meta( $post_id, $name, $new );
+				} elseif ( '' == $new && $old ) {
+					delete_post_meta( $post_id, $name, $old );
+				}
+			}
+	
 		}
-	}
+	} 
 }
 
 /**
@@ -425,7 +447,15 @@ function cmb_editor_footer_scripts() { ?>
  			});
 		});
 	/* ]]> */</script>
-	<?php }
+	
+	<?php if ($_GET['cmb_force_send']=="true") { $label = $_GET['cmb_send_label']; if ($label =="") $label="Select File";?>	
+	<script type="text/javascript">
+		jQuery(function($) {
+			$('td.savesend input').val('<?php echo $label; ?>');
+		});
+	</script>
+	<?php } ?>
+<?php }
 add_action( 'admin_print_footer_scripts', 'cmb_editor_footer_scripts', 99 );
 
 function cmb_styles_inline() { 
@@ -460,6 +490,15 @@ function cmb_styles_inline() {
 		table.cmb_metabox .cmb_upload_status .img_status .remove_file_button { text-indent: -9999px; background: url(<?php echo CMB_META_BOX_URL ?>images/ico-delete.png); width: 16px; height: 16px; position: absolute; top: -5px; left: -5px;}
 	</style>
 	<?php
+}
+
+// Force 'Insert into Post' button from Media Library 
+add_filter( 'get_media_item_args', 'cmb_force_send' );
+function cmb_force_send( $args ) {
+		
+	if ($_GET['cmb_force_send']=="true") $args['send'] = true; 
+    return $args;
+
 }
 
 // End. That's it, folks! //
