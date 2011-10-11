@@ -496,7 +496,51 @@ function cmb_styles_inline() {
 add_filter( 'get_media_item_args', 'cmb_force_send' );
 function cmb_force_send( $args ) {
 		
-	if ($_GET['cmb_force_send']=="true") $args['send'] = true; 
+	// if the Gallery tab is opened from a custom meta box field, add Insert Into Post button	
+	if ($_GET['cmb_force_send']=="true")
+		$args['send'] = true;
+	
+	// if the From Computer tab is opened AT ALL, add Insert Into Post button after an image is uploaded	
+	if ($_POST["attachment_id"]!="") {
+		
+		$args['send'] = true;		
+
+		// TO DO: Are there any conditions in which we don't want the Insert Into Post 
+		// button added? For example, if a post type supports thumbnails, does not support
+		// the editor, and does not have any cmb file inputs? If so, here's the first
+		// bits of code needed to check all that.
+		// $attachment_ancestors = get_post_ancestors( $_POST["attachment_id"] );
+		// $attachment_parent_post_type = get_post_type( $attachment_ancestors[0] );
+		// $post_type_object = get_post_type_object( $attachment_parent_post_type );
+
+	}		
+	
+	// change the label of the button on the From Computer tab
+	if ($_POST["attachment_id"]!="") {
+
+		echo '
+			<script type="text/javascript">
+				function cmbGetParameterByNameInline(name) {
+					name = name.replace(/[\[]/, "\\\[").replace(/[\]]/, "\\\]");
+					var regexS = "[\\?&]" + name + "=([^&#]*)";
+					var regex = new RegExp(regexS);
+					var results = regex.exec(window.location.href);
+					if(results == null)
+						return "";
+					else
+						return decodeURIComponent(results[1].replace(/\+/g, " "));
+				}
+							
+				jQuery(function($) {
+					if (cmbGetParameterByNameInline("cmb_force_send")=="true") {
+						var cmb_send_label = cmbGetParameterByNameInline("cmb_send_label");
+						$("td.savesend input").val(cmb_send_label);
+					}
+				});
+			</script>
+		';
+	}
+	 
     return $args;
 
 }
