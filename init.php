@@ -1,4 +1,4 @@
-<?php 
+<?php
 /*
 Script Name: 	Custom Metaboxes and Fields
 Contributors: 	Andrew Norcross (@norcross / andrewnorcross.com)
