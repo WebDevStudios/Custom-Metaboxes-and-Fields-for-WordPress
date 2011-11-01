@@ -2,9 +2,9 @@
 Contributors:	Andrew Norcross (@norcross / andrewnorcross.com)
 				Jared Atchison (@jaredatch / jaredatchison.com)
 				Bill Erickson (@billerickson / billerickson.net)
-Version: 0.6
+Version: 0.6.2
 Requires at least: 3.0
-Tested up to: 3.2
+Tested up to: 3.3 Beta 2
  
 == Description ==
 
@@ -29,6 +29,10 @@ Coming soon.
 * File handling improvement and fixes
 
 == Changelog ==
+
+= 0.6.2 =
+* Added the new wp_editor() function for the WYSIWYG dialog box
+* Fixed a padding issue that showed up for Selection Boxes
 
 = 0.6.1 =
 * Enabled the ability to define your own custom field types (issue #28). props @randyhoyt
