@@ -523,7 +523,7 @@ function cmb_styles_inline() {
 		table.cmb_metabox input, table.cmb_metabox textarea { font-size:11px; padding: 5px;}
 		table.cmb_metabox li { font-size:11px; }
 		table.cmb_metabox ul { padding-top:5px; }
-		table.cmb_metabox select { font-size:11px; padding: 5px 10px;}
+		table.cmb_metabox select { font-size:11px; }
 		table.cmb_metabox input:focus, table.cmb_metabox textarea:focus { background: #fffff8;}
 		.cmb_metabox_title { margin: 0 0 5px 0; padding: 5px 0 0 0; font: italic 24px/35px Georgia,"Times New Roman","Bitstream Charter",Times,serif;}
 		.cmb_radio_inline { padding: 4px 0 0 0;}
