@@ -256,9 +256,9 @@ class cmb_Meta_Box {
 					echo '<p class="cmb_metabox_description">', $field['desc'], '</p>';
 					break;
 				case 'wysiwyg':
-					/* Make sure that we have 3.3 or later of WordPress
+					/* Make sure that the new wp_editor() function is available.
 					 * Otherwise, use the "old" version of the WYSIWYG editor */
-					if( version_compare( $wp_version, '3.3', '>=' ) ) {
+					if( function_exists( 'wp_editor' ) {
 						wp_editor( $meta ? $meta : $field['std'], $field['id'] );
 					} else {
 						echo '<div id="poststuff" class="meta_mce">';
@@ -379,7 +379,7 @@ class cmb_Meta_Box {
 			$new = isset( $_POST[$field['id']] ) ? $_POST[$field['id']] : null;
 
 			// wpautop() should not be needed with version 3.3 and later
-			if ( $field['type'] == 'wysiwyg' && version_compare( $wp_version, '3.3', '<' ) ) {
+			if ( $field['type'] == 'wysiwyg' && !function_exists( 'wp_editor' ) {
 				$new = wpautop($new);
 			}
 			
