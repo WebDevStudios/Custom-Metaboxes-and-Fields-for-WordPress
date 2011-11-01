@@ -1,8 +1,13 @@
 <?php
 // Include & setup custom metabox and fields
+
+// Allows $prefix to be defined elsewhere, such as in functions.php
+global $prefix;
+
 $prefix = '_cmb_'; // start with an underscore to hide fields from custom fields list
 add_filter( 'cmb_meta_boxes', 'be_sample_metaboxes' );
 function be_sample_metaboxes( $meta_boxes ) {
+	global $prefix;
 	$meta_boxes[] = array(
 	    'id' => 'test_metabox',
 	    'title' => 'Test Metabox',
