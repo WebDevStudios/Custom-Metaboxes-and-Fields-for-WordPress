@@ -34,12 +34,21 @@ jQuery(document).ready(function($) {
 	$('.upload_file').change(function() {
 		formfield = $(this).attr('name');
 		$('#' + formfield + '_id').val("");
+<<<<<<< HEAD
 	});	
 	
 	$('.upload_button').live('click', function() {
 		formfield = $(this).prev('input').attr('name');
 		buttonLabel = "Use as " + $('label[for=' + formfield + ']').text();
 		tb_show('', 'media-upload.php?post_id=' + pID + '&type=image&cmb_force_send=true&cmb_send_label=' + buttonLabel + '&TB_iframe=true');
+=======
+	});
+
+	$('.upload_button').live('click', function() {
+		formfield = $(this).prev('input').attr('name');
+		buttonLabel = "Use as " + $('label[for=' + formfield + ']').text();
+		tb_show('', 'media-upload.php?post_id=' + pID + '&type=image&cmb_force_send=true&cmb_send_label=' + buttonLabel + '&cbm_setting=cbm_value&TB_iframe=true');
+>>>>>>> upstream/trunk
 		return false;
 	});
 	
