@@ -181,8 +181,9 @@ class cmb_Meta_Box {
 			if ( !isset( $field['std'] ) ) $field['std'] = '';
 			if ( 'file' == $field['type'] && !isset( $field['allow'] ) ) $field['allow'] = array( 'url', 'attachment' );
 			if ( 'file' == $field['type'] && !isset( $field['save_id'] ) )  $field['save_id']  = false;
+			if ( 'multicheck' == $field['type'] ) $field['multiple'] = true;			
 						
-			$meta = get_post_meta( $post->ID, $field['id'], 'multicheck' != $field['type'] /* If multicheck this can be multiple values */ );
+			$meta = get_post_meta( $post->ID, $field['id'], !$field['multiple'] /* If multicheck this can be multiple values */ );
 
 			echo '<tr>';
 	
@@ -254,7 +255,7 @@ class cmb_Meta_Box {
 					foreach ( $field['options'] as $value => $name ) {
 						// Append `[]` to the name to get multiple values
 						// Use in_array() to check whether the current option should be checked
-						echo '<li><input type="checkbox" name="', $field['id'], '[]" id="', $field['id'], '" value="', $value, '"', in_array( $value, $meta ) ? ' checked="checked"' : '', ' /><label>', $name, '</label></li>';
+						echo '<li><label><input type="checkbox" name="', $field['id'], '[]" id="', $field['id'], '" value="', $value, '"', in_array( $value, $meta ) ? ' checked="checked"' : '', ' /><label>', $name, '</label></li>';
 					}
 					echo '</ul>';
 					echo '<span class="cmb_metabox_description">', $field['desc'], '</span>';					
@@ -391,11 +392,12 @@ class cmb_Meta_Box {
 		} elseif ( !current_user_can( 'edit_post', $post_id ) ) {
 			return $post_id;
 		}
-
+			
 		foreach ( $this->_meta_box['fields'] as $field ) {
 			$name = $field['id'];
-			$old = get_post_meta( $post_id, $name, 'multicheck' != $field['type'] /* If multicheck this can be multiple values */ );
-			$new = isset( $_POST[$field['id']] ) ? $_POST[$field['id']] : null;
+			if ( 'multicheck' == $field['type'] ) $field['multiple'] = true;			
+			$old = get_post_meta( $post_id, $name, !$field['multiple'] /* If multicheck this can be multiple values */ );
+			$new = isset( $_POST[$field['id']] ) ? $_POST[$field['id']] : null;	
 
 			// wpautop() should not be needed with version 3.3 and later
 			if ( $field['type'] == 'wysiwyg' && !function_exists( 'wp_editor' ) ) {
@@ -422,7 +424,8 @@ class cmb_Meta_Box {
 				if ( $ok === false ) { // pass away when meta value is invalid
 					continue;
 				}
-			} elseif ( 'multicheck' == $field['type'] ) {
+			} elseif ( $field['multiple'] ) {
+				
 				// Do the saving in two steps: first get everything we don't have yet
 				// Then get everything we should not have anymore
 				if ( empty( $new ) ) {
@@ -431,7 +434,7 @@ class cmb_Meta_Box {
 				$aNewToAdd = array_diff( $new, $old );
 				$aOldToDelete = array_diff( $old, $new );
 				foreach ( $aNewToAdd as $newToAdd ) {
-					add_post_meta( $post_id, $name, $newToAdd, false );
+					if ($newToAdd!="") add_post_meta( $post_id, $name, $newToAdd, false );
 				}
 				foreach ( $aOldToDelete as $oldToDelete ) {
 					delete_post_meta( $post_id, $name, $oldToDelete );
@@ -444,7 +447,7 @@ class cmb_Meta_Box {
 			
 			if ( 'file' == $field['type'] ) {
 				$name = $field['id'] . "_id";
-				$old = get_post_meta( $post_id, $name, 'multicheck' != $field['type'] /* If multicheck this can be multiple values */ );
+				$old = get_post_meta( $post_id, $name, !$field['multiple'] /* If multicheck this can be multiple values */ );
 				if ( $field['save_id'] ) {
 					$new = isset( $_POST[$name] ) ? $_POST[$name] : null;
 				} else {
