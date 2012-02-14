@@ -62,52 +62,6 @@ add_action( 'cmb_render_cloneable_text', function( $field, $meta ) {
 }, 10, 2 );
 
 
-add_action( 'cmb_render_pl_contest_entries', function() {
-	
-	global $post;
-	
-	$entries = get_post_meta( $post->ID, '_contest_entry', false );
-	
-	if ( ! $entries )
-		return;
-	
-	$sorted_entries = array();
-	foreach ( $entries as $entry )
-		$sorted_entries[$entry['answer']][] = $entry;
-	?>
-	
-	<table class="widefat cmb-entry-table">
-			<thead>
-				<tr>
-					<th>Name</th>
-					<th>Email</th>
-					<th>Date Entered</th>
-				</tr>
-			</thead>
-	</table>
-	
-	<style>
-		.cmb-entry-table th,
-		.cmb-entry-table td { width: 30%; text-align: left !important; }
-	</style>
-	<?php foreach ( $sorted_entries as $answer => $entries ) : ?>
-		<p><strong><?php echo $answer ?></strong></p>
-		<table class="widefat cmb-entry-table">
-			<tbody>
-				<?php foreach ( $entries as $entry ) : ?>
-					<tr>
-						<td><?php echo $entry['name'] ?></td>
-						<td><?php echo $entry['email'] ?></td>
-						<td><?php echo date( DATE_RFC822, $entry['date'] ) ?></td>
-					</tr>
-				<?php endforeach; ?>
-			</tbody>
-		</table>
-	<?php endforeach; ?>
-	<?php
-
-} );
-
 add_filter( 'cmb_validate_cloneable_text', function( $data ) {
 	$data = (array) $data;
 	sort( $data );
