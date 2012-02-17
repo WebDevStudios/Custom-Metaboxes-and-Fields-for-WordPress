@@ -47,6 +47,12 @@ function cmb_sample_metaboxes( array $meta_boxes ) {
 				'type' => 'text_medium',
 			),
 			array(
+				'name' => 'Test Text URL',
+				'desc' => 'field description (optional)',
+				'id'   => $prefix . 'test_texturl',
+				'type' => 'text_url',
+			),
+			array(
 				'name' => 'Test Date Picker',
 				'desc' => 'field description (optional)',
 				'id'   => $prefix . 'test_textdate',
