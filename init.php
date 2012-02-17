@@ -207,6 +207,9 @@ class cmb_Meta_Box {
 				case 'text_medium':
 					echo '<input class="cmb_text_medium" type="text" name="', $field['id'], '" id="', $field['id'], '" value="', '' !== $meta ? $meta : $field['std'], '" /><span class="cmb_metabox_description">', $field['desc'], '</span>';
 					break;
+				case 'text_url':
+					echo '<input class="cmb_text_url" type="text" name="', $field['id'], '" id="', $field['id'], '" value="', '' !== $meta ? $meta : $field['std'], '" /><span class="cmb_metabox_description">', $field['desc'], '</span>';
+					break;
 				case 'text_date':
 					echo '<input class="cmb_text_small cmb_datepicker" type="text" name="', $field['id'], '" id="', $field['id'], '" value="', '' !== $meta ? $meta : $field['std'], '" /><span class="cmb_metabox_description">', $field['desc'], '</span>';
 					break;
@@ -428,6 +431,10 @@ class cmb_Meta_Box {
 
 			if ( ($field['type'] == 'textarea_code') ) {
 				$new = htmlspecialchars_decode( $new );
+			}
+
+			if ( $field['type'] == 'text_url' ) {
+				$new = esc_url( $new );
 			}
 			
 			if ( $field['type'] == 'text_date_timestamp' ) {
