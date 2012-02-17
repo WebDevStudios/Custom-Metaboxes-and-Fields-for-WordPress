@@ -208,7 +208,7 @@ class cmb_Meta_Box {
 					echo '<input class="cmb_text_medium" type="text" name="', $field['id'], '" id="', $field['id'], '" value="', '' !== $meta ? $meta : $field['std'], '" /><span class="cmb_metabox_description">', $field['desc'], '</span>';
 					break;
 				case 'text_url':
-					echo '<input class="cmb_text_url code" type="text" name="', $field['id'], '" id="', $field['id'], '" value="', '' !== $meta ? $meta : $field['std'], '" /><span class="cmb_metabox_description">', $field['desc'], '</span>';
+					echo '<input class="cmb_text_url code" type="text" name="', $field['id'], '" id="', $field['id'], '" value="', '' !== $meta ? esc_url( $meta ) : $field['std'], '" /><span class="cmb_metabox_description">', $field['desc'], '</span>';
 					break;
 				case 'text_date':
 					echo '<input class="cmb_text_small cmb_datepicker" type="text" name="', $field['id'], '" id="', $field['id'], '" value="', '' !== $meta ? $meta : $field['std'], '" /><span class="cmb_metabox_description">', $field['desc'], '</span>';
@@ -433,10 +433,6 @@ class cmb_Meta_Box {
 				$new = htmlspecialchars_decode( $new );
 			}
 
-			if ( $field['type'] == 'text_url' ) {
-				$new = esc_url( $new );
-			}
-			
 			if ( $field['type'] == 'text_date_timestamp' ) {
 				$new = strtotime( $new );
 			}
