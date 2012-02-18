@@ -32,7 +32,7 @@ Version: 		0.9
 		You should not edit the code below or things might explode!
 *************************************************************************/
 
-include_once( 'additions.cloneable_text.php' );
+include_once( 'additions.cloneable_text.php' ); 
 include_once( 'additions.oembed.php' );
 
 $meta_boxes = array();
@@ -179,7 +179,7 @@ class cmb_Meta_Box {
 	
 	// Show fields
 	function show() {
-		
+
 		global $post;
 
 		// Use nonce for verification
@@ -221,12 +221,12 @@ class cmb_Meta_Box {
 				$field['save_id']  = false;
 				
 			$field['name_attr'] = $field['id'];
-			
+						
 			if ( $i )
 				$field['id'] .= '_' . $i;
 			
 			$meta = $this->get_meta_value( $field['name_attr'], $i );
-			
+
 			echo '<tr>';
 	
 			if ( $field['type'] == "title" ) {
@@ -488,7 +488,11 @@ class cmb_Meta_Box {
 				$new = strtotime( $string );
 			}
 			
+			
 			$new = apply_filters('cmb_validate_' . $field['type'], $new, $post_id, $field);			
+			
+			if ( $new === false )
+				continue;
 			
 			// validate meta value
 			if ( isset( $field['validate_func']) ) {

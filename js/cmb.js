@@ -17,6 +17,7 @@ jQuery(document).ready(function ($) {
 	'use strict';
 
 	var formfield;
+	var formfieldobj;
 
 	/**
 	 * Initialize timepicker (this will be moved inline in a future release)
@@ -60,20 +61,32 @@ jQuery(document).ready(function ($) {
 	 * File and image upload handling
 	 */
 	$('.cmb_upload_file').change(function () {
-		formfield = $(this).attr('name');
+		formfield = $(this).attr('id');
+		
+		formfieldobj = $(this).siblings( '.cmb_upload_file_id' );
+		
 		$('#' + formfield + '_id').val("");
+		
 	});
 
 	$('.cmb_upload_button').live('click', function () {
 		var buttonLabel;
-		formfield = $(this).prev('input').attr('name');
-		buttonLabel = 'Use as ' + $('label[for=' + formfield + ']').text();
+		formfield = $(this).prev('input').attr('id');
+		formfieldobj = $(this).siblings( '.cmb_upload_file_id' );
+		
+		if ( formfieldobj.siblings( 'label' ).length )
+			buttonLabel = 'Use as ' + formfieldobj.siblings( 'label' ).text();
+			
+		else
+			buttonLabel = 'Use as ' + $('label[for=' + formfield + ']').text();
+			
 		tb_show('', 'media-upload.php?post_id=' + $('#post_ID').val() + '&type=file&cmb_force_send=true&cmb_send_label=' + buttonLabel + '&TB_iframe=true');
 		return false;
 	});
 
 	$('.cmb_remove_file_button').live('click', function () {
 		formfield = $(this).attr('rel');
+		formfieldobj = $(this).closest('.cmb_upload_status').siblings( '.cmb_upload_file_id' );
 		$('input#' + formfield).val('');
 		$('input#' + formfield + '_id').val('');
 		$(this).parent().remove();
@@ -84,7 +97,7 @@ jQuery(document).ready(function ($) {
     window.send_to_editor = function (html) {
 		var itemurl, itemclass, itemClassBits, itemid, htmlBits, itemtitle,
 			image, uploadStatus = true;
-
+		
 		if (formfield) {
 
 	        if ($(html).html(html).find('img').length > 0) {
@@ -113,10 +126,18 @@ jQuery(document).ready(function ($) {
 				html = '<a href="' + itemurl + '" target="_blank" rel="external">View File</a>';
 				uploadStatus = '<div class="no_image"><span class="file_link">' + html + '</span>&nbsp;&nbsp;&nbsp;<a href="#" class="cmb_remove_file_button" rel="' + formfield + '">Remove</a></div>';
 			}
-
-			$('#' + formfield).val(itemurl);
-			$('#' + formfield + '_id').val(itemid);
-			$('#' + formfield).siblings('.cmb_upload_status').slideDown().html(uploadStatus);
+			
+			if ( formfieldobj ) {
+			
+				$(formfieldobj).val(itemid);
+				$(formfieldobj).siblings('.cmb_upload_status').slideDown().html(uploadStatus);
+				
+			} else {
+				$('#' + formfield).val(itemurl);
+				$('#' + formfield + '_id').val(itemid);
+				$('#' + formfield).siblings('.cmb_upload_status').slideDown().html(uploadStatus);
+			}
+			
 			tb_remove();
 
 		} else {
