@@ -32,7 +32,8 @@ Version: 		0.9
 		You should not edit the code below or things might explode!
 *************************************************************************/
 
-include_once( 'additions.cloneable_text.php' ); 
+include_once( 'additions.cloneable_text.php' );
+include_once( 'additions.oembed.php' );
 
 $meta_boxes = array();
 $meta_boxes = apply_filters ( 'cmb_meta_boxes' , $meta_boxes );
