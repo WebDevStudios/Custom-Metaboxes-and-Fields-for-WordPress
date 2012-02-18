@@ -27,7 +27,7 @@ abstract class CMB_Field {
 		
 		$this->name 	= $name;
 		$this->title 	= $title;
-		$this->args		= $args;
+		$this->args		= wp_parse_args( $args, array( 'repeatable' => false, 'std' => '' ) );
 		
 		if ( ! empty( $this->args['repeatable'] ) ) {
 			
@@ -101,7 +101,7 @@ class CMB_Text_Small_Field extends CMB_Field {
 		?>
 
 		<p>
-			<label style="display:inline-block; width: 200px;"><?php echo $this->title ?></label>
+			<label style="display:inline-block; width: 70%"><?php echo $this->title ?></label>
 			<input class="cmb_text_small" type="text" name="<?php echo $this->name ?>" value="<?php echo $this->value ?>" /> <span class="cmb_metabox_description"><?php echo $this->description ?></span>
 		</p>
 		<?php
@@ -164,7 +164,7 @@ class CMB_Text_URL_Field extends CMB_Field {
 	
 		?>
 		<p>
-			<label style="display:inline-block; width: 200px;"><?php echo $this->title ?></label>
+			<label style="display:inline-block; width: %70"><?php echo $this->title ?></label>
 			<input class="cmb_text_url" type="text" name="<?php echo $this->name ?>" value="<?php echo esc_url( $this->value ) ?>" /> <span class="cmb_metabox_description"><?php echo $this->description ?></span>
 		</p>
 		<?php
@@ -178,8 +178,13 @@ class CMB_Text_URL_Field extends CMB_Field {
 class CMB_Oembed_Field extends CMB_Field {
 
 	public function html() {
-	
-		echo '<input class="cmb_oembed code" type="text" name="', $this->name, '" id="',$this->name, '" value="', '' !== $this->value ? esc_url( $this->value ) : $this->args['std'], '" /><span class="cmb_metabox_description">', $this->args['desc'], '</span>';
+		
+		?>
+		<p>
+			<label style="display:inline-block; width: %70"><?php echo $this->title ?></label>
+			<?php echo '<input class="cmb_oembed code" type="text" name="', $this->name, '" id="',$this->name, '" value="', '' !== $this->value ? esc_url( $this->value ) : $this->args['std'], '" /><span class="cmb_metabox_description">', $this->args['desc'], '</span>'; ?>
+		</p>
+		<?php
 	}
 }
 
@@ -214,8 +219,8 @@ class CMB_Group_Field extends CMB_Field {
 		// mutltiple so is differernt
 		$meta = get_post_meta( $post->ID, $this->name, false );
 		
-		$meta[] = '';
-		
+		if ( ! $meta )
+			$meta = array( '' );
 		$field = $this->args;
 		
 		?>
@@ -235,7 +240,7 @@ class CMB_Group_Field extends CMB_Field {
 				
 						$class = _cmb_field_class_for_type( $f['type'] );
 
-						$field_obj = new $class( $f['uid'], $f['name'], isset( $value[$f['id']] ) ? $value[$f['id']] : '' );
+						$field_obj = new $class( $f['uid'], $f['name'], isset( $value[$f['id']] ) ? $value[$f['id']] : '', $f );
 						
 						$field_obj->html();
 					
@@ -243,13 +248,7 @@ class CMB_Group_Field extends CMB_Field {
 					
 				</div>
 			<?php endforeach; ?>
-			
-			<?php if ( $field['repeatable'] == true ) : ?>
-				
-				<p>
-				    <a href="#" class="clone-group button">Add New</a>
-				</p>
-			<?php endif; ?>
+		
 		</div>
 		<?php
 		
@@ -288,7 +287,7 @@ class CMB_Group_Field extends CMB_Field {
 	public function save_multiple( $post_id ) {
 
 		delete_post_meta( $post_id, $this->name );
-	
+		
 		$first = reset( $this->value );
 		
 		foreach ($first as $key => $field_val ) {
@@ -297,7 +296,7 @@ class CMB_Group_Field extends CMB_Field {
 			
 			foreach ( $this->args['fields'] as $construct_field )
 				$meta[$construct_field['id']] = $this->value[$construct_field['id']][$key];
-
+			
 			if( array_filter( $meta ) )
 				add_post_meta( $post_id, $this->name, $meta );
 			

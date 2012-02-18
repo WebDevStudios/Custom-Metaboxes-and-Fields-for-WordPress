@@ -427,11 +427,23 @@ class cmb_Meta_Box {
 					
 					if ( $class = _cmb_field_class_for_type( $field['type'] ) ) {
 						
-						if ( !empty(  $this->_meta_box['repeatable'] ) )
+						if ( ! empty( $this->_meta_box['repeatable'] ) )
 							$field['repeatable'] = true;
 							
 						$field_obj = new $class( $field['id'], $field['name'], $meta, $field );
-						$field_obj->html();
+						?>
+						
+						<div class="field <?php echo $field['repeatable'] ? 'repeatable' : '' ?>">
+							
+							<div class="field-item">
+								<?php $field_obj->html(); ?>
+							</div>
+							<p>
+								<a href="#" class="button repeat-field">Add New</a>
+							</p>
+						</div>
+						
+						<?php
 					}
 					
 					else {

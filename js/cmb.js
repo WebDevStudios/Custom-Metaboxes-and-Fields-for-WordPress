@@ -155,7 +155,7 @@ jQuery(document).ready(function ($) {
 	 *
 	 * @todo repeatable tinymce
 	 */
-	if ( $( '.cmb_repeatable' ).size() ) {
+	if ( $( '.cmbs_repeatable' ).size() ) {
 
 		var removeButton = '<button type="button" class="button cmb_remove_repeated_fieldset">Remove Fieldset</button>';
 
@@ -204,7 +204,21 @@ jQuery(document).ready(function ($) {
 			$( this ).prev( '.cmb_repeated' ).remove().end().remove();
 
 		} );
+		
+		//
 
 	}
+	
+	jQuery( document ).on( 'click', 'a.repeat-field', function( e ) {
+				
+	    e.preventDefault();
+	    var a = jQuery( this );
+	    
+	    var newT = a.parent().prev().clone().removeClass('hidden');
+	    newT.find('input[type!="button"]').val('');
+	    newT.find( '.cmb_upload_status' ).html('');
+	    newT.insertAfter( a.parent().prev() );
+	    
+	} );
 
 });
