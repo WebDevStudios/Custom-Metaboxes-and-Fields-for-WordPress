@@ -82,8 +82,9 @@ add_action( 'cmb_render_text_cloneable', 'cmb_render_text_cloneable', 10, 2 );
  * @param array $data
  * @return array
  */
-function cmb_validate_text_cloneable( array $data ) {
-
+function cmb_validate_text_cloneable( $data ) {
+	
+	$data = (array) $data;
 	sort( $data );
 	return array_filter( $data );
 
