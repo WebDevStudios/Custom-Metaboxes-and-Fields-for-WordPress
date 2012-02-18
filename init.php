@@ -32,8 +32,8 @@ Version: 		0.9
 		You should not edit the code below or things might explode!
 *************************************************************************/
 
+include_once( 'additions.classes.fields.php' );
 include_once( 'additions.cloneable_text.php' ); 
-include_once( 'additions.oembed.php' );
 
 $meta_boxes = array();
 $meta_boxes = apply_filters ( 'cmb_meta_boxes' , $meta_boxes );
@@ -170,7 +170,7 @@ class cmb_Meta_Box {
 		
 		$meta = (array) get_post_meta( get_the_id(), $field, false );
 		
-		if ( ! empty( $meta ) )
+		if ( ! empty( $meta ) && isset( $meta[$key] ) )
 			return $meta[$key];
 			
 		return '';
@@ -187,9 +187,9 @@ class cmb_Meta_Box {
 		
 		$multiple_count = count( (array) get_post_meta( $post->ID, $this->_meta_box['fields'][0]['id'], false ) );
 		
-		if ( ! $multiple_count )
+		if ( ! $multiple_count || empty( $this->_meta_box['repeatable'] ) )
 			$multiple_count = 1;
-		
+				
 		for( $i = 0; $i < $multiple_count; $i++ ) {
 		
 		$classes = 'form-table cmb_metabox';
@@ -424,7 +424,16 @@ class cmb_Meta_Box {
 					echo '</div>'; 
 				break;
 				default:
-					do_action('cmb_render_' . $field['type'] , $field, $meta);
+					
+					if ( $class = _cmb_field_class_for_type( $field['type'] ) ) {
+						$field_obj = new $class( $field['id'], $field['name'], $meta, $field );
+						$field_obj->html();
+					}
+					
+					else {
+						do_action('cmb_render_' . $field['type'] , $field, $meta);
+					}
+						
 			}
 			
 			echo '</td>','</tr>';
@@ -459,6 +468,12 @@ class cmb_Meta_Box {
 		}
 
 		foreach ( $this->_meta_box['fields'] as $field ) {
+			
+			if ( $class = _cmb_field_class_for_type( $field['type'] ) ) {
+			    $field_obj = new $class( $field['id'], $field['name'], $_POST[$field['id']], $field );
+			    $field_obj->save( $post_id );
+			}
+			
 			$name = $field['id'];			
 
 			if ( ! isset( $field['multiple'] ) )
@@ -612,6 +627,22 @@ function cmb_force_send( $args ) {
 	}
 	 
     return $args;
+
+}
+
+function _cmb_field_class_for_type( $type ) {
+
+	$map = array(
+	
+		'text'			=> 'CMB_Text_Field',
+		'text_small' 	=> 'CMB_Text_Small_Field',
+		'text_url'		=> 'CMB_Text_URL_Field',
+		'file'			=> 'CMB_File_Field',
+		'group'			=> 'CMB_Group_Field',
+		'oembed'		=> 'CMB_Oembed_Field'
+	);
+	
+	return $map[$type];
 
 }
 // End. That's it, folks! //
