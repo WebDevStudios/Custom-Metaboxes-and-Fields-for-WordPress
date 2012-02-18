@@ -125,4 +125,55 @@ jQuery(document).ready(function ($) {
 
 		formfield = '';
 	};
+
+	/**
+	 * Repeatable fieldsets
+	 *
+	 * Makes a fieldset repeatable, handles id's and for attributes.
+	 * Strips value attributes and duplicate descriptoin text.
+	 *
+	 * @todo remove fieldset
+	 */
+	if ( $( '.cmb_repeatable' ).size() ) {
+
+		// Insert the new fieldset button
+		$( '.cmb_repeatable' ).closest( '.inside' ).append( '<button class="button cmb_repeat_fieldset">New FieldSet</button>' );
+
+		$( '.cmb_repeatable, .cmb_repeated' ).each( function() {
+
+			// Append [] to name so fields are stored as arrays
+			$( this ).find( '[name]' ).each( function() {
+				$( this ).attr( 'name', $( this ).attr( 'name' ) + '[]' );
+			} );
+			
+		} );
+		
+		$( '.cmb_repeatable' ).each( function() {
+
+			// Store the original fieldset in data
+			$( this ).data( 'fieldSet', $( $( this ).clone() ).find( 'input' ).val( '' ).end() );
+
+		} );
+		
+		// Setup the button click handler
+		$( document ).on( 'click', '.cmb_repeat_fieldset', function( e ) {
+
+		    var fieldSetCount = $( this ).closest( '.inside' ).find( 'table' ).size();
+
+		    $( this ).before( $( $( this ).closest( '.inside' ).find( '.cmb_repeatable' ).data( 'fieldSet' ) ).find( '[id], [for]' ).each( function() {
+
+		    	if ( $( this ).attr( 'id' ) )
+		    		$( this ).attr( 'id', $( this ).attr( 'id' ) + '_' + Number( fieldSetCount ) );
+
+		    	if ( $( this ).attr( 'for' ) )
+		    		$( this ).attr( 'for', $( this ).attr( 'for' ) + '_' + Number( fieldSetCount ) );
+
+		    } ).end().find( '.cmb_metabox_description' ).remove().end().removeClass( '.cmb_repeatable' ).addClass( '.cmb_repeated' ).clone() );
+
+		    e.preventDefault();
+
+		} )
+
+	}
+
 });
