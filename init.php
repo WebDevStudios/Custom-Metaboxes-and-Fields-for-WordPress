@@ -33,6 +33,7 @@ Version: 		0.9
 *************************************************************************/
 
 include_once( 'additions.cloneable_text.php' ); 
+include_once( 'additions.group.php' ); 
 
 $meta_boxes = array();
 $meta_boxes = apply_filters ( 'cmb_meta_boxes' , $meta_boxes );
@@ -442,7 +443,11 @@ class cmb_Meta_Box {
 				$new = strtotime( $string );
 			}
 			
+			
 			$new = apply_filters('cmb_validate_' . $field['type'], $new, $post_id, $field);			
+			
+			if ( $new === false )
+				continue;
 			
 			// validate meta value
 			if ( isset( $field['validate_func']) ) {
