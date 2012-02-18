@@ -68,8 +68,6 @@ abstract class CMB_Field {
 		delete_post_meta( $post_id, $this->name );
 		
 		foreach( (array) $this->value as $v ) {
-			
-			hm( $v );
 			add_post_meta( $post_id, $this->name, $v );
 		}
 		
