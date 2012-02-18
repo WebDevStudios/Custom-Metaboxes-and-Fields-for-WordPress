@@ -42,7 +42,7 @@ jQuery(document).ready(function ($) {
 	});
 	// Wrap date picker in class to narrow the scope of jQuery UI CSS and prevent conflicts
 	$("#ui-datepicker-div").wrap('<div class="cmb_element" />');
-	
+
 	/**
 	 * Initialize color picker
 	 */
@@ -146,4 +146,65 @@ jQuery(document).ready(function ($) {
 
 		formfield = '';
 	};
+
+	/**
+	 * Repeatable fieldsets
+	 *
+	 * Makes a fieldset repeatable, handles id's and for attributes.
+	 * Strips value attributes and duplicate descriptoin text.
+	 *
+	 * @todo repeatable tinymce
+	 */
+	if ( $( '.cmb_repeatable' ).size() ) {
+
+		var removeButton = '<button type="button" class="button cmb_remove_repeated_fieldset">Remove Fieldset</button>';
+
+		// Insert the new fieldset button
+		$( '.cmb_repeatable' ).closest( '.inside' ).append( '<button type="button" class="button cmb_repeat_fieldset">New FieldSet</button>' );
+
+		$( '.cmb_repeatable, .cmb_repeated' ).each( function() {
+
+			// Append [] to name so fields are stored as arrays
+			$( this ).find( '[name]' ).each( function() {
+				$( this ).attr( 'name', $( this ).attr( 'name' ) + '[]' );
+			} );
+
+		} );
+
+		$( '.cmb_repeatable' ).each( function() {
+
+			// Store the original fieldset in data
+			$( this ).data( 'fieldSet', $( $( this ).clone() ).find( 'input' ).val( '' ).end() );
+
+		} );
+
+		$( '.cmb_repeated' ).after( removeButton );
+
+		// Setup the add fieldset button click handler
+		$( document ).on( 'click', '.cmb_repeat_fieldset', function( e ) {
+
+		    var fieldSetCount = $( this ).closest( '.inside' ).find( 'table' ).size();
+
+		    $( this ).before( $( $( this ).closest( '.inside' ).find( '.cmb_repeatable' ).data( 'fieldSet' ) ).find( '[id], [for]' ).each( function() {
+
+		    	if ( $( this ).attr( 'id' ) )
+		    		$( this ).attr( 'id', $( this ).attr( 'id' ) + '_' + Number( fieldSetCount ) );
+
+		    	if ( $( this ).attr( 'for' ) )
+		    		$( this ).attr( 'for', $( this ).attr( 'for' ) + '_' + Number( fieldSetCount ) );
+
+		    } ).end().find( '.cmb_metabox_description' ).remove().end().removeClass( 'cmb_repeatable' ).addClass( 'cmb_repeated' ).clone() ).before( removeButton );
+
+		    e.preventDefault();
+
+		} );
+
+		$( document ).on( 'click', '.cmb_remove_repeated_fieldset', function( e ) {
+
+			$( this ).prev( '.cmb_repeated' ).remove().end().remove();
+
+		} );
+
+	}
+
 });
