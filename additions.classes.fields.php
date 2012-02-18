@@ -8,22 +8,73 @@
  */
 abstract class CMB_Field {
 	
-	public $id;
 	public $value;
 	
-	public function __construct( $name, $title, $value, $args = array() ) {
+	/**
+	 * used for repeatable
+	 * 
+	 */
+	static $did_saves;
 	
+	
+	/**
+	 * used for repeatable
+	 * 
+	 */
+	static $next_values;
+	
+	public function __construct( $name, $title, $value, $args = array() ) {
+		
 		$this->name 	= $name;
-		$this->title 	= $title;	
-		$this->value 	= $value;
-		$this->description = '';
+		$this->title 	= $title;
 		$this->args		= $args;
+		
+		if ( ! empty( $this->args['repeatable'] ) ) {
+			
+			if ( !isset( self::$next_values[$name] ) )
+				self::$next_values[$name] = 0;
+				
+			if ( !isset( self::$did_saves[$name] ) )
+				self::$did_saves[$name] = false;
+				
+			$value = (array) $value;
+			
+			$this->value = $value[(int)self::$next_values[$name]];
+			self::$next_values[$name]++;
+		
+		} else {
+			$this->value = $value;
+		}
+					
+		$this->description = '';
+		
 	}
 	
 	public function save( $post_id ) {
-
-		update_post_meta( $post_id, $this->name, reset( $this->value ) );
+		
+		if ( $this->args['repeatable'] ) {
+			
+			if ( ! self::$did_saves[$this->name] )
+				$this->save_multiple( $post_id );
+		
+		} else {
+			update_post_meta( $post_id, $this->name, $this->value );
+		}
 	
+	}
+	
+	public function save_multiple( $post_id ) {
+			
+		delete_post_meta( $post_id, $this->name );
+		
+		foreach( (array) $this->value as $v ) {
+			
+			hm( $v );
+			add_post_meta( $post_id, $this->name, $v );
+		}
+		
+		self::$did_saves[$this->name] = true;
+		
 	}
 }
 
@@ -138,13 +189,24 @@ class CMB_Oembed_Field extends CMB_Field {
 /**
  * Field to group child fieids
  * pass $args[fields] array for child fields
- * pass $args['cloneable'] for cloing all child fields (set) 
+ * pass $args['repeatable'] for cloing all child fields (set) 
  *
- * @todo remote global $post reference, somehow
+ * @todo remove global $post reference, somehow
  */
 class CMB_Group_Field extends CMB_Field {
 	
 	static $added_js;
+	
+	public function __construct( $name, $title, $value, $args = array() ) {
+		
+		$this->name 	= $name;
+		$this->title 	= $title;
+		$this->args		= $args;
+		$this->value = $value;
+			
+		$this->description = '';
+		
+	}
 	
 	public function html() {
 		
@@ -162,7 +224,7 @@ class CMB_Group_Field extends CMB_Field {
 		<div class="cloneable-group">
 			
 			<?php foreach ( $meta as $value ) : ?>
-				<div style="background: #eee; border-radius: 5px; padding: 5px; margin-bottom: 10px;" class="group <?php echo $field['cloneable'] == true ? 'cloneable' : '' ?> <?php echo $value == '' ? 'hidden' : '' ?>">
+				<div style="background: #eee; border-radius: 5px; padding: 5px; margin-bottom: 10px;" class="group <?php echo $field['repeatable'] == true ? 'cloneable' : '' ?> <?php echo $value == '' ? 'hidden' : '' ?>">
 					
 					<a class="delete-group button" style="float: right">X</a>
 					<?php foreach ( $this->args['fields'] as $f ) {
@@ -170,11 +232,11 @@ class CMB_Group_Field extends CMB_Field {
 						$f['uid'] = $field['id'] . '[' . $f['id'] . ']';
 						
 						// If it's cloneable , make it an array
-						if ( $field['cloneable'] == true )
+						if ( $field['repeatable'] == true )
 							$f['uid'] .= '[]';
 				
 						$class = _cmb_field_class_for_type( $f['type'] );
-						
+
 						$field_obj = new $class( $f['uid'], $f['name'], isset( $value[$f['id']] ) ? $value[$f['id']] : '' );
 						
 						$field_obj->html();
@@ -184,7 +246,7 @@ class CMB_Group_Field extends CMB_Field {
 				</div>
 			<?php endforeach; ?>
 			
-			<?php if ( $field['cloneable'] == true ) : ?>
+			<?php if ( $field['repeatable'] == true ) : ?>
 				
 				<p>
 				    <a href="#" class="clone-group button">Add New</a>
@@ -225,8 +287,8 @@ class CMB_Group_Field extends CMB_Field {
 		
 	}
 	
-	public function save( $post_id ) {
-	
+	public function save_multiple( $post_id ) {
+
 		delete_post_meta( $post_id, $this->name );
 	
 		$first = reset( $this->value );
@@ -237,7 +299,7 @@ class CMB_Group_Field extends CMB_Field {
 			
 			foreach ( $this->args['fields'] as $construct_field )
 				$meta[$construct_field['id']] = $this->value[$construct_field['id']][$key];
-				
+
 			if( array_filter( $meta ) )
 				add_post_meta( $post_id, $this->name, $meta );
 			

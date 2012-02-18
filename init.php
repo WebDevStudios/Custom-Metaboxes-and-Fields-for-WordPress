@@ -226,7 +226,7 @@ class cmb_Meta_Box {
 				$field['id'] .= '_' . $i;
 			
 			$meta = $this->get_meta_value( $field['name_attr'], $i );
-
+			
 			echo '<tr>';
 	
 			if ( $field['type'] == "title" ) {
@@ -426,6 +426,10 @@ class cmb_Meta_Box {
 				default:
 					
 					if ( $class = _cmb_field_class_for_type( $field['type'] ) ) {
+						
+						if ( !empty(  $this->_meta_box['repeatable'] ) )
+							$field['repeatable'] = true;
+							
 						$field_obj = new $class( $field['id'], $field['name'], $meta, $field );
 						$field_obj->html();
 					}
@@ -470,8 +474,13 @@ class cmb_Meta_Box {
 		foreach ( $this->_meta_box['fields'] as $field ) {
 			
 			if ( $class = _cmb_field_class_for_type( $field['type'] ) ) {
+				
+				if ( !empty(  $this->_meta_box['repeatable'] ) )
+					$field['repeatable'] = true;
+							
 			    $field_obj = new $class( $field['id'], $field['name'], $_POST[$field['id']], $field );
 			    $field_obj->save( $post_id );
+			    continue;
 			}
 			
 			$name = $field['id'];			
