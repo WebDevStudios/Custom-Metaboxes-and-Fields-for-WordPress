@@ -30,13 +30,23 @@ abstract class CMB_Field {
 		$this->title 	= $title;
 		$this->args		= wp_parse_args( $args, array( 'repeatable' => false, 'std' => '', 'show_label' => false ) );
 
+	
 		$this->values 	= $values;
+		$this->value 	= reset( $this->values );
 					
 		$this->description = $this->args['desc'];
 	}
 	
+	public function get_value() {
+		return $this->value;
+	}
+	
 	public function parse_save_values() {
 		
+	}
+	
+	public function parse_save_value() {
+
 	}
 	
 	public function save( $post_id ) {
@@ -46,9 +56,11 @@ abstract class CMB_Field {
 		delete_post_meta( $post_id, $this->id );
 
 		foreach( $this->values as $v ) {
+			$this->value = $v;
+			$this->parse_save_value();
 			
 			if ( $v )
-				add_post_meta( $post_id, $this->id, $v );
+				add_post_meta( $post_id, $this->id, $this->value );
 		}
 	
 	}
@@ -248,9 +260,28 @@ class CMB_Oembed_Field extends CMB_Field {
 		?>
 		<p>
 			<?php if ( $this->args['show_label'] ) : ?><label style="display:inline-block; width: 70%"><?php echo $this->title ?></label><?php endif; ?>
-			<?php echo '<input class="cmb_oembed code" type="text" name="', $this->name, '" id="',$this->name, '" value="', '' !== $this->value ? esc_url( $this->value ) : $this->args['std'], '" /><span class="cmb_metabox_description">', $this->args['desc'], '</span>'; ?>
+			
+			<?php if ( ! $this->value ) : ?>
+				<?php echo '<input class="cmb_oembed code" type="text" name="', $this->name, '" id="',$this->name, '" value="" /><span class="cmb_metabox_description">', $this->description, '</span>'; ?>
+			<?php else : ?>
+				
+				<?php echo '<div class="hidden"><input disabled class="cmb_oembed code" type="text" name="', $this->name, '" id="',$this->name, '" value="" /><span class="cmb_metabox_description">', $this->description, '</span></div>'; ?>
+				
+				<div style="position: relative">
+					<span><?php echo $this->value ?></span>
+					<input type="hidden" name="<?php echo $this->name ?>" value="<?php echo esc_attr( $this->value ) ?>" />
+					<a href="#" class="cmb_remove_file_button" onclick="jQuery( this ).closest('div').prev().removeClass('hidden').find('input').first().removeAttr('disabled')">Remove</a>
+				</div>	
+				
+			<?php endif; ?>
 		</p>
 		<?php
+	}
+	
+	public function parse_save_value() {
+		
+		if ( strpos( $this->value, 'http' ) === 0 )
+			$this->value = wp_oembed_get( $this->value, array( 'height' => 75 ) );
 	}
 }
 
@@ -371,8 +402,17 @@ class CMB_Group_Field extends CMB_Field {
 			
 			$meta = array();
 			
-			foreach ( $this->args['fields'] as $construct_field )
-				$meta[$construct_field['id']] = $values[$construct_field['id']][$key];
+			foreach ( $this->args['fields'] as $construct_field ) {
+				
+				// create the fiel object so it can sanitize it's data etc
+				$class = _cmb_field_class_for_type( $construct_field['type'] );
+				$field = new $class( $construct_field['id'], $construct_field['name'], $values[$construct_field['id']][$key], $construct_field );
+
+				$field->parse_save_value();
+				
+				
+				$meta[$construct_field['id']] = array( $field->get_value() );
+			}
 			
 			if( $this->isNotEmptyArray( $meta ) )
 				$this->values[] = $meta;
