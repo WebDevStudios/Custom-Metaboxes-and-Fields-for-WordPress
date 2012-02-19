@@ -27,7 +27,7 @@ abstract class CMB_Field {
 		
 		$this->name 	= $name;
 		$this->title 	= $title;
-		$this->args		= wp_parse_args( $args, array( 'repeatable' => false, 'std' => '' ) );
+		$this->args		= wp_parse_args( $args, array( 'repeatable' => false, 'std' => '', 'show_label' => false ) );
 		
 		if ( ! empty( $this->args['repeatable'] ) ) {
 			
@@ -46,7 +46,7 @@ abstract class CMB_Field {
 			$this->value = $value;
 		}
 					
-		$this->description = '';
+		$this->description = $this->args['desc'];
 		
 	}
 	
@@ -86,7 +86,7 @@ class CMB_Text_Field extends CMB_Field {
 	
 		?>
 		<p>
-			<label><?php echo $this->title ?>
+			<label><?php if ( $this->args['show_label'] ) : ?><?php echo $this->title ?><?php endif; ?>
 				<input type="text" name="<?php echo $this->name ?>" value="<?php echo $this->value ?>" />
 			</label>
 		</p>
@@ -101,7 +101,7 @@ class CMB_Text_Small_Field extends CMB_Field {
 		?>
 
 		<p>
-			<label style="display:inline-block; width: 70%"><?php echo $this->title ?></label>
+			<?php if ( $this->args['show_label'] ) : ?><label style="display:inline-block; width: 70%"><?php echo $this->title ?></label><?php endif; ?>
 			<input class="cmb_text_small" type="text" name="<?php echo $this->name ?>" value="<?php echo $this->value ?>" /> <span class="cmb_metabox_description"><?php echo $this->description ?></span>
 		</p>
 		<?php
@@ -133,8 +133,10 @@ class CMB_File_Field extends CMB_Field {
 		$input_type_url = "hidden";
 		if ( 'url' == $field['allow'] || ( is_array( $field['allow'] ) && in_array( 'url', $field['allow'] ) ) )
 		    $input_type_url="text";
-		   
-		echo '<label>', $this->title, '<br /></label>';
+		  
+		if ( $this->args['show_label'] )
+			echo '<label>', $this->title, '<br /></label>';
+			
 		echo '<input class="cmb_upload_file" type="' . $input_type_url . '" size="45" id="', $field['html_id'], '" value="', $meta, '" />';
 		echo '<input class="cmb_upload_button button" type="button" value="Upload File" />';
 		echo '<input class="cmb_upload_file_id" type="hidden" id="', $field['html_id'], '_id" name="', $field['id'], '" value="', $this->value, '" />';					
@@ -164,12 +166,65 @@ class CMB_Text_URL_Field extends CMB_Field {
 	
 		?>
 		<p>
-			<label style="display:inline-block; width: %70"><?php echo $this->title ?></label>
+			<?php if ( $this->args['show_label'] ) : ?><label style="display:inline-block; width: 70%"><?php echo $this->title ?></label><?php endif; ?>
 			<input class="cmb_text_url" type="text" name="<?php echo $this->name ?>" value="<?php echo esc_url( $this->value ) ?>" /> <span class="cmb_metabox_description"><?php echo $this->description ?></span>
 		</p>
 		<?php
 	}
 }
+
+/**
+ * Date picker box.
+ * 
+ */
+class CMB_Date_Field extends CMB_Field {
+
+	public function html() {
+	
+		?>
+		<p>
+			<?php if ( $this->args['show_label'] ) : ?><label style="display:inline-block; width: 70%"><?php echo $this->title ?></label><?php endif; ?>
+			<input class="cmb_text_url cmb_datepicker" type="text" name="<?php echo $this->name ?>" value="<?php echo $this->value ?>" /> <span class="cmb_metabox_description"><?php echo $this->description ?></span>
+		</p>
+		<?php
+	}
+}
+
+/**
+ * Date picker for date only (not time) box.
+ * 
+ */
+class CMB_Date_Timestamp_Field extends CMB_Field {
+
+	public function html() {
+	
+		?>
+		<p>
+			<?php if ( $this->args['show_label'] ) : ?><label style="display:inline-block; width: 70%"><?php echo $this->title ?></label><?php endif; ?>
+			<input class="cmb_text_url cmb_datepicker" type="text" name="<?php echo $this->name ?>" value="<?php echo $this->value ? date( 'm\/d\/Y', $this-value ) : '' ?>" /> <span class="cmb_metabox_description"><?php echo $this->description ?></span>
+		</p>
+		<?php
+	}
+}
+
+/**
+ * Date picker for date and time (seperate fields) box.
+ * 
+ */
+class CMB_Datetime_Timestamp_Field extends CMB_Field {
+
+	public function html() {
+	
+		?>
+		<p>
+			<?php if ( $this->args['show_label'] ) : ?><label style="display:inline-block; width: 70%"><?php echo $this->title ?></label><?php endif; ?>
+			<input class="cmb_text_url cmb_datepicker" type="text" name="<?php echo $this->name ?>[date]" value="<?php echo $this->value ? date( 'm\/d\/Y', $this-value ) : '' ?>" />
+			<input class="cmb_text_url text_time" type="text" name="<?php echo $this->name ?>[time]" value="<?php echo $this->value ? date( 'm\/d\/Y', $this-value ) : '' ?>" /> <span class="cmb_metabox_description"><?php echo $this->description ?></span>
+		</p>
+		<?php
+	}
+}
+
 
 /**
  * Standard text meta box for a URL.
@@ -181,7 +236,7 @@ class CMB_Oembed_Field extends CMB_Field {
 		
 		?>
 		<p>
-			<label style="display:inline-block; width: %70"><?php echo $this->title ?></label>
+			<?php if ( $this->args['show_label'] ) : ?><label style="display:inline-block; width: 70%"><?php echo $this->title ?></label><?php endif; ?>
 			<?php echo '<input class="cmb_oembed code" type="text" name="', $this->name, '" id="',$this->name, '" value="', '' !== $this->value ? esc_url( $this->value ) : $this->args['std'], '" /><span class="cmb_metabox_description">', $this->args['desc'], '</span>'; ?>
 		</p>
 		<?php
@@ -239,7 +294,8 @@ class CMB_Group_Field extends CMB_Field {
 							$f['uid'] .= '[]';
 				
 						$class = _cmb_field_class_for_type( $f['type'] );
-
+						$f['show_label'] = true;
+						
 						$field_obj = new $class( $f['uid'], $f['name'], isset( $value[$f['id']] ) ? $value[$f['id']] : '', $f );
 						
 						$field_obj->html();
