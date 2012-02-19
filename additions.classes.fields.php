@@ -23,56 +23,67 @@ abstract class CMB_Field {
 	 */
 	static $next_values;
 	
-	public function __construct( $name, $title, $value, $args = array() ) {
+	public function __construct( $name, $title, array $values, $args = array() ) {
 		
-		$this->name 	= $name;
+		$this->id 		= $name;
+		$this->name		= $name . '[]';
 		$this->title 	= $title;
 		$this->args		= wp_parse_args( $args, array( 'repeatable' => false, 'std' => '', 'show_label' => false ) );
-		
-		if ( ! empty( $this->args['repeatable'] ) ) {
-			
-			if ( !isset( self::$next_values[$name] ) )
-				self::$next_values[$name] = 0;
-				
-			if ( !isset( self::$did_saves[$name] ) )
-				self::$did_saves[$name] = false;
-				
-			$value = (array) $value;
-			
-			$this->value = $value[(int)self::$next_values[$name]];
-			self::$next_values[$name]++;
-		
-		} else {
-			$this->value = $value;
-		}
+
+		$this->values 	= $values;
 					
 		$this->description = $this->args['desc'];
+	}
+	
+	public function parse_save_values() {
 		
 	}
 	
 	public function save( $post_id ) {
 		
-		if ( $this->args['repeatable'] ) {
-			
-			if ( ! self::$did_saves[$this->name] )
-				$this->save_multiple( $post_id );
+		$this->parse_save_values();
 		
-		} else {
-			update_post_meta( $post_id, $this->name, $this->value );
+		delete_post_meta( $post_id, $this->id );
+
+		foreach( $this->values as $v ) {
+			
+			if ( $v )
+				add_post_meta( $post_id, $this->id, $v );
 		}
 	
 	}
 	
-	public function save_multiple( $post_id ) {
-			
-		delete_post_meta( $post_id, $this->name );
+	public function display() {
 		
-		foreach( (array) $this->value as $v ) {
-			add_post_meta( $post_id, $this->name, $v );
+		// if there are no values and it's not repeateble, we want to do one with empty string
+		if ( empty( $this->values ) && !  $this->args['repeatable'] )
+			$this->values = array( '' );
+		
+		foreach ( $this->values as $value ) {
+			
+			$this->value = $value;
+			
+			echo '<div class="field-item">';
+			$this->html();
+			echo '</div>';
+			
 		}
 		
-		self::$did_saves[$this->name] = true;
-		
+		// insert a hidden one if it's repeatable
+		if ( $this->args['repeatable'] ) {
+			$this->value = '';
+			
+			echo '<div class="field-item hidden">';
+			$this->html();
+			echo '</div>';
+			
+			?>
+			<p>
+				<a href="#" class="button repeat-field">Add New</a>
+			</p>
+			<?php
+		}
+	
 	}
 }
 
@@ -255,59 +266,38 @@ class CMB_Group_Field extends CMB_Field {
 	
 	static $added_js;
 	
-	public function __construct( $name, $title, $value, $args = array() ) {
-		
-		$this->name 	= $name;
-		$this->title 	= $title;
-		$this->args		= $args;
-		$this->value = $value;
-			
-		$this->description = '';
-		
-	}
-	
-	public function html() {
+	public function display() {
 		
 		global $post;
 		
-		global $post;
-		// mutltiple so is differernt
-		$meta = get_post_meta( $post->ID, $this->name, false );
+		$meta = $this->values;
 		
-		if ( ! $meta )
+		if ( ! $meta && ! $this->args['repeatable'] )
 			$meta = array( '' );
+	
 		$field = $this->args;
 		
-		?>
-		<div class="cloneable-group">
-			
-			<?php foreach ( $meta as $value ) : ?>
-				<div style="background: #eee; border-radius: 5px; padding: 5px; margin-bottom: 10px;" class="group <?php echo $field['repeatable'] == true ? 'cloneable' : '' ?> <?php echo $value == '' ? 'hidden' : '' ?>">
-					
-					<a class="delete-group button" style="float: right">X</a>
-					<?php foreach ( $this->args['fields'] as $f ) {
-						
-						$f['uid'] = $field['id'] . '[' . $f['id'] . ']';
-						
-						// If it's cloneable , make it an array
-						if ( $field['repeatable'] == true )
-							$f['uid'] .= '[]';
+		foreach ( $meta as $value ) {
 				
-						$class = _cmb_field_class_for_type( $f['type'] );
-						$f['show_label'] = true;
-						
-						$field_obj = new $class( $f['uid'], $f['name'], isset( $value[$f['id']] ) ? $value[$f['id']] : '', $f );
-						
-						$field_obj->html();
-					
-					} ?>
-					
-				</div>
-			<?php endforeach; ?>
+			$this->value = $value;
+			echo '<div class="field-item">';
+			$this->html();
+			echo '</div>';
+				
+		}
 		
-		</div>
-		<?php
 		
+		if ( $this->args['repeatable'] ) {
+			$this->value = '';
+			echo '<div class="field-item hidden">';
+			$this->html();
+			echo '</div>';
+			?>
+			<p>
+				<a href="#" class="button repeat-field">Add New</a>
+			</p>
+			<?php
+		}
 		
 		if ( ! self::$added_js ) : ?>
 		
@@ -337,27 +327,71 @@ class CMB_Group_Field extends CMB_Field {
 			</script>
 		
 		<?php self::$added_js = true; endif; 
-		
 	}
 	
-	public function save_multiple( $post_id ) {
-
-		delete_post_meta( $post_id, $this->name );
+	public function html() {
 		
-		$first = reset( $this->value );
+		$field = $this->args;
+		$value = $this->value;
+		
+		?>
+		<div style="background: #eee; border-radius: 5px; padding: 5px; margin-bottom: 10px;" class="group <?php echo !empty( $field['repeatable'] ) ? 'cloneable' : '' ?>">
+		    
+		    <a class="delete-group button" style="float: right">X</a>
+		    <?php foreach ( $this->args['fields'] as $f ) {
+		    	
+		    	$f['uid'] = $field['id'] . '[' . $f['id'] . ']';
+		    	
+		    	// If it's cloneable , make it an array
+		    	if ( $field['repeatable'] == true )
+		    		$f['uid'] .= '[]';
+		
+		    	$class = _cmb_field_class_for_type( $f['type'] );
+		    	$f['show_label'] = true;
+		    	
+		    	$field_obj = new $class( $f['uid'], $f['name'], isset( $value[$f['id']] ) ? $value[$f['id']] : array( '' ), $f );
+		    	
+		    	$field_obj->display();
+		    
+		    } ?>
+		    
+		</div>
+			
+		<?php
+	}
+	
+	public function parse_save_values() {
+				
+		$values = $this->values;
+		$this->values = array();
+		
+		$first = reset( $values );
 		
 		foreach ($first as $key => $field_val ) {
 			
 			$meta = array();
 			
 			foreach ( $this->args['fields'] as $construct_field )
-				$meta[$construct_field['id']] = $this->value[$construct_field['id']][$key];
+				$meta[$construct_field['id']] = $values[$construct_field['id']][$key];
 			
-			if( array_filter( $meta ) )
-				add_post_meta( $post_id, $this->name, $meta );
+			if( $this->isNotEmptyArray( $meta ) )
+				$this->values[] = $meta;
 			
 		}
+		
+	}
+	
+	private function isNotEmptyArray( $array ) {
+	
+		foreach ($array as &$value) 
+    	{ 
+    	  if (is_array($value)) 
+    	  { 
+    	    $value = $this->isNotEmptyArray($value); 
+    	  } 
+    	} 
+    	
+    	return array_filter($array); 
 	
 	}
-
 }
