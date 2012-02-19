@@ -240,25 +240,12 @@ class cmb_Meta_Box {
 						
 			switch ( $field['type'] ) {
 
-				case 'text':
-					echo '<input type="text" name="', $field['name_attr'], '" id="', $field['id'], '" value="', '' !== $meta ? $meta : $field['std'], '" />','<p class="cmb_metabox_description">', $field['desc'], '</p>';
-					break;
 				case 'text_small':
 					echo '<input class="cmb_text_small" type="text" name="', $field['name_attr'], '" id="', $field['id'], '" value="', '' !== $meta ? $meta : $field['std'], '" /><span class="cmb_metabox_description">', $field['desc'], '</span>';
 					break;
 				case 'text_medium':
 					echo '<input class="cmb_text_medium" type="text" name="', $field['name_attr'], '" id="', $field['id'], '" value="', '' !== $meta ? $meta : $field['std'], '" /><span class="cmb_metabox_description">', $field['desc'], '</span>';
 					break;
-				case 'text_url':
-					echo '<input class="cmb_text_url code" type="text" name="', $field['name_attr'], '" id="', $field['id'], '" value="', '' !== $meta ? esc_url( $meta ) : $field['std'], '" /><span class="cmb_metabox_description">', $field['desc'], '</span>';
-					break;
-				case 'text_date':
-					echo '<input class="cmb_text_small cmb_datepicker" type="text" name="', $field['name_attr'], '" id="', $field['id'], '" value="', '' !== $meta ? $meta : $field['std'], '" /><span class="cmb_metabox_description">', $field['desc'], '</span>';
-					break;
-				case 'text_date_timestamp':
-					echo '<input class="cmb_text_small cmb_datepicker" type="text" name="', $field['name_attr'], '" id="', $field['id'], '" value="', '' !== $meta ? date( 'm\/d\/Y', $meta ) : $field['std'], '" /><span class="cmb_metabox_description">', $field['desc'], '</span>';
-					break;
-
 				case 'text_datetime_timestamp':
 					echo '<input class="cmb_text_small cmb_datepicker" type="text" name="', $field['name_attr'], '[date]" id="', $field['id'], '_date" value="', '' !== $meta ? date( 'm\/d\/Y', $meta ) : $field['std'], '" />';
 					echo '<input class="cmb_timepicker text_time" type="text" name="', $field['name_attr'], '[time]" id="', $field['id'], '_time" value="', '' !== $meta ? date( 'h:i A', $meta ) : $field['std'], '" /><span class="cmb_metabox_description" >', $field['desc'], '</span>';
