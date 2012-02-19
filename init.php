@@ -189,16 +189,8 @@ class cmb_Meta_Box {
 		
 		if ( ! $multiple_count || empty( $this->_meta_box['repeatable'] ) )
 			$multiple_count = 1;
-				
-		for( $i = 0; $i < $multiple_count; $i++ ) {
-		
+						
 		$classes = 'form-table cmb_metabox';
-		
-		if ( ! empty( $this->_meta_box['repeatable'] ) && ! $i )
-			$classes .= ' cmb_repeatable';
-			
-		if ( ! empty( $this->_meta_box['repeatable'] ) && $i )
-			$classes .= ' cmb_repeated';
 		
 		echo '<table class="' . $classes . '">';
 
@@ -208,7 +200,7 @@ class cmb_Meta_Box {
 			if ( ! isset( $field['name'] ) )
 				$field['name'] = '';
 
-			if ( ! isset( $field['desc'] ) || $i )
+			if ( ! isset( $field['desc'] ) )
 				$field['desc'] = '';
 
 			if ( ! isset( $field['std'] ) )
@@ -221,11 +213,8 @@ class cmb_Meta_Box {
 				$field['save_id']  = false;
 				
 			$field['name_attr'] = $field['id'];
-						
-			if ( $i )
-				$field['id'] .= '_' . $i;
 			
-			$meta = $this->get_meta_value( $field['name_attr'], $i );
+			$meta = get_post_meta( get_the_id(), $field['id'], true );
 			
 			echo '<tr>';
 	
@@ -246,6 +235,13 @@ class cmb_Meta_Box {
 				case 'text_medium':
 					echo '<input class="cmb_text_medium" type="text" name="', $field['name_attr'], '" id="', $field['id'], '" value="', '' !== $meta ? $meta : $field['std'], '" /><span class="cmb_metabox_description">', $field['desc'], '</span>';
 					break;
+				case 'text_date':
+					echo '<input class="cmb_text_small cmb_datepicker" type="text" name="', $field['name_attr'], '" id="', $field['id'], '" value="', '' !== $meta ? $meta : $field['std'], '" /><span class="cmb_metabox_description">', $field['desc'], '</span>';
+					break;
+				case 'text_date_timestamp':
+					echo '<input class="cmb_text_small cmb_datepicker" type="text" name="', $field['name_attr'], '" id="', $field['id'], '" value="', '' !== $meta ? date( 'm\/d\/Y', $meta ) : $field['std'], '" /><span class="cmb_metabox_description">', $field['desc'], '</span>';
+					break;
+
 				case 'text_datetime_timestamp':
 					echo '<input class="cmb_text_small cmb_datepicker" type="text" name="', $field['name_attr'], '[date]" id="', $field['id'], '_date" value="', '' !== $meta ? date( 'm\/d\/Y', $meta ) : $field['std'], '" />';
 					echo '<input class="cmb_timepicker text_time" type="text" name="', $field['name_attr'], '[time]" id="', $field['id'], '_time" value="', '' !== $meta ? date( 'h:i A', $meta ) : $field['std'], '" /><span class="cmb_metabox_description" >', $field['desc'], '</span>';
@@ -417,17 +413,15 @@ class cmb_Meta_Box {
 						if ( ! empty( $this->_meta_box['repeatable'] ) )
 							$field['repeatable'] = true;
 							
+						$meta = get_post_meta( get_the_id(), $field['id'], false );
+						
 						$field_obj = new $class( $field['id'], $field['name'], $meta, $field );
 						?>
 						
-						<div class="field <?php echo $field['repeatable'] ? 'repeatable' : '' ?>">
+						<div class="field <?php echo !empty( $field['repeatable'] ) ? 'repeatable' : '' ?>">
 							
-							<div class="field-item">
-								<?php $field_obj->html(); ?>
-							</div>
-							<p>
-								<a href="#" class="button repeat-field">Add New</a>
-							</p>
+							<?php $field_obj->display(); ?>
+							
 						</div>
 						
 						<?php
@@ -443,8 +437,6 @@ class cmb_Meta_Box {
 		}
 
 		echo '</table>';
-
-		}
 
 	}
 
@@ -476,8 +468,10 @@ class cmb_Meta_Box {
 				
 				if ( !empty(  $this->_meta_box['repeatable'] ) )
 					$field['repeatable'] = true;
-							
-			    $field_obj = new $class( $field['id'], $field['name'], $_POST[$field['id']], $field );
+				
+				$value = isset( $_POST[$field['id']] ) ? (array) $_POST[$field['id']] : (array) $_POST[$field['id'].'[]'];
+			    $field_obj = new $class( $field['id'], $field['name'], $value, $field );
+
 			    $field_obj->save( $post_id );
 			    continue;
 			}
