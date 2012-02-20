@@ -113,7 +113,7 @@ jQuery(document).ready(function ($) {
 				itemtitle = htmlBits[2];
 				itemtitle = itemtitle.replace('>', '');
 				itemtitle = itemtitle.replace('</a>', '');
-				itemid = ""; // TO DO: Get ID for non-image attachments.
+				itemid = itemurl; // TO DO: Get ID for non-image attachments.
 			}
 
 			image = /(jpe?g|png|gif|ico)$/gi;

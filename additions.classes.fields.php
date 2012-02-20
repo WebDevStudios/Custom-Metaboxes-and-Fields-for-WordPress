@@ -134,7 +134,6 @@ class CMB_Text_Small_Field extends CMB_Field {
 /**
  * Field for image upload / file updoad.
  *
- * @todo work with files as well as images
  * @todo ability to set image size (preview image) from caller
  */
 class CMB_File_Field extends CMB_Field {
@@ -147,11 +146,17 @@ class CMB_File_Field extends CMB_Field {
 			'desc' => $this->description,
 			'html_id' => str_replace( array( '[', ']' ),  '_', $this->name . rand(1,100) )
 		);
-
-		if ( wp_get_attachment_image_src( $this->value, 'width=100&height=100' ) )
-			$meta = reset( wp_get_attachment_image_src( $this->value, 'width=100&height=100' ) );
-		else
-			$meta = '';
+		
+		// value can be URL of file or id of image attachment
+		
+		if ( is_numeric( $this->value ) ) {
+			if ( wp_get_attachment_image_src( $this->value, 'width=100&height=100' ) )
+				$meta = reset( wp_get_attachment_image_src( $this->value, 'width=100&height=100' ) );
+			else
+				$meta = '';
+		} else {
+			$meta = $this->value;
+		}
 
 		$input_type_url = "hidden";
 		if ( 'url' == $field['allow'] || ( is_array( $field['allow'] ) && in_array( 'url', $field['allow'] ) ) )
@@ -172,6 +177,13 @@ class CMB_File_Field extends CMB_Field {
 		    		echo '<img src="', $meta, '" alt="" />';
 		    		echo '<a href="#" class="cmb_remove_file_button" rel="', $field['html_id'], '">Remove Image</a>';
 		    		echo '</div>';
+		    	} else {
+		    		?>
+		    		<div class="img_status">
+		    		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="<?php echo $meta ?>" target="_blank">View File</a>
+		    		<a href="#" class="cmb_remove_file_button" rel="<?php echo $field['html_id'] ?>">Remove</a>
+		    		</div>
+		    		<?php
 		    	}
 		    }
 		echo '</div>';
