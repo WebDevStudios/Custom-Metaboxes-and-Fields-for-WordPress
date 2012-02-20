@@ -314,7 +314,7 @@ function cmb_oembed_thumbnail( $return, $data, $url ) {
     $backtrace = debug_backtrace();
 
     if ( $data->type == 'video' && ! empty( $backtrace[5]['args'][1]['cmb_oembed'] ) )
-    	return '<a href=""><img data-src="' . $data->thumbnail_url . '" src="' . wpthumb( $data->thumbnail_url, 'height=75&crop=1' ) . '" />' . $return . '</a>';
+    	return '<a href=""><img src="' . $data->thumbnail_url . '" /><span class="video_embed">' . $return . '</span></a>';
 
     return $return;
 
