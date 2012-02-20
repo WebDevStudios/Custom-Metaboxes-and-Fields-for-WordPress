@@ -422,12 +422,13 @@ class CMB_Group_Field extends CMB_Field {
 
 		$field = $this->args;
 		$value = $this->value;
-
 		?>
 		<div style="background: #eee; border-radius: 5px; padding: 5px; margin-bottom: 10px;" class="group <?php echo !empty( $field['repeatable'] ) ? 'cloneable' : '' ?>">
 
 		    <a class="delete-group button" style="float: right">X</a>
 		    <?php foreach ( $this->args['fields'] as $f ) {
+		    	
+		    	$field_value = isset( $this->value[$f['id']] ) ? $this->value[$f['id']] : '';
 
 		    	$f['uid'] = $field['id'] . '[' . $f['id'] . ']';
 
@@ -437,8 +438,9 @@ class CMB_Group_Field extends CMB_Field {
 
 		    	$class = _cmb_field_class_for_type( $f['type'] );
 		    	$f['show_label'] = true;
-
-		    	$field_obj = new $class( $f['uid'], $f['name'], isset( $value[$f['id']] ) ? $value[$f['id']] : array( '' ), $f );
+				
+				// Todo support for repeatble fields in groups
+		    	$field_obj = new $class( $f['uid'], $f['name'], array( $field_value ), $f );
 
 		    	$field_obj->display();
 
@@ -469,7 +471,7 @@ class CMB_Group_Field extends CMB_Field {
 				$field->parse_save_value();
 
 
-				$meta[$construct_field['id']] = array( $field->get_value() );
+				$meta[$construct_field['id']] = $field->get_value();
 			}
 
 			if( $this->isNotEmptyArray( $meta ) )
