@@ -467,6 +467,9 @@ class cmb_Meta_Box {
 				if ( !empty(  $this->_meta_box['repeatable'] ) )
 					$field['repeatable'] = true;
 				
+				if ( ! isset( $_POST[$field['id']] ) && ! isset( $_POST[$field['id']. '[]'] ) ) //TODO: fix this, checkboxes
+					continue; 		
+				
 				$value = isset( $_POST[$field['id']] ) ? (array) $_POST[$field['id']] : (array) $_POST[$field['id'].'[]'];
 			    $field_obj = new $class( $field['id'], $field['name'], $value, $field );
 
