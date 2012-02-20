@@ -183,7 +183,7 @@ class CMB_File_Field extends CMB_Field {
  * Standard text meta box for a URL.
  * 
  */
-class CMB_Text_URL_Field extends CMB_Field {
+class CMB_URL_Field extends CMB_Field {
 
 	public function html() {
 	
@@ -207,7 +207,20 @@ class CMB_Date_Field extends CMB_Field {
 		?>
 		<p>
 			<?php if ( $this->args['show_label'] ) : ?><label style="display:inline-block; width: 70%"><?php echo $this->title ?></label><?php endif; ?>
-			<input class="cmb_text_url cmb_datepicker" type="text" name="<?php echo $this->name ?>" value="<?php echo $this->value ?>" /> <span class="cmb_metabox_description"><?php echo $this->description ?></span>
+			<input class="cmb_text_small cmb_datepicker" type="text" name="<?php echo $this->name ?>" value="<?php echo $this->value ?>" /> <span class="cmb_metabox_description"><?php echo $this->description ?></span>
+		</p>
+		<?php
+	}
+}
+
+class CMB_Time_Field extends CMB_Field {
+
+	public function html() {
+	
+		?>
+		<p>
+			<?php if ( $this->args['show_label'] ) : ?><label style="display:inline-block; width: 70%"><?php echo $this->title ?></label><?php endif; ?>
+			<input class="cmb_text_small cmb_timepicker" type="text" name="<?php echo $this->name ?>" value="<?php echo $this->value ? date( 'm\/d\/Y', $this->value ) : '' ?>" /> <span class="cmb_metabox_description"><?php echo $this->description ?></span>
 		</p>
 		<?php
 	}
@@ -224,9 +237,13 @@ class CMB_Date_Timestamp_Field extends CMB_Field {
 		?>
 		<p>
 			<?php if ( $this->args['show_label'] ) : ?><label style="display:inline-block; width: 70%"><?php echo $this->title ?></label><?php endif; ?>
-			<input class="cmb_text_url cmb_datepicker" type="text" name="<?php echo $this->name ?>" value="<?php echo $this->value ? date( 'm\/d\/Y', $this-value ) : '' ?>" /> <span class="cmb_metabox_description"><?php echo $this->description ?></span>
+			<input class="cmb_text_small cmb_datepicker" type="text" name="<?php echo $this->name ?>" value="<?php echo $this->value ? date( 'm\/d\/Y', $this->value ) : '' ?>" /> <span class="cmb_metabox_description"><?php echo $this->description ?></span>
 		</p>
 		<?php
+	}
+	
+	public function parse_save_value() {
+		return strtotime( $this->value );
 	}
 }
 
@@ -241,10 +258,14 @@ class CMB_Datetime_Timestamp_Field extends CMB_Field {
 		?>
 		<p>
 			<?php if ( $this->args['show_label'] ) : ?><label style="display:inline-block; width: 70%"><?php echo $this->title ?></label><?php endif; ?>
-			<input class="cmb_text_url cmb_datepicker" type="text" name="<?php echo $this->name ?>[date]" value="<?php echo $this->value ? date( 'm\/d\/Y', $this-value ) : '' ?>" />
-			<input class="cmb_text_url text_time" type="text" name="<?php echo $this->name ?>[time]" value="<?php echo $this->value ? date( 'm\/d\/Y', $this-value ) : '' ?>" /> <span class="cmb_metabox_description"><?php echo $this->description ?></span>
+			<input class="cmb_text_small cmb_datepicker" type="text" name="<?php echo $this->name ?>[date]" value="<?php echo $this->value ? date( 'm\/d\/Y', $this-value ) : '' ?>" />
+			<input class="cmb_text_small cmb_timepicker" type="text" name="<?php echo $this->name ?>[time]" value="<?php echo $this->value ? date( 'm\/d\/Y', $this-value ) : '' ?>" /> <span class="cmb_metabox_description"><?php echo $this->description ?></span>
 		</p>
 		<?php
+	}
+	
+	public function parse_save_value() {
+		return strtotime( $this->value['date'] . ' ' . $this->value['time'] );
 	}
 }
 
