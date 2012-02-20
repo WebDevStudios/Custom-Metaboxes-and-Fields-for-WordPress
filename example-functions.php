@@ -23,7 +23,7 @@ function cmb_sample_metaboxes( array $meta_boxes ) {
 	$meta_boxes[] = array(
 		'id'         => 'test_metabox',
 		'title'      => 'Test Metabox',
-		'pages'      => array( 'page', ), // Post type
+		'pages'      => array( 'post', ), // Post type
 		'context'    => 'normal',
 		'priority'   => 'high',
 		'show_names' => true, // Show field names on the left
@@ -56,25 +56,25 @@ function cmb_sample_metaboxes( array $meta_boxes ) {
 				'name' => 'Test Date Picker',
 				'desc' => 'field description (optional)',
 				'id'   => $prefix . 'test_textdate',
-				'type' => 'text_date',
+				'type' => 'date',
 			),
 			array(
 				'name' => 'Test Date Picker (UNIX timestamp)',
 				'desc' => 'field description (optional)',
 				'id'   => $prefix . 'test_textdate_timestamp',
-				'type' => 'text_date_timestamp',
+				'type' => 'date_unix',
 			),
 			array(
 				'name' => 'Test Date/Time Picker Combo (UNIX timestamp)',
 				'desc' => 'field description (optional)',
 				'id'   => $prefix . 'test_datetime_timestamp',
-				'type' => 'text_datetime',
+				'type' => 'datetime_unix',
 			),
 			array(
 	            'name' => 'Test Time',
 	            'desc' => 'field description (optional)',
 	            'id'   => $prefix . 'test_time',
-	            'type' => 'text_time',
+	            'type' => 'time',
 	        ),
 			array(
 				'name' => 'Test Money',

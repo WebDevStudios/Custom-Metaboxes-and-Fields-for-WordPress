@@ -23,7 +23,7 @@ jQuery(document).ready(function ($) {
 	 * Initialize timepicker (this will be moved inline in a future release)
 	 */
 	$('.cmb_timepicker').each(function () {
-		$('#' + jQuery(this).attr('id')).timePicker({
+		$( this ).timePicker({
 			startTime: "07:00",
 			endTime: "22:00",
 			show24Hours: false,
@@ -36,7 +36,7 @@ jQuery(document).ready(function ($) {
 	 * Initialize jQuery UI datepicker (this will be moved inline in a future release)
 	 */
 	$('.cmb_datepicker').each(function () {
-		$('#' + jQuery(this).attr('id')).datepicker();
+		$( this ).datepicker();
 		// $('#' + jQuery(this).attr('id')).datepicker({ dateFormat: 'yy-mm-dd' });
 		// For more options see http://jqueryui.com/demos/datepicker/#option-dateFormat
 	});
