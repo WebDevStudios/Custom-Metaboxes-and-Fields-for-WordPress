@@ -183,7 +183,9 @@ class cmb_Meta_Box {
 	function show() {
 
 		global $post;
-
+		
+		$post = get_post( $post );
+		
 		// Use nonce for verification
 		echo '<input type="hidden" name="wp_meta_box_nonce" value="', wp_create_nonce( basename(__FILE__) ), '" />';
 		
