@@ -6,7 +6,7 @@
 * Jared Atchison ( [@jaredatch](http://twitter.com/jaredatch ) / [jaredatchison.com](http://jaredatchison.com/) )
 * Bill Erickson ( [@billerickson](http://twitter.com/billerickson ) / [billerickson.net](http://billerickson.net/) )
 
-**Version**: 0.9   
+**Version**: 1.0 trunk   
 **Requires at least**: 3.3  
 **Tested up to**: 3.3  
 **License**: GPLv2  
@@ -73,6 +73,9 @@ This script is easy to install. If you can't figure it out you probably shouldn'
 * look at preserving taxonomy hierarchies
 
 ## Changelog
+
+### 1.0
+* 
 
 ### 0.9
 * __Note: This release requires WordPress 3.3+__
