@@ -272,7 +272,7 @@ class cmb_Meta_Box {
 					echo '<p class="cmb_metabox_description">', $field['desc'], '</p>';
 					break;
 				case 'checkbox':
-					echo '<input type="checkbox" name="', $field['id'], '" id="', $field['id'], '"', checked( ( $meta == true && $field['std'] ), true, false ), ' />';
+					echo '<input type="checkbox" name="', $field['id'], '" id="', $field['id'], '"', checked( ( ( $meta == '' && $field['std'] ) || $meta == true ), true, false ), ' />';
 					echo '<span class="cmb_metabox_description">', $field['desc'], '</span>';
 					break;
 				case 'multicheck':
@@ -565,5 +565,23 @@ function cmb_force_send( $args ) {
 	 
     return $args;
 
+}
+
+add_filter( 'cmb_validate_checkbox', 'cmb_validate_checkbox', 10, 3 );
+/**
+ * Sets the meta value for a stand-alone checkbox to either 1 or 0. Without this, we would have an
+ * empty string in the DB or the word "on". Setting it to either 1 or 0 facilitates checking 
+ * whether the box shoudl be chcked, and makes it easier to set a default checked status.
+ * 
+ * @param string $new New value to be saved
+ * @param int $post_id ID of the post being saved
+ * @param array $field Array of field values for the checkbox
+ * @return string 
+ */
+function cmb_validate_checkbox( $new, $post_id, $field ) {
+    if ( $new === null )
+        return '0';
+    if ( $new == 'on' )
+        return '1';
 }
 // End. That's it, folks! //
