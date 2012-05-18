@@ -230,11 +230,13 @@ class cmb_Meta_Box {
 			    ?>
 			    
 			    <tr>
-				
+					
+					<?php if ( $this->_meta_box['show_names'] ) : ?>
 					<th style="width:18%">
 						<?php echo $field_obj->title ?>
 					</th>
-					    	
+					<?php endif; ?>    	
+
 			    	<td>
 				    	<div class="field <?php echo !empty( $field['repeatable'] ) ? 'repeatable' : '' ?>">
 				    		<?php $field_obj->display(); ?>
@@ -639,7 +641,8 @@ function _cmb_field_class_for_type( $type ) {
 		'date'			=> 'CMB_Date_Field', 
 		'date_unix'		=> 'CMB_Date_Timestamp_Field',
 		'datetime_unix' => 'CMB_Datetime_Timestamp_Field',
-		'time'			=> 'CMB_Time_Field'
+		'time'			=> 'CMB_Time_Field',
+		'textarea'		=> 'CMB_Textarea_Field'
 	);
 	
 	if ( isset( $map[$type] ) )

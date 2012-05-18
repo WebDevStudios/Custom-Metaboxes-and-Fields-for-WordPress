@@ -355,6 +355,25 @@ function cmb_oembed_thumbnail( $return, $data, $url ) {
 
 add_filter( 'oembed_dataparse', 'cmb_oembed_thumbnail', 10, 3 );
 
+/**
+ * Standard text field.
+ *
+ * Args:
+ *  - int "rows" - number of rows in the <textarea>
+ */
+class CMB_Textarea_Field extends CMB_Field {
+
+	public function html() {
+
+		?>
+		<p>
+			<label><?php if ( $this->args['show_label'] ) : ?><?php echo $this->title ?><?php endif; ?>
+				<textarea rows="<?php echo !empty( $this->args['rows'] ) ? $this->args['rows'] : 4 ?>" name="<?php echo $this->name ?>"><?php echo $this->value ?></textarea>
+			</label>
+		</p>
+		<?php
+	}
+}
 
 /**
  * Field to group child fieids
