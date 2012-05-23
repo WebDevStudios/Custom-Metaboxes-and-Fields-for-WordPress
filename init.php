@@ -26,6 +26,8 @@ Version: 		0.9
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  * **********************************************************************
+ *
+ * @version 0.9
  */
 
 /************************************************************************
@@ -443,7 +445,7 @@ class cmb_Meta_Box {
 	}
 
 	// Save data from metabox
-	function save( $post_id)  {
+	function save( $post_id )  {
 
 		// verify nonce
 		if ( ! isset( $_POST['wp_meta_box_nonce'] ) || !wp_verify_nonce( $_POST['wp_meta_box_nonce'], basename(__FILE__) ) ) {
@@ -642,8 +644,16 @@ function _cmb_field_class_for_type( $type ) {
 		'date_unix'		=> 'CMB_Date_Timestamp_Field',
 		'datetime_unix' => 'CMB_Datetime_Timestamp_Field',
 		'time'			=> 'CMB_Time_Field',
-		'textarea'		=> 'CMB_Textarea_Field'
-	);
+		'textarea'		=> 'CMB_Textarea_Field',
+        'textarea_code' => 'CMB_Textarea_Field_Code',
+        'colorpicker'   => 'CMB_Color_Picker',
+        'select'        => 'CMB_Select',
+        'checkbox'      => 'CMB_Checkbox',
+        'title'			=> 'CMB_Title',
+        'wysiwyg'       => 'CMB_wysiwyg',
+        'taxonomy'      => 'CMB_Taxonomy'
+
+    );
 	
 	if ( isset( $map[$type] ) )
 		return $map[$type];
