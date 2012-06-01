@@ -310,7 +310,7 @@ class cmb_Meta_Box {
 					echo '<p class="cmb_metabox_description">', $field['desc'], '</p>';
 					break;
 				case 'taxonomy_radio':
-					$names= wp_get_object_terms( $post->ID, $field['taxonomy'] );
+					$names = wp_get_object_terms( $post->ID, $field['taxonomy'] );
 					$terms = get_terms( $field['taxonomy'], 'hide_empty=0' );
 					echo '<ul>';
 					foreach ( $terms as $term ) {
@@ -336,6 +336,7 @@ class cmb_Meta_Box {
 					}
 				break;
 				case 'file_list':
+					echo '<div id="' . $field['id'] . '" class="file-div">';
 					echo '<input class="cmb_upload_file" type="text" size="36" name="', $field['id'], '" value="" />';
 					echo '<input class="cmb_upload_button button" type="button" value="Upload File" />';
 					echo '<p class="cmb_metabox_description">', $field['desc'], '</p>';
@@ -356,11 +357,13 @@ class cmb_Meta_Box {
 								}
 								echo '</ul>';
 							}
+					echo '</div>';
 						break;
 				case 'file':
 					$input_type_url = "hidden";
 					if ( 'url' == $field['allow'] || ( is_array( $field['allow'] ) && in_array( 'url', $field['allow'] ) ) )
 						$input_type_url="text";
+					echo '<div id="'.$field['id'].'" class="file-div">';
 					echo '<input class="cmb_upload_file" type="' . $input_type_url . '" size="45" id="', $field['id'], '" name="', $field['id'], '" value="', $meta, '" />';
 					echo '<input class="cmb_upload_button button" type="button" value="Upload File" />';
 					echo '<input class="cmb_upload_file_id" type="hidden" id="', $field['id'], '_id" name="', $field['id'], '_id" value="', get_post_meta( $post->ID, $field['id'] . "_id",true), '" />';					
@@ -381,7 +384,7 @@ class cmb_Meta_Box {
 								echo 'File: <strong>', $title, '</strong>&nbsp;&nbsp;&nbsp; (<a href="', $meta, '" target="_blank" rel="external">Download</a> / <a href="#" class="cmb_remove_file_button" rel="', $field['id'], '">Remove</a>)';
 							}	
 						}
-					echo '</div>'; 
+					echo '</div></div>';
 				break;
 				default:
 					do_action('cmb_render_' . $field['type'] , $field, $meta);
@@ -394,7 +397,6 @@ class cmb_Meta_Box {
 
 	// Save data from metabox
 	function save( $post_id)  {
-
 		// verify nonce
 		if ( ! isset( $_POST['wp_meta_box_nonce'] ) || !wp_verify_nonce( $_POST['wp_meta_box_nonce'], basename(__FILE__) ) ) {
 			return $post_id;
@@ -481,6 +483,7 @@ class cmb_Meta_Box {
 				}
 			}			
 		}
+		return $post_id;
 	}
 }
 
@@ -495,6 +498,7 @@ function cmb_scripts( $hook ) {
 		wp_enqueue_script( 'cmb-scripts' );
 		wp_register_style( 'cmb-styles', CMB_META_BOX_URL . 'style.css', array( 'thickbox', 'farbtastic' ) );
 		wp_enqueue_style( 'cmb-styles' );
+		wp_enqueue_script( 'woo', CMB_META_BOX_URL . 'js/woo-js.js', array( 'cmb-scripts' ) );
   	}
 }
 add_action( 'admin_enqueue_scripts', 'cmb_scripts', 10 );
