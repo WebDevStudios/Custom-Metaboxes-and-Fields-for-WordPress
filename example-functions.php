@@ -8,7 +8,7 @@
  * @link     https://github.com/jaredatch/Custom-Metaboxes-and-Fields-for-WordPress
  */
 
-//add_filter( 'cmb_meta_boxes', 'cmb_sample_metaboxes' );
+add_filter( 'cmb_meta_boxes', 'cmb_sample_metaboxes' );
 /**
  * Define the metabox and field configurations.
  *
@@ -214,15 +214,4 @@ function cmb_sample_metaboxes( array $meta_boxes ) {
 	// Add other metaboxes as needed
 
 	return $meta_boxes;
-}
-
-add_action( 'init', 'cmb_initialize_cmb_meta_boxes', 9999 );
-/**
- * Initialize the metabox class.
- */
-function cmb_initialize_cmb_meta_boxes() {
-
-	if ( ! class_exists( 'cmb_Meta_Box' ) )
-		require_once 'init.php';
-
 }
