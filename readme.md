@@ -8,7 +8,7 @@ Custom Meta Boxes is a fork (non backwards compatible) of jaradatch's great http
 
 We really liked the idea of the original Custom Metaboxes, but were not so keen on the implementation. That's not to say it wasn't good, it's just not how we envisioned somethign like working from an API point of view.
 
-This fork attemps to make the frameowrk much more modular, taking a more Object Orientated approach. Though the original CMB does used Classes it's in a rather rudimentary (simiilar to a lot of the Classes in WordPress it's self). In this fork, each field type is an extension of the `abstract class` `CMB_Field`. This makes maintability and extension much easier and also makes writing tests a lot better.
+This fork attemps to make the framework much more modular, taking a more Object Orientated approach. Though the original CMB does use Classes it's in a fairly basic (simiilar to a lot of the Classes in WordPress it's self). In this fork, each field type is an extension of the `abstract class` `CMB_Field`. This makes maintability and extension much easier and also makes writing tests a lot better.
 
 The fork also contains a new field type called `CMB_Group_Field` which supports sub-fields. Group Fields are clonable (or _repeatable_), for example a meta box would have a `Group field` "Price", which would contain 2 sub fields "currency" and "amount". These can then be cloned as a pair, and saved in custom meta as such too.
 
