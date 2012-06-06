@@ -10,7 +10,7 @@ We really liked the idea of the original Custom Metaboxes, but were not so keen 
 
 This fork attemps to make the frameowrk much more modular, taking a more Object Orientated approach. Though the original CMB does used Classes it's in a rather rudimentary (simiilar to a lot of the Classes in WordPress it's self). In this fork, each field type is an extension of the `abstract class` `CMB_Field`. This makes maintability and extension much easier and also makes writing tests a lot better.
 
-The fork also contains a new field type called `CMB_Group_Field` which supports sub-fields. Group Fields are clonable (or _repeatable_, for example a meta box would have a `Group field` "Price", which would contain 2 sub fields "currency" and "amount". These can then be cloned as a pair, and saved in custo mmeta as such too.
+The fork also contains a new field type called `CMB_Group_Field` which supports sub-fields. Group Fields are clonable (or _repeatable_), for example a meta box would have a `Group field` "Price", which would contain 2 sub fields "currency" and "amount". These can then be cloned as a pair, and saved in custom meta as such too.
 
 This fork also simplifies the field types from the original. There is no "text", "text small", "text medium" as top level fields. There is only "text" which has a size property. This is the same for a lot of fields.
 
