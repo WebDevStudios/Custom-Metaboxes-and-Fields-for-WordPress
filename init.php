@@ -182,6 +182,8 @@ class cmb_Meta_Box {
 			if ( 'multicheck' == $field['type'] ) $field['multiple'] = true;  
 						
 			$meta = get_post_meta( $post->ID, $field['id'], 'multicheck' != $field['type'] /* If multicheck this can be multiple values */ );
+			if ( 'file' != $field['type'] && $field['type'] != 'file_list ' )
+					$meta = is_array( $meta ) ? array_map( 'esc_attr', $meta ) : esc_attr( $meta );
 
 			echo '<tr>';
 	
