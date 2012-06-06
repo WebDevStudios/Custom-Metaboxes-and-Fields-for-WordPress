@@ -11,6 +11,9 @@ class CMB_Meta_Box {
 
 		$this->_meta_box = $meta_box;
 
+		if ( empty( $this->_meta_box['id'] ) )
+			$this->_meta_box['id'] = $this->_meta_box['title'];
+
 		$upload = false;
 
 		foreach ( $meta_box['fields'] as $field ) {
@@ -48,7 +51,7 @@ class CMB_Meta_Box {
 		$this->_meta_box['priority'] = empty($this->_meta_box['priority']) ? 'high' : $this->_meta_box['priority'];
 		$this->_meta_box['show_on'] = empty( $this->_meta_box['show_on'] ) ? array('key' => false, 'value' => false) : $this->_meta_box['show_on'];
 		
-		foreach ( $this->_meta_box['pages'] as $page ) {
+		foreach ( (array) $this->_meta_box['pages'] as $page ) {
 			if( apply_filters( 'cmb_show_on', true, $this->_meta_box ) )
 				add_meta_box( $this->_meta_box['id'], $this->_meta_box['title'], array(&$this, 'show'), $page, $this->_meta_box['context'], $this->_meta_box['priority']) ;
 		}
@@ -119,22 +122,21 @@ class CMB_Meta_Box {
 		
 		if ( ! $multiple_count || empty( $this->_meta_box['repeatable'] ) )
 			$multiple_count = 1;
-						
-		$classes = 'form-table cmb_metabox';
 		
-		echo '<table class="' . $classes . '">';
+		$fields = array();
 
 		foreach ( $this->_meta_box['fields'] as $field ) {
 
 			// Set up blank or default values for empty ones
-			if ( ! isset( $field['name'] ) )
-				$field['name'] = '';
+			// 
+			$defaults = array( 
+				'name' => '',
+				'desc' => '',
+				'std'  => '',
+				'cols' => 12
+			);
 
-			if ( ! isset( $field['desc'] ) )
-				$field['desc'] = '';
-
-			if ( ! isset( $field['std'] ) )
-				$field['std'] = '';
+			$field = wp_parse_args( $field, $defaults );
 	
 			if ( 'file' == $field['type'] && ! isset( $field['allow'] ) )
 				$field['allow'] = array( 'url', 'attachment' );
@@ -143,42 +145,60 @@ class CMB_Meta_Box {
 				$field['save_id']  = false;
 				
 			$field['name_attr'] = $field['id'];
-			
-			// new class based approach
-			if ( ! $class = _cmb_field_class_for_type( $field['type'] ) ) {
-				do_action('cmb_render_' . $field['type'], $field, get_post_meta( get_the_id(), $field['id'], false ));
-				continue;
-			}
+			$class = _cmb_field_class_for_type( $field['type'] );
 
 			if ( ! empty( $this->_meta_box['repeatable'] ) )
 				$field['repeatable'] = true;
 								
-			$field_obj = new $class( $field['id'], $field['name'], get_post_meta( get_the_id(), $field['id'], false ), $field );
-			?>
+			$fields[] = new $class( $field['id'], $field['name'], get_post_meta( get_the_id(), $field['id'], false ), $field );
 			
-			<tr>
-				
-				<?php if ( $this->_meta_box['show_names'] ) : ?>
-				<th style="width:18%">
-					<?php echo $field_obj->title ?>
-				</th>
-				<?php endif; ?>    	
-
-				<td>
-					<div class="field <?php echo !empty( $field['repeatable'] ) ? 'repeatable' : '' ?>">
-						<?php $field_obj->display(); ?>
-					</div>
-				</td>
-			
-			</tr>
-			
-			<?php
-						
 		}
 
+		self::layout_fields( $fields );
+	}
 
-		echo '</table>';
+	/**
+	 * Layout an array of fields, depending on their 'cols' property. 
+	 * 
+	 * This is a static method so other fields can use it that rely on sub fields
+	 * 
+	 * @param  CMB_Field[]  $fields 
+	 */
+	static function layout_fields( array $fields ) {
 
+		?>
+
+		<table class="form-table cmb_metabox">
+
+			<?php
+			$current_colspan = 0;
+
+			foreach ( $fields as $field ) :
+
+				if ( $current_colspan == 0 ) :
+					?>
+					<tr>
+				<?php endif;
+
+				$current_colspan += $field->args['cols'];
+				?>
+
+				<td style="width: <?php echo $field->args['cols'] / 12 * 100 ?>%" colspan="<?php echo $field->args['cols'] ?>">
+					<div class="field <?php echo !empty( $field->args['repeatable'] ) ? 'repeatable' : '' ?>">
+						<?php $field->display(); ?>
+					</div>
+				</td>
+
+				<?php if ( $current_colspan == 12 ) :
+					$current_colspan = 0;
+					?>
+					</tr>
+				<?php endif; ?>
+
+			<?php endforeach; ?>
+		</table>
+
+		<?php
 	}
 
 	// Save data from metabox

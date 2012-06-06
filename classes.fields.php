@@ -68,14 +68,17 @@ abstract class CMB_Field {
 	public function display() {
 
 		// if there are no values and it's not repeateble, we want to do one with empty string
-		if ( empty( $this->values ) && !  $this->args['repeatable'] )
+		if ( empty( $this->values ) && ! $this->args['repeatable'] )
 			$this->values = array( '' );
+
+		echo '<strong>' . $this->args['name'] . '</strong>';
 
 		foreach ( $this->values as $value ) {
 
 			$this->value = $value;
-
+	
 			echo '<div class="field-item">';
+
 			$this->html();
 			echo '</div>';
 
@@ -109,9 +112,7 @@ class CMB_Text_Field extends CMB_Field {
 
 		?>
 		<p>
-			<label><?php if ( $this->args['show_label'] ) : ?><?php echo $this->title ?><?php endif; ?>
-				<input type="text" name="<?php echo $this->name ?>" value="<?php echo $this->value ?>" />
-			</label>
+			<input type="text" name="<?php echo $this->name ?>" value="<?php echo $this->value ?>" />
 		</p>
 		<?php
 	}
@@ -124,7 +125,6 @@ class CMB_Text_Small_Field extends CMB_Field {
 		?>
 
 		<p>
-			<?php if ( $this->args['show_label'] ) : ?><label style="display:inline-block; width: 70%"><?php echo $this->title ?></label><?php endif; ?>
 			<input class="cmb_text_small" type="text" name="<?php echo $this->name ?>" value="<?php echo $this->value ?>" /> <span class="cmb_metabox_description"><?php echo $this->description ?></span>
 		</p>
 		<?php
@@ -160,7 +160,7 @@ class CMB_File_Field extends CMB_Field {
 
 		$input_type_url = "hidden";
 		if ( 'url' == $field['allow'] || ( is_array( $field['allow'] ) && in_array( 'url', $field['allow'] ) ) )
-		    $input_type_url="text";
+			$input_type_url="text";
 
 		if ( $this->args['show_label'] )
 			echo '<label>', $this->title, '<br /></label>';
@@ -170,22 +170,22 @@ class CMB_File_Field extends CMB_Field {
 		echo '<input class="cmb_upload_file_id" type="hidden" id="', $field['html_id'], '_id" name="', $field['id'], '" value="', $this->value, '" />';
 		echo '<p class="cmb_metabox_description">', $field['desc'], '</p>';
 		echo '<div id="', $field['html_id'], '_status" class="cmb_upload_status">';
-		    if ( $meta != '' ) {
-		    	$check_image = preg_match( '/(^.*\.jpg|jpeg|png|gif|ico*)/i', $meta );
-		    	if ( $check_image ) {
-		    		echo '<div class="img_status">';
-		    		echo '<img src="', $meta, '" alt="" />';
-		    		echo '<a href="#" class="cmb_remove_file_button" rel="', $field['html_id'], '">Remove Image</a>';
-		    		echo '</div>';
-		    	} else {
-		    		?>
-		    		<div class="img_status">
-		    		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="<?php echo $meta ?>" target="_blank">View File</a>
-		    		<a href="#" class="cmb_remove_file_button" rel="<?php echo $field['html_id'] ?>">Remove</a>
-		    		</div>
-		    		<?php
-		    	}
-		    }
+			if ( $meta != '' ) {
+				$check_image = preg_match( '/(^.*\.jpg|jpeg|png|gif|ico*)/i', $meta );
+				if ( $check_image ) {
+					echo '<div class="img_status">';
+					echo '<img src="', $meta, '" alt="" />';
+					echo '<a href="#" class="cmb_remove_file_button" rel="', $field['html_id'], '">Remove Image</a>';
+					echo '</div>';
+				} else {
+					?>
+					<div class="img_status">
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="<?php echo $meta ?>" target="_blank">View File</a>
+					<a href="#" class="cmb_remove_file_button" rel="<?php echo $field['html_id'] ?>">Remove</a>
+					</div>
+					<?php
+				}
+			}
 		echo '</div>';
 
 	}
@@ -201,7 +201,6 @@ class CMB_URL_Field extends CMB_Field {
 
 		?>
 		<p>
-			<?php if ( $this->args['show_label'] ) : ?><label style="display:inline-block; width: 70%"><?php echo $this->title ?></label><?php endif; ?>
 			<input class="cmb_text_url" type="text" name="<?php echo $this->name ?>" value="<?php echo esc_url( $this->value ) ?>" /> <span class="cmb_metabox_description"><?php echo $this->description ?></span>
 		</p>
 		<?php
@@ -218,7 +217,6 @@ class CMB_Date_Field extends CMB_Field {
 
 		?>
 		<p>
-			<?php if ( $this->args['show_label'] ) : ?><label style="display:inline-block; width: 70%"><?php echo $this->title ?></label><?php endif; ?>
 			<input class="cmb_text_small cmb_datepicker" type="text" name="<?php echo $this->name ?>" value="<?php echo $this->value ?>" /> <span class="cmb_metabox_description"><?php echo $this->description ?></span>
 		</p>
 		<?php
@@ -231,7 +229,6 @@ class CMB_Time_Field extends CMB_Field {
 	
 		?>
 		<p>
-			<?php if ( $this->args['show_label'] ) : ?><label style="display:inline-block; width: 70%"><?php echo $this->title ?></label><?php endif; ?>
 			<input class="cmb_text_small cmb_timepicker" type="text" name="<?php echo $this->name ?>" value="<?php echo $this->value ? date( 'm\/d\/Y', $this->value ) : '' ?>" /> <span class="cmb_metabox_description"><?php echo $this->description ?></span>
 		</p>
 		<?php
@@ -248,7 +245,6 @@ class CMB_Date_Timestamp_Field extends CMB_Field {
 
 		?>
 		<p>
-			<?php if ( $this->args['show_label'] ) : ?><label style="display:inline-block; width: 70%"><?php echo $this->title ?></label><?php endif; ?>
 			<input class="cmb_text_small cmb_datepicker" type="text" name="<?php echo $this->name ?>" value="<?php echo $this->value ? date( 'm\/d\/Y', $this->value ) : '' ?>" /> <span class="cmb_metabox_description"><?php echo $this->description ?></span>
 		</p>
 		<?php
@@ -269,7 +265,6 @@ class CMB_Datetime_Timestamp_Field extends CMB_Field {
 
 		?>
 		<p>
-			<?php if ( $this->args['show_label'] ) : ?><label style="display:inline-block; width: 70%"><?php echo $this->title ?></label><?php endif; ?>
 			<input class="cmb_text_small cmb_datepicker" type="text" name="<?php echo $this->name ?>[date]" value="<?php echo $this->value ? date( 'm\/d\/Y', $this-value ) : '' ?>" />
 			<input class="cmb_text_small cmb_timepicker" type="text" name="<?php echo $this->name ?>[time]" value="<?php echo $this->value ? date( 'm\/d\/Y', $this-value ) : '' ?>" /> <span class="cmb_metabox_description"><?php echo $this->description ?></span>
 		</p>
@@ -297,7 +292,6 @@ class CMB_Oembed_Field extends CMB_Field {
 		</style>
 
 		<p>
-			<?php if ( $this->args['show_label'] ) : ?><label style="display:inline-block; width: 70%"><?php echo $this->title ?></label><?php endif; ?>
 
 			<?php if ( ! $this->value ) : ?>
 				<?php echo '<input class="cmb_oembed code" type="text" name="', $this->name, '" id="',$this->name, '" value="" /><span class="cmb_metabox_description">', $this->description, '</span>'; ?>
@@ -344,12 +338,12 @@ class CMB_Oembed_Field extends CMB_Field {
 
 function cmb_oembed_thumbnail( $return, $data, $url ) {
 
-    $backtrace = debug_backtrace();
+	$backtrace = debug_backtrace();
 
-    if ( $data->type == 'video' && ! empty( $backtrace[5]['args'][1]['cmb_oembed'] ) )
-    	return '<a href=""><img src="' . $data->thumbnail_url . '" /><span class="video_embed">' . $return . '</span></a>';
+	if ( $data->type == 'video' && ! empty( $backtrace[5]['args'][1]['cmb_oembed'] ) )
+		return '<a href=""><img src="' . $data->thumbnail_url . '" /><span class="video_embed">' . $return . '</span></a>';
 
-    return $return;
+	return $return;
 
 }
 
@@ -367,9 +361,7 @@ class CMB_Textarea_Field extends CMB_Field {
 
 		?>
 		<p>
-			<label><?php if ( $this->args['show_label'] ) : ?><?php echo $this->title ?><?php endif; ?>
-				<textarea rows="<?php echo !empty( $this->args['rows'] ) ? $this->args['rows'] : 4 ?>" name="<?php echo $this->name ?>"><?php echo $this->value ?></textarea>
-			</label>
+			<textarea rows="<?php echo !empty( $this->args['rows'] ) ? $this->args['rows'] : 4 ?>" name="<?php echo $this->name ?>"><?php echo $this->value ?></textarea>
 		</p>
 		<?php
 	}
@@ -397,6 +389,8 @@ class CMB_Group_Field extends CMB_Field {
 
 		$field = $this->args;
 
+		echo '<strong>' . $this->args['name'] . '</strong>';
+
 		foreach ( $meta as $value ) {
 
 			$this->value = $value;
@@ -405,7 +399,6 @@ class CMB_Group_Field extends CMB_Field {
 			echo '</div>';
 
 		}
-
 
 		if ( $this->args['repeatable'] ) {
 			$this->value = '';
@@ -453,29 +446,30 @@ class CMB_Group_Field extends CMB_Field {
 
 		$field = $this->args;
 		$value = $this->value;
+		$fields = array();
+
+		foreach ( $this->args['fields'] as $f ) {
+			$field_value = isset( $this->value[$f['id']] ) ? $this->value[$f['id']] : '';
+			$f['uid'] = $field['id'] . '[' . $f['id'] . ']';
+
+			// If it's cloneable , make it an array
+			if ( $field['repeatable'] == true )
+				$f['uid'] .= '[]';
+
+			$class = _cmb_field_class_for_type( $f['type'] );
+			$f['show_label'] = true;
+			
+			// Todo support for repeatble fields in groups
+			$fields[] = new $class( $f['uid'], $f['name'], array( $field_value ), $f );
+		}
 		?>
-		<div style="background: #eee; border-radius: 5px; padding: 5px; margin-bottom: 10px;" class="group <?php echo !empty( $field['repeatable'] ) ? 'cloneable' : '' ?>">
+		<div style="background: #eee; border-radius: 5px; margin-bottom: 5px; position: relative;" class="group <?php echo !empty( $field['repeatable'] ) ? 'cloneable' : '' ?>">
 
-		    <a class="delete-group button" style="float: right">X</a>
-		    <?php foreach ( $this->args['fields'] as $f ) {
-		    	
-		    	$field_value = isset( $this->value[$f['id']] ) ? $this->value[$f['id']] : '';
-
-		    	$f['uid'] = $field['id'] . '[' . $f['id'] . ']';
-
-		    	// If it's cloneable , make it an array
-		    	if ( $field['repeatable'] == true )
-		    		$f['uid'] .= '[]';
-
-		    	$class = _cmb_field_class_for_type( $f['type'] );
-		    	$f['show_label'] = true;
-				
-				// Todo support for repeatble fields in groups
-		    	$field_obj = new $class( $f['uid'], $f['name'], array( $field_value ), $f );
-
-		    	$field_obj->display();
-
-		    } ?>
+			<?php if ( $this->args['repeatable'] ) : ?>
+				<a class="delete-group button" style="position: absolute; top: -3px; right: -3px">X</a>
+			<?php endif; ?>
+			
+			<?php CMB_Meta_Box::layout_fields( $fields ); ?>
 
 		</div>
 
@@ -515,14 +509,14 @@ class CMB_Group_Field extends CMB_Field {
 	private function isNotEmptyArray( $array ) {
 
 		foreach ($array as &$value)
-    	{
-    	  if (is_array($value))
-    	  {
-    	    $value = $this->isNotEmptyArray($value);
-    	  }
-    	}
+		{
+		  if (is_array($value))
+		  {
+			$value = $this->isNotEmptyArray($value);
+		  }
+		}
 
-    	return array_filter($array);
+		return array_filter($array);
 
 	}
 }
