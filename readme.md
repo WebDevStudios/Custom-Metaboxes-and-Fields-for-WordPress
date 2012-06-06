@@ -14,6 +14,9 @@ The fork also contains a new field type called `CMB_Group_Field` which supports 
 
 This fork also simplifies the field types from the original. There is no "text", "text small", "text medium" as top level fields. There is only "text" which has a size property. This is the same for a lot of fields.
 
+We have also added a basic layout engine for fields, any field has a `cols` argument. There is a maximum of 12 cols, so two fields of `6 cols` would give you a split down the middle (shown below).
+
+![](https://dl.dropbox.com/u/238502/Captured/2YKcQ.png)
 
 ### Field Types:
 * text
@@ -35,5 +38,4 @@ This fork also simplifies the field types from the original. There is no "text",
 ## Known Issues
 
 ## To-do
-* Layout engine - some mechanisn to support a basic grid for fields in the meta box. This would also include the `CMB_Group` field
 * Make hooking / registering nicer. Perhaps use callbacks to reduce overhead of adding boxes when they will not be displayed.
