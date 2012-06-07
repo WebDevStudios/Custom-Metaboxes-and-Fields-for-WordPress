@@ -152,7 +152,8 @@ function _cmb_field_class_for_type( $type ) {
 		'date_unix'		=> 'CMB_Date_Timestamp_Field',
 		'datetime_unix' => 'CMB_Datetime_Timestamp_Field',
 		'time'			=> 'CMB_Time_Field',
-		'textarea'		=> 'CMB_Textarea_Field'
+		'textarea'		=> 'CMB_Textarea_Field',
+		'taxonomy_select'=> 'CMB_Taxonomy'
 	);
 	
 	if ( isset( $map[$type] ) )

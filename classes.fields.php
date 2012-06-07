@@ -28,17 +28,65 @@ abstract class CMB_Field {
 		$this->id 		= $name;
 		$this->name		= $name . '[]';
 		$this->title 	= $title;
-		$this->args		= wp_parse_args( $args, array( 'repeatable' => false, 'std' => '', 'show_label' => false ) );
+		$this->args		= wp_parse_args( $args, array(
+			'repeatable' => false,
+			'std'        => '',
+			'default'    => '',
+			'show_label' => false,
+			'taxonomy'   => '',
+			'hide_empty' => false,
+			'data_delegate' => null
+			)
+		);
 
+		if ( ! empty( $this->args['std'] ) && empty( $this->args['default'] ) ) {
+			$this->args['default'] = $this->args['std'];
+			_deprecated_argument( 'CMB_Field', "'std' is deprecated, use 'default instead'", '0.9' );
+		}
+
+		if ( ! empty( $this->args['options'] ) && is_array( reset( $this->args['options'] ) ) ) {
+
+			$re_format = array();
+
+			foreach ( $this->args['options'] as $option ) {
+				$re_format[$option['value']] = $option['name'];
+			}
+			_deprecated_argument( 'CMB_Field', "'std' is deprecated, use 'default instead'", '0.9' );
+
+			$this->args['options'] = $re_format;
+		}
 
 		$this->values 	= $values;
 		$this->value 	= reset( $this->values );
 
 		$this->description = $this->args['desc'];
+
+	}
+
+	/**
+	 * Check if this field has a data delegate set
+	 * 
+	 * @return boolean
+	 */
+	public function has_data_delegate() {
+		return (bool) $this->args['data_delegate'];
+	}
+
+	/**
+	 * Get the array of data from the data delegate
+	 * 
+	 * @return array mixed
+	 */
+	protected function get_delegate_data() {
+		if ( $this->args['data_delegate'] )
+			return call_user_func_array( $this->args['data_delegate'], array( $this ) );
+
+		return array();
 	}
 
 	public function get_value() {
-		return $this->value;
+
+	   return ( $this->value ) ? $this->value : $this->args['default'];
 	}
 
 	public function parse_save_values() {
@@ -68,7 +116,7 @@ abstract class CMB_Field {
 	public function display() {
 
 		// if there are no values and it's not repeateble, we want to do one with empty string
-		if ( empty( $this->values ) && ! $this->args['repeatable'] )
+		if ( empty( $this->values ) && !  $this->args['repeatable'] )
 			$this->values = array( '' );
 
 		echo '<strong>' . $this->args['name'] . '</strong>';
@@ -76,7 +124,7 @@ abstract class CMB_Field {
 		foreach ( $this->values as $value ) {
 
 			$this->value = $value;
-	
+
 			echo '<div class="field-item">';
 
 			$this->html();
@@ -112,7 +160,7 @@ class CMB_Text_Field extends CMB_Field {
 
 		?>
 		<p>
-			<input type="text" name="<?php echo $this->name ?>" value="<?php echo $this->value ?>" />
+				<input type="text" name="<?php echo $this->name ?>" value="<?php echo $this->value ?>" />
 		</p>
 		<?php
 	}
@@ -123,7 +171,6 @@ class CMB_Text_Small_Field extends CMB_Field {
 	public function html() {
 
 		?>
-
 		<p>
 			<input class="cmb_text_small" type="text" name="<?php echo $this->name ?>" value="<?php echo $this->value ?>" /> <span class="cmb_metabox_description"><?php echo $this->description ?></span>
 		</p>
@@ -161,9 +208,6 @@ class CMB_File_Field extends CMB_Field {
 		$input_type_url = "hidden";
 		if ( 'url' == $field['allow'] || ( is_array( $field['allow'] ) && in_array( 'url', $field['allow'] ) ) )
 			$input_type_url="text";
-
-		if ( $this->args['show_label'] )
-			echo '<label>', $this->title, '<br /></label>';
 
 		echo '<input class="cmb_upload_file" type="' . $input_type_url . '" size="45" id="', $field['html_id'], '" value="', $meta, '" />';
 		echo '<input class="cmb_upload_button button" type="button" value="Upload File" />';
@@ -361,10 +405,159 @@ class CMB_Textarea_Field extends CMB_Field {
 
 		?>
 		<p>
-			<textarea rows="<?php echo !empty( $this->args['rows'] ) ? $this->args['rows'] : 4 ?>" name="<?php echo $this->name ?>"><?php echo $this->value ?></textarea>
+				<textarea rows="<?php echo !empty( $this->args['rows'] ) ? $this->args['rows'] : 4 ?>" name="<?php echo $this->name ?>"><?php echo $this->value ?></textarea>
 		</p>
 		<?php
 	}
+}
+
+/**
+ * Code style text field.
+ *
+ * Args:
+ *  - int "rows" - number of rows in the <textarea>
+ */
+class CMB_Textarea_Field_Code extends CMB_Field {
+
+	public function html() {
+
+		?>
+		<p>
+			<textarea class="cmb_textarea_code" rows="<?php echo !empty( $this->args['rows'] ) ? $this->args['rows'] : 4 ?>" name="<?php echo $this->name ?>"><?php echo $this->value ?></textarea>
+		</p>
+		<?php
+	}
+}
+
+/**
+ *  Colour picker
+ *
+ */
+class CMB_Color_Picker extends CMB_Field {
+
+	public function html() {
+
+		?>
+		<p>
+			<input class="cmb_colorpicker cmb_text_small" type="text" name="<?php echo $this->name; ?>" value="<?php echo $this->get_value() ?>" /><span class="cmb_metabox_description"><?php echo $this->description ?></span>
+		</p>
+		<?php
+	}
+
+}
+
+/**
+ * Standard select field.
+ *
+ */
+class CMB_Select extends CMB_Field {
+
+	public function html() {
+		if ( $this->has_data_delegate() )
+			$this->args['options'] = $this->get_delegate_data();
+		?>
+		<p>
+			<select name="<?php echo $this->name ?>"> >
+				<?php foreach ( $this->args['options'] as $value => $name ): ?>
+				   <option <?php selected( $this->value, $value ) ?> value="<?php echo $value; ?>"><?php echo $name; ?></option>
+				<?php endforeach; ?>
+			</select>
+		</p>
+		<?php
+	}
+}
+
+/**
+ * Standard radio field.
+ *
+ * Args:
+ *  - bool "inline" - display the radio buttons inline
+ */
+class CMB_Radio_Field extends CMB_Field {
+
+	public function html() {
+		?>
+		<p>
+			<?php foreach ( $this->values as $key => $value ): ?>
+				<input type="radio" name="<?php echo $this->name ?>" value="<?php echo $value; ?>" <?php checked( $value, $this->get_value() ); ?> />
+			<?php endforeach; ?>
+		</p>
+		<?php
+	}
+}
+
+/**
+ * Standard checkbox field.
+ *
+ */
+class CMB_Checkbox extends CMB_Field {
+
+	public function html() {
+		?>
+		<p>
+			<input type="checkbox" name="<?php echo $this->name ?>" value="<?php echo $this->get_value(); ?>" <?php checked( $this->get_value() ); ?> /><span class="cmb_metabox_description"><?php echo $this->description ?></span>
+		</p>
+		<?php
+	}
+}
+
+
+/**
+ * Standard title used as a splitter.
+ *
+ */
+class CMB_Title extends CMB_Field {
+
+	public function html() {
+		?>
+		<p>
+			<h5 class="cmb_metabox_title"><?php echo $this->title; ?></h5>
+			<span class="cmb_metabox_description"><?php echo $this->description ?></span>
+		</p>
+		<?php
+	}
+}
+
+/**
+ * wysiwyg field.
+ *
+ */
+class CMB_wysiwyg extends CMB_Field {
+
+	public function html() {
+
+		?>
+		<p>
+			<?php wp_editor( $this->get_value(), $this->id, $this->args['options'] );?><span class="cmb_metabox_description"><?php echo $this->description ?></span>
+		</p>
+		<?php
+	}
+}
+
+class CMB_Taxonomy extends CMB_Select {
+
+	public function __construct() {
+		$args = func_get_args();
+		call_user_func_array( array( 'parent', '__construct' ), $args );
+
+		$this->args['data_delegate'] = array( $this, 'get_delegate_data' );
+	}
+
+	public function get_delegate_data() {
+		$terms = $this->get_terms();
+		$term_options = array();
+
+		foreach ( $terms as $term )
+			$term_options[$term->term_id] = $term->name;
+
+		return $term_options;
+	}
+
+	private function get_terms() {
+
+		return get_terms( $this->args['taxonomy'], array( 'hide_empty' => $this->args['hide_empty'] ) );
+	}
+
 }
 
 /**
@@ -447,19 +640,19 @@ class CMB_Group_Field extends CMB_Field {
 		$field = $this->args;
 		$value = $this->value;
 		$fields = array();
-
+				
 		foreach ( $this->args['fields'] as $f ) {
-			$field_value = isset( $this->value[$f['id']] ) ? $this->value[$f['id']] : '';
-			$f['uid'] = $field['id'] . '[' . $f['id'] . ']';
+				$field_value = isset( $this->value[$f['id']] ) ? $this->value[$f['id']] : '';
+				$f['uid'] = $field['id'] . '[' . $f['id'] . ']';
 
-			// If it's cloneable , make it an array
-			if ( $field['repeatable'] == true )
-				$f['uid'] .= '[]';
+				// If it's cloneable , make it an array
+				if ( $field['repeatable'] == true )
+					$f['uid'] .= '[]';
 
-			$class = _cmb_field_class_for_type( $f['type'] );
-			$f['show_label'] = true;
-			
-			// Todo support for repeatble fields in groups
+				$class = _cmb_field_class_for_type( $f['type'] );
+				$f['show_label'] = true;
+				
+				// Todo support for repeatble fields in groups
 			$fields[] = new $class( $f['uid'], $f['name'], array( $field_value ), $f );
 		}
 		?>
@@ -468,7 +661,7 @@ class CMB_Group_Field extends CMB_Field {
 			<?php if ( $this->args['repeatable'] ) : ?>
 				<a class="delete-group button" style="position: absolute; top: -3px; right: -3px">X</a>
 			<?php endif; ?>
-			
+
 			<?php CMB_Meta_Box::layout_fields( $fields ); ?>
 
 		</div>
