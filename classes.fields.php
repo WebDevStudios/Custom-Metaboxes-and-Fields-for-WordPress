@@ -29,31 +29,32 @@ abstract class CMB_Field {
 		$this->name		= $name . '[]';
 		$this->title 	= $title;
 		$this->args		= wp_parse_args( $args, array(
-            'repeatable' => false,
-            'std'        => '',
-            'default'    => '',
-            'show_label' => false,
-            'taxonomy'   => '',
-            'hide_empty' => false
-            )
-        );
+			'repeatable' => false,
+			'std'        => '',
+			'default'    => '',
+			'show_label' => false,
+			'taxonomy'   => '',
+			'hide_empty' => false,
+			'data_delegate' => null
+			)
+		);
 
-        if ( ! empty( $this->args['std'] ) && empty( $this->args['default'] ) ) {
-            $this->args['default'] = $this->args['std'];
-            _deprecated_argument( 'CMB_Field', "'std' is deprecated, use 'default instead'", '0.9' );
-        }
+		if ( ! empty( $this->args['std'] ) && empty( $this->args['default'] ) ) {
+			$this->args['default'] = $this->args['std'];
+			_deprecated_argument( 'CMB_Field', "'std' is deprecated, use 'default instead'", '0.9' );
+		}
 
-        if ( ! empty( $this->args['options'] ) && is_array( reset( $this->args['options'] ) ) ) {
+		if ( ! empty( $this->args['options'] ) && is_array( reset( $this->args['options'] ) ) ) {
 
-            $re_format = array();
+			$re_format = array();
 
-            foreach ( $this->args['options'] as $option ) {
-                $re_format[$option['value']] = $option['name'];
-            }
-            _deprecated_argument( 'CMB_Field', "'std' is deprecated, use 'default instead'", '0.9' );
+			foreach ( $this->args['options'] as $option ) {
+				$re_format[$option['value']] = $option['name'];
+			}
+			_deprecated_argument( 'CMB_Field', "'std' is deprecated, use 'default instead'", '0.9' );
 
-            $this->args['options'] = $re_format;
-        }
+			$this->args['options'] = $re_format;
+		}
 
 		$this->values 	= $values;
 		$this->value 	= reset( $this->values );
@@ -62,9 +63,30 @@ abstract class CMB_Field {
 
 	}
 
+	/**
+	 * Check if this field has a data delegate set
+	 * 
+	 * @return boolean
+	 */
+	public function has_data_delegate() {
+		return (bool) $this->args['data_delegate'];
+	}
+
+	/**
+	 * Get the array of data from the data delegate
+	 * 
+	 * @return array mixed
+	 */
+	protected function get_delegate_data() {
+		if ( $this->args['data_delegate'] )
+			return call_user_func_array( $this->args['data_delegate'], array( $this ) );
+
+		return array();
+	}
+
 	public function get_value() {
 
-       return ( $this->value ) ? $this->value : $this->args['default'];
+	   return ( $this->value ) ? $this->value : $this->args['default'];
 	}
 
 	public function parse_save_values() {
@@ -185,32 +207,29 @@ class CMB_File_Field extends CMB_Field {
 
 		$input_type_url = "hidden";
 		if ( 'url' == $field['allow'] || ( is_array( $field['allow'] ) && in_array( 'url', $field['allow'] ) ) )
-		    $input_type_url="text";
-
-		if ( $this->args['show_label'] )
-			echo '<label>', $this->title, '<br /></label>';
+			$input_type_url="text";
 
 		echo '<input class="cmb_upload_file" type="' . $input_type_url . '" size="45" id="', $field['html_id'], '" value="', $meta, '" />';
 		echo '<input class="cmb_upload_button button" type="button" value="Upload File" />';
 		echo '<input class="cmb_upload_file_id" type="hidden" id="', $field['html_id'], '_id" name="', $field['id'], '" value="', $this->value, '" />';
 		echo '<p class="cmb_metabox_description">', $field['desc'], '</p>';
 		echo '<div id="', $field['html_id'], '_status" class="cmb_upload_status">';
-		    if ( $meta != '' ) {
-		    	$check_image = preg_match( '/(^.*\.jpg|jpeg|png|gif|ico*)/i', $meta );
-		    	if ( $check_image ) {
-		    		echo '<div class="img_status">';
-		    		echo '<img src="', $meta, '" alt="" />';
-		    		echo '<a href="#" class="cmb_remove_file_button" rel="', $field['html_id'], '">Remove Image</a>';
-		    		echo '</div>';
-		    	} else {
-		    		?>
-		    		<div class="img_status">
-		    		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="<?php echo $meta ?>" target="_blank">View File</a>
-		    		<a href="#" class="cmb_remove_file_button" rel="<?php echo $field['html_id'] ?>">Remove</a>
-		    		</div>
-		    		<?php
-		    	}
-		    }
+			if ( $meta != '' ) {
+				$check_image = preg_match( '/(^.*\.jpg|jpeg|png|gif|ico*)/i', $meta );
+				if ( $check_image ) {
+					echo '<div class="img_status">';
+					echo '<img src="', $meta, '" alt="" />';
+					echo '<a href="#" class="cmb_remove_file_button" rel="', $field['html_id'], '">Remove Image</a>';
+					echo '</div>';
+				} else {
+					?>
+					<div class="img_status">
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="<?php echo $meta ?>" target="_blank">View File</a>
+					<a href="#" class="cmb_remove_file_button" rel="<?php echo $field['html_id'] ?>">Remove</a>
+					</div>
+					<?php
+				}
+			}
 		echo '</div>';
 
 	}
@@ -363,12 +382,12 @@ class CMB_Oembed_Field extends CMB_Field {
 
 function cmb_oembed_thumbnail( $return, $data, $url ) {
 
-    $backtrace = debug_backtrace();
+	$backtrace = debug_backtrace();
 
-    if ( $data->type == 'video' && ! empty( $backtrace[5]['args'][1]['cmb_oembed'] ) )
-    	return '<a href=""><img src="' . $data->thumbnail_url . '" /><span class="video_embed">' . $return . '</span></a>';
+	if ( $data->type == 'video' && ! empty( $backtrace[5]['args'][1]['cmb_oembed'] ) )
+		return '<a href=""><img src="' . $data->thumbnail_url . '" /><span class="video_embed">' . $return . '</span></a>';
 
-    return $return;
+	return $return;
 
 }
 
@@ -400,16 +419,14 @@ class CMB_Textarea_Field extends CMB_Field {
  */
 class CMB_Textarea_Field_Code extends CMB_Field {
 
-    public function html() {
+	public function html() {
 
-        ?>
-        <p>
-            <label><?php if ( $this->args['show_label'] ) : ?><?php echo $this->title ?><?php endif; ?>
-                <textarea class="cmb_textarea_code" rows="<?php echo !empty( $this->args['rows'] ) ? $this->args['rows'] : 4 ?>" name="<?php echo $this->name ?>"><?php echo $this->value ?></textarea>
-            </label>
-        </p>
-        <?php
-    }
+		?>
+		<p>
+			<textarea class="cmb_textarea_code" rows="<?php echo !empty( $this->args['rows'] ) ? $this->args['rows'] : 4 ?>" name="<?php echo $this->name ?>"><?php echo $this->value ?></textarea>
+		</p>
+		<?php
+	}
 }
 
 /**
@@ -418,15 +435,14 @@ class CMB_Textarea_Field_Code extends CMB_Field {
  */
 class CMB_Color_Picker extends CMB_Field {
 
-    public function html() {
+	public function html() {
 
-        ?>
-    <p>
-        <?php if ( $this->args['show_label'] ) : ?><label style="display:inline-block; width: 70%"><?php echo $this->title ?></label><?php endif; ?>
-        <input class="cmb_colorpicker cmb_text_small" type="text" name="<?php echo $this->name; ?>" value="<?php echo $this->get_value() ?>" /><span class="cmb_metabox_description"><?php echo $this->description ?></span>
-    </p>
-    <?php
-    }
+		?>
+		<p>
+			<input class="cmb_colorpicker cmb_text_small" type="text" name="<?php echo $this->name; ?>" value="<?php echo $this->get_value() ?>" /><span class="cmb_metabox_description"><?php echo $this->description ?></span>
+		</p>
+		<?php
+	}
 
 }
 
@@ -436,19 +452,19 @@ class CMB_Color_Picker extends CMB_Field {
  */
 class CMB_Select extends CMB_Field {
 
-    public function html() {
-        ?>
-        <p>
-            <label><?php if ( $this->args['show_label'] ) : ?><?php echo $this->title ?><?php endif; ?>
-                <select name="<?php echo $this->name ?>"> >
-                    <?php foreach ( $this->args['options'] as $value => $name ): ?>
-                       <option value="<?php echo $value; ?>"><?php echo $name; ?></option>
-                    <?php endforeach; ?>
-                </select>
-            </label>
-        </p>
-        <?php
-    }
+	public function html() {
+		if ( $this->has_data_delegate() )
+			$this->args['options'] = $this->get_delegate_data();
+		?>
+		<p>
+			<select name="<?php echo $this->name ?>"> >
+				<?php foreach ( $this->args['options'] as $value => $name ): ?>
+				   <option <?php selected( $this->value, $value ) ?> value="<?php echo $value; ?>"><?php echo $name; ?></option>
+				<?php endforeach; ?>
+			</select>
+		</p>
+		<?php
+	}
 }
 
 /**
@@ -459,17 +475,15 @@ class CMB_Select extends CMB_Field {
  */
 class CMB_Radio_Field extends CMB_Field {
 
-    public function html() {
-        ?>
-    <p>
-        <label><?php if ( $this->args['show_label'] ) : ?><?php echo $this->title ?><?php endif; ?>
-                <?php foreach ( $this->values as $key => $value ): ?>
-                    <input type="radio" name="<?php echo $this->name ?>" value="<?php echo $value; ?>" <?php checked( $value, $this->get_value() ); ?> />
-                <?php endforeach; ?>
-        </label>
-    </p>
-    <?php
-    }
+	public function html() {
+		?>
+		<p>
+			<?php foreach ( $this->values as $key => $value ): ?>
+				<input type="radio" name="<?php echo $this->name ?>" value="<?php echo $value; ?>" <?php checked( $value, $this->get_value() ); ?> />
+			<?php endforeach; ?>
+		</p>
+		<?php
+	}
 }
 
 /**
@@ -478,15 +492,13 @@ class CMB_Radio_Field extends CMB_Field {
  */
 class CMB_Checkbox extends CMB_Field {
 
-    public function html() {
-    ?>
-    <p>
-        <label><?php if ( $this->args['show_label'] ) : ?><label style="display:inline-block; width: 70%"><?php echo $this->title ?></label><?php endif; ?>
-            <input type="checkbox" name="<?php echo $this->name ?>" value="<?php echo $this->get_value(); ?>" <?php checked( $this->get_value() ); ?> /><span class="cmb_metabox_description"><?php echo $this->description ?></span>
-        </label>
-    </p>
-    <?php
-    }
+	public function html() {
+		?>
+		<p>
+			<input type="checkbox" name="<?php echo $this->name ?>" value="<?php echo $this->get_value(); ?>" <?php checked( $this->get_value() ); ?> /><span class="cmb_metabox_description"><?php echo $this->description ?></span>
+		</p>
+		<?php
+	}
 }
 
 
@@ -496,14 +508,14 @@ class CMB_Checkbox extends CMB_Field {
  */
 class CMB_Title extends CMB_Field {
 
-    public function html() {
-    ?>
-    <p>
-        <h5 class="cmb_metabox_title"><?php echo $this->title; ?></h5>
-        <span class="cmb_metabox_description"><?php echo $this->description ?></span>
-    </p>
-    <?php
-    }
+	public function html() {
+		?>
+		<p>
+			<h5 class="cmb_metabox_title"><?php echo $this->title; ?></h5>
+			<span class="cmb_metabox_description"><?php echo $this->description ?></span>
+		</p>
+		<?php
+	}
 }
 
 /**
@@ -512,39 +524,39 @@ class CMB_Title extends CMB_Field {
  */
 class CMB_wysiwyg extends CMB_Field {
 
-    public function html() {
+	public function html() {
 
-        ?>
-        <p>
-            <label><?php if ( $this->args['show_label'] ) : ?><label style="display:inline-block; width: 70%"><?php echo $this->title ?></label><?php endif; ?>
-            <?php wp_editor( $this->get_value(), $this->id, $this->args['options'] );?><span class="cmb_metabox_description"><?php echo $this->description ?></span>
-            </label>
-        </p>
-        <?php
-    }
+		?>
+		<p>
+			<?php wp_editor( $this->get_value(), $this->id, $this->args['options'] );?><span class="cmb_metabox_description"><?php echo $this->description ?></span>
+		</p>
+		<?php
+	}
 }
 
-class CMB_Taxonomy extends CMB_Field {
+class CMB_Taxonomy extends CMB_Select {
 
-    public function html() {
+	public function __construct() {
+		$args = func_get_args();
+		call_user_func_array( array( 'parent', '__construct' ), $args );
 
-        ?>
-        <p>
-            <label><?php if ( $this->args['show_label'] ) : ?><?php echo $this->title ?><?php endif; ?>
-                <select name="<?php echo $this->name ?>"> >
-                    <?php foreach ( $this->terms() as $term ): ?>
-                        <option value="<?php echo $term->slug; ?>"<?php selected( $term->slug, $this->get_value() ); ?> ><?php echo $term->name; ?></option>
-                    <?php endforeach; ?>
-                </select>
-            </label>
-        </p>
-        <?php
-    }
+		$this->args['data_delegate'] = array( $this, 'get_delegate_data' );
+	}
 
-    public function terms() {
+	public function get_delegate_data() {
+		$terms = $this->get_terms();
+		$term_options = array();
 
-        return get_terms( $this->args['taxonomy'], array( 'hide_empty' => $this->args['hide_empty'] ) );
-    }
+		foreach ( $terms as $term )
+			$term_options[$term->term_id] = $term->name;
+
+		return $term_options;
+	}
+
+	private function get_terms() {
+
+		return get_terms( $this->args['taxonomy'], array( 'hide_empty' => $this->args['hide_empty'] ) );
+	}
 
 }
 
@@ -628,17 +640,17 @@ class CMB_Group_Field extends CMB_Field {
 		$field = $this->args;
 		$value = $this->value;
 		$fields = array();
-		    	
+				
 		foreach ( $this->args['fields'] as $f ) {
-		    	$field_value = isset( $this->value[$f['id']] ) ? $this->value[$f['id']] : '';
-		    	$f['uid'] = $field['id'] . '[' . $f['id'] . ']';
+				$field_value = isset( $this->value[$f['id']] ) ? $this->value[$f['id']] : '';
+				$f['uid'] = $field['id'] . '[' . $f['id'] . ']';
 
-		    	// If it's cloneable , make it an array
-		    	if ( $field['repeatable'] == true )
-		    		$f['uid'] .= '[]';
+				// If it's cloneable , make it an array
+				if ( $field['repeatable'] == true )
+					$f['uid'] .= '[]';
 
-		    	$class = _cmb_field_class_for_type( $f['type'] );
-		    	$f['show_label'] = true;
+				$class = _cmb_field_class_for_type( $f['type'] );
+				$f['show_label'] = true;
 				
 				// Todo support for repeatble fields in groups
 			$fields[] = new $class( $f['uid'], $f['name'], array( $field_value ), $f );
@@ -690,14 +702,14 @@ class CMB_Group_Field extends CMB_Field {
 	private function isNotEmptyArray( $array ) {
 
 		foreach ($array as &$value)
-    	{
-    	  if (is_array($value))
-    	  {
-    	    $value = $this->isNotEmptyArray($value);
-    	  }
-    	}
+		{
+		  if (is_array($value))
+		  {
+			$value = $this->isNotEmptyArray($value);
+		  }
+		}
 
-    	return array_filter($array);
+		return array_filter($array);
 
 	}
 }

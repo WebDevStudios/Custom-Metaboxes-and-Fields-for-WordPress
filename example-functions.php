@@ -28,6 +28,20 @@ function cmb_sample_metaboxes( array $meta_boxes ) {
 		'priority'   => 'high',
 		'show_names' => true, // Show field names on the left
 		'fields' => array(
+			array( 'id' => 'input4', 'name' => 'Text (12 cols, sub field)', 'type' => 'taxonomy_select', 'cols' => 12, 'taxonomy' => 'category' ),
+		)
+	);
+
+	return $meta_boxes;
+
+	$meta_boxes[] = array(
+		'id' => 'f',
+		'title' => 'Test Meta Box',
+		'pages' => 'post',
+		'context'    => 'normal',
+		'priority'   => 'high',
+		'show_names' => true, // Show field names on the left
+		'fields' => array(
 
 			array( 'id' => 'input', 'name' => 'Test Text Box (12 cols)', 'type' => 'text', 'cols' => 12 ),
 			array( 'id' => 'input2', 'name' => 'Test Repeatable Field (4 cols)', 'type' => 'text', 'cols' => 4, 'repeatable' => true ),
@@ -35,206 +49,11 @@ function cmb_sample_metaboxes( array $meta_boxes ) {
 			array( 'id' => 'group-1', 'name' => 'Group of Fields (repeatable)', 'type' => 'group', 'repeatable' => true, 'fields' => array(
 				array( 'id' => 'input3-1', 'name' => 'Sub Field (2 cols)', 'type' => 'text', 'cols' => 2 ),
 				array( 'id' => 'input3-2', 'name' => 'Text Fieldt', 'type' => 'text', 'cols' => 10 ),
-				array( 'id' => 'input4', 'name' => 'Text (12 cols, sub field)', 'type' => 'text', 'cols' => 12 )
+				array( 'id' => 'input4', 'name' => 'Text (12 cols, sub field)', 'type' => 'taxonomy_select', 'cols' => 12, 'taxonomy' => 'category' )
 			) )
 
 		)
 	);
-
-	return $meta_boxes;
-
-	$meta_boxes[] = array(
-		'id'         => 'test_metabox',
-		'title'      => 'Test Metabox',
-		'pages'      => array( 'post', ), // Post type
-		'context'    => 'normal',
-		'priority'   => 'high',
-		'show_names' => true, // Show field names on the left
-		'fields'     => array(
-			array(
-				'name' => 'Test Text',
-				'desc' => 'field description (optional)',
-				'id'   => $prefix . 'test_text',
-				'type' => 'text',
-			),
-			array(
-				'name' => 'Test Text Small',
-				'desc' => 'field description (optional)',
-				'id'   => $prefix . 'test_textsmall',
-				'type' => 'text_small',
-			),
-			array(
-				'name' => 'Test Text Medium',
-				'desc' => 'field description (optional)',
-				'id'   => $prefix . 'test_textmedium',
-				'type' => 'text_medium',
-			),
-			array(
-				'name' => 'Test Text URL',
-				'desc' => 'field description (optional)',
-				'id'   => $prefix . 'test_texturl',
-				'type' => 'text_url',
-			),
-			array(
-				'name' => 'Test Date Picker',
-				'desc' => 'field description (optional)',
-				'id'   => $prefix . 'test_textdate',
-				'type' => 'date',
-			),
-			array(
-				'name' => 'Test Date Picker (UNIX timestamp)',
-				'desc' => 'field description (optional)',
-				'id'   => $prefix . 'test_textdate_timestamp',
-				'type' => 'date_unix',
-			),
-			array(
-				'name' => 'Test Date/Time Picker Combo (UNIX timestamp)',
-				'desc' => 'field description (optional)',
-				'id'   => $prefix . 'test_datetime_timestamp',
-				'type' => 'datetime_unix',
-			),
-			array(
-	            'name' => 'Test Time',
-	            'desc' => 'field description (optional)',
-	            'id'   => $prefix . 'test_time',
-	            'type' => 'time',
-	        ),
-			array(
-				'name' => 'Test Money',
-				'desc' => 'field description (optional)',
-				'id'   => $prefix . 'test_textmoney',
-				'type' => 'text_money',
-			),
-			array(
-	            'name' => 'Test Color Picker',
-	            'desc' => 'field description (optional)',
-	            'id'   => $prefix . 'test_colorpicker',
-	            'type' => 'colorpicker',
-				'std'  => '#ffffff'
-	        ),
-			array(
-				'name' => 'Test Text Area',
-				'desc' => 'field description (optional)',
-				'id'   => $prefix . 'test_textarea',
-				'type' => 'textarea',
-			),
-			array(
-				'name' => 'Test Text Area Small',
-				'desc' => 'field description (optional)',
-				'id'   => $prefix . 'test_textareasmall',
-				'type' => 'textarea_small',
-			),
-			array(
-				'name' => 'Test Text Area Code',
-				'desc' => 'field description (optional)',
-				'id'   => $prefix . 'test_textarea_code',
-				'type' => 'textarea_code',
-			),
-			array(
-				'name' => 'Test Title Weeeee',
-				'desc' => 'This is a title description',
-				'id'   => $prefix . 'test_title',
-				'type' => 'title',
-			),
-			array(
-				'name'    => 'Test Select',
-				'desc'    => 'field description (optional)',
-				'id'      => $prefix . 'test_select',
-				'type'    => 'select',
-				'options' => array(
-					array( 'name' => 'Option One', 'value' => 'standard', ),
-					array( 'name' => 'Option Two', 'value' => 'custom', ),
-					array( 'name' => 'Option Three', 'value' => 'none', ),
-				),
-			),
-			array(
-				'name'    => 'Test Radio inline',
-				'desc'    => 'field description (optional)',
-				'id'      => $prefix . 'test_radio_inline',
-				'type'    => 'radio_inline',
-				'options' => array(
-					array( 'name' => 'Option One', 'value' => 'standard', ),
-					array( 'name' => 'Option Two', 'value' => 'custom', ),
-					array( 'name' => 'Option Three', 'value' => 'none', ),
-				),
-			),
-			array(
-				'name'    => 'Test Radio',
-				'desc'    => 'field description (optional)',
-				'id'      => $prefix . 'test_radio',
-				'type'    => 'radio',
-				'options' => array(
-					array( 'name' => 'Option One', 'value' => 'standard', ),
-					array( 'name' => 'Option Two', 'value' => 'custom', ),
-					array( 'name' => 'Option Three', 'value' => 'none', ),
-				),
-			),
-			array(
-				'name'     => 'Test Taxonomy Radio',
-				'desc'     => 'Description Goes Here',
-				'id'       => $prefix . 'text_taxonomy_radio',
-				'type'     => 'taxonomy_radio',
-				'taxonomy' => '', // Taxonomy Slug
-			),
-			array(
-				'name'     => 'Test Taxonomy Select',
-				'desc'     => 'Description Goes Here',
-				'id'       => $prefix . 'text_taxonomy_select',
-				'type'     => 'taxonomy_select',
-				'taxonomy' => '', // Taxonomy Slug
-			),
-			array(
-				'name' => 'Test Checkbox',
-				'desc' => 'field description (optional)',
-				'id'   => $prefix . 'test_checkbox',
-				'type' => 'checkbox',
-			),
-			array(
-				'name'    => 'Test Multi Checkbox',
-				'desc'    => 'field description (optional)',
-				'id'      => $prefix . 'test_multicheckbox',
-				'type'    => 'multicheck',
-				'options' => array(
-					'check1' => 'Check One',
-					'check2' => 'Check Two',
-					'check3' => 'Check Three',
-				),
-			),
-			array(
-				'name'    => 'Test wysiwyg',
-				'desc'    => 'field description (optional)',
-				'id'      => $prefix . 'test_wysiwyg',
-				'type'    => 'wysiwyg',
-				'options' => array(	'textarea_rows' => 5, ),
-			),
-			array(
-				'name' => 'Test Image',
-				'desc' => 'Upload an image or enter an URL.',
-				'id'   => $prefix . 'test_image',
-				'type' => 'file',
-			),
-		),
-	);
-
-	$meta_boxes[] = array(
-		'id'         => 'about_page_metabox',
-		'title'      => 'About Page Metabox',
-		'pages'      => array( 'page', ), // Post type
-		'context'    => 'normal',
-		'priority'   => 'high',
-		'show_names' => true, // Show field names on the left
-		'show_on'    => array( 'key' => 'id', 'value' => array( 2, ), ), // Specific post IDs to display this metabox
-		'fields' => array(
-			array(
-				'name' => 'Test Text',
-				'desc' => 'field description (optional)',
-				'id'   => $prefix . 'test_text',
-				'type' => 'text',
-			),
-		)
-	);
-
-	// Add other metaboxes as needed
 
 	return $meta_boxes;
 }
