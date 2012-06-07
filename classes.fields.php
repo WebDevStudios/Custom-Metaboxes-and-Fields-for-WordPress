@@ -35,7 +35,9 @@ abstract class CMB_Field {
 			'show_label' => false,
 			'taxonomy'   => '',
 			'hide_empty' => false,
-			'data_delegate' => null
+			'data_delegate' => null,
+			'options'	=> array(),
+			'cols' 	=> '12'
 			)
 		);
 

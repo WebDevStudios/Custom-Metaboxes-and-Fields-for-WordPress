@@ -48,7 +48,7 @@ add_action( 'init', function() {
 		return;
 
 	$meta_boxes = apply_filters( 'cmb_meta_boxes', array() );
-	
+
 	foreach ( $meta_boxes as $meta_box )
 		new CMB_Meta_Box( $meta_box );
 
@@ -141,19 +141,21 @@ function _cmb_field_class_for_type( $type ) {
 
 	$map = array(
 	
-		'text'			=> 'CMB_Text_Field',
-		'text_small' 	=> 'CMB_Text_Small_Field',
-		'text_url'		=> 'CMB_URL_Field',
-		'url'			=> 'CMB_URL_Field',
-		'file'			=> 'CMB_File_Field',
-		'group'			=> 'CMB_Group_Field',
-		'oembed'		=> 'CMB_Oembed_Field',
-		'date'			=> 'CMB_Date_Field', 
-		'date_unix'		=> 'CMB_Date_Timestamp_Field',
-		'datetime_unix' => 'CMB_Datetime_Timestamp_Field',
-		'time'			=> 'CMB_Time_Field',
-		'textarea'		=> 'CMB_Textarea_Field',
-		'taxonomy_select'=> 'CMB_Taxonomy'
+		'text'				=> 'CMB_Text_Field',
+		'text_small' 		=> 'CMB_Text_Small_Field',
+		'text_url'			=> 'CMB_URL_Field',
+		'url'				=> 'CMB_URL_Field',
+		'file'				=> 'CMB_File_Field',
+		'group'				=> 'CMB_Group_Field',
+		'oembed'			=> 'CMB_Oembed_Field',
+		'date'				=> 'CMB_Date_Field', 
+		'date_unix'			=> 'CMB_Date_Timestamp_Field',
+		'datetime_unix'		=> 'CMB_Datetime_Timestamp_Field',
+		'time'				=> 'CMB_Time_Field',
+		'textarea'			=> 'CMB_Textarea_Field',
+		'taxonomy_select'	=> 'CMB_Taxonomy',
+		'select'			=> 'CMB_Select',
+		'wysiwyg'			=> 'CMB_wysiwyg'
 	);
 	
 	if ( isset( $map[$type] ) )
