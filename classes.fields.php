@@ -97,11 +97,14 @@ abstract class CMB_Field {
 		if ( empty( $this->values ) && !  $this->args['repeatable'] )
 			$this->values = array( '' );
 
+		echo '<strong>' . $this->args['name'] . '</strong>';
+
 		foreach ( $this->values as $value ) {
 
 			$this->value = $value;
 
 			echo '<div class="field-item">';
+
 			$this->html();
 			echo '</div>';
 
@@ -135,9 +138,7 @@ class CMB_Text_Field extends CMB_Field {
 
 		?>
 		<p>
-			<label><?php if ( $this->args['show_label'] ) : ?><?php echo $this->title ?><?php endif; ?>
 				<input type="text" name="<?php echo $this->name ?>" value="<?php echo $this->value ?>" />
-			</label>
 		</p>
 		<?php
 	}
@@ -147,12 +148,11 @@ class CMB_Text_Small_Field extends CMB_Field {
 
 	public function html() {
 
-        ?>
-        <p>
-            <?php if ( $this->args['show_label'] ) : ?><label style="display:inline-block; width: 70%"><?php echo $this->title ?></label><?php endif; ?>
-            <input class="cmb_text_small" type="text" name="<?php echo $this->name ?>" value="<?php echo $this->value ?>" /> <span class="cmb_metabox_description"><?php echo $this->description ?></span>
-        </p>
-        <?php
+		?>
+		<p>
+			<input class="cmb_text_small" type="text" name="<?php echo $this->name ?>" value="<?php echo $this->value ?>" /> <span class="cmb_metabox_description"><?php echo $this->description ?></span>
+		</p>
+		<?php
 	}
 }
 
@@ -226,7 +226,6 @@ class CMB_URL_Field extends CMB_Field {
 
 		?>
 		<p>
-			<?php if ( $this->args['show_label'] ) : ?><label style="display:inline-block; width: 70%"><?php echo $this->title ?></label><?php endif; ?>
 			<input class="cmb_text_url" type="text" name="<?php echo $this->name ?>" value="<?php echo esc_url( $this->value ) ?>" /> <span class="cmb_metabox_description"><?php echo $this->description ?></span>
 		</p>
 		<?php
@@ -243,7 +242,6 @@ class CMB_Date_Field extends CMB_Field {
 
 		?>
 		<p>
-			<?php if ( $this->args['show_label'] ) : ?><label style="display:inline-block; width: 70%"><?php echo $this->title ?></label><?php endif; ?>
 			<input class="cmb_text_small cmb_datepicker" type="text" name="<?php echo $this->name ?>" value="<?php echo $this->value ?>" /> <span class="cmb_metabox_description"><?php echo $this->description ?></span>
 		</p>
 		<?php
@@ -256,7 +254,6 @@ class CMB_Time_Field extends CMB_Field {
 	
 		?>
 		<p>
-			<?php if ( $this->args['show_label'] ) : ?><label style="display:inline-block; width: 70%"><?php echo $this->title ?></label><?php endif; ?>
 			<input class="cmb_text_small cmb_timepicker" type="text" name="<?php echo $this->name ?>" value="<?php echo $this->value ? date( 'm\/d\/Y', $this->value ) : '' ?>" /> <span class="cmb_metabox_description"><?php echo $this->description ?></span>
 		</p>
 		<?php
@@ -273,7 +270,6 @@ class CMB_Date_Timestamp_Field extends CMB_Field {
 
 		?>
 		<p>
-			<?php if ( $this->args['show_label'] ) : ?><label style="display:inline-block; width: 70%"><?php echo $this->title ?></label><?php endif; ?>
 			<input class="cmb_text_small cmb_datepicker" type="text" name="<?php echo $this->name ?>" value="<?php echo $this->value ? date( 'm\/d\/Y', $this->value ) : '' ?>" /> <span class="cmb_metabox_description"><?php echo $this->description ?></span>
 		</p>
 		<?php
@@ -294,7 +290,6 @@ class CMB_Datetime_Timestamp_Field extends CMB_Field {
 
 		?>
 		<p>
-			<?php if ( $this->args['show_label'] ) : ?><label style="display:inline-block; width: 70%"><?php echo $this->title ?></label><?php endif; ?>
 			<input class="cmb_text_small cmb_datepicker" type="text" name="<?php echo $this->name ?>[date]" value="<?php echo $this->value ? date( 'm\/d\/Y', $this-value ) : '' ?>" />
 			<input class="cmb_text_small cmb_timepicker" type="text" name="<?php echo $this->name ?>[time]" value="<?php echo $this->value ? date( 'm\/d\/Y', $this-value ) : '' ?>" /> <span class="cmb_metabox_description"><?php echo $this->description ?></span>
 		</p>
@@ -322,7 +317,6 @@ class CMB_Oembed_Field extends CMB_Field {
 		</style>
 
 		<p>
-			<?php if ( $this->args['show_label'] ) : ?><label style="display:inline-block; width: 70%"><?php echo $this->title ?></label><?php endif; ?>
 
 			<?php if ( ! $this->value ) : ?>
 				<?php echo '<input class="cmb_oembed code" type="text" name="', $this->name, '" id="',$this->name, '" value="" /><span class="cmb_metabox_description">', $this->description, '</span>'; ?>
@@ -392,9 +386,7 @@ class CMB_Textarea_Field extends CMB_Field {
 
 		?>
 		<p>
-			<label><?php if ( $this->args['show_label'] ) : ?><?php echo $this->title ?><?php endif; ?>
 				<textarea rows="<?php echo !empty( $this->args['rows'] ) ? $this->args['rows'] : 4 ?>" name="<?php echo $this->name ?>"><?php echo $this->value ?></textarea>
-			</label>
 		</p>
 		<?php
 	}
@@ -578,6 +570,8 @@ class CMB_Group_Field extends CMB_Field {
 
 		$field = $this->args;
 
+		echo '<strong>' . $this->args['name'] . '</strong>';
+
 		foreach ( $meta as $value ) {
 
 			$this->value = $value;
@@ -586,7 +580,6 @@ class CMB_Group_Field extends CMB_Field {
 			echo '</div>';
 
 		}
-
 
 		if ( $this->args['repeatable'] ) {
 			$this->value = '';
@@ -634,14 +627,10 @@ class CMB_Group_Field extends CMB_Field {
 
 		$field = $this->args;
 		$value = $this->value;
-		?>
-		<div style="background: #eee; border-radius: 5px; padding: 5px; margin-bottom: 10px;" class="group <?php echo !empty( $field['repeatable'] ) ? 'cloneable' : '' ?>">
-
-		    <a class="delete-group button" style="float: right">X</a>
-		    <?php foreach ( $this->args['fields'] as $f ) {
+		$fields = array();
 		    	
+		foreach ( $this->args['fields'] as $f ) {
 		    	$field_value = isset( $this->value[$f['id']] ) ? $this->value[$f['id']] : '';
-
 		    	$f['uid'] = $field['id'] . '[' . $f['id'] . ']';
 
 		    	// If it's cloneable , make it an array
@@ -652,11 +641,16 @@ class CMB_Group_Field extends CMB_Field {
 		    	$f['show_label'] = true;
 				
 				// Todo support for repeatble fields in groups
-		    	$field_obj = new $class( $f['uid'], $f['name'], array( $field_value ), $f );
+			$fields[] = new $class( $f['uid'], $f['name'], array( $field_value ), $f );
+		}
+		?>
+		<div style="background: #eee; border-radius: 5px; margin-bottom: 5px; position: relative;" class="group <?php echo !empty( $field['repeatable'] ) ? 'cloneable' : '' ?>">
 
-		    	$field_obj->display();
+			<?php if ( $this->args['repeatable'] ) : ?>
+				<a class="delete-group button" style="position: absolute; top: -3px; right: -3px">X</a>
+			<?php endif; ?>
 
-		    } ?>
+			<?php CMB_Meta_Box::layout_fields( $fields ); ?>
 
 		</div>
 
