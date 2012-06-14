@@ -494,10 +494,18 @@ class CMB_Radio_Field extends CMB_Field {
  */
 class CMB_Checkbox extends CMB_Field {
 
+	public function parse_save_values() {
+
+		$name = str_replace( '[]', '', $this->name );
+		foreach ( $this->values as $key => $value )
+			$this->values[$key] = isset( $_POST['checkbox_' . $name][$key] ) ? $_POST['checkbox_' . $name][$key] : null;
+	}
+
 	public function html() {
 		?>
 		<p>
-			<input type="checkbox" name="<?php echo $this->name ?>" value="<?php echo $this->get_value(); ?>" <?php checked( $this->get_value() ); ?> /><span class="cmb_metabox_description"><?php echo $this->description ?></span>
+			<input type="checkbox" name="checkbox_<?php echo $this->name ?>" value="1" <?php checked( $this->get_value() ); ?> /><span class="cmb_metabox_description"><?php echo $this->description ?></span>
+			<input type="hidden" name="<?php echo $this->name ?>" value="1" />
 		</p>
 		<?php
 	}

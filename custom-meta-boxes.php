@@ -155,7 +155,8 @@ function _cmb_field_class_for_type( $type ) {
 		'textarea'			=> 'CMB_Textarea_Field',
 		'taxonomy_select'	=> 'CMB_Taxonomy',
 		'select'			=> 'CMB_Select',
-		'wysiwyg'			=> 'CMB_wysiwyg'
+		'wysiwyg'			=> 'CMB_wysiwyg',
+		'checkbox'			=> 'CMB_Checkbox'
 	);
 	
 	if ( isset( $map[$type] ) )
