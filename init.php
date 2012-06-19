@@ -571,7 +571,7 @@ add_filter( 'cmb_validate_checkbox', 'cmb_validate_checkbox', 10, 3 );
 /**
  * Sets the meta value for a stand-alone checkbox to either 1 or 0. Without this, we would have an
  * empty string in the DB or the word "on". Setting it to either 1 or 0 facilitates checking 
- * whether the box shoudl be chcked, and makes it easier to set a default checked status.
+ * whether the box should be chcked, and makes it easier to set a default checked status.
  * 
  * @param string $new New value to be saved
  * @param int $post_id ID of the post being saved
