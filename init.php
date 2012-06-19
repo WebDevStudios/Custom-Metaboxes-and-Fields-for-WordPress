@@ -5,7 +5,7 @@ Contributors: 	Andrew Norcross (@norcross / andrewnorcross.com)
 				Jared Atchison (@jaredatch / jaredatchison.com)
 				Bill Erickson (@billerickson / billerickson.net)
 Description: 	This will create metaboxes with custom fields that will blow your mind.
-Version: 		0.8
+Version: 		0.9
 */
 
 /**
@@ -55,7 +55,7 @@ class cmb_Meta_Box_Validate {
 /**
  * Defines the url to which is used to load local resources.
  * This may need to be filtered for local Window installations.
- * If resources to not load, please check the wiki for details.
+ * If resources do not load, please check the wiki for details.
  */
 define( 'CMB_META_BOX_URL', apply_filters( 'cmb_meta_box_url', trailingslashit( str_replace( WP_CONTENT_DIR, WP_CONTENT_URL, dirname( __FILE__ ) ) ) ) );
 
@@ -223,7 +223,13 @@ class cmb_Meta_Box {
 					echo '$ <input class="cmb_text_money" type="text" name="', $field['id'], '" id="', $field['id'], '" value="', '' !== $meta ? $meta : $field['std'], '" /><span class="cmb_metabox_description">', $field['desc'], '</span>';
 					break;
 				case 'colorpicker':
-					echo '<input class="cmb_colorpicker cmb_text_small" type="text" name="', $field['id'], '" id="', $field['id'], '" value="', '' !== $meta ? $meta : $field['std'], '" /><span class="cmb_metabox_description">', $field['desc'], '</span>';
+					$meta = '' !== $meta ? $meta : $field['std'];
+					$hex_color = '(([a-fA-F0-9]){3}){1,2}$';
+					if ( preg_match( '/^' . $hex_color . '/i', $meta ) ) // Value is just 123abc, so prepend #.
+						$meta = '#' . $meta;
+					elseif ( ! preg_match( '/^#' . $hex_color . '/i', $meta ) ) // Value doesn't match #123abc, so sanitize to just #.
+						$meta = "#";
+					echo '<input class="cmb_colorpicker cmb_text_small" type="text" name="', $field['id'], '" id="', $field['id'], '" value="', $meta, '" /><span class="cmb_metabox_description">', $field['desc'], '</span>';
 					break;
 				case 'textarea':
 					echo '<textarea name="', $field['id'], '" id="', $field['id'], '" cols="60" rows="10">', '' !== $meta ? $meta : $field['std'], '</textarea>','<p class="cmb_metabox_description">', $field['desc'], '</p>';
@@ -235,6 +241,7 @@ class cmb_Meta_Box {
 					echo '<textarea name="', $field['id'], '" id="', $field['id'], '" cols="60" rows="10" class="cmb_textarea_code">', '' !== $meta ? $meta : $field['std'], '</textarea>','<p class="cmb_metabox_description">', $field['desc'], '</p>';
 					break;					
 				case 'select':
+					if( empty( $meta ) && !empty( $field['std'] ) ) $meta = $field['std'];
 					echo '<select name="', $field['id'], '" id="', $field['id'], '">';
 					foreach ($field['options'] as $option) {
 						echo '<option value="', $option['value'], '"', $meta == $option['value'] ? ' selected="selected"' : '', '>', $option['name'], '</option>';
@@ -265,7 +272,7 @@ class cmb_Meta_Box {
 					echo '<p class="cmb_metabox_description">', $field['desc'], '</p>';
 					break;
 				case 'checkbox':
-					echo '<input type="checkbox" name="', $field['id'], '" id="', $field['id'], '"', $meta ? ' checked="checked"' : '', ' />';
+					echo '<input type="checkbox" name="', $field['id'], '" id="', $field['id'], '"', checked( ( ( $meta == '' && $field['std'] ) || $meta == true ), true, false ), ' />';
 					echo '<span class="cmb_metabox_description">', $field['desc'], '</span>';
 					break;
 				case 'multicheck':
@@ -409,7 +416,10 @@ class cmb_Meta_Box {
 
 		foreach ( $this->_meta_box['fields'] as $field ) {
 			$name = $field['id'];			
-			if ( 'multicheck' == $field['type'] ? $field['multiple'] = true : $field['multiple'] = false );      
+
+			if ( ! isset( $field['multiple'] ) )
+				$field['multiple'] = ( 'multicheck' == $field['type'] ) ? true : false;    
+				  
 			$old = get_post_meta( $post_id, $name, !$field['multiple'] /* If multicheck this can be multiple values */ );
 			$new = isset( $_POST[$field['id']] ) ? $_POST[$field['id']] : null;
 			
@@ -555,5 +565,23 @@ function cmb_force_send( $args ) {
 	 
     return $args;
 
+}
+
+add_filter( 'cmb_validate_checkbox', 'cmb_validate_checkbox', 10, 3 );
+/**
+ * Sets the meta value for a stand-alone checkbox to either 1 or 0. Without this, we would have an
+ * empty string in the DB or the word "on". Setting it to either 1 or 0 facilitates checking 
+ * whether the box should be chcked, and makes it easier to set a default checked status.
+ * 
+ * @param string $new New value to be saved
+ * @param int $post_id ID of the post being saved
+ * @param array $field Array of field values for the checkbox
+ * @return string 
+ */
+function cmb_validate_checkbox( $new, $post_id, $field ) {
+    if ( $new === null )
+        return '0';
+    if ( $new == 'on' )
+        return '1';
 }
 // End. That's it, folks! //
