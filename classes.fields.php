@@ -538,7 +538,7 @@ class CMB_wysiwyg extends CMB_Field {
 
 		?>
 		<p>
-			<?php wp_editor( $this->get_value(), $this->id, $this->args['options'] );?><span class="cmb_metabox_description"><?php echo $this->description ?></span>
+			<?php wp_editor( $this->get_value(), $this->name, $this->args['options'] );?><span class="cmb_metabox_description"><?php echo $this->description ?></span>
 		</p>
 		<?php
 	}
