@@ -327,3 +327,9 @@ div.time-picker li.selected { background: #0063CE; color: #fff; }
      width: 200px; /*must have*/
      height: 200px; /*must have*/
  }
+
+
+
+
+ .cmb_metabox .group { background: #eee; border-radius: 5px; margin: 10px 5px; padding: 10px; border: 1px solid #CCC; position: relative; }
+ .cmb_metabox h2.group-name { margin-top: 0 !important; }

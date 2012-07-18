@@ -592,8 +592,6 @@ class CMB_Group_Field extends CMB_Field {
 
 		$field = $this->args;
 
-		echo '<strong>' . $this->args['name'] . '</strong>';
-
 		foreach ( $meta as $value ) {
 
 			$this->value = $value;
@@ -666,7 +664,11 @@ class CMB_Group_Field extends CMB_Field {
 			$fields[] = new $class( $f['uid'], $f['name'], array( $field_value ), $f );
 		}
 		?>
-		<div style="background: #eee; border-radius: 5px; margin-bottom: 5px; position: relative;" class="group <?php echo !empty( $field['repeatable'] ) ? 'cloneable' : '' ?>">
+		<div class="group <?php echo !empty( $field['repeatable'] ) ? 'cloneable' : '' ?>">
+
+			<?php if ( ! empty( $this->args['name'] ) ) : ?>			
+				<h2 class="group-name"><?php echo $this->args['name'] ?></h2>
+			<?php endif; ?>
 
 			<?php if ( $this->args['repeatable'] ) : ?>
 				<a class="delete-group button" style="position: absolute; top: -3px; right: -3px">X</a>
@@ -694,7 +696,7 @@ class CMB_Group_Field extends CMB_Field {
 
 				// create the fiel object so it can sanitize it's data etc
 				$class = _cmb_field_class_for_type( $construct_field['type'] );
-				$field = new $class( $construct_field['id'], $construct_field['name'], $values[$construct_field['id']][$key], $construct_field );
+				$field = new $class( $construct_field['id'], $construct_field['name'], (array) $values[$construct_field['id']][$key], $construct_field );
 
 				$field->parse_save_value();
 
