@@ -183,7 +183,11 @@ class cmb_Meta_Box {
 						
 			$meta = get_post_meta( $post->ID, $field['id'], 'multicheck' != $field['type'] /* If multicheck this can be multiple values */ );
 
-			echo '<tr>';
+			echo '<tr';
+			if ( $field['type'] == "hidden" ) {
+				echo ' style="display:none;"';
+			}
+			echo '>';
 	
 			if ( $field['type'] == "title" ) {
 				echo '<td colspan="2">';
