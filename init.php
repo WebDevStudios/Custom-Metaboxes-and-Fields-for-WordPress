@@ -382,7 +382,10 @@ class cmb_Meta_Box {
 							}	
 						}
 					echo '</div>'; 
-				break;
+					break;
+				case 'hidden':
+					echo '<input type="hidden" name="', $field['id'], '" id="', $field['id'], '" value="', $meta ? $meta : $field['std'], '" />';
+					break;
 				default:
 					do_action('cmb_render_' . $field['type'] , $field, $meta);
 			}
