@@ -49,8 +49,9 @@ add_action( 'init', function() {
 
 	$meta_boxes = apply_filters( 'cmb_meta_boxes', array() );
 
-	foreach ( $meta_boxes as $meta_box )
-		new CMB_Meta_Box( $meta_box );
+	if ( ! empty( $meta_boxes ) )
+		foreach ( $meta_boxes as $meta_box )
+			new CMB_Meta_Box( $meta_box );
 
 }, 99 );
 
