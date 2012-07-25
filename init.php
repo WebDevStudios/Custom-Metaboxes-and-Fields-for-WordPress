@@ -298,12 +298,14 @@ class cmb_Meta_Box {
 					break;
 				case 'taxonomy_select':
 					echo '<select name="', $field['id'], '" id="', $field['id'], '">';
-					$names= wp_get_object_terms( $post->ID, $field['taxonomy'] );
+					$names = wp_get_object_terms( $post->ID, $field['taxonomy'] );
 					$terms = get_terms( $field['taxonomy'], 'hide_empty=0' );
+					$set = false;
 					foreach ( $terms as $term ) {
 						if (!is_wp_error( $names ) && !empty( $names ) && !strcmp( $term->slug, $names[0]->slug ) ) {
 							echo '<option value="' . $term->slug . '" selected>' . $term->name . '</option>';
-						} elseif ( !empty( $field['std'] ) && $field['std'] == $term->slug ) {
+							$set = true;
+						} elseif ( !empty( $field['std'] ) && $field['std'] == $term->slug && $set === false ) {
 							echo '<option value="' . $term->slug . '" selected>' . $term->name . '</option>';
 						} else {
 							echo '<option value="' . $term->slug . '  ' , $meta == $term->slug ? $meta : ' ' ,'  ">' . $term->name . '</option>';
@@ -315,11 +317,13 @@ class cmb_Meta_Box {
 				case 'taxonomy_radio':
 					$names= wp_get_object_terms( $post->ID, $field['taxonomy'] );
 					$terms = get_terms( $field['taxonomy'], 'hide_empty=0' );
+					$set = false;
 					echo '<ul>';
 					foreach ( $terms as $term ) {
 						if ( !is_wp_error( $names ) && !empty( $names ) && !strcmp( $term->slug, $names[0]->slug ) ) {
 							echo '<li><input type="radio" name="', $field['id'], '" value="'. $term->slug . '" checked>' . $term->name . '</li>';
-						} elseif ( !empty( $field['std'] ) && $field['std'] == $term->slug ) {
+							$set = true;
+						} elseif ( !empty( $field['std'] ) && $field['std'] == $term->slug && $set === false ) {
 							echo '<li><input type="radio" name="', $field['id'], '" value="'. $term->slug . '" checked>' . $term->name . '</li>';
 						} else {
 							echo '<li><input type="radio" name="', $field['id'], '" value="' . $term->slug . '  ' , $meta == $term->slug ? $meta : ' ' ,'  ">' . $term->name .'</li>';
