@@ -66,6 +66,20 @@ abstract class CMB_Field {
 	}
 
 	/**
+	 * Method responsible for enqueueing any extra scripts the field needs
+	 * 
+	 * @uses wp_enqueue_script()
+	 */
+	public function enqueue_scripts() {}
+
+	/**
+	 * Method responsible for enqueueing any extra styles the field needs
+	 * 
+	 * @uses wp_enqueue_style()
+	 */
+	public function enqueue_styles() {}
+
+	/**
 	 * Check if this field has a data delegate set
 	 * 
 	 * @return boolean
@@ -454,17 +468,38 @@ class CMB_Color_Picker extends CMB_Field {
  */
 class CMB_Select extends CMB_Field {
 
+	public function enqueue_scripts() {
+
+		parent::enqueue_scripts();
+
+		wp_enqueue_script( 'select2', CMB_URL . 'js/select2/select2.js', array( 'jquery' ) );
+	}
+
+	public function enqueue_styles() {
+
+		parent::enqueue_styles();
+
+		wp_enqueue_style( 'select2', CMB_URL . 'js/select2/select2.css' );
+	}
+
 	public function html() {
 		if ( $this->has_data_delegate() )
 			$this->args['options'] = $this->get_delegate_data();
+
+		$id = 'select-' . rand( 0, 1000 );
 		?>
 		<p>
-			<select name="<?php echo $this->name ?>"> >
+			<select id="<?php echo $id ?>" name="<?php echo $this->name ?>"> >
 				<?php foreach ( $this->args['options'] as $value => $name ): ?>
 				   <option <?php selected( $this->value, $value ) ?> value="<?php echo $value; ?>"><?php echo $name; ?></option>
 				<?php endforeach; ?>
 			</select>
 		</p>
+		<script>
+			jQuery( document ).ready( function() {
+				jQuery( '#<?php echo $id ?>' ).select2();
+			} );
+		</script>
 		<?php
 	}
 }
