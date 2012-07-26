@@ -166,7 +166,7 @@ jQuery(document).ready(function ($) {
 	    newT.removeClass('hidden');
 	    newT.find('input[type!="button"]').val('');
 	    newT.find( '.cmb_upload_status' ).html('');
-	    newT.insertAfter( a.parent().prev() );
+	    newT.insertBefore( a.parent().prev() );
 	    
 	} );
 

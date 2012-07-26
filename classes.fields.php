@@ -6,6 +6,7 @@
  *
  * @abstract
  */
+
 abstract class CMB_Field {
 
 	public $value;
@@ -61,7 +62,7 @@ abstract class CMB_Field {
 		$this->values 	= $values;
 		$this->value 	= reset( $this->values );
 
-		$this->description = $this->args['desc'];
+		$this->description = ! empty( $this->args['desc'] ) ? $this->args['desc'] : '';
 
 	}
 
@@ -650,14 +651,16 @@ class CMB_Group_Field extends CMB_Field {
 
 		$field = $this->args;
 
-		echo '<strong>' . $this->args['name'] . '</strong>';
-
 		foreach ( $meta as $value ) {
 
 			$this->value = $value;
 			echo '<div class="field-item">';
 			$this->html();
 			echo '</div>';
+
+			?>
+
+			<?php
 
 		}
 
@@ -705,7 +708,7 @@ class CMB_Group_Field extends CMB_Field {
 			$fields[] = new $class( $f['uid'], $f['name'], array( $field_value ), $f );
 		}
 		?>
-		<div class="group <?php echo !empty( $field['repeatable'] ) ? 'cloneable' : '' ?>">
+		<div class="group <?php echo !empty( $field['repeatable'] ) ? 'cloneable' : '' ?>" style="position: relative">
 
 			<?php if ( ! empty( $this->args['name'] ) ) : ?>			
 				<h2 class="group-name"><?php echo $this->args['name'] ?></h2>

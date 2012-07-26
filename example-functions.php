@@ -19,9 +19,14 @@ function cmb_sample_metaboxes( array $meta_boxes ) {
 		'priority'   => 'high',
 		'show_names' => true, // Show field names on the left
 		'fields' => array(
-			array( 'id' => 'input4', 'name' => 'Text (12 cols, sub field)', 'type' => 'taxonomy_select', 'cols' => 12, 'taxonomy' => 'category', 'repeatable' => true ),
+			array( 'id' => 'group', 'repeatable' => true, 'type' => 'group', 'fields' => array(
+				array( 'id' => 'input24', 'name' => 'Text (12 cols, sub field)', 'type' => 'taxonomy_select', 'cols' => 12, 'taxonomy' => 'category', 'repeatable' => false ),
+				array( 'id' => 'input22', 'name' => 'Text (12 cols, sub field)', 'type' => 'text', 'cols' => 12, 'taxonomy' => 'category', 'repeatable' => false ),
+			) ) 
 		)
 	);
+
+
 
 	$meta_boxes[] = array(
 		'title' => 'Test Meta Box',

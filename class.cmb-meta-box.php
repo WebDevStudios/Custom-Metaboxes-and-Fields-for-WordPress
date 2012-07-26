@@ -42,10 +42,20 @@ class CMB_Meta_Box {
 
 	private function init_fields() {
 
+		global $post;
+
 		// Get the current ID
-		if( isset( $_GET['post'] ) ) $post_id = $_GET['post'];
-		elseif( isset( $_POST['post_ID'] ) ) $post_id = $_POST['post_ID'];
-		if( !( isset( $post_id ) || is_page() ) ) return false;
+		if( isset( $_GET['post'] ) ) 
+			$post_id = $_GET['post'];
+		
+		elseif( isset( $_POST['post_ID'] ) ) 
+			$post_id = $_POST['post_ID'];
+		
+		elseif ( !empty( $post->ID ) )
+			$post_id = $post->ID;
+
+		if( !( isset( $post_id ) || is_page() ) ) 
+			return false;
 
 		foreach ( $this->_meta_box['fields'] as $field ) {
 
