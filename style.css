@@ -1,13 +1,13 @@
 /**
  * CMB Styling
  */
-table.cmb_metabox tr td, table.cmb_metabox tr th { vertical-align: top; padding: 0; }
+table.cmb_metabox tr td, table.cmb_metabox tr th { vertical-align: top; padding: 5px; }
 table.cmb_metabox th { text-align: right; font-weight:bold;}
 table.cmb_metabox th label { margin-top:5px; display:block;}
 p.cmb_metabox_description { color: #AAA; font-style: italic; margin: 2px 0 !important;}
 span.cmb_metabox_description { color: #AAA; font-style: italic;}
 table.cmb_metabox input, table.cmb_metabox textarea { font-size:12px; padding: 5px; }
-table.cmb_metabox input[type=text], table.cmb_metabox textarea { width: 97%; }
+table.cmb_metabox input[type=text], table.cmb_metabox textarea, table.cmb_metabox select { width: 97%; }
 table.cmb_metabox textarea.cmb_textarea_code { font-family: Consolas,Monaco,monospace; line-height: 16px; }
 table.cmb_metabox input.cmb_text_small { width: 100px; margin-right: 15px;}
 table.cmb_metabox input.cmb_timepicker { width: 100px; margin-right: 15px;}
@@ -327,9 +327,3 @@ div.time-picker li.selected { background: #0063CE; color: #fff; }
      width: 200px; /*must have*/
      height: 200px; /*must have*/
  }
-
-
-
-
- .cmb_metabox .group { background: #eee; border-radius: 5px; margin: 10px 5px; padding: 10px; border: 1px solid #CCC; position: relative; }
- .cmb_metabox h2.group-name { margin-top: 0 !important; }

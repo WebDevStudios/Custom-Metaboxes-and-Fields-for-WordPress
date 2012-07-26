@@ -1,12 +1,4 @@
 <?php
-/**
- * Include and setup custom metaboxes and fields.
- *
- * @category YourThemeOrPlugin
- * @package  Metaboxes
- * @license  http://www.opensource.org/licenses/gpl-license.php GPL v2.0 (or later)
- * @link     https://github.com/jaredatch/Custom-Metaboxes-and-Fields-for-WordPress
- */
 
 add_filter( 'cmb_meta_boxes', 'cmb_sample_metaboxes' );
 /**
@@ -21,21 +13,17 @@ function cmb_sample_metaboxes( array $meta_boxes ) {
 	$prefix = '_cmb_';
 
 	$meta_boxes[] = array(
-		'id' => 'f',
-		'title' => 'Test Meta Box',
+		'title' => 'Test Meta-Box',
 		'pages' => 'post',
 		'context'    => 'normal',
 		'priority'   => 'high',
 		'show_names' => true, // Show field names on the left
 		'fields' => array(
-			array( 'id' => 'input4', 'name' => 'Text (12 cols, sub field)', 'type' => 'taxonomy_select', 'cols' => 12, 'taxonomy' => 'category' ),
+			array( 'id' => 'input4', 'name' => 'Text (12 cols, sub field)', 'type' => 'taxonomy_select', 'cols' => 12, 'taxonomy' => 'category', 'repeatable' => true ),
 		)
 	);
 
-	return $meta_boxes;
-
 	$meta_boxes[] = array(
-		'id' => 'f',
 		'title' => 'Test Meta Box',
 		'pages' => 'post',
 		'context'    => 'normal',
