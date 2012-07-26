@@ -107,6 +107,12 @@ abstract class CMB_Field {
 
 	public function parse_save_values() {
 
+		// if it's repeatable take off the last one
+		if ( $this->args['repeatable'] ) {
+			end( $this->values );
+			unset( $this->values[key( $this->values )] );
+			reset( $this->values );
+		}
 	}
 
 	public function parse_save_value() {
@@ -141,7 +147,15 @@ abstract class CMB_Field {
 
 			$this->value = $value;
 
-			echo '<div class="field-item">';
+			echo '<div class="field-item" style="position: relative">';
+
+			if ( $this->args['repeatable'] ) : ?>
+				<span class="cmb_element">
+					<span class="ui-state-default">
+						<a class="delete-field ui-icon-circle-close ui-icon" style="position: absolute; top: 5px; right: -10px">X</a>
+					</span>
+				</span>
+			<?php endif;
 
 			$this->html();
 			echo '</div>';
@@ -152,7 +166,16 @@ abstract class CMB_Field {
 		if ( $this->args['repeatable'] ) {
 			$this->value = '';
 
-			echo '<div class="field-item hidden">';
+			echo '<div class="field-item hidden" style="position: relative">';
+			
+			if ( $this->args['repeatable'] ) : ?>
+				<span class="cmb_element">
+					<span class="ui-state-default">
+						<a class="delete-field ui-icon-circle-close ui-icon" style="position: absolute; top: 5px; right: -10px">X</a>
+					</span>
+				</span>
+			<?php endif;
+
 			$this->html();
 			echo '</div>';
 
@@ -627,6 +650,8 @@ class CMB_Group_Field extends CMB_Field {
 
 		$field = $this->args;
 
+		echo '<strong>' . $this->args['name'] . '</strong>';
+
 		foreach ( $meta as $value ) {
 
 			$this->value = $value;
@@ -652,26 +677,7 @@ class CMB_Group_Field extends CMB_Field {
 
 			<script type="text/javascript">
 
-				jQuery( document ).on( 'click', 'a.clone-group', function( e ) {
-
-					e.preventDefault();
-					var a = jQuery( this );
-
-					var newT = a.parent().prev().clone().removeClass('hidden');
-					newT.find('input[type!="button"]').val('');
-					newT.find( '.cmb_upload_status' ).html('');
-					newT.insertBefore( a.parent().prev() );
-
-				} );
-
-				jQuery( document ).on( 'click', 'a.delete-group', function( e ) {
-
-					e.preventDefault();
-					var a = jQuery( this );
-
-					a.closest( '.group' ).remove();
-
-				} );
+				
 
 			</script>
 
@@ -706,7 +712,7 @@ class CMB_Group_Field extends CMB_Field {
 			<?php endif; ?>
 
 			<?php if ( $this->args['repeatable'] ) : ?>
-				<a class="delete-group button" style="position: absolute; top: -3px; right: -3px">X</a>
+				<a class="delete-field button" style="position: absolute; top: -3px; right: -3px">X</a>
 			<?php endif; ?>
 
 			<?php CMB_Meta_Box::layout_fields( $fields ); ?>
@@ -743,6 +749,8 @@ class CMB_Group_Field extends CMB_Field {
 				$this->values[] = $meta;
 
 		}
+
+		parent::parse_save_values();
 
 	}
 
