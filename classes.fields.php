@@ -87,16 +87,21 @@ abstract class CMB_Field {
 	}
 
 	public function get_value() {
-
 	   return ( $this->value ) ? $this->value : $this->args['default'];
 	}
 
 	public function parse_save_values() {
 
+		// if it's repeatable take off the last one
+		if ( $this->args['repeatable'] ) {
+			end( $this->values );
+			unset( $this->values[key( $this->values )] );
+			reset( $this->values );
+		}
+	
 	}
 
 	public function parse_save_value() {
-
 	}
 
 	public function save( $post_id ) {
@@ -106,10 +111,11 @@ abstract class CMB_Field {
 		delete_post_meta( $post_id, $this->id );
 
 		foreach( $this->values as $v ) {
+			
 			$this->value = $v;
 			$this->parse_save_value();
 
-			if ( $v )
+			if ( $this->value )
 				add_post_meta( $post_id, $this->id, $this->value );
 		}
 
@@ -275,10 +281,11 @@ class CMB_Time_Field extends CMB_Field {
 	
 		?>
 		<p>
-			<input class="cmb_text_small cmb_timepicker" type="text" name="<?php echo $this->name ?>" value="<?php echo $this->value ? date( 'm\/d\/Y', $this->value ) : '' ?>" /> <span class="cmb_metabox_description"><?php echo $this->description ?></span>
+			<input class="cmb_text_small cmb_timepicker" type="text" name="<?php echo $this->name ?>" value="<?php echo $this->value;?>"/> <span class="cmb_metabox_description"><?php echo $this->description ?></span>
 		</p>
 		<?php
 	}
+
 }
 
 /**
@@ -297,7 +304,7 @@ class CMB_Date_Timestamp_Field extends CMB_Field {
 	}
 	
 	public function parse_save_value() {
-		return strtotime( $this->value );
+		$this->value = strtotime( $this->value );
 	}
 }
 
@@ -310,16 +317,31 @@ class CMB_Datetime_Timestamp_Field extends CMB_Field {
 	public function html() {
 
 		?>
+
 		<p>
-			<input class="cmb_text_small cmb_datepicker" type="text" name="<?php echo $this->name ?>[date]" value="<?php echo $this->value ? date( 'm\/d\/Y', $this-value ) : '' ?>" />
-			<input class="cmb_text_small cmb_timepicker" type="text" name="<?php echo $this->name ?>[time]" value="<?php echo $this->value ? date( 'm\/d\/Y', $this-value ) : '' ?>" /> <span class="cmb_metabox_description"><?php echo $this->description ?></span>
+			<input class="cmb_text_small cmb_datepicker" type="text" name="<?php echo $this->id ?>[date][]" value="<?php echo $this->value ? date( 'm\/d\/Y', $this->value ) : '' ?>" />
+			<input class="cmb_text_small cmb_timepicker" type="text" name="<?php echo $this->id ?>[time][]" value="<?php echo $this->value ? date( 'H:i A', $this->value ) : '' ?>" /> <span class="cmb_metabox_description"><?php echo $this->description ?></span>
 		</p>
+
 		<?php
 	}
 	
-	public function parse_save_value() {
-		return strtotime( $this->value['date'] . ' ' . $this->value['time'] );
+	public function parse_save_values() {
+		
+		$r = array();
+
+		for ( $i = 0; $i < count( $this->values['date'] ); $i++ ) 
+			if( ! empty( $this->values['date'][$i] ) )
+				$r[$i] = strtotime( $this->values['date'][$i] . ' ' . $this->values['time'][$i] );
+
+		$this->values = $r;
+
+		error_log( print_r( $this->values, true ) );
+
+		parent::parse_save_values();
+
 	}
+
 }
 
 
