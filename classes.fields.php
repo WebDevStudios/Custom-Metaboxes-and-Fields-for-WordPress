@@ -6,6 +6,7 @@
  *
  * @abstract
  */
+
 abstract class CMB_Field {
 
 	public $value;
@@ -61,9 +62,23 @@ abstract class CMB_Field {
 		$this->values 	= $values;
 		$this->value 	= reset( $this->values );
 
-		$this->description = $this->args['desc'];
+		$this->description = ! empty( $this->args['desc'] ) ? $this->args['desc'] : '';
 
 	}
+
+	/**
+	 * Method responsible for enqueueing any extra scripts the field needs
+	 * 
+	 * @uses wp_enqueue_script()
+	 */
+	public function enqueue_scripts() {}
+
+	/**
+	 * Method responsible for enqueueing any extra styles the field needs
+	 * 
+	 * @uses wp_enqueue_style()
+	 */
+	public function enqueue_styles() {}
 
 	/**
 	 * Check if this field has a data delegate set
@@ -98,7 +113,6 @@ abstract class CMB_Field {
 			unset( $this->values[key( $this->values )] );
 			reset( $this->values );
 		}
-	
 	}
 
 	public function parse_save_value() {
@@ -133,7 +147,15 @@ abstract class CMB_Field {
 
 			$this->value = $value;
 
-			echo '<div class="field-item">';
+			echo '<div class="field-item" style="position: relative">';
+
+			if ( $this->args['repeatable'] ) : ?>
+				<span class="cmb_element">
+					<span class="ui-state-default">
+						<a class="delete-field ui-icon-circle-close ui-icon" style="position: absolute; top: 5px; right: -10px">X</a>
+					</span>
+				</span>
+			<?php endif;
 
 			$this->html();
 			echo '</div>';
@@ -144,7 +166,16 @@ abstract class CMB_Field {
 		if ( $this->args['repeatable'] ) {
 			$this->value = '';
 
-			echo '<div class="field-item hidden">';
+			echo '<div class="field-item hidden" style="position: relative">';
+			
+			if ( $this->args['repeatable'] ) : ?>
+				<span class="cmb_element">
+					<span class="ui-state-default">
+						<a class="delete-field ui-icon-circle-close ui-icon" style="position: absolute; top: 5px; right: -10px">X</a>
+					</span>
+				</span>
+			<?php endif;
+
 			$this->html();
 			echo '</div>';
 
@@ -476,17 +507,38 @@ class CMB_Color_Picker extends CMB_Field {
  */
 class CMB_Select extends CMB_Field {
 
+	public function enqueue_scripts() {
+
+		parent::enqueue_scripts();
+
+		wp_enqueue_script( 'select2', CMB_URL . 'js/select2/select2.js', array( 'jquery' ) );
+	}
+
+	public function enqueue_styles() {
+
+		parent::enqueue_styles();
+
+		wp_enqueue_style( 'select2', CMB_URL . 'js/select2/select2.css' );
+	}
+
 	public function html() {
 		if ( $this->has_data_delegate() )
 			$this->args['options'] = $this->get_delegate_data();
+
+		$id = 'select-' . rand( 0, 1000 );
 		?>
 		<p>
-			<select name="<?php echo $this->name ?>"> >
+			<select id="<?php echo $id ?>" name="<?php echo $this->name ?>"> >
 				<?php foreach ( $this->args['options'] as $value => $name ): ?>
 				   <option <?php selected( $this->value, $value ) ?> value="<?php echo $value; ?>"><?php echo $name; ?></option>
 				<?php endforeach; ?>
 			</select>
 		</p>
+		<script>
+			jQuery( document ).ready( function() {
+				jQuery( '#<?php echo $id ?>' ).select2();
+			} );
+		</script>
 		<?php
 	}
 }
@@ -560,7 +612,7 @@ class CMB_wysiwyg extends CMB_Field {
 
 		?>
 		<p>
-			<?php wp_editor( $this->get_value(), $this->id, $this->args['options'] );?><span class="cmb_metabox_description"><?php echo $this->description ?></span>
+			<?php wp_editor( $this->get_value(), $this->name, $this->args['options'] );?><span class="cmb_metabox_description"><?php echo $this->description ?></span>
 		</p>
 		<?php
 	}
@@ -614,14 +666,16 @@ class CMB_Group_Field extends CMB_Field {
 
 		$field = $this->args;
 
-		echo '<strong>' . $this->args['name'] . '</strong>';
-
 		foreach ( $meta as $value ) {
 
 			$this->value = $value;
 			echo '<div class="field-item">';
 			$this->html();
 			echo '</div>';
+
+			?>
+
+			<?php
 
 		}
 
@@ -641,26 +695,7 @@ class CMB_Group_Field extends CMB_Field {
 
 			<script type="text/javascript">
 
-				jQuery( document ).on( 'click', 'a.clone-group', function( e ) {
-
-					e.preventDefault();
-					var a = jQuery( this );
-
-					var newT = a.parent().prev().clone().removeClass('hidden');
-					newT.find('input[type!="button"]').val('');
-					newT.find( '.cmb_upload_status' ).html('');
-					newT.insertBefore( a.parent().prev() );
-
-				} );
-
-				jQuery( document ).on( 'click', 'a.delete-group', function( e ) {
-
-					e.preventDefault();
-					var a = jQuery( this );
-
-					a.closest( '.group' ).remove();
-
-				} );
+				
 
 			</script>
 
@@ -688,10 +723,14 @@ class CMB_Group_Field extends CMB_Field {
 			$fields[] = new $class( $f['uid'], $f['name'], array( $field_value ), $f );
 		}
 		?>
-		<div style="background: #eee; border-radius: 5px; margin-bottom: 5px; position: relative;" class="group <?php echo !empty( $field['repeatable'] ) ? 'cloneable' : '' ?>">
+		<div class="group <?php echo !empty( $field['repeatable'] ) ? 'cloneable' : '' ?>" style="position: relative">
+
+			<?php if ( ! empty( $this->args['name'] ) ) : ?>			
+				<h2 class="group-name"><?php echo $this->args['name'] ?></h2>
+			<?php endif; ?>
 
 			<?php if ( $this->args['repeatable'] ) : ?>
-				<a class="delete-group button" style="position: absolute; top: -3px; right: -3px">X</a>
+				<a class="delete-field button" style="position: absolute; top: -3px; right: -3px">X</a>
 			<?php endif; ?>
 
 			<?php CMB_Meta_Box::layout_fields( $fields ); ?>
@@ -716,7 +755,7 @@ class CMB_Group_Field extends CMB_Field {
 
 				// create the fiel object so it can sanitize it's data etc
 				$class = _cmb_field_class_for_type( $construct_field['type'] );
-				$field = new $class( $construct_field['id'], $construct_field['name'], $values[$construct_field['id']][$key], $construct_field );
+				$field = new $class( $construct_field['id'], $construct_field['name'], (array) $values[$construct_field['id']][$key], $construct_field );
 
 				$field->parse_save_value();
 
@@ -728,6 +767,8 @@ class CMB_Group_Field extends CMB_Field {
 				$this->values[] = $meta;
 
 		}
+
+		parent::parse_save_values();
 
 	}
 

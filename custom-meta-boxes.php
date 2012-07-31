@@ -39,7 +39,7 @@ define( 'CMB_PATH', plugin_dir_path( __FILE__ ) );
 
 include_once( CMB_PATH . '/classes.fields.php' );
 include_once( CMB_PATH . '/class.cmb-meta-box.php' );
-include_once( CMB_PATH . '/example-functions.php' );
+// include_once( CMB_PATH . '/example-functions.php' );
 
 // get all the meta boxes on init
 add_action( 'init', function() {
@@ -49,8 +49,9 @@ add_action( 'init', function() {
 
 	$meta_boxes = apply_filters( 'cmb_meta_boxes', array() );
 
-	foreach ( $meta_boxes as $meta_box )
-		new CMB_Meta_Box( $meta_box );
+	if ( ! empty( $meta_boxes ) )
+		foreach ( $meta_boxes as $meta_box )
+			new CMB_Meta_Box( $meta_box );
 
 }, 99 );
 

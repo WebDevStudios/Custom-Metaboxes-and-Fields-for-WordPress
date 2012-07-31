@@ -19,6 +19,15 @@ jQuery(document).ready(function ($) {
 	var formfield;
 	var formfieldobj;
 
+	jQuery( document ).on( 'click', 'a.delete-field', function( e ) {
+
+		e.preventDefault();
+		var a = jQuery( this );
+
+		a.closest( '.field-item' ).remove();
+
+	} );
+
 	/**
 	 * Initialize timepicker (this will be moved inline in a future release)
 	 */
@@ -157,7 +166,7 @@ jQuery(document).ready(function ($) {
 	    newT.removeClass('hidden');
 	    newT.find('input[type!="button"]').val('');
 	    newT.find( '.cmb_upload_status' ).html('');
-	    newT.insertAfter( a.parent().prev() );
+	    newT.insertBefore( a.parent().prev() );
 	    
 	} );
 

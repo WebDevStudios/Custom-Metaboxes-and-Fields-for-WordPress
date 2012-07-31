@@ -6,6 +6,7 @@
 class CMB_Meta_Box {
 
 	protected $_meta_box;
+	private $fields = array();
 
 	function __construct( $meta_box ) {
 
@@ -23,6 +24,8 @@ class CMB_Meta_Box {
 			}
 		}
 		
+		$this->init_fields();
+
 		global $pagenow;
 		if ( $upload && in_array( $pagenow, array( 'page.php', 'page-new.php', 'post.php', 'post-new.php' ) ) ) {
 			add_action( 'admin_head', array( &$this, 'add_post_enctype' ) );
@@ -30,9 +33,71 @@ class CMB_Meta_Box {
 
 		add_action( 'admin_menu', array( &$this, 'add' ) );
 		add_action( 'save_post', array( &$this, 'save' ) );
+		add_action( 'admin_enqueue_scripts', array( &$this, 'enqueue_scripts' ) );
+		add_action( 'admin_enqueue_scripts', array( &$this, 'enqueue_styles' ) );
 
 		add_filter( 'cmb_show_on', array( &$this, 'add_for_id' ), 10, 2 );
 		add_filter( 'cmb_show_on', array( &$this, 'add_for_page_template' ), 10, 2 );
+	}
+
+	private function init_fields() {
+
+		global $post;
+
+		// Get the current ID
+		if( isset( $_GET['post'] ) ) 
+			$post_id = $_GET['post'];
+		
+		elseif( isset( $_POST['post_ID'] ) ) 
+			$post_id = $_POST['post_ID'];
+		
+		elseif ( !empty( $post->ID ) )
+			$post_id = $post->ID;
+
+		if( !( isset( $post_id ) || is_page() ) ) 
+			return false;
+
+		foreach ( $this->_meta_box['fields'] as $field ) {
+
+			// Set up blank or default values for empty ones
+			// 
+			$defaults = array( 
+				'name' => '',
+				'desc' => '',
+				'std'  => '',
+				'cols' => 12
+			);
+
+			$field = wp_parse_args( $field, $defaults );
+	
+			if ( 'file' == $field['type'] && ! isset( $field['allow'] ) )
+				$field['allow'] = array( 'url', 'attachment' );
+
+			if ( 'file' == $field['type'] && ! isset( $field['save_id'] ) )
+				$field['save_id']  = false;
+				
+			$field['name_attr'] = $field['id'];
+			$class = _cmb_field_class_for_type( $field['type'] );
+
+			if ( ! empty( $this->_meta_box['repeatable'] ) )
+				$field['repeatable'] = true;
+
+			$this->fields[] = new $class( $field['id'], $field['name'], get_post_meta( $post_id, $field['id'], false ), $field );
+			
+		}
+
+	}
+
+	function enqueue_scripts() {
+		foreach ( $this->fields as $field ) {
+			$field->enqueue_scripts();
+		}
+	}
+
+	function enqueue_styles() {
+		foreach ( $this->fields as $field ) {
+			$field->enqueue_styles();
+		}
 	}
 
 	function add_post_enctype() {
@@ -122,39 +187,8 @@ class CMB_Meta_Box {
 		
 		if ( ! $multiple_count || empty( $this->_meta_box['repeatable'] ) )
 			$multiple_count = 1;
-		
-		$fields = array();
 
-		foreach ( $this->_meta_box['fields'] as $field ) {
-
-			// Set up blank or default values for empty ones
-			// 
-			$defaults = array( 
-				'name' => '',
-				'desc' => '',
-				'std'  => '',
-				'cols' => 12
-			);
-
-			$field = wp_parse_args( $field, $defaults );
-	
-			if ( 'file' == $field['type'] && ! isset( $field['allow'] ) )
-				$field['allow'] = array( 'url', 'attachment' );
-
-			if ( 'file' == $field['type'] && ! isset( $field['save_id'] ) )
-				$field['save_id']  = false;
-				
-			$field['name_attr'] = $field['id'];
-			$class = _cmb_field_class_for_type( $field['type'] );
-
-			if ( ! empty( $this->_meta_box['repeatable'] ) )
-				$field['repeatable'] = true;
-								
-			$fields[] = new $class( $field['id'], $field['name'], get_post_meta( get_the_id(), $field['id'], false ), $field );
-			
-		}
-
-		self::layout_fields( $fields );
+		self::layout_fields( $this->fields );
 	}
 
 	/**
