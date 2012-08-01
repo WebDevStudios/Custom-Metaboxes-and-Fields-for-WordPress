@@ -157,7 +157,7 @@ jQuery(document).ready(function ($) {
 	};
 	
 	jQuery( document ).on( 'click', 'a.repeat-field', function( e ) {
-				
+		
 	    e.preventDefault();
 	    var a = jQuery( this );
 
@@ -168,6 +168,22 @@ jQuery(document).ready(function ($) {
 	    newT.find( '.cmb_upload_status' ).html('');
 	    newT.insertBefore( a.parent().prev() );
 	    
+	    // Reinitialize all the datepickers
+		jQuery('.cmb_datepicker' ).each(function () {
+			$(this).attr( 'id', '' ).removeClass( 'hasDatepicker' ).removeData( 'datepicker' ).unbind().datepicker();
+		});
+
+		// Reinitialize all the timepickers.
+		jQuery('.cmb_timepicker' ).each(function () {
+			$(this).timePicker({
+				startTime: "07:00",
+				endTime: "22:00",
+				show24Hours: false,
+				separator: ':',
+				step: 30
+			});
+		});
+
 	} );
 
 });
