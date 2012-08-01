@@ -367,8 +367,6 @@ class CMB_Datetime_Timestamp_Field extends CMB_Field {
 
 		$this->values = $r;
 
-		error_log( print_r( $this->values, true ) );
-
 		parent::parse_save_values();
 
 	}
