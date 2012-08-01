@@ -365,9 +365,9 @@ class CMB_Datetime_Timestamp_Field extends CMB_Field {
 			if( ! empty( $this->values['date'][$i] ) )
 				$r[$i] = strtotime( $this->values['date'][$i] . ' ' . $this->values['time'][$i] );
 
-		$this->values = $r;
+		$r[] = '';
 
-		error_log( print_r( $this->values, true ) );
+		$this->values = $r;
 
 		parent::parse_save_values();
 
