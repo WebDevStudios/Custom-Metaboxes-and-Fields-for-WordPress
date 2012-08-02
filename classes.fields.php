@@ -365,6 +365,8 @@ class CMB_Datetime_Timestamp_Field extends CMB_Field {
 			if( ! empty( $this->values['date'][$i] ) )
 				$r[$i] = strtotime( $this->values['date'][$i] . ' ' . $this->values['time'][$i] );
 
+		sort( $r );
+
 		$r[] = '';
 
 		$this->values = $r;
