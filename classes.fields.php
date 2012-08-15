@@ -509,7 +509,12 @@ class CMB_Color_Picker extends CMB_Field {
 
 /**
  * Standard select field.
- *
+ * 
+ * @supports "data_delegate"
+ * @args
+ * 		'options' 		=> array Array of options to show in the select, optionally use data_delegate instead
+ *   	'allow_none' 	=> bool Allow no option to be selected (will palce a "None" at the top of the select)
+ *    	'multiple' 		=> bool whether multiple can be selected
  */
 class CMB_Select extends CMB_Field {
 
@@ -536,7 +541,7 @@ class CMB_Select extends CMB_Field {
 		$id = 'select-' . rand( 0, 1000 );
 		?>
 		<p>
-			<select id="<?php echo $id ?>" name="<?php echo $this->name ?>"> >
+			<select <?php echo ! empty( $this->args['multiple'] ) ? 'multiple' : '' ?> id="<?php echo $id ?>" name="<?php echo $this->name ?>"> >
 				<?php if ( ! empty( $this->args['allow_none'] ) ) : ?>
 					<option value="">None</option>
 				<?php endif; ?>
