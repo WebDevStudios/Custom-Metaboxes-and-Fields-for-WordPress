@@ -24,7 +24,8 @@ class CMB_Meta_Box {
 			}
 		}
 		
-		$this->init_fields();
+		add_action( 'dbx_post_advanced', array( &$this, 'init_fields' ) );
+
 
 		global $pagenow;
 		if ( $upload && in_array( $pagenow, array( 'page.php', 'page-new.php', 'post.php', 'post-new.php' ) ) ) {
@@ -40,9 +41,9 @@ class CMB_Meta_Box {
 		add_filter( 'cmb_show_on', array( &$this, 'add_for_page_template' ), 10, 2 );
 	}
 
-	private function init_fields() {
+	public function init_fields() {
 
-		global $post;
+		global $post, $temp_ID;
 
 		// Get the current ID
 		if( isset( $_GET['post'] ) ) 
@@ -51,7 +52,7 @@ class CMB_Meta_Box {
 		elseif( isset( $_POST['post_ID'] ) ) 
 			$post_id = $_POST['post_ID'];
 		
-		elseif ( !empty( $post->ID ) )
+		elseif ( ! empty( $post->ID ) )
 			$post_id = $post->ID;
 
 		if( !( isset( $post_id ) || is_page() ) ) 
@@ -179,7 +180,7 @@ class CMB_Meta_Box {
 		global $post;
 		
 		$post = get_post( $post );
-		
+
 		// Use nonce for verification
 		echo '<input type="hidden" name="wp_meta_box_nonce" value="', wp_create_nonce( basename(__FILE__) ), '" />';
 		

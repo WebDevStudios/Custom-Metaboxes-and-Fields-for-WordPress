@@ -60,7 +60,6 @@ abstract class CMB_Field {
 		}
 
 		$this->values 	= $values;
-		$this->value 	= reset( $this->values );
 
 		$this->description = ! empty( $this->args['desc'] ) ? $this->args['desc'] : '';
 
@@ -102,6 +101,7 @@ abstract class CMB_Field {
 	}
 
 	public function get_value() {
+
 	   return ( $this->value ) ? $this->value : $this->args['default'];
 	}
 
@@ -135,14 +135,18 @@ abstract class CMB_Field {
 
 	}
 
+	public function title() {
+		echo '<strong>' . $this->args['name'] . '</strong>';
+	}
+
 	public function display() {
 
 		// if there are no values and it's not repeateble, we want to do one with empty string
 		if ( empty( $this->values ) && !  $this->args['repeatable'] )
 			$this->values = array( '' );
 
-		echo '<strong>' . $this->args['name'] . '</strong>';
-
+		$this->title();
+		
 		foreach ( $this->values as $value ) {
 
 			$this->value = $value;
@@ -199,7 +203,7 @@ class CMB_Text_Field extends CMB_Field {
 
 		?>
 		<p>
-				<input type="text" name="<?php echo $this->name ?>" value="<?php echo $this->value ?>" />
+			<input type="text" name="<?php echo $this->name ?>" value="<?php echo $this->value ?>" />
 		</p>
 		<?php
 	}
@@ -524,13 +528,18 @@ class CMB_Select extends CMB_Field {
 	}
 
 	public function html() {
+
 		if ( $this->has_data_delegate() )
 			$this->args['options'] = $this->get_delegate_data();
+
 
 		$id = 'select-' . rand( 0, 1000 );
 		?>
 		<p>
 			<select id="<?php echo $id ?>" name="<?php echo $this->name ?>"> >
+				<?php if ( ! empty( $this->args['allow_none'] ) ) : ?>
+					<option value="">None</option>
+				<?php endif; ?>
 				<?php foreach ( $this->args['options'] as $value => $name ): ?>
 				   <option <?php selected( $this->value, $value ) ?> value="<?php echo $value; ?>"><?php echo $name; ?></option>
 				<?php endforeach; ?>
@@ -573,14 +582,26 @@ class CMB_Checkbox extends CMB_Field {
 	public function parse_save_values() {
 
 		$name = str_replace( '[]', '', $this->name );
+		$values = _cmb_get_value_from_array_path( $_POST, 'checkbox_' . $name );
+
 		foreach ( $this->values as $key => $value )
-			$this->values[$key] = isset( $_POST['checkbox_' . $name][$key] ) ? $_POST['checkbox_' . $name][$key] : null;
+			$this->values[$key] = $values[$key];
+
+		$this->value = reset( $this->values );
+	}
+
+	public function title() {
+
 	}
 
 	public function html() {
 		?>
 		<p>
-			<input type="checkbox" name="checkbox_<?php echo $this->name ?>" value="1" <?php checked( $this->get_value() ); ?> /><span class="cmb_metabox_description"><?php echo $this->description ?></span>
+			<label>
+				<input type="checkbox" name="checkbox_<?php echo $this->name ?>" value="1" <?php checked( $this->get_value() ); ?> />
+				<?php echo $this->args['name'] ?>
+			</label>
+				<span class="cmb_metabox_description"><?php echo $this->description ?></span>
 			<input type="hidden" name="<?php echo $this->name ?>" value="1" />
 		</p>
 		<?php
@@ -755,10 +776,17 @@ class CMB_Group_Field extends CMB_Field {
 
 			foreach ( $this->args['fields'] as $construct_field ) {
 
+				$name = $this->args['id'] . '[' . $construct_field['id'] . ']';
+
+				// If it's cloneable , make it an array
+				if ( $this->args['repeatable'] == true )
+					$name .= '[]';
+
 				// create the fiel object so it can sanitize it's data etc
 				$class = _cmb_field_class_for_type( $construct_field['type'] );
-				$field = new $class( $construct_field['id'], $construct_field['name'], (array) $values[$construct_field['id']][$key], $construct_field );
+				$field = new $class( $name, $construct_field['name'], (array) $values[$construct_field['id']][$key], $construct_field );
 
+				$field->parse_save_values();
 				$field->parse_save_value();
 
 
@@ -787,4 +815,23 @@ class CMB_Group_Field extends CMB_Field {
 		return array_filter($array);
 
 	}
+}
+
+function _cmb_get_value_from_array_path( $array, $path ) {
+
+	if ( strpos( $path , '[' ) === false )
+		return $array[$path];
+
+	$top_level = reset( explode( '[' , $path ) );
+	
+	preg_match_all( '#\[([^\]]+)\]#', $path, $matches );
+
+	$value = $array[$top_level];
+
+	$keys = $matches[1];
+
+	foreach ( $keys as $key )
+		$value = $value[$key];
+
+	return $value;
 }
