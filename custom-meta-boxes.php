@@ -34,8 +34,8 @@ Version: 		1.o
  * This may need to be filtered for local Window installations.
  * If resources do not load, please check the wiki for details.
  */
-define( 'CMB_URL', plugin_dir_url( __FILE__ ) );
-define( 'CMB_PATH', plugin_dir_path( __FILE__ ) );
+define( 'CMB_PATH', dirname( __FILE__ ) );
+define( 'CMB_URL', str_replace( WP_CONTENT_DIR, WP_CONTENT_URL, CMB_PATH ) );
 
 include_once( CMB_PATH . '/classes.fields.php' );
 include_once( CMB_PATH . '/class.cmb-meta-box.php' );
@@ -60,11 +60,11 @@ add_action( 'init', function() {
  */
 function cmb_scripts( $hook ) {
 	if ( $hook == 'post.php' || $hook == 'post-new.php' || $hook == 'page-new.php' || $hook == 'page.php' ) {
-		wp_register_script( 'cmb-timepicker', CMB_URL . 'js/jquery.timePicker.min.js' );
-		wp_register_script( 'cmb-scripts', CMB_URL . 'js/cmb.js', array( 'jquery', 'jquery-ui-core', 'jquery-ui-datepicker', 'media-upload', 'thickbox', 'farbtastic' ) );
+		wp_register_script( 'cmb-timepicker', CMB_URL . '/js/jquery.timePicker.min.js' );
+		wp_register_script( 'cmb-scripts', CMB_URL . '/js/cmb.js', array( 'jquery', 'jquery-ui-core', 'jquery-ui-datepicker', 'media-upload', 'thickbox', 'farbtastic' ) );
 		wp_enqueue_script( 'cmb-timepicker' );
 		wp_enqueue_script( 'cmb-scripts' );
-		wp_register_style( 'cmb-styles', CMB_URL . 'style.css', array( 'thickbox', 'farbtastic' ) );
+		wp_register_style( 'cmb-styles', CMB_URL . '/style.css', array( 'thickbox', 'farbtastic' ) );
 		wp_enqueue_style( 'cmb-styles' );
 	}
 }
