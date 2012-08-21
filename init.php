@@ -272,8 +272,9 @@ class cmb_Meta_Box {
 					echo '<p class="cmb_metabox_description">', $field['desc'], '</p>';
 					break;
 				case 'checkbox':
-					echo '<input type="checkbox" name="', $field['id'], '" id="', $field['id'], '"', $meta ? ' checked="checked"' : '', ' />';
-					echo '<span class="cmb_metabox_description">', $field['desc'], '</span>';
+					echo '<input type="hidden" value="0" name="', $field['id'], '" />';
+					echo '<input type="checkbox" value="1" name="', $field['id'], '" id="', $field['id'], '"', $meta ? ' checked="checked"' : '', ' />';
+					echo '<label for="',$field['id'],'"><span class="cmb_metabox_description">', $field['desc'], '</span></label>';
 					break;
 				case 'multicheck':
 					echo '<ul>';
