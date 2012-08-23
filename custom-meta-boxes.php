@@ -39,7 +39,8 @@ define( 'CMB_URL', str_replace( WP_CONTENT_DIR, WP_CONTENT_URL, CMB_PATH ) );
 
 include_once( CMB_PATH . '/classes.fields.php' );
 include_once( CMB_PATH . '/class.cmb-meta-box.php' );
-// include_once( CMB_PATH . '/example-functions.php' );
+include_once( CMB_PATH . '/example-functions.php' );
+
 
 // get all the meta boxes on init
 add_action( 'init', function() {

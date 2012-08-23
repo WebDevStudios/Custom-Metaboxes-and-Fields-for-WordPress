@@ -237,7 +237,7 @@ class CMB_Meta_Box {
 	}
 
 	// Save data from metabox
-	function save( $post_id)  {
+	function save( $post_id )  {
 
 		// verify nonce
 		if ( ! isset( $_POST['wp_meta_box_nonce'] ) || ! wp_verify_nonce( $_POST['wp_meta_box_nonce'], basename(__FILE__) ) ) {
@@ -253,6 +253,13 @@ class CMB_Meta_Box {
 			
 			$value = isset( $_POST[$field['id']] ) ? (array) $_POST[$field['id']] : (array) $_POST[$field['id'].'[]'];
 
+			// if it's repeatable take off the last one
+			if ( ! empty( $field['repeatable'] ) && $field['type'] != 'group' ) {
+				end( $value );
+				unset( $value[key( $value )] );
+				reset( $value );
+			}
+
 			if ( ! $class = _cmb_field_class_for_type( $field['type'] ) ) {
 				do_action('cmb_save_' . $field['type'], $field, $value);
 			}
@@ -261,10 +268,10 @@ class CMB_Meta_Box {
 				$field['repeatable'] = true;
 			
 			if ( ! isset( $_POST[$field['id']] ) && ! isset( $_POST[$field['id']. '[]'] ) ) //TODO: fix this, checkboxes
-				continue; 		
+				continue;
 			
 			$field_obj = new $class( $field['id'], $field['name'], $value, $field );
-
+			$field_obj->parse_save_values();
 			$field_obj->save( $post_id );
 				
 		}

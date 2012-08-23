@@ -60,6 +60,7 @@ abstract class CMB_Field {
 		}
 
 		$this->values 	= $values;
+		$this->value 	= reset( $this->values );
 
 		$this->description = ! empty( $this->args['desc'] ) ? $this->args['desc'] : '';
 
@@ -101,26 +102,29 @@ abstract class CMB_Field {
 	}
 
 	public function get_value() {
-
 	   return ( $this->value ) ? $this->value : $this->args['default'];
 	}
 
+	public function get_values() {
+		return $this->values;
+	}
+
+	public function set_values( array $values ) {
+		$this->values = $values;
+
+		unset( $this->value );
+	}
+
+
 	public function parse_save_values() {
 
-		// if it's repeatable take off the last one
-		if ( $this->args['repeatable'] ) {
-			end( $this->values );
-			unset( $this->values[key( $this->values )] );
-			reset( $this->values );
-		}
 	}
 
 	public function parse_save_value() {
+
 	}
 
 	public function save( $post_id ) {
-
-		$this->parse_save_values();
 
 		delete_post_meta( $post_id, $this->id );
 
@@ -132,11 +136,6 @@ abstract class CMB_Field {
 			if ( $this->value )
 				add_post_meta( $post_id, $this->id, $this->value );
 		}
-
-	}
-
-	public function title() {
-		echo '<strong>' . $this->args['name'] . '</strong>';
 	}
 
 	public function display() {
@@ -145,8 +144,8 @@ abstract class CMB_Field {
 		if ( empty( $this->values ) && !  $this->args['repeatable'] )
 			$this->values = array( '' );
 
-		$this->title();
-		
+		echo '<strong>' . $this->args['name'] . '</strong>';
+
 		foreach ( $this->values as $value ) {
 
 			$this->value = $value;
@@ -509,12 +508,7 @@ class CMB_Color_Picker extends CMB_Field {
 
 /**
  * Standard select field.
- * 
- * @supports "data_delegate"
- * @args
- * 		'options' 		=> array Array of options to show in the select, optionally use data_delegate instead
- *   	'allow_none' 	=> bool Allow no option to be selected (will palce a "None" at the top of the select)
- *    	'multiple' 		=> bool whether multiple can be selected
+ *
  */
 class CMB_Select extends CMB_Field {
 
@@ -522,29 +516,24 @@ class CMB_Select extends CMB_Field {
 
 		parent::enqueue_scripts();
 
-		wp_enqueue_script( 'select2', CMB_URL . '/js/select2/select2.js', array( 'jquery' ) );
+		wp_enqueue_script( 'select2', CMB_URL . 'js/select2/select2.js', array( 'jquery' ) );
 	}
 
 	public function enqueue_styles() {
 
 		parent::enqueue_styles();
 
-		wp_enqueue_style( 'select2', CMB_URL . '/js/select2/select2.css' );
+		wp_enqueue_style( 'select2', CMB_URL . 'js/select2/select2.css' );
 	}
 
 	public function html() {
-
 		if ( $this->has_data_delegate() )
 			$this->args['options'] = $this->get_delegate_data();
-
 
 		$id = 'select-' . rand( 0, 1000 );
 		?>
 		<p>
-			<select <?php echo ! empty( $this->args['multiple'] ) ? 'multiple' : '' ?> id="<?php echo $id ?>" name="<?php echo $this->name ?>"> >
-				<?php if ( ! empty( $this->args['allow_none'] ) ) : ?>
-					<option value="">None</option>
-				<?php endif; ?>
+			<select id="<?php echo $id ?>" name="<?php echo $this->name ?>"> >
 				<?php foreach ( $this->args['options'] as $value => $name ): ?>
 				   <option <?php selected( $this->value, $value ) ?> value="<?php echo $value; ?>"><?php echo $name; ?></option>
 				<?php endforeach; ?>
@@ -587,26 +576,14 @@ class CMB_Checkbox extends CMB_Field {
 	public function parse_save_values() {
 
 		$name = str_replace( '[]', '', $this->name );
-		$values = _cmb_get_value_from_array_path( $_POST, 'checkbox_' . $name );
-
 		foreach ( $this->values as $key => $value )
-			$this->values[$key] = $values[$key];
-
-		$this->value = reset( $this->values );
-	}
-
-	public function title() {
-
+			$this->values[$key] = isset( $_POST['checkbox_' . $name][$key] ) ? $_POST['checkbox_' . $name][$key] : null;
 	}
 
 	public function html() {
 		?>
 		<p>
-			<label>
-				<input type="checkbox" name="checkbox_<?php echo $this->name ?>" value="1" <?php checked( $this->get_value() ); ?> />
-				<?php echo $this->args['name'] ?>
-			</label>
-				<span class="cmb_metabox_description"><?php echo $this->description ?></span>
+			<input type="checkbox" name="checkbox_<?php echo $this->name ?>" value="1" <?php checked( $this->get_value() ); ?> /><span class="cmb_metabox_description"><?php echo $this->description ?></span>
 			<input type="hidden" name="<?php echo $this->name ?>" value="1" />
 		</p>
 		<?php
@@ -682,6 +659,28 @@ class CMB_Taxonomy extends CMB_Select {
 class CMB_Group_Field extends CMB_Field {
 
 	static $added_js;
+	private $fields = array();
+
+	function __construct() {
+
+		$args = func_get_args(); // you can't just put func_get_args() into a function as a parameter
+    	call_user_func_array( array( 'parent', '__construct' ), $args );
+
+    	if ( ! empty( $this->args['fields'] ) ) {
+			foreach ( $this->args['fields'] as $f ) {
+				$field_value = isset( $this->value[$f['id']] ) ? $this->value[$f['id']] : '';
+				$f['uid'] = $f['id'];
+
+				$class = _cmb_field_class_for_type( $f['type'] );
+				$f['show_label'] = true;
+			
+				// Todo support for repeatble fields in groups
+				$this->add_field( new $class( $f['uid'], $f['name'], (array) $field_value, $f ) ); 
+				
+			}
+		}
+
+	}
 
 	public function display() {
 
@@ -718,38 +717,26 @@ class CMB_Group_Field extends CMB_Field {
 			</p>
 			<?php
 		}
+	}
 
-		if ( ! self::$added_js ) : ?>
+	public function add_field( CMB_Field $field ) {
 
-			<script type="text/javascript">
-
-				
-
-			</script>
-
-		<?php self::$added_js = true; endif;
+		$key = $field->id;
+		$field->original_id = $key;
+		$field->id = $this->id . '[' . $field->id . '][]';
+		$field->name = $field->id . '[]';
+		$this->fields[$key] = $field;
 	}
 
 	public function html() {
 
 		$field = $this->args;
 		$value = $this->value;
-		$fields = array();
-				
-		foreach ( $this->args['fields'] as $f ) {
-				$field_value = isset( $this->value[$f['id']] ) ? $this->value[$f['id']] : '';
-				$f['uid'] = $field['id'] . '[' . $f['id'] . ']';
 
-				// If it's cloneable , make it an array
-				if ( $field['repeatable'] == true )
-					$f['uid'] .= '[]';
-
-				$class = _cmb_field_class_for_type( $f['type'] );
-				$f['show_label'] = true;
-				
-				// Todo support for repeatble fields in groups
-			$fields[] = new $class( $f['uid'], $f['name'], array( $field_value ), $f );
+		foreach ( $value as $field => $field_value ) {
+			$this->fields[$field]->set_values( (array) $field_value );
 		}
+
 		?>
 		<div class="group <?php echo !empty( $field['repeatable'] ) ? 'cloneable' : '' ?>" style="position: relative">
 
@@ -761,7 +748,7 @@ class CMB_Group_Field extends CMB_Field {
 				<a class="delete-field button" style="position: absolute; top: -3px; right: -3px">X</a>
 			<?php endif; ?>
 
-			<?php CMB_Meta_Box::layout_fields( $fields ); ?>
+			<?php CMB_Meta_Box::layout_fields( $this->fields ); ?>
 
 		</div>
 
@@ -769,33 +756,23 @@ class CMB_Group_Field extends CMB_Field {
 	}
 
 	public function parse_save_values() {
-
 		$values = $this->values;
+
 		$this->values = array();
 
 		$first = reset( $values );
 
-		foreach ($first as $key => $field_val ) {
+		foreach ( $first as $key => $field_val ) {
 
 			$meta = array();
 
-			foreach ( $this->args['fields'] as $construct_field ) {
-
-				$name = $this->args['id'] . '[' . $construct_field['id'] . ']';
-
-				// If it's cloneable , make it an array
-				if ( $this->args['repeatable'] == true )
-					$name .= '[]';
+			foreach ( $this->fields as $field ) {
 
 				// create the fiel object so it can sanitize it's data etc
-				$class = _cmb_field_class_for_type( $construct_field['type'] );
-				$field = new $class( $name, $construct_field['name'], (array) $values[$construct_field['id']][$key], $construct_field );
-
+				$field->values = (array) $values[$field->original_id][$key];
 				$field->parse_save_values();
-				$field->parse_save_value();
 
-
-				$meta[$construct_field['id']] = $field->get_value();
+				$meta[$field->original_id] = $field->values;
 			}
 
 			if( $this->isNotEmptyArray( $meta ) )
@@ -803,40 +780,36 @@ class CMB_Group_Field extends CMB_Field {
 
 		}
 
-		parent::parse_save_values();
 
+		if ( $this->args['repeatable'] ) {
+			end( $this->values );
+			unset( $this->values[key( $this->values )] );
+			reset( $this->values );
+
+		}
 	}
-
+	
 	private function isNotEmptyArray( $array ) {
 
-		foreach ($array as &$value)
-		{
-		  if (is_array($value))
-		  {
-			$value = $this->isNotEmptyArray($value);
-		  }
+		foreach ($array as &$value){
+		  	if ( is_array( $value) ) {
+				$value = $this->isNotEmptyArray($value);
+			}
 		}
 
 		return array_filter($array);
 
 	}
-}
 
-function _cmb_get_value_from_array_path( $array, $path ) {
+	public function set_values( array $values ) {
 
-	if ( strpos( $path , '[' ) === false )
-		return $array[$path];
+		$this->values = $values;
 
-	$top_level = reset( explode( '[' , $path ) );
-	
-	preg_match_all( '#\[([^\]]+)\]#', $path, $matches );
+		foreach ( $values as $value ) {
 
-	$value = $array[$top_level];
-
-	$keys = $matches[1];
-
-	foreach ( $keys as $key )
-		$value = $value[$key];
-
-	return $value;
+			foreach ( $value as $field => $field_value ) {
+				$this->fields[$field]->set_values( (array) $field_value );
+			}
+		}
+	}
 }
