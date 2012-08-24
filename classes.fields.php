@@ -516,14 +516,14 @@ class CMB_Select extends CMB_Field {
 
 		parent::enqueue_scripts();
 
-		wp_enqueue_script( 'select2', CMB_URL . 'js/select2/select2.js', array( 'jquery' ) );
+		wp_enqueue_script( 'select2', trailingslashit( CMB_URL ) . 'js/select2/select2.js', array( 'jquery' ) );
 	}
 
 	public function enqueue_styles() {
 
 		parent::enqueue_styles();
 
-		wp_enqueue_style( 'select2', CMB_URL . 'js/select2/select2.css' );
+		wp_enqueue_style( 'select2', trailingslashit( CMB_URL ) . 'js/select2/select2.css' );
 	}
 
 	public function html() {
