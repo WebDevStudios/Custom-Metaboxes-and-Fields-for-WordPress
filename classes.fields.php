@@ -138,13 +138,18 @@ abstract class CMB_Field {
 		}
 	}
 
+	public function title() {
+
+		echo '<h4 class="field-title">' . $this->title . '</h4>';
+
+	}
 	public function display() {
 
 		// if there are no values and it's not repeateble, we want to do one with empty string
 		if ( empty( $this->values ) && !  $this->args['repeatable'] )
 			$this->values = array( '' );
 
-		echo '<strong>' . $this->args['name'] . '</strong>';
+		$this->title();
 
 		foreach ( $this->values as $value ) {
 
