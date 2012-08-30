@@ -733,10 +733,11 @@ class CMB_Group_Field extends CMB_Field {
 		$field = $this->args;
 		$value = $this->value;
 
-		foreach ( $value as $field => $field_value ) {
-			$this->fields[$field]->set_values( (array) $field_value );
-		}
-
+		if ( ! empty( $value ) )
+			foreach ( $value as $field => $field_value )
+				if ( ! empty( $field ) )
+					$this->fields[$field]->set_values( (array) $field_value );
+		
 		?>
 		<div class="group <?php echo !empty( $field['repeatable'] ) ? 'cloneable' : '' ?>" style="position: relative">
 
