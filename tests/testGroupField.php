@@ -38,7 +38,6 @@ class GroupFieldTestCase extends WP_UnitTestCase {
 		$group->add_field( $field );
 		$group->values = array( 'foo' => array( array( 1, 2 ) ) );
 		$group->parse_save_values();
-
 		$this->assertEquals( $group->get_values(), array( array( 'foo' => array( 1, 2 ) ) ) );
 
 	}
