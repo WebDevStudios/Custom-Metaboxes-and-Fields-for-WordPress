@@ -140,8 +140,15 @@ abstract class CMB_Field {
 
 	public function title() {
 
-		echo '<strong>' . $this->args['name'] . '</strong>';
-   	}
+		echo '<h4 class="field-title">' . $this->title . '</h4>';
+
+	}
+
+	public function description() {
+
+		echo '<p class="cmb_metabox_description">' . $this->description . '</p>';
+
+	}
 
 	public function display() {
 
@@ -150,6 +157,8 @@ abstract class CMB_Field {
 			$this->values = array( '' );
 
 		$this->title();
+
+		$this->description();
 
 		foreach ( $this->values as $value ) {
 
@@ -225,7 +234,6 @@ class CMB_File_Field extends CMB_Field {
 		$field = array(
 			'id' => $this->name,
 			'allow' => '',
-			'desc' => $this->description,
 			'html_id' => str_replace( array( '[', ']' ),  '_', $this->name . rand(1,100) )
 		);
 		
@@ -247,7 +255,6 @@ class CMB_File_Field extends CMB_Field {
 		echo '<input class="cmb_upload_file" type="' . $input_type_url . '" size="45" id="', $field['html_id'], '" value="', $meta, '" />';
 		echo '<input class="cmb_upload_button button" type="button" value="Upload File" />';
 		echo '<input class="cmb_upload_file_id" type="hidden" id="', $field['html_id'], '_id" name="', $field['id'], '" value="', $this->value, '" />';
-		echo '<p class="cmb_metabox_description">', $field['desc'], '</p>';
 		echo '<div id="', $field['html_id'], '_status" class="cmb_upload_status">';
 			if ( $meta != '' ) {
 				$check_image = preg_match( '/(^.*\.jpg|jpeg|png|gif|ico*)/i', $meta );
@@ -280,7 +287,7 @@ class CMB_URL_Field extends CMB_Field {
 
 		?>
 		<p>
-			<input class="cmb_text_url" type="text" name="<?php echo $this->name ?>" value="<?php echo esc_url( $this->value ) ?>" /> <span class="cmb_metabox_description"><?php echo $this->description ?></span>
+			<input class="cmb_text_url" type="text" name="<?php echo $this->name ?>" value="<?php echo esc_url( $this->value ) ?>" />
 		</p>
 		<?php
 	}
@@ -296,7 +303,7 @@ class CMB_Date_Field extends CMB_Field {
 
 		?>
 		<p>
-			<input class="cmb_text_small cmb_datepicker" type="text" name="<?php echo $this->name ?>" value="<?php echo $this->value ?>" /> <span class="cmb_metabox_description"><?php echo $this->description ?></span>
+			<input class="cmb_text_small cmb_datepicker" type="text" name="<?php echo $this->name ?>" value="<?php echo $this->value ?>" />
 		</p>
 		<?php
 	}
@@ -308,7 +315,7 @@ class CMB_Time_Field extends CMB_Field {
 	
 		?>
 		<p>
-			<input class="cmb_text_small cmb_timepicker" type="text" name="<?php echo $this->name ?>" value="<?php echo $this->value;?>"/> <span class="cmb_metabox_description"><?php echo $this->description ?></span>
+			<input class="cmb_text_small cmb_timepicker" type="text" name="<?php echo $this->name ?>" value="<?php echo $this->value;?>"/>
 		</p>
 		<?php
 	}
@@ -325,7 +332,7 @@ class CMB_Date_Timestamp_Field extends CMB_Field {
 
 		?>
 		<p>
-			<input class="cmb_text_small cmb_datepicker" type="text" name="<?php echo $this->name ?>" value="<?php echo $this->value ? date( 'm\/d\/Y', $this->value ) : '' ?>" /> <span class="cmb_metabox_description"><?php echo $this->description ?></span>
+			<input class="cmb_text_small cmb_datepicker" type="text" name="<?php echo $this->name ?>" value="<?php echo $this->value ? date( 'm\/d\/Y', $this->value ) : '' ?>" />
 		</p>
 		<?php
 	}
@@ -347,7 +354,7 @@ class CMB_Datetime_Timestamp_Field extends CMB_Field {
 
 		<p>
 			<input class="cmb_text_small cmb_datepicker" type="text" name="<?php echo $this->id ?>[date][]" value="<?php echo $this->value ? date( 'm\/d\/Y', $this->value ) : '' ?>" />
-			<input class="cmb_text_small cmb_timepicker" type="text" name="<?php echo $this->id ?>[time][]" value="<?php echo $this->value ? date( 'H:i A', $this->value ) : '' ?>" /> <span class="cmb_metabox_description"><?php echo $this->description ?></span>
+			<input class="cmb_text_small cmb_timepicker" type="text" name="<?php echo $this->id ?>[time][]" value="<?php echo $this->value ? date( 'H:i A', $this->value ) : '' ?>" />
 		</p>
 
 		<?php
@@ -391,11 +398,11 @@ class CMB_Oembed_Field extends CMB_Field {
 		<p>
 
 			<?php if ( ! $this->value ) : ?>
-				<?php echo '<input class="cmb_oembed code" type="text" name="', $this->name, '" id="',$this->name, '" value="" /><span class="cmb_metabox_description">', $this->description, '</span>'; ?>
+				<?php echo '<input class="cmb_oembed code" type="text" name="', $this->name, '" id="',$this->name, '" value="" />'; ?>
 			
 			<?php else : ?>
 
-				<?php echo '<div class="hidden"><input disabled class="cmb_oembed code" type="text" name="', $this->name, '" id="',$this->name, '" value="" /><span class="cmb_metabox_description">', $this->description, '</span></div>'; ?>
+				<?php echo '<div class="hidden"><input disabled class="cmb_oembed code" type="text" name="', $this->name, '" id="',$this->name, '" value="" /></div>'; ?>
 
 				<div style="position: relative">
 				
@@ -492,7 +499,7 @@ class CMB_Color_Picker extends CMB_Field {
 
 		?>
 		<p>
-			<input class="cmb_colorpicker cmb_text_small" type="text" name="<?php echo $this->name; ?>" value="<?php echo $this->get_value() ?>" /><span class="cmb_metabox_description"><?php echo $this->description ?></span>
+			<input class="cmb_colorpicker cmb_text_small" type="text" name="<?php echo $this->name; ?>" value="<?php echo $this->get_value() ?>" />
 		</p>
 		<?php
 	}
@@ -541,7 +548,7 @@ class CMB_Select extends CMB_Field {
 			
 				<?php foreach ( $this->args['options'] as $value => $name ): ?>
 
-            		<option <?php selected( $this->value, $value ) ?> value="<?php echo $value; ?>"><?php echo $name; ?></option>
+				   <option <?php selected( $this->value, $value ) ?> value="<?php echo $value; ?>"><?php echo $name; ?></option>
 
 				<?php endforeach; ?>
 
@@ -587,11 +594,11 @@ class CMB_Checkbox extends CMB_Field {
 		foreach ( $this->values as $key => $value )
 			$this->values[$key] = isset( $_POST['checkbox_' . $name][$key] ) ? $_POST['checkbox_' . $name][$key] : null;
 	}
-
-	public function title() {
+    
+    public function title() {
 
 	}
-
+	  
 	public function html() {
 		?>
 		<p>
@@ -599,7 +606,6 @@ class CMB_Checkbox extends CMB_Field {
 				<input type="checkbox" name="checkbox_<?php echo $this->name ?>" value="1" <?php checked( $this->get_value() ); ?> />
 				<?php echo $this->args['name'] ?>
 			</label>
-			<span class="cmb_metabox_description"><?php echo $this->description ?></span>			
 			<input type="hidden" name="<?php echo $this->name ?>" value="1" />
 		</p>
 		<?php
@@ -613,14 +619,8 @@ class CMB_Checkbox extends CMB_Field {
  */
 class CMB_Title extends CMB_Field {
 
-	public function html() {
-		?>
-		<p>
-			<h5 class="cmb_metabox_title"><?php echo $this->title; ?></h5>
-			<span class="cmb_metabox_description"><?php echo $this->description ?></span>
-		</p>
-		<?php
-	}
+	public function html() {}
+
 }
 
 /**
@@ -633,7 +633,7 @@ class CMB_wysiwyg extends CMB_Field {
 
 		?>
 		<p>
-			<?php wp_editor( $this->get_value(), $this->name, $this->args['options'] );?><span class="cmb_metabox_description"><?php echo $this->description ?></span>
+			<?php wp_editor( $this->get_value(), $this->name, $this->args['options'] );?>
 		</p>
 		<?php
 	}
@@ -752,8 +752,8 @@ class CMB_Group_Field extends CMB_Field {
 		if ( ! empty( $value ) )
 			foreach ( $value as $field => $field_value )
 				if ( ! empty( $field ) )
-					$this->fields[$field]->set_values( (array) $field_value );
-		
+			$this->fields[$field]->set_values( (array) $field_value );
+
 		?>
 		<div class="group <?php echo !empty( $field['repeatable'] ) ? 'cloneable' : '' ?>" style="position: relative">
 
