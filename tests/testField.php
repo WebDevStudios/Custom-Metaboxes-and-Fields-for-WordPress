@@ -25,11 +25,15 @@ class FieldTestCase extends WP_UnitTestCase {
 
 		$field->save( $post->ID );
 
+		global $wpdb;
+
 		$meta = get_post_meta( $post->ID, 'foo', false );
-
 		delete_post_meta( $post->ID , 'foo' );
+		
+		// order is not guerenteed
+		sort( $meta );
 
-		$this->assertEquals( $meta, array( 1, 2 ) );
+		$this->assertEquals( $meta, array( 1 , 2 ) );
 
 	}
 
@@ -41,13 +45,16 @@ class FieldTestCase extends WP_UnitTestCase {
 		if ( ! $post )
 			$this->markTestSkipped( 'Post not found' );
 
+
 		$field->save( $post->ID );
 
 		$meta = get_post_meta( $post->ID, 'foo', false );
 
 		delete_post_meta( $post->ID , 'foo' );
 
+		// order is not guerenteed
+		sort( $meta );
+		
 		$this->assertEquals( $meta, array( 1, 2 ) );
-
 	}
 }

@@ -138,13 +138,18 @@ abstract class CMB_Field {
 		}
 	}
 
+	public function title() {
+
+		echo '<strong>' . $this->args['name'] . '</strong>';
+   	}
+
 	public function display() {
 
 		// if there are no values and it's not repeateble, we want to do one with empty string
 		if ( empty( $this->values ) && !  $this->args['repeatable'] )
 			$this->values = array( '' );
 
-		echo '<strong>' . $this->args['name'] . '</strong>';
+		$this->title();
 
 		foreach ( $this->values as $value ) {
 
@@ -202,19 +207,7 @@ class CMB_Text_Field extends CMB_Field {
 
 		?>
 		<p>
-			<input type="text" name="<?php echo $this->name ?>" value="<?php echo $this->value ?>" />
-		</p>
-		<?php
-	}
-}
-
-class CMB_Text_Small_Field extends CMB_Field {
-
-	public function html() {
-
-		?>
-		<p>
-			<input class="cmb_text_small" type="text" name="<?php echo $this->name ?>" value="<?php echo $this->value ?>" /> <span class="cmb_metabox_description"><?php echo $this->description ?></span>
+			<input type="text" name="<?php echo $this->name ?>" value="<?php echo htmlspecialchars( $this->get_value() ) ?>" />
 		</p>
 		<?php
 	}
@@ -509,6 +502,11 @@ class CMB_Color_Picker extends CMB_Field {
 /**
  * Standard select field.
  *
+ * @supports "data_delegate"
+ * @args
+ *     'options'     => array Array of options to show in the select, optionally use data_delegate instead
+ *     'allow_none'   => bool Allow no option to be selected (will palce a "None" at the top of the select)
+ *     'multiple'     => bool whether multiple can be selected
  */
 class CMB_Select extends CMB_Field {
 
@@ -533,10 +531,20 @@ class CMB_Select extends CMB_Field {
 		$id = 'select-' . rand( 0, 1000 );
 		?>
 		<p>
-			<select id="<?php echo $id ?>" name="<?php echo $this->name ?>"> >
+			<select <?php echo ! empty( $this->args['multiple'] ) ? 'multiple' : '' ?> id="<?php echo $id ?>" name="<?php echo $this->name ?>"> >
+
+				<?php if ( ! empty( $this->args['allow_none'] ) ) : ?>
+
+					<option value="">None</option>
+
+				<?php endif; ?>
+			
 				<?php foreach ( $this->args['options'] as $value => $name ): ?>
-				   <option <?php selected( $this->value, $value ) ?> value="<?php echo $value; ?>"><?php echo $name; ?></option>
+
+            		<option <?php selected( $this->value, $value ) ?> value="<?php echo $value; ?>"><?php echo $name; ?></option>
+
 				<?php endforeach; ?>
+
 			</select>
 		</p>
 		<script>
@@ -580,10 +588,18 @@ class CMB_Checkbox extends CMB_Field {
 			$this->values[$key] = isset( $_POST['checkbox_' . $name][$key] ) ? $_POST['checkbox_' . $name][$key] : null;
 	}
 
+	public function title() {
+
+	}
+
 	public function html() {
 		?>
 		<p>
-			<input type="checkbox" name="checkbox_<?php echo $this->name ?>" value="1" <?php checked( $this->get_value() ); ?> /><span class="cmb_metabox_description"><?php echo $this->description ?></span>
+			<label>
+				<input type="checkbox" name="checkbox_<?php echo $this->name ?>" value="1" <?php checked( $this->get_value() ); ?> />
+				<?php echo $this->args['name'] ?>
+			</label>
+			<span class="cmb_metabox_description"><?php echo $this->description ?></span>			
 			<input type="hidden" name="<?php echo $this->name ?>" value="1" />
 		</p>
 		<?php
