@@ -221,6 +221,18 @@ class CMB_Text_Field extends CMB_Field {
 		<?php
 	}
 }
+ 
+class CMB_Text_Small_Field extends CMB_Field {
+ 
+	public function html() {
+ 
+		?>
+		<p>
+			<input type="text" name="<?php echo $this->name ?>" value="<?php echo htmlspecialchars( $this->get_value() ) ?>" class="cmb_text_small"/>
+		</p>
+		<?php
+	}
+}
 
 /**
  * Field for image upload / file updoad.
