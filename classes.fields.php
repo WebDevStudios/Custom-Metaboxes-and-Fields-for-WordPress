@@ -38,7 +38,8 @@ abstract class CMB_Field {
 			'hide_empty' => false,
 			'data_delegate' => null,
 			'options'	=> array(),
-			'cols' 	=> '12'
+			'cols' 		=> '12',
+			'style' 	=> ''
 			)
 		);
 
@@ -164,7 +165,7 @@ abstract class CMB_Field {
 
 			$this->value = $value;
 
-			echo '<div class="field-item" style="position: relative">';
+			echo '<div class="field-item" style="position: relative; '. $this->args['style'] . '">';
 
 			if ( $this->args['repeatable'] ) : ?>
 				<span class="cmb_element">
@@ -327,7 +328,7 @@ class CMB_Image_Field extends CMB_Field {
 			'size' => array( 'width' => 200, 'height' => 200, 'crop' => true )
 		) );
 
-		$args['size'] = wp_parse_args( $args['size'] );
+		$args['size'] = wp_parse_args( $args['size'], array( 'width' => 200, 'height' => 200, 'crop' => true ) );
 
 		$attachment_id = $this->get_value();
 		// Filter to change the drag & drop box background string
@@ -631,7 +632,7 @@ class CMB_Textarea_Field extends CMB_Field {
 
 		?>
 		<p>
-				<textarea rows="<?php echo !empty( $this->args['rows'] ) ? $this->args['rows'] : 4 ?>" name="<?php echo $this->name ?>"><?php echo $this->value ?></textarea>
+			<textarea rows="<?php echo !empty( $this->args['rows'] ) ? $this->args['rows'] : 4 ?>" name="<?php echo $this->name ?>"><?php echo $this->value ?></textarea>
 		</p>
 		<?php
 	}
@@ -704,7 +705,7 @@ class CMB_Select extends CMB_Field {
 		$id = 'select-' . rand( 0, 1000 );
 		?>
 		<p>
-			<select <?php echo ! empty( $this->args['multiple'] ) ? 'multiple' : '' ?> id="<?php echo $id ?>" name="<?php echo $this->name ?>"> >
+			<select <?php echo ! empty( $this->args['multiple'] ) ? 'multiple' : '' ?> class="<?php echo $id ?>" name="<?php echo $this->name ?>"> >
 
 				<?php if ( ! empty( $this->args['allow_none'] ) ) : ?>
 
@@ -722,7 +723,16 @@ class CMB_Select extends CMB_Field {
 		</p>
 		<script>
 			jQuery( document ).ready( function() {
-				jQuery( '#<?php echo $id ?>' ).select2();
+
+				setInterval( function() {
+					jQuery( '.<?php echo $id ?>' ).each( function( index, el ) {
+						if ( jQuery(el).is(':visible') && ! jQuery( el ).hasClass( 'select2-added' ) ) {
+							jQuery( this ).addClass('select2-added').select2();
+
+						}
+					});
+				}, 300 );
+
 			} );
 		</script>
 		<?php
@@ -893,10 +903,13 @@ class CMB_Group_Field extends CMB_Field {
 
 		$field = $this->args;
 
-		foreach ( $meta as $value ) {
+		if ( ! empty( $this->args['name'] ) ) : ?>	
+			<h2 class="group-name"><?php echo $this->args['name'] ?></h2>
+		<?php endif;
 
+		foreach ( $meta as $value ) {
 			$this->value = $value;
-			echo '<div class="field-item">';
+			echo '<div class="field-item" style="' . $this->args['style'] . '">';
 			$this->html();
 			echo '</div>';
 
@@ -908,11 +921,11 @@ class CMB_Group_Field extends CMB_Field {
 
 		if ( $this->args['repeatable'] ) {
 			$this->value = '';
-			echo '<div class="field-item hidden">';
+			echo '<div class="field-item hidden" style="' . $this->args['style'] . '">';
 			$this->html();
 			echo '</div>';
 			?>
-			<p>
+			<p style="margin-top: 12px;">
 				<a href="#" class="button repeat-field">Add New</a>
 			</p>
 			<?php
@@ -940,10 +953,6 @@ class CMB_Group_Field extends CMB_Field {
 
 		?>
 		<div class="group <?php echo !empty( $field['repeatable'] ) ? 'cloneable' : '' ?>" style="position: relative">
-
-			<?php if ( ! empty( $this->args['name'] ) ) : ?>			
-				<h2 class="group-name"><?php echo $this->args['name'] ?></h2>
-			<?php endif; ?>
 
 			<?php if ( $this->args['repeatable'] ) : ?>
 				<a class="delete-field button" style="position: absolute; top: -3px; right: -3px">X</a>
