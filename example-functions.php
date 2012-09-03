@@ -13,20 +13,6 @@ function cmb_sample_metaboxes( array $meta_boxes ) {
 	$prefix = '_cmb_';
 
 	$meta_boxes[] = array(
-		'title' => 'Test Meta-Box',
-		'pages' => 'post',
-		'context'    => 'normal',
-		'priority'   => 'high',
-		'show_names' => true, // Show field names on the left
-		'fields' => array(
-			array( 'id' => 'group', 'name' => 'group11', 'repeatable' => true, 'type' => 'group', 'fields' => array(
-				array( 'id' => 'input24', 'name' => 'Text (12 cols, sub field)', 'type' => 'taxonomy_select', 'cols' => 12, 'taxonomy' => 'category', 'repeatable' => false ),
-				array( 'id' => 'input22', 'name' => 'Text (12 cols, sub field)', 'type' => 'text', 'cols' => 12, 'taxonomy' => 'category', 'repeatable' => false ),
-			) ) 
-		)
-	);
-
-	$meta_boxes[] = array(
 		'title' => 'Test Meta Box',
 		'pages' => 'post',
 		'context'    => 'normal',
@@ -34,13 +20,15 @@ function cmb_sample_metaboxes( array $meta_boxes ) {
 		'show_names' => true, // Show field names on the left
 		'fields' => array(
 
-			array( 'id' => 'input', 'name' => 'Test Text Box (12 cols)', 'type' => 'text', 'cols' => 12 ),
-			array( 'id' => 'input2', 'name' => 'Test Repeatable Field (4 cols)', 'type' => 'text', 'cols' => 4, 'repeatable' => true ),
-			array( 'id' => 'input3', 'name' => 'Text Field', 'type' => 'text', 'cols' => 8 ),
-			array( 'id' => 'group-1', 'name' => 'Group of Fields (repeatable)', 'type' => 'group', 'repeatable' => true, 'fields' => array(
-				array( 'id' => 'input3-1', 'name' => 'Sub Field (2 cols)', 'type' => 'text', 'cols' => 2 ),
-				array( 'id' => 'input3-2', 'name' => 'Text Fieldt', 'type' => 'text', 'cols' => 10 ),
-				array( 'id' => 'input4', 'name' => 'Text (12 cols, sub field)', 'type' => 'taxonomy_select', 'cols' => 12, 'taxonomy' => 'category' )
+			array( 'id' => 'input', 'name' => 'A Normal text input', 'type' => 'text', 'cols' => 12 ),
+			array( 'id' => 'input2', 'name' => 'Test Repeatable Field', 'type' => 'text', 'cols' => 4, 'repeatable' => true ),
+			array( 'id' => 'input3', 'name' => 'URL Text Field', 'type' => 'url', 'cols' => 8 ),
+			array( 'id' => 'group-1', 'name' => 'Group of Fields (repeatable)', 'type' => 'group', 'style' => 'background: #f1f1f1; border-radius: 4px; border: 1px solid #e2e2e2; margin-bottom: 10px; padding: 10px', 'repeatable' => true, 'fields' => array(
+				array( 'id' => 'input3-1', 'name' => 'Image', 'type' => 'image', 'cols' => 4, 'size' => 'width=200&height=120' ),
+				array( 'id' => 'input4', 'name' => 'Select Category', 'type' => 'taxonomy_select', 'cols' => 4, 'taxonomy' => 'category' ),
+				array( 'id' => 'input2', 'name' => 'Checbox 1', 'type' => 'checkbox', 'cols' => 2, 'style' => 'margin-top: 50px' ),
+				array( 'id' => 'input5', 'name' => 'Checbox 2', 'type' => 'checkbox', 'cols' => 2, 'style' => 'margin-top: 50px' )
+
 			) )
 
 		)
