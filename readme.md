@@ -16,7 +16,7 @@ This fork also simplifies the field types from the original. There is no "text",
 
 We have also added a basic layout engine for fields, any field has a `cols` argument. There is a maximum of 12 cols, so two fields of `6 cols` would give you a split down the middle (shown below).
 
-![](https://dl.dropbox.com/u/238502/Captured/2YKcQ.png)
+![](https://dl.dropbox.com/u/238502/Captured/rjnI2.png)
 
 ### Field Types:
 * text
