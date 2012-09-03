@@ -141,13 +141,15 @@ abstract class CMB_Field {
 
 	public function title() {
 
-		echo '<h4 class="field-title">' . $this->title . '</h4>';
+		if ( $this->title )
+			echo '<h4 class="field-title">' . $this->title . '</h4>';
 
 	}
 
 	public function description() {
 
-		echo '<p class="cmb_metabox_description">' . $this->description . '</p>';
+		if ( $this->description )
+			echo '<p class="cmb_metabox_description">' . $this->description . '</p>';
 
 	}
 
