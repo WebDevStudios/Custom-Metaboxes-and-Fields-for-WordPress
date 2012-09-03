@@ -33,9 +33,11 @@ We have also added a basic layout engine for fields, any field has a `cols` argu
 * checkbox
 * multicheck
 * WYSIWYG/TinyMCE
-* Image/file upload
+* file upload
+* DnD Image Upload Well
 
 ## Known Issues
+* Image Upload Well does not work as repeatable fields
 
 ## To-do
 * Make hooking / registering nicer. Perhaps use callbacks to reduce overhead of adding boxes when they will not be displayed.
