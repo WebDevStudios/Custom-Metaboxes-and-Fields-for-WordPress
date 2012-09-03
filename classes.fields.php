@@ -289,6 +289,160 @@ class CMB_File_Field extends CMB_Field {
 	}
 }
 
+class CMB_Image_Field extends CMB_Field {
+
+	function enqueue_scripts() {
+		wp_enqueue_script( 'plupload-all' );
+		wp_enqueue_script( 'tf-well-plupload-image', CMB_URL . '/js/plupload-image.js', array( 'jquery-ui-sortable', 'wp-ajax-response', 'plupload-all' ), 1 );
+
+		wp_localize_script( 'tf-well-plupload-image', 'tf_well_plupload_defaults', array(
+			'runtimes'				=> 'html5,silverlight,flash,html4',
+			'file_data_name'		=> 'async-upload',
+			'multiple_queues'		=> true,
+			'max_file_size'			=> wp_max_upload_size().'b',
+			'url'					=> admin_url('admin-ajax.php'),
+			'flash_swf_url'			=> includes_url( 'js/plupload/plupload.flash.swf' ),
+			'silverlight_xap_url'	=> includes_url( 'js/plupload/plupload.silverlight.xap' ),
+			'filters'				=> array( array( 'title' => __( 'Allowed Image Files' ), 'extensions' => '*' ) ),
+			'multipart'				=> true,
+			'urlstream_upload'		=> true,			
+			// additional post data to send to our ajax hook
+			'multipart_params'		=> array(
+				'_ajax_nonce'	=> wp_create_nonce( 'plupload_image' ),
+				'action'    	=> 'plupload_image_upload'
+			)
+
+		));
+		
+	}
+
+	function enqueue_styles() {
+		wp_enqueue_style( 'tf-well-plupload-image', CMB_URL . '/css/plupload-image.css', array() );
+	}
+
+	function html() {
+
+		$args = wp_parse_args( $this->args, array( 
+			'allowed_extensions' => array( 'jpg', 'gif', 'png', 'jpeg', 'bmp' ),
+			'size' => array( 'width' => 200, 'height' => 200, 'crop' => true )
+		) );
+
+		$args['size'] = wp_parse_args( $args['size'] );
+
+		$attachment_id = $this->get_value();
+		// Filter to change the drag & drop box background string
+		$drop_text = 'Upload image';
+		$extensions = implode( ',', $args['allowed_extensions'] );
+		$img_prefix	= $this->id;
+		$style = sprintf( 'width: %dpx; height: %dpx;', $args['size']['width'], $args['size']['height'] );
+
+		$size_str = sprintf( 'width=%d&height=%d&crop=%s', $args['size']['width'], $args['size']['height'], $args['size']['crop'] );
+
+
+		$html = "<div style='$style' class='hm-uploader " . ( ( $attachment_id ) ? 'with-image' : '' ) . "' id='{$img_prefix}-container'>";
+		
+		$html .= "<input type='hidden' class='field-id rwmb-image-prefix' value='{$img_prefix}' />";
+
+		echo $html;
+		
+		$html = '';
+		?>
+
+		<input type="hidden" class="field-val" name="<?php echo $this->name ?>" value="<?php echo $attachment_id ?>" />
+
+		<div style="<?php echo $style ?><?php echo ( $attachment_id ) ? '' : 'display: none;' ?> line-height: <?php echo $args['size']['height'] ?>px;" class="current-image">
+			<?php if ( $attachment_id && wp_get_attachment_image( $attachment_id, $args['size'], false, 'id=' . $this->id ) ) : ?>
+				<?php echo wp_get_attachment_image( $attachment_id, $args['size'], false, 'id=' . $this->id ) ?>
+			<?php else : ?>
+				<img src="" />
+			<?php endif; ?>
+			<div class="image-options">
+				<a href="#" class="delete-image button-secondary">Delete</a>
+			</div>
+		</div>
+		<?php
+		
+		// Show form upload
+		?>
+		<div style='<?php echo $style ?>' id='<?php echo $img_prefix ?>-dragdrop' data-extensions='<?php echo $extensions ?>' data-size='<?php echo $size_str ?>' class='rwmb-drag-drop upload-form'>
+			<div class = 'rwmb-drag-drop-inside'>
+				<p><?php echo $drop_text ?></p>
+				<p>or</p>
+				<p><input id='<?php echo $img_prefix ?>-browse-button' type='button' value='Select Files' class='button-secondary' /></p>
+			</div>
+		</div>
+
+		<div style="<?php echo $style ?>" class="loading-block hidden">
+			<img src="<?php echo get_bloginfo( 'template_url' ).'/framework/assets/images/spinner.gif'; ?>" />
+		</div>
+		<?php
+
+		$html .= "</div>";
+
+		echo $html;
+	}
+
+
+	/**
+	 * Upload
+	 * Ajax callback function
+	 * 
+	 * @return error or (XML-)response
+	 */
+	static function handle_upload () {
+		header( 'Content-Type: text/html; charset=UTF-8' );
+
+		if ( ! defined('DOING_AJAX' ) )
+			define( 'DOING_AJAX', true );
+
+		check_ajax_referer('plupload_image');
+
+		$post_id = 0;
+		if ( is_numeric( $_REQUEST['post_id'] ) )
+			$post_id = (int) $_REQUEST['post_id'];
+
+		// you can use WP's wp_handle_upload() function:
+		$file = $_FILES['async-upload'];
+		$file_attr = wp_handle_upload( $file, array('test_form'=>true, 'action' => 'plupload_image_upload') );
+		$attachment = array(
+			'post_mime_type'	=> $file_attr['type'],
+			'post_title'		=> preg_replace( '/\.[^.]+$/', '', basename( $file['name'] ) ),
+			'post_content'		=> '',
+			'post_status'		=> 'inherit',
+
+		);
+
+		// Adds file as attachment to WordPress
+		$id = wp_insert_attachment( $attachment, $file_attr['file'], $post_id );
+		if ( ! is_wp_error( $id ) )
+		{
+			$response = new WP_Ajax_Response();
+			wp_update_attachment_metadata( $id, wp_generate_attachment_metadata( $id, $file_attr['file'] ) );
+			if ( isset( $_REQUEST['field_id'] ) ) 
+			{
+				// Save file ID in meta field
+				add_post_meta( $post_id, $_REQUEST['field_id'], $id, false );
+			}
+			
+			$src = wp_get_attachment_image_src( $id, $_REQUEST['size'] );
+			
+			$response->add( array(
+				'what'			=>'tf_well_image_response',
+				'data'			=> $id,
+				'supplemental'	=> array(
+					'thumbnail'	=>  $src[0],
+					'edit_link'	=> get_edit_post_link($id)
+				)
+			) );
+			$response->send();
+		}
+
+		exit;
+	}
+
+}
+add_action( 'wp_ajax_plupload_image_upload', array( 'CMB_Image_Field', 'handle_upload' ) );
+
 /**
  * Standard text meta box for a URL.
  *
@@ -708,6 +862,24 @@ class CMB_Group_Field extends CMB_Field {
 			}
 		}
 
+	}
+
+	public function enqueue_scripts() {
+		foreach ( $this->args['fields'] as $f ) {
+
+			$class = _cmb_field_class_for_type( $f['type'] );
+			$field = new $class( '', '', array(), $f );
+			$field->enqueue_scripts();
+		}
+	}
+
+	public function enqueue_styles() {
+		foreach ( $this->args['fields'] as $f ) {
+
+			$class = _cmb_field_class_for_type( $f['type'] );
+			$field = new $class( '', '', array(), $f );
+			$field->enqueue_styles();
+		}
 	}
 
 	public function display() {
