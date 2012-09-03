@@ -287,7 +287,7 @@ class CMB_URL_Field extends CMB_Field {
 
 		?>
 		<p>
-			<input class="cmb_text_url" type="text" name="<?php echo $this->name ?>" value="<?php echo esc_url( $this->value ) ?>" />
+			<input class="cmb_text_url code" type="text" name="<?php echo $this->name ?>" value="<?php echo esc_url( $this->value ) ?>" />
 		</p>
 		<?php
 	}
