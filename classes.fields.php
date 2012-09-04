@@ -982,7 +982,12 @@ class CMB_Group_Field extends CMB_Field {
 				$field->values = (array) $values[$field->original_id][$key];
 				$field->parse_save_values();
 
-				$meta[$field->original_id] = $field->values;
+				// if the field is a repeatable field, store the whole array of them, if it's not repeatble, 
+				// just store the first (and only) one directly
+				if ( $field->args['repeatable'] )
+					$meta[$field->original_id] = $field->values;
+				else
+					$meta[$field->original_id] = reset( $field->values );
 			}
 
 			if( $this->isNotEmptyArray( $meta ) )
