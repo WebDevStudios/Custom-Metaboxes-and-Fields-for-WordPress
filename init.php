@@ -559,7 +559,7 @@ function cmb_force_send( $args ) {
 					if (cmbGetParameterByNameInline("cmb_force_send")=="true") {
 						var cmb_send_label = cmbGetParameterByNameInline("cmb_send_label");
 						$("td.savesend input").val(cmb_send_label);
-					}
+					};
 				});
 			</script>
 		';
