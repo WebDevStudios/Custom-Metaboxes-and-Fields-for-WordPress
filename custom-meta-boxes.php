@@ -21,7 +21,7 @@ Version: 		1.o
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -43,8 +43,10 @@ include_once( CMB_PATH . '/class.cmb-meta-box.php' );
 
 
 // get all the meta boxes on init
-add_action( 'init', function() {
-	
+add_action( 'init', 'cmb_init' );
+
+function cmb_init() {
+
 	if ( ! is_admin() )
 		return;
 
@@ -54,7 +56,7 @@ add_action( 'init', function() {
 		foreach ( $meta_boxes as $meta_box )
 			new CMB_Meta_Box( $meta_box );
 
-}, 99 );
+}
 
 /**
  * Adding scripts and styles
@@ -73,42 +75,42 @@ add_action( 'admin_enqueue_scripts', 'cmb_scripts', 10 );
 
 function cmb_editor_footer_scripts() { ?>
 	<?php
-	if ( isset( $_GET['cmb_force_send'] ) && 'true' == $_GET['cmb_force_send'] ) { 
-		$label = $_GET['cmb_send_label']; 
+	if ( isset( $_GET['cmb_force_send'] ) && 'true' == $_GET['cmb_force_send'] ) {
+		$label = $_GET['cmb_send_label'];
 		if ( empty( $label ) ) $label="Select File";
-		?>	
+		?>
 		<script type="text/javascript">
 		jQuery(function($) {
 			$('td.savesend input').val('<?php echo $label; ?>');
 		});
 		</script>
-		<?php 
+		<?php
 	}
 }
 add_action( 'admin_print_footer_scripts', 'cmb_editor_footer_scripts', 99 );
 
-// Force 'Insert into Post' button from Media Library 
+// Force 'Insert into Post' button from Media Library
 add_filter( 'get_media_item_args', 'cmb_force_send' );
 function cmb_force_send( $args ) {
-		
-	// if the Gallery tab is opened from a custom meta box field, add Insert Into Post button	
+
+	// if the Gallery tab is opened from a custom meta box field, add Insert Into Post button
 	if ( isset( $_GET['cmb_force_send'] ) && 'true' == $_GET['cmb_force_send'] )
 		$args['send'] = true;
-	
-	// if the From Computer tab is opened AT ALL, add Insert Into Post button after an image is uploaded	
-	if ( isset( $_POST['attachment_id'] ) && '' != $_POST["attachment_id"] ) {
-		
-		$args['send'] = true;		
 
-		// TO DO: Are there any conditions in which we don't want the Insert Into Post 
+	// if the From Computer tab is opened AT ALL, add Insert Into Post button after an image is uploaded
+	if ( isset( $_POST['attachment_id'] ) && '' != $_POST["attachment_id"] ) {
+
+		$args['send'] = true;
+
+		// TO DO: Are there any conditions in which we don't want the Insert Into Post
 		// button added? For example, if a post type supports thumbnails, does not support
 		// the editor, and does not have any cmb file inputs? If so, here's the first
 		// bits of code needed to check all that.
 		// $attachment_ancestors = get_post_ancestors( $_POST["attachment_id"] );
 		// $attachment_parent_post_type = get_post_type( $attachment_ancestors[0] );
 		// $post_type_object = get_post_type_object( $attachment_parent_post_type );
-	}		
-	
+	}
+
 	// change the label of the button on the From Computer tab
 	if ( isset( $_POST['attachment_id'] ) && '' != $_POST["attachment_id"] ) {
 
@@ -124,7 +126,7 @@ function cmb_force_send( $args ) {
 					else
 						return decodeURIComponent(results[1].replace(/\+/g, " "));
 				}
-							
+
 				jQuery(function($) {
 					if (cmbGetParameterByNameInline("cmb_force_send")=="true") {
 						var cmb_send_label = cmbGetParameterByNameInline("cmb_send_label");
@@ -134,7 +136,7 @@ function cmb_force_send( $args ) {
 			</script>
 		';
 	}
-	 
+
 	return $args;
 
 }
@@ -142,7 +144,7 @@ function cmb_force_send( $args ) {
 function _cmb_field_class_for_type( $type ) {
 
 	$map = array(
-	
+
 		'text'				=> 'CMB_Text_Field',
 		'text_small' 		=> 'CMB_Text_Small_Field',
 		'text_url'			=> 'CMB_URL_Field',
@@ -151,7 +153,7 @@ function _cmb_field_class_for_type( $type ) {
 		'image' 			=> 'CMB_Image_Field',
 		'group'				=> 'CMB_Group_Field',
 		'oembed'			=> 'CMB_Oembed_Field',
-		'date'				=> 'CMB_Date_Field', 
+		'date'				=> 'CMB_Date_Field',
 		'date_unix'			=> 'CMB_Date_Timestamp_Field',
 		'datetime_unix'		=> 'CMB_Datetime_Timestamp_Field',
 		'time'				=> 'CMB_Time_Field',
@@ -162,10 +164,10 @@ function _cmb_field_class_for_type( $type ) {
 		'checkbox'			=> 'CMB_Checkbox',
 		'post_select'		=> 'CMB_Post_Select'
 	);
-	
+
 	if ( isset( $map[$type] ) )
 		return $map[$type];
-	
+
 	return null;
 
 }
