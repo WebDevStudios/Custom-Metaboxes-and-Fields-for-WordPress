@@ -942,7 +942,8 @@ add_action( 'wp_ajax_cmb_post_select', 'cmb_ajax_post_select' );
 
 function cmb_ajax_post_select() {
 
-	$posts = get_posts( $_GET );
+	$query = new WP_Query( $_GET );
+	$posts = $query->posts;
 
 	$json = array();
 
