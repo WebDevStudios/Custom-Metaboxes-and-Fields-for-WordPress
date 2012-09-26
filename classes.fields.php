@@ -938,8 +938,10 @@ class CMB_Post_Select extends CMB_Select {
 	}
 }
 
-add_action( 'wp_ajax_cmb_post_select', function() {
-	
+add_action( 'wp_ajax_cmb_post_select', 'cmb_ajax_post_select' );
+
+function cmb_ajax_post_select() {
+
 	$posts = get_posts( $_GET );
 
 	$json = array();
