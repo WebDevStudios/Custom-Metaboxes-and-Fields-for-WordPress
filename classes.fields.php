@@ -686,6 +686,14 @@ class CMB_Color_Picker extends CMB_Field {
  */
 class CMB_Select extends CMB_Field {
 
+	public function __construct() {
+		$args = func_get_args();
+
+		call_user_func_array( array( 'parent', '__construct' ), $args );
+
+		$this->args = wp_parse_args( $this->args, array( 'multiple' => false, 'ajax_url' => '' ) );
+	}
+
 	public function enqueue_scripts() {
 
 		parent::enqueue_scripts();
@@ -707,29 +715,65 @@ class CMB_Select extends CMB_Field {
 		$id = 'select-' . rand( 0, 1000 );
 		?>
 		<p>
-			<select <?php echo ! empty( $this->args['multiple'] ) ? 'multiple' : '' ?> class="<?php echo $id ?>" name="<?php echo $this->name ?>"> >
+			<?php if ( $this->args['ajax_url'] ) : ?>
+				<input value="<?php echo implode( ',' , (array) $this->value ) ?>" name="<?php echo $this->name ?>" style="width: 100%" class="<?php echo $id ?>" id="<?php echo $id ?>" />
+			<?php else : ?>
+				<select <?php echo ! empty( $this->args['multiple'] ) ? 'multiple' : '' ?> class="<?php echo $id ?>" name="<?php echo $this->name ?>">
 
-				<?php if ( ! empty( $this->args['allow_none'] ) ) : ?>
+					<?php if ( ! empty( $this->args['allow_none'] ) ) : ?>
 
-					<option value="">None</option>
+						<option value="">None</option>
 
-				<?php endif; ?>
-			
-				<?php foreach ( $this->args['options'] as $value => $name ): ?>
+					<?php endif; ?>
+				
+					<?php foreach ( $this->args['options'] as $value => $name ): ?>
 
-				   <option <?php selected( $this->value, $value ) ?> value="<?php echo $value; ?>"><?php echo $name; ?></option>
+					   <option <?php selected( $this->value, $value ) ?> value="<?php echo $value; ?>"><?php echo $name; ?></option>
 
-				<?php endforeach; ?>
+					<?php endforeach; ?>
 
-			</select>
+				</select>
+			<?php endif; ?>
 		</p>
 		<script>
 			jQuery( document ).ready( function() {
 
+				var options = { placeholder: "Type to search" };
+
+				<?php if ( $this->args['ajax_url'] ) : ?>
+					var query = JSON.parse( '<?php echo json_encode( $this->args['ajax_args'] ? $this->args['ajax_args'] : (object) array() ) ?>' );
+					var posts = [];
+
+					<?php if ( $this->args['multiple'] ) : ?>
+						options.multiple = true;
+					<?php endif; ?>
+					<?php foreach ( array_filter( (array) $this->value ) as $post_id ) : ?>
+						posts.push( { id: <?php echo $post_id ?>, text: '<?php echo get_the_title( $post_id ) ?>' } )
+					<?php endforeach; ?>
+
+					options.ajax = {
+						url: '<?php echo $this->args['ajax_url'] ?>',
+						dataType: 'json',
+						data: function( term, page ) {
+							query.s = term;
+							query.paged = page;
+							return query;
+						},
+						results : function( data, page ) {
+							return { results: data }
+						}
+					}
+
+					options.initSelection = function (element, callback) {
+						return posts;
+					}
+				<?php endif; ?>
+
 				setInterval( function() {
 					jQuery( '.<?php echo $id ?>' ).each( function( index, el ) {
+
 						if ( jQuery(el).is(':visible') && ! jQuery( el ).hasClass( 'select2-added' ) ) {
-							jQuery( this ).addClass('select2-added').select2();
+							jQuery( this ).addClass('select2-added').select2( options );
 
 						}
 					});
@@ -772,8 +816,8 @@ class CMB_Checkbox extends CMB_Field {
 		foreach ( $this->values as $key => $value )
 			$this->values[$key] = isset( $_POST['checkbox_' . $name][$key] ) ? $_POST['checkbox_' . $name][$key] : null;
 	}
-    
-    public function title() {
+	
+	public function title() {
 
 	}
 	  
@@ -852,59 +896,61 @@ class CMB_Taxonomy extends CMB_Select {
  *     'allow_none'   => bool Allow no option to be selected (will palce a "None" at the top of the select)
  *     'multiple'     => bool whether multiple can be selected
  */
-class CMB_Query_Select extends CMB_Field {
+class CMB_Post_Select extends CMB_Select {
 
-	public function enqueue_scripts() {
+	public function __construct() {
+		$args = func_get_args();
 
-		parent::enqueue_scripts();
+		call_user_func_array( array( 'parent', '__construct' ), $args );
 
-		wp_enqueue_script( 'select2', trailingslashit( CMB_URL ) . 'js/select2/select2.js', array( 'jquery' ) );
-	}
+		$this->args = wp_parse_args( $this->args, array( 'use_ajax' => false ) );
 
-	public function enqueue_styles() {
-
-		parent::enqueue_styles();
-
-		wp_enqueue_style( 'select2', trailingslashit( CMB_URL ) . 'js/select2/select2.css' );
-	}
-
-	public function html() {
+		$this->args['query'] = isset( $this->args['query'] ) ? $this->args['query'] : array();
 		
-		$id = 'select-' . rand( 0, 1000 );
-		?>
-		<p>
-			<input type="hidden" id="<?php echo $id ?>" name="<?php echo $this->name ?>">
+		if ( ! $this->args['use_ajax'] ) {
+			$this->args['data_delegate'] = array( $this, 'get_delegate_data' );
+		} else {
+			$this->args['ajax_url'] = add_query_arg( 'action', 'cmb_post_select', admin_url( 'admin-ajax.php' ) );
+			$this->args['ajax_args'] = $this->args['query'];
+		}
 
-		</p>
-		<script>
-		jQuery(document).ready(function() {
-        	jQuery("#<?php echo $id ?>").select2({
-           		placeholder: "Search for a movie",
-            	minimumInputLength: 1,
-            	ajax: { // instead of writing the function to execute the request we use Select2's convenient helper
-                	url: "http://api.rottentomatoes.com/api/public/v1.0/movies.json",
-                	dataType: 'jsonp',
-                	data: function (term, page) {
-                    	return {
-                        	q: term, // search term
-                        	page_limit: 10,
-                        	apikey: "ju6z9mjyajq2djue3gbvv26t" // please do not use so this example keeps working
-                    	};
-                	},
-                	results: function (data, page) { // parse the results into the format expected by Select2.
-                    	// since we are using custom formatting functions we do not need to alter remote JSON data
-                    	return {results: data.movies};
-                	}
-            	},
-            	formatResult: movieFormatResult, // omitted for brevity, see the source of this page
-            	formatSelection: movieFormatSelection,  // omitted for brevity, see the source of this page
-            	dropdownCssClass: "bigdrop" // apply css that makes the dropdown taller
-        	});
-    	});
-		</script>
-		<?php
+	}
+
+	public function get_delegate_data() {
+		$posts = $this->get_posts();
+		$post_options = array();
+
+		foreach ( $posts as $post )
+			$post_options[$post->ID] = get_the_title( $post->ID );
+
+		return $post_options;
+	}
+
+	private function get_posts() {
+
+		return get_posts( $this->args['query'] );
+	}
+
+	public function parse_save_value() {
+
+		if ( $this->args['ajax_url'] && $this->args['multiple'] )
+			$this->value = explode( ',', $this->value );
 	}
 }
+
+add_action( 'wp_ajax_cmb_post_select', function() {
+	
+	$posts = get_posts( $_GET );
+
+	$json = array();
+
+	foreach ( $posts as $post )
+		$json[] = array( 'id' => $post->ID, 'text' => get_the_title( $post->ID ) );
+
+	echo json_encode( $json );
+
+	exit;
+});
 
 
 /**
@@ -922,9 +968,9 @@ class CMB_Group_Field extends CMB_Field {
 	function __construct() {
 
 		$args = func_get_args(); // you can't just put func_get_args() into a function as a parameter
-    	call_user_func_array( array( 'parent', '__construct' ), $args );
+		call_user_func_array( array( 'parent', '__construct' ), $args );
 
-    	if ( ! empty( $this->args['fields'] ) ) {
+		if ( ! empty( $this->args['fields'] ) ) {
 			foreach ( $this->args['fields'] as $f ) {
 				$field_value = isset( $this->value[$f['id']] ) ? $this->value[$f['id']] : '';
 				$f['uid'] = $f['id'];
@@ -1014,8 +1060,8 @@ class CMB_Group_Field extends CMB_Field {
 
 		if ( ! empty( $value ) )
 			foreach ( $value as $field => $field_value )
-				if ( ! empty( $field ) )
-			$this->fields[$field]->set_values( (array) $field_value );
+				if ( ! empty( $field ) && ! empty( $this->fields[$field] ) )
+					$this->fields[$field]->set_values( (array) $field_value );
 
 		?>
 		<div class="group <?php echo !empty( $field['repeatable'] ) ? 'cloneable' : '' ?>" style="position: relative">
@@ -1073,7 +1119,7 @@ class CMB_Group_Field extends CMB_Field {
 	private function isNotEmptyArray( $array ) {
 
 		foreach ($array as &$value){
-		  	if ( is_array( $value) ) {
+			if ( is_array( $value) ) {
 				$value = $this->isNotEmptyArray($value);
 			}
 		}

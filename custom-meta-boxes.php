@@ -160,7 +160,7 @@ function _cmb_field_class_for_type( $type ) {
 		'select'			=> 'CMB_Select',
 		'wysiwyg'			=> 'CMB_wysiwyg',
 		'checkbox'			=> 'CMB_Checkbox',
-		'query_select'		=> 'CMB_Query_Select'
+		'post_select'		=> 'CMB_Post_Select'
 	);
 	
 	if ( isset( $map[$type] ) )
