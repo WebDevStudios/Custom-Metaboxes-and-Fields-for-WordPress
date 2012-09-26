@@ -1057,14 +1057,22 @@ class CMB_Group_Field extends CMB_Field {
 
 	public function html() {
 
-		$field = $this->args;
+		
 		$value = $this->value;
 
-		if ( ! empty( $value ) )
+		if ( ! empty( $value ) ) {
 			foreach ( $value as $field => $field_value )
 				if ( ! empty( $field ) && ! empty( $this->fields[$field] ) )
 					$this->fields[$field]->set_values( (array) $field_value );
+				else if ( ! empty( $this->fields[$field] ) )
+					$this->fields[$field]->set_values( array() );		
+		} else {
+			foreach ( $this->fields as $field ) {
+				$field->set_values( array() );
+			}
+		}
 
+		$field = $this->args;
 		?>
 		<div class="group <?php echo !empty( $field['repeatable'] ) ? 'cloneable' : '' ?>" style="position: relative">
 
@@ -1106,14 +1114,6 @@ class CMB_Group_Field extends CMB_Field {
 
 			if( $this->isNotEmptyArray( $meta ) )
 				$this->values[] = $meta;
-
-		}
-
-
-		if ( $this->args['repeatable'] ) {
-			end( $this->values );
-			unset( $this->values[key( $this->values )] );
-			reset( $this->values );
 
 		}
 	}

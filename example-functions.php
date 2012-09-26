@@ -84,5 +84,30 @@ function cmb_sample_metaboxes( array $meta_boxes ) {
 		)
 	);
 
+	// repeatble groups test
+	$meta_boxes[] = array(
+		'title' => 'Posts Select',
+		'pages' => 'post',
+		'context'    => 'normal',
+		'priority'   => 'high',
+		'show_names' => true, // Show field names on the left
+		'fields' => array(
+
+			array( 
+				'id' => 'simple-group', 
+				'name' => 'Simple Repeatable Group', 
+				'type' => 'group', 
+				'cols' => 12, 
+				'repeatable' => true,
+				'fields' => array( 
+					array(
+						'id' => 'simple-group-text',
+						'type' => 'text'
+					)
+				)
+			)
+		)
+	);
+
 	return $meta_boxes;
 }
