@@ -844,6 +844,70 @@ class CMB_Taxonomy extends CMB_Select {
 }
 
 /**
+ * Standard select field.
+ *
+ * @supports "data_delegate"
+ * @args
+ *     'options'     => array Array of options to show in the select, optionally use data_delegate instead
+ *     'allow_none'   => bool Allow no option to be selected (will palce a "None" at the top of the select)
+ *     'multiple'     => bool whether multiple can be selected
+ */
+class CMB_Query_Select extends CMB_Field {
+
+	public function enqueue_scripts() {
+
+		parent::enqueue_scripts();
+
+		wp_enqueue_script( 'select2', trailingslashit( CMB_URL ) . 'js/select2/select2.js', array( 'jquery' ) );
+	}
+
+	public function enqueue_styles() {
+
+		parent::enqueue_styles();
+
+		wp_enqueue_style( 'select2', trailingslashit( CMB_URL ) . 'js/select2/select2.css' );
+	}
+
+	public function html() {
+		
+		$id = 'select-' . rand( 0, 1000 );
+		?>
+		<p>
+			<input type="hidden" id="<?php echo $id ?>" name="<?php echo $this->name ?>">
+
+		</p>
+		<script>
+		jQuery(document).ready(function() {
+        	jQuery("#<?php echo $id ?>").select2({
+           		placeholder: "Search for a movie",
+            	minimumInputLength: 1,
+            	ajax: { // instead of writing the function to execute the request we use Select2's convenient helper
+                	url: "http://api.rottentomatoes.com/api/public/v1.0/movies.json",
+                	dataType: 'jsonp',
+                	data: function (term, page) {
+                    	return {
+                        	q: term, // search term
+                        	page_limit: 10,
+                        	apikey: "ju6z9mjyajq2djue3gbvv26t" // please do not use so this example keeps working
+                    	};
+                	},
+                	results: function (data, page) { // parse the results into the format expected by Select2.
+                    	// since we are using custom formatting functions we do not need to alter remote JSON data
+                    	return {results: data.movies};
+                	}
+            	},
+            	formatResult: movieFormatResult, // omitted for brevity, see the source of this page
+            	formatSelection: movieFormatSelection,  // omitted for brevity, see the source of this page
+            	dropdownCssClass: "bigdrop" // apply css that makes the dropdown taller
+        	});
+    	});
+		</script>
+		<?php
+	}
+}
+
+
+/**
  * Field to group child fieids
  * pass $args[fields] array for child fields
  * pass $args['repeatable'] for cloing all child fields (set)
