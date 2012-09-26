@@ -741,7 +741,7 @@ class CMB_Select extends CMB_Field {
 				var options = { placeholder: "Type to search" };
 
 				<?php if ( $this->args['ajax_url'] ) : ?>
-					var query = JSON.parse( '<?php echo json_encode( $this->args['ajax_args'] ? $this->args['ajax_args'] : (object) array() ) ?>' );
+					var query = JSON.parse( '<?php echo json_encode( $this->args['ajax_args'] ? wp_parse_args( $this->args['ajax_args'] ) : (object) array() ) ?>' );
 					var posts = [];
 
 					<?php if ( $this->args['multiple'] ) : ?>
