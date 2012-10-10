@@ -88,6 +88,7 @@ class cmb_Meta_Box {
 
 		add_filter( 'cmb_show_on', array( &$this, 'add_for_id' ), 10, 2 );
 		add_filter( 'cmb_show_on', array( &$this, 'add_for_page_template' ), 10, 2 );
+		add_filter( 'cmb_show_on', array( &$this, 'add_for_page_slug' ), 10, 2 );
 	}
 
 	function add_post_enctype() {
@@ -162,7 +163,31 @@ class cmb_Meta_Box {
 		else
 			return false;
 	}
-	
+
+	// Add for Page Slug
+	function add_for_page_slug( $display, $meta_box ) {
+
+		if( 'slug' !== $meta_box['show_on']['key'] )
+			return $display;
+
+		// Get the current ID
+		if( isset( $_GET['post'] ) ) $post_id = $_GET['post'];
+		elseif( isset( $_POST['post_ID'] ) ) $post_id = $_POST['post_ID'];
+		if( !( isset( $post_id ) || is_page() ) ) return false;
+
+		$post = get_post($post_id);
+		$slug = $post->post_name;
+
+		// If value isn't an array, turn it into one
+		$meta_box['show_on']['value'] = !is_array( $meta_box['show_on']['value'] ) ? array( $meta_box['show_on']['value'] ) : $meta_box['show_on']['value'];
+
+		// See if there's a match
+		if( in_array( $slug, $meta_box['show_on']['value'] ) )
+			return true;
+		else
+			return false;
+	}
+
 	// Show fields
 	function show() {
 
