@@ -162,12 +162,13 @@ function _cmb_field_class_for_type( $type ) {
 		'select'			=> 'CMB_Select',
 		'wysiwyg'			=> 'CMB_wysiwyg',
 		'checkbox'			=> 'CMB_Checkbox',
-		'post_select'		=> 'CMB_Post_Select'
+		'post_select'		=> 'CMB_Post_Select',
+		'radio'				=> 'CMB_Radio_Field'
 	);
 
 	if ( isset( $map[$type] ) )
 		return $map[$type];
 
-	return null;
+	return $type;
 
 }
