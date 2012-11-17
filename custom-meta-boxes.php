@@ -143,7 +143,7 @@ function cmb_force_send( $args ) {
 
 function _cmb_field_class_for_type( $type ) {
 
-	$map = array(
+	$map = apply_filters( 'cmb_field_types', array(
 
 		'text'				=> 'CMB_Text_Field',
 		'text_small' 		=> 'CMB_Text_Small_Field',
@@ -164,7 +164,7 @@ function _cmb_field_class_for_type( $type ) {
 		'checkbox'			=> 'CMB_Checkbox',
 		'post_select'		=> 'CMB_Post_Select',
 		'radio'				=> 'CMB_Radio_Field'
-	);
+	) );
 
 	if ( isset( $map[$type] ) )
 		return $map[$type];
