@@ -103,7 +103,7 @@ abstract class CMB_Field {
 	}
 
 	public function get_value() {
-	   return ( $this->value ) ? $this->value : $this->args['default'];
+	   return ( $this->value || $this->value === '0' ) ? $this->value : $this->args['default'];
 	}
 
 	public function get_values() {
@@ -134,7 +134,8 @@ abstract class CMB_Field {
 			$this->value = $v;
 			$this->parse_save_value();
 
-			if ( $this->value )
+
+			if ( $this->value || $this->value === '0' )
 				add_post_meta( $post_id, $this->id, $this->value );
 		}
 	}
@@ -690,12 +691,14 @@ class CMB_Select extends CMB_Field {
 			$this->args['options'] = $this->get_delegate_data();
 
 		$id = 'select-' . rand( 0, 1000 );
+
+		$val = (array) $this->get_value();
 		?>
 		<p>
 			<?php if ( $this->args['ajax_url'] ) : ?>
 				<input value="<?php echo implode( ',' , (array) $this->value ) ?>" name="<?php echo $this->name ?>" style="width: 100%" class="<?php echo $id ?>" id="<?php echo $id ?>" />
 			<?php else : ?>
-				<select <?php echo ! empty( $this->args['multiple'] ) ? 'multiple' : '' ?> class="<?php echo $id ?>" name="<?php echo $this->name ?>">
+				<select <?php echo ! empty( $this->args['multiple'] ) ? 'multiple' : '' ?> class="<?php echo $id ?>" name="<?php /*nasty hack*/ echo str_replace( '[', '[m', $this->name ) ?><?php echo ! empty( $this->args['multiple'] ) ? '[]' : '' ?>">
 
 					<?php if ( ! empty( $this->args['allow_none'] ) ) : ?>
 
@@ -705,7 +708,7 @@ class CMB_Select extends CMB_Field {
 
 					<?php foreach ( $this->args['options'] as $value => $name ): ?>
 
-					   <option <?php selected( $this->value, $value ) ?> value="<?php echo $value; ?>"><?php echo $name; ?></option>
+					   <option <?php selected( in_array( $value, $val ) ) ?> value="<?php echo $value; ?>"><?php echo $name; ?></option>
 
 					<?php endforeach; ?>
 
@@ -771,10 +774,15 @@ class CMB_Select extends CMB_Field {
 class CMB_Radio_Field extends CMB_Field {
 
 	public function html() {
+		if ( $this->has_data_delegate() )
+			$this->args['options'] = $this->get_delegate_data();
+
+
 		?>
 		<p>
-			<?php foreach ( $this->values as $key => $value ): ?>
-				<input type="radio" name="<?php echo $this->name ?>" value="<?php echo $value; ?>" <?php checked( $value, $this->get_value() ); ?> />
+			<?php foreach ( $this->args['options'] as $key => $value ): ?>
+				<label><?php echo $value; ?></label>
+				<input type="radio" name="<?php echo $this->name ?>" value="<?php echo $key; ?>" <?php checked( $key, $this->get_value() ); ?> />
 			<?php endforeach; ?>
 		</p>
 		<?php
