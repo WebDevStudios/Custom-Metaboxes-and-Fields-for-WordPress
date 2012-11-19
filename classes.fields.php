@@ -698,7 +698,7 @@ class CMB_Select extends CMB_Field {
 			<?php if ( $this->args['ajax_url'] ) : ?>
 				<input value="<?php echo implode( ',' , (array) $this->value ) ?>" name="<?php echo $this->name ?>" style="width: 100%" class="<?php echo $id ?>" id="<?php echo $id ?>" />
 			<?php else : ?>
-				<select <?php echo ! empty( $this->args['multiple'] ) ? 'multiple' : '' ?> class="<?php echo $id ?>" name="<?php /*nasty hack*/ echo str_replace( '[', '[m', $this->name ) ?><?php echo ! empty( $this->args['multiple'] ) ? '[]' : '' ?>">
+				<select style="width: 100%" <?php echo ! empty( $this->args['multiple'] ) ? 'multiple' : '' ?> class="<?php echo $id ?>" name="<?php /*nasty hack*/ echo str_replace( '[', '[m', $this->name ) ?><?php echo ! empty( $this->args['multiple'] ) ? '[]' : '' ?>">
 
 					<?php if ( ! empty( $this->args['allow_none'] ) ) : ?>
 
