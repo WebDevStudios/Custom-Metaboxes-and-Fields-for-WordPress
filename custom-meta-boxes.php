@@ -58,6 +58,10 @@ function cmb_init() {
 
 }
 
+//function cmb_enqueue_post_edit_scrips() {
+//	wp_enqueue_script('post');
+//}
+
 /**
  * Adding scripts and styles
  */
@@ -171,4 +175,11 @@ function _cmb_field_class_for_type( $type ) {
 
 	return $type;
 
+}
+
+//Draw the meta boxes in places other than the post edit screen
+function cmb_draw_meta_boxes( $pages, $object = null ) {
+
+	do_meta_boxes( $pages, 'normal', $object );
+	wp_enqueue_script('post');
 }

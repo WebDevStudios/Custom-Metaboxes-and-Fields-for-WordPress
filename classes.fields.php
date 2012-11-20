@@ -108,17 +108,6 @@ abstract class CMB_Field {
 
 	public function get_values() {
 
-		if ( ! empty( $this->args['values_callback'] ) ) {
-
-			// @todo this isn't great, should be passed into __construct()
-			$id = get_the_id();
-
-			if ( ! isset( $this->values_callback ) )
-				$this->values_callback = call_user_func( $this->args['values_callback'], $id );
-
-			return $this->values_callback;
-		}
-
 		return $this->values;
 	}
 
@@ -146,6 +135,10 @@ abstract class CMB_Field {
 
 			return;
 		}
+
+		//If we are not on a post edit screen
+		if ( ! $post_id )
+			return;
 
 		delete_post_meta( $post_id, $this->id );
 

@@ -24,8 +24,8 @@ class CMB_Meta_Box {
 			}
 		}
 		
-		add_action( 'dbx_post_advanced', array( &$this, 'init_fields' ) );
-
+		add_action( 'dbx_post_advanced', array( &$this, 'init_fields_for_post' ) );
+		add_action( 'cmb_init_fields', array( &$this, 'init_fields' ) );
 
 		global $pagenow;
 		if ( $upload && in_array( $pagenow, array( 'page.php', 'page-new.php', 'post.php', 'post-new.php' ) ) ) {
@@ -33,7 +33,9 @@ class CMB_Meta_Box {
 		}
 
 		add_action( 'admin_menu', array( &$this, 'add' ) );
-		add_action( 'save_post', array( &$this, 'save' ) );
+		add_action( 'save_post', array( &$this, 'save_for_post' ) );
+		add_action( 'cmb_save_fields', array( &$this, 'save' ) );
+
 		add_action( 'admin_enqueue_scripts', array( &$this, 'enqueue_scripts' ) );
 		add_action( 'admin_enqueue_scripts', array( &$this, 'enqueue_styles' ) );
 
@@ -41,7 +43,50 @@ class CMB_Meta_Box {
 		add_filter( 'cmb_show_on', array( &$this, 'add_for_page_template' ), 10, 2 );
 	}
 
-	public function init_fields() {
+	public function init_fields( $post_id = 0 ) {
+
+		foreach ( $this->_meta_box['fields'] as $key => $field ) {
+
+			$values = array();
+
+			// Set up blank or default values for empty ones
+			//
+			$defaults = array(
+				'name' => '',
+				'desc' => '',
+				'std'  => '',
+				'cols' => 12
+			);
+
+			$field = wp_parse_args( $field, $defaults );
+
+			if ( 'file' == $field['type'] && ! isset( $field['allow'] ) )
+				$field['allow'] = array( 'url', 'attachment' );
+
+			if ( 'file' == $field['type'] && ! isset( $field['save_id'] ) )
+				$field['save_id']  = false;
+
+			$field['name_attr'] = $field['id'];
+			$class = _cmb_field_class_for_type( $field['type'] );
+
+			if ( ! empty( $this->_meta_box['repeatable'] ) )
+				$field['repeatable'] = true;
+
+			//If the field has a custom value populator callback
+			if ( ! empty( $field['values_callback'] ) )
+				$values = call_user_func( $field['values_callback'], null );
+
+			//Else if we are on a post edit screen
+			 elseif ( $post_id )
+				$values = (array) get_post_meta( $post_id, $field['id'], false );
+
+
+			$this->fields[] = new $class( $field['id'], $field['name'], (array) $values, $field );
+		}
+
+	}
+
+	public function init_fields_for_post() {
 
 		global $post, $temp_ID;
 
@@ -55,38 +100,10 @@ class CMB_Meta_Box {
 		elseif ( ! empty( $post->ID ) )
 			$post_id = $post->ID;
 
-		if( !( isset( $post_id ) || is_page() ) ) 
+		if ( is_page() || ! isset( $post_id ) )
 			return false;
 
-		foreach ( $this->_meta_box['fields'] as $field ) {
-
-			// Set up blank or default values for empty ones
-			// 
-			$defaults = array( 
-				'name' => '',
-				'desc' => '',
-				'std'  => '',
-				'cols' => 12
-			);
-
-			$field = wp_parse_args( $field, $defaults );
-	
-			if ( 'file' == $field['type'] && ! isset( $field['allow'] ) )
-				$field['allow'] = array( 'url', 'attachment' );
-
-			if ( 'file' == $field['type'] && ! isset( $field['save_id'] ) )
-				$field['save_id']  = false;
-				
-			$field['name_attr'] = $field['id'];
-			$class = _cmb_field_class_for_type( $field['type'] );
-
-			if ( ! empty( $this->_meta_box['repeatable'] ) )
-				$field['repeatable'] = true;
-
-			$this->fields[] = new $class( $field['id'], $field['name'], get_post_meta( $post_id, $field['id'], false ), $field );
-			
-		}
-
+		$this->init_fields( (int) $post_id );
 	}
 
 	function enqueue_scripts() {
@@ -177,17 +194,8 @@ class CMB_Meta_Box {
 	// Show fields
 	function show() {
 
-		global $post;
-		
-		$post = get_post( $post );
-
 		// Use nonce for verification
 		echo '<input type="hidden" name="wp_meta_box_nonce" value="', wp_create_nonce( basename(__FILE__) ), '" />';
-		
-		$multiple_count = count( (array) get_post_meta( $post->ID, $this->_meta_box['fields'][0]['id'], false ) );
-		
-		if ( ! $multiple_count || empty( $this->_meta_box['repeatable'] ) )
-			$multiple_count = 1;
 
 		self::layout_fields( $this->fields );
 	}
@@ -237,15 +245,10 @@ class CMB_Meta_Box {
 	}
 
 	// Save data from metabox
-	function save( $post_id )  {
+	function save( $post_id = 0 )  {
 
 		// verify nonce
 		if ( ! isset( $_POST['wp_meta_box_nonce'] ) || ! wp_verify_nonce( $_POST['wp_meta_box_nonce'], basename(__FILE__) ) ) {
-			return $post_id;
-		}
-
-		// check autosave
-		if ( defined('DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
 			return $post_id;
 		}
 
@@ -272,5 +275,22 @@ class CMB_Meta_Box {
 			$field_obj->save( $post_id );
 				
 		}
+
+		//If we are not on a post, need to refresh the field objects to reflect new values, as we do not get a redirect
+		if ( ! $post_id ) {
+			$this->fields = array();
+			$this->init_fields();
+		}
+	}
+
+	//Save the on save_post hook
+	function save_for_post( $post_id ) {
+
+		// check autosave
+		if ( defined('DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
+			return $post_id;
+		}
+
+		$this->save( $post_id );
 	}
 }
