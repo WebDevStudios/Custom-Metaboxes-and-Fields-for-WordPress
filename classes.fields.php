@@ -107,6 +107,18 @@ abstract class CMB_Field {
 	}
 
 	public function get_values() {
+
+		if ( ! empty( $this->args['values_callback'] ) ) {
+
+			// @todo this isn't great, should be passed into __construct()
+			$id = get_the_id();
+
+			if ( ! isset( $this->values_callback ) )
+				$this->values_callback = call_user_func( $this->args['values_callback'], $id );
+
+			return $this->values_callback;
+		}
+
 		return $this->values;
 	}
 
@@ -127,13 +139,20 @@ abstract class CMB_Field {
 
 	public function save( $post_id ) {
 
+		// allow override from args
+		if ( ! empty( $this->args['save_callback'] ) ) {
+
+			call_user_func( $this->args['save_callback'], $this->values, $post_id );
+
+			return;
+		}
+
 		delete_post_meta( $post_id, $this->id );
 
 		foreach( $this->values as $v ) {
 
 			$this->value = $v;
 			$this->parse_save_value();
-
 
 			if ( $this->value || $this->value === '0' )
 				add_post_meta( $post_id, $this->id, $this->value );
@@ -157,14 +176,16 @@ abstract class CMB_Field {
 	public function display() {
 
 		// if there are no values and it's not repeateble, we want to do one with empty string
-		if ( empty( $this->values ) && !  $this->args['repeatable'] )
-			$this->values = array( '' );
+		if ( ! $this->get_values() && ! $this->args['repeatable'] )
+			$values = array( '' );
+		else
+			$values = $this->get_values();
 
 		$this->title();
 
 		$this->description();
 
-		foreach ( $this->values as $value ) {
+		foreach ( $values as $value ) {
 
 			$this->value = $value;
 
