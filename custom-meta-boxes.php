@@ -66,7 +66,7 @@ function cmb_init() {
  * Adding scripts and styles
  */
 function cmb_scripts( $hook ) {
-	if ( $hook == 'post.php' || $hook == 'post-new.php' || $hook == 'page-new.php' || $hook == 'page.php' ) {
+	if ( $hook == 'post.php' || $hook == 'post-new.php' || $hook == 'page-new.php' || $hook == 'page.php' || did_action( 'cmb_init_fields' ) ) {
 		wp_register_script( 'cmb-timepicker', CMB_URL . '/js/jquery.timePicker.min.js' );
 		wp_register_script( 'cmb-scripts', CMB_URL . '/js/cmb.js', array( 'jquery', 'jquery-ui-core', 'jquery-ui-datepicker', 'media-upload', 'thickbox', 'farbtastic' ) );
 		wp_enqueue_script( 'cmb-timepicker' );
@@ -77,73 +77,6 @@ function cmb_scripts( $hook ) {
 }
 add_action( 'admin_enqueue_scripts', 'cmb_scripts', 10 );
 
-function cmb_editor_footer_scripts() { ?>
-	<?php
-	if ( isset( $_GET['cmb_force_send'] ) && 'true' == $_GET['cmb_force_send'] ) {
-		$label = $_GET['cmb_send_label'];
-		if ( empty( $label ) ) $label="Select File";
-		?>
-		<script type="text/javascript">
-		jQuery(function($) {
-			$('td.savesend input').val('<?php echo $label; ?>');
-		});
-		</script>
-		<?php
-	}
-}
-add_action( 'admin_print_footer_scripts', 'cmb_editor_footer_scripts', 99 );
-
-// Force 'Insert into Post' button from Media Library
-add_filter( 'get_media_item_args', 'cmb_force_send' );
-function cmb_force_send( $args ) {
-
-	// if the Gallery tab is opened from a custom meta box field, add Insert Into Post button
-	if ( isset( $_GET['cmb_force_send'] ) && 'true' == $_GET['cmb_force_send'] )
-		$args['send'] = true;
-
-	// if the From Computer tab is opened AT ALL, add Insert Into Post button after an image is uploaded
-	if ( isset( $_POST['attachment_id'] ) && '' != $_POST["attachment_id"] ) {
-
-		$args['send'] = true;
-
-		// TO DO: Are there any conditions in which we don't want the Insert Into Post
-		// button added? For example, if a post type supports thumbnails, does not support
-		// the editor, and does not have any cmb file inputs? If so, here's the first
-		// bits of code needed to check all that.
-		// $attachment_ancestors = get_post_ancestors( $_POST["attachment_id"] );
-		// $attachment_parent_post_type = get_post_type( $attachment_ancestors[0] );
-		// $post_type_object = get_post_type_object( $attachment_parent_post_type );
-	}
-
-	// change the label of the button on the From Computer tab
-	if ( isset( $_POST['attachment_id'] ) && '' != $_POST["attachment_id"] ) {
-
-		echo '
-			<script type="text/javascript">
-				function cmbGetParameterByNameInline(name) {
-					name = name.replace(/[\[]/, "\\\[").replace(/[\]]/, "\\\]");
-					var regexS = "[\\?&]" + name + "=([^&#]*)";
-					var regex = new RegExp(regexS);
-					var results = regex.exec(window.location.href);
-					if(results == null)
-						return "";
-					else
-						return decodeURIComponent(results[1].replace(/\+/g, " "));
-				}
-
-				jQuery(function($) {
-					if (cmbGetParameterByNameInline("cmb_force_send")=="true") {
-						var cmb_send_label = cmbGetParameterByNameInline("cmb_send_label");
-						$("td.savesend input").val(cmb_send_label);
-					}
-				});
-			</script>
-		';
-	}
-
-	return $args;
-
-}
 
 function _cmb_field_class_for_type( $type ) {
 
@@ -178,8 +111,68 @@ function _cmb_field_class_for_type( $type ) {
 }
 
 //Draw the meta boxes in places other than the post edit screen
-function cmb_draw_meta_boxes( $pages, $object = null ) {
+function cmb_draw_meta_boxes( $pages, $context = 'normal', $object = null ) {
 
-	do_meta_boxes( $pages, 'normal', $object );
+	cmb_do_meta_boxes( $pages, $context, $object );
 	wp_enqueue_script('post');
+}
+
+/**
+ * Meta-Box template function
+ *
+ * @since 2.5.0
+ *
+ * @param string|object $screen Screen identifier
+ * @param string $context box context
+ * @param mixed $object gets passed to the box callback function as first parameter
+ * @return int number of meta_boxes
+ */
+function cmb_do_meta_boxes( $screen, $context, $object ) {
+	global $wp_meta_boxes;
+
+	static $already_sorted = false;
+
+	if ( empty( $screen ) )
+		$screen = get_current_screen();
+	elseif ( is_string( $screen ) )
+		$screen = convert_to_screen( $screen );
+
+	$page = $screen->id;
+
+	$hidden = get_hidden_meta_boxes( $screen );
+
+	$i = 0;
+	do {
+		// Grab the ones the user has manually sorted. Pull them out of their previous context/priority and into the one the user chose
+		if ( !$already_sorted && $sorted = get_user_option( "meta-box-order_$page" ) ) {
+			foreach ( $sorted as $box_context => $ids ) {
+				foreach ( explode(',', $ids ) as $id ) {
+					if ( $id && 'dashboard_browser_nag' !== $id )
+						add_meta_box( $id, null, null, $screen, $box_context, 'sorted' );
+				}
+			}
+		}
+		$already_sorted = true;
+
+		if ( !isset($wp_meta_boxes) || !isset($wp_meta_boxes[$page]) || !isset($wp_meta_boxes[$page][$context]) )
+			break;
+
+		foreach ( array('high', 'sorted', 'core', 'default', 'low') as $priority ) {
+			if ( isset($wp_meta_boxes[$page][$context][$priority]) ) {
+				foreach ( (array) $wp_meta_boxes[$page][$context][$priority] as $box ) {
+					if ( false == $box || ! $box['title'] )
+						continue;
+
+					$i++;
+					$style = '';
+					$hidden_class = in_array($box['id'], $hidden) ? ' hide-if-js' : '';
+					echo '<div id="' . $box['id'] . '" class=" ' . postbox_classes($box['id'], $page) . $hidden_class . '" ' . '>' . "\n";
+					call_user_func($box['callback'], $object, $box);
+					echo "</div>\n";
+				}
+			}
+		}
+	} while(0);
+
+	return $i;
 }

@@ -41,10 +41,12 @@ jQuery( document ).ready( function() {
 
 	jQuery( document ).on( 'click', '.cmb-remove-file', function(e) {
 		e.preventDefault();
+
 		var container = jQuery( this ).parent();
 		container.find( '.cmb-file-holder' ).html( '' ).parent().hide();
 		container.find( '.cmb-file-upload-input' ).val( '' );
-		container.find( '.cmb-file-upload' ).show();
+
+		container.parent().find( '.cmb-file-upload' ).show();
 	} );
 	
 } );

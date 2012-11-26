@@ -261,13 +261,14 @@ class CMB_File_Field extends CMB_Field {
 
 	function enqueue_scripts() {
 		wp_enqueue_script( 'cmb-file-upload', CMB_URL . '/js/file-upload.js', array( 'jquery' ) );
+		wp_enqueue_media();
 	}
 
 	public function html() {
 
 		?>
-		<a class="button cmb-file-upload" class="<?php echo $this->get_value() ? 'hidden' : '' ?>" href="#">Upload file</a>
-		<div class="<?php echo $this->get_value() ? '' : 'hidden' ?>" style="width: 200px; height: 120px; padding: 5px; border-radius: 5px; background: #eee; text-align: center;">
+		<a class="button cmb-file-upload <?php echo $this->get_value() ? 'hidden' : '' ?>" href="#">Upload file</a>
+		<div class="<?php echo $this->get_value() ? '' : 'hidden' ?>" style="width: 200px; padding: 5px; text-align: center;">
 			<div class="cmb-file-holder" style="text-align: center; vertical-align: middle;">
 				<?php if ( $this->get_value() ) : ?>
 					<?php echo wp_get_attachment_image( $this->get_value(),'thumbnail', true ) ?>
