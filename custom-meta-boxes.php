@@ -34,8 +34,8 @@ Version: 		1.o
  * This may need to be filtered for local Window installations.
  * If resources do not load, please check the wiki for details.
  */
-define( 'CMB_PATH', dirname( __FILE__ ) );
-define( 'CMB_URL', str_replace( WP_CONTENT_DIR, WP_CONTENT_URL, CMB_PATH ) );
+define( 'CMB_PATH', str_replace( '\\', '/', dirname( __FILE__ ) ) );
+define( 'CMB_URL', str_replace( str_replace( '\\', '/', WP_CONTENT_DIR ), str_replace( '\\', '/', WP_CONTENT_URL ), CMB_PATH ) );
 
 include_once( CMB_PATH . '/classes.fields.php' );
 include_once( CMB_PATH . '/class.cmb-meta-box.php' );
