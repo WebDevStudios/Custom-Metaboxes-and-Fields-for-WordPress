@@ -602,19 +602,6 @@ class CMB_Oembed_Field extends CMB_Field {
 
 }
 
-function cmb_oembed_thumbnail( $return, $data, $url ) {
-
-	$backtrace = debug_backtrace();
-
-	if ( $data->type == 'video' && ! empty( $backtrace[5]['args'][1]['cmb_oembed'] ) )
-		return '<a href=""><img src="' . $data->thumbnail_url . '" /><span class="video_embed">' . $return . '</span></a>';
-
-	return $return;
-
-}
-
-add_filter( 'oembed_dataparse', 'cmb_oembed_thumbnail', 10, 3 );
-
 /**
  * Standard text field.
  *
