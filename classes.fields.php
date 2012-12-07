@@ -72,7 +72,10 @@ abstract class CMB_Field {
 	 *
 	 * @uses wp_enqueue_script()
 	 */
-	public function enqueue_scripts() {}
+	public function enqueue_scripts() {
+
+		wp_enqueue_script( 'cmb-scripts', CMB_URL . '/js/cmb.js', array( 'jquery', 'jquery-ui-core', 'jquery-ui-datepicker', 'media-upload', 'thickbox', 'farbtastic' ) );
+	}
 
 	/**
 	 * Method responsible for enqueueing any extra styles the field needs
@@ -260,6 +263,8 @@ class CMB_Text_Small_Field extends CMB_Field {
 class CMB_File_Field extends CMB_Field {
 
 	function enqueue_scripts() {
+
+		parent::enqueue_scripts();
 		wp_enqueue_script( 'cmb-file-upload', CMB_URL . '/js/file-upload.js', array( 'jquery' ) );
 		wp_enqueue_media();
 	}
@@ -288,6 +293,8 @@ class CMB_File_Field extends CMB_Field {
 class CMB_Image_Field extends CMB_Field {
 
 	function enqueue_scripts() {
+
+		parent::enqueue_scripts();
 		wp_enqueue_script( 'plupload-all' );
 		wp_enqueue_script( 'tf-well-plupload-image', CMB_URL . '/js/plupload-image.js', array( 'jquery-ui-sortable', 'wp-ajax-response', 'plupload-all' ), 1 );
 
@@ -977,6 +984,9 @@ class CMB_Group_Field extends CMB_Field {
 	}
 
 	public function enqueue_scripts() {
+
+		parent::enqueue_scripts();
+
 		foreach ( $this->args['fields'] as $f ) {
 
 			$class = _cmb_field_class_for_type( $f['type'] );
