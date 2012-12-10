@@ -157,10 +157,15 @@ class cmb_Meta_Box {
 		$meta_box['show_on']['value'] = !is_array( $meta_box['show_on']['value'] ) ? array( $meta_box['show_on']['value'] ) : $meta_box['show_on']['value'];
 
 		// See if there's a match
-		if( in_array( $current_template, $meta_box['show_on']['value'] ) )
+		if( in_array( $current_template, $meta_box['show_on']['value'] ) ) {
 			return true;
-		else
-			return false;
+        	} else {
+            		$post = get_post($post_id);
+            		if( locate_template(array('page-' . $post->post_name . '.php') , false) )
+                		return true;
+            		else
+                		return false;
+        	}
 	}
 	
 	// Show fields
