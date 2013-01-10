@@ -72,9 +72,6 @@ class CMB_Meta_Box {
 			if ( ! empty( $this->_meta_box['repeatable'] ) )
 				$field['repeatable'] = true;
 
-			//If the field has a custom value populator callback
-			if ( ! empty( $field['values_callback'] ) )
-				$values = call_user_func( $field['values_callback'], null );
 
 			//Else if we are on a post edit screen
 			 elseif ( $post_id )
@@ -279,8 +276,7 @@ class CMB_Meta_Box {
 				$field['repeatable'] = true;
 			
 			$field_obj = new $class( $field['id'], $field['name'], $value, $field );
-			$field_obj->parse_save_values();
-			$field_obj->save( $post_id );
+			$field_obj->save( $post_id, $value );
 				
 		}
 

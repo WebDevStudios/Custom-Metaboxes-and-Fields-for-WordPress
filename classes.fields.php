@@ -60,7 +60,13 @@ abstract class CMB_Field {
 			$this->args['options'] = $re_format;
 		}
 
-		$this->values 	= $values;
+		//If the field has a custom value populator callback
+		if ( ! empty( $args['values_callback'] ) )
+			$this->values = call_user_func( $args['values_callback'], get_the_id() );
+
+		else
+			$this->values = $values;
+
 		$this->value 	= reset( $this->values );
 
 		$this->description = ! empty( $this->args['desc'] ) ? $this->args['desc'] : '';
@@ -129,8 +135,10 @@ abstract class CMB_Field {
 
 	}
 
-	public function save( $post_id ) {
+	public function save( $post_id, $values ) {
 
+		$this->values = $values;
+		$this->parse_save_values();
 		// allow override from args
 		if ( ! empty( $this->args['save_callback'] ) ) {
 
