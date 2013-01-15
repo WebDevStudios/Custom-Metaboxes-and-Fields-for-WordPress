@@ -689,6 +689,14 @@ class CMB_Select extends CMB_Field {
 		$this->args = wp_parse_args( $this->args, array( 'multiple' => false, 'ajax_url' => '' ) );
 	}
 
+	public function get_options() {
+
+		if ( $this->has_data_delegate() )
+			$this->args['options'] = $this->get_delegate_data();
+
+		return $this->args['options'];
+	}
+
 	public function enqueue_scripts() {
 
 		parent::enqueue_scripts();
