@@ -363,25 +363,28 @@ class cmb_Meta_Box {
 					$input_type_url = "hidden";
 					if ( 'url' == $field['allow'] || ( is_array( $field['allow'] ) && in_array( 'url', $field['allow'] ) ) )
 						$input_type_url="text";
-					echo '<input class="cmb_upload_file" type="' . $input_type_url . '" size="45" id="', $field['id'], '" name="', $field['id'], '" value="', $meta, '" />';
+					echo '<input class="cmb_upload_file" type="' . $input_type_url . '" size="45" id="', $field['id'], '" data-name="', $field['id'], '" />';
 					echo '<input class="cmb_upload_button button" type="button" value="Upload File" />';
 					echo '<input class="cmb_upload_file_id" type="hidden" id="', $field['id'], '_id" name="', $field['id'], '_id" value="', get_post_meta( $post->ID, $field['id'] . "_id",true), '" />';					
 					echo '<p class="cmb_metabox_description">', $field['desc'], '</p>';
 					echo '<div id="', $field['id'], '_status" class="cmb_upload_status">';	
 						if ( $meta != '' ) { 
-							$check_image = preg_match( '/(^.*\.jpg|jpeg|png|gif|ico*)/i', $meta );
-							if ( $check_image ) {
-								echo '<div class="img_status">';
-								echo '<img src="', $meta, '" alt="" />';
-								echo '<a href="#" class="cmb_remove_file_button" rel="', $field['id'], '">Remove Image</a>';
-								echo '</div>';
-							} else {
-								$parts = explode( '/', $meta );
-								for( $i = 0; $i < count( $parts ); ++$i ) {
-									$title = $parts[$i];
-								} 
-								echo 'File: <strong>', $title, '</strong>&nbsp;&nbsp;&nbsp; (<a href="', $meta, '" target="_blank" rel="external">Download</a> / <a href="#" class="cmb_remove_file_button" rel="', $field['id'], '">Remove</a>)';
-							}	
+              foreach( $meta as $file):
+                $check_image = preg_match( '/(^.*\.jpg|jpeg|png|gif|ico*)/i', $file );
+                if ( $check_image ) {
+                  echo '<div class="img_status">';
+                  echo '<img src="', $file, '" alt="" />';
+                  echo '<a href="#" class="cmb_remove_file_button" rel="', $field['id'], '">Remove Image</a>';
+                  echo '<input type="hidden" name="' . $field['id'] . '[]" value="' . $file . '"/>';
+                  echo '</div>';
+                } else {
+                  $parts = explode( '/', $file );
+                  for( $i = 0; $i < count( $parts ); ++$i ) {
+                    $title = $parts[$i];
+                  } 
+                  echo 'File: <strong>', $title, '</strong>&nbsp;&nbsp;&nbsp; (<a href="', $file, '" target="_blank" rel="external">Download</a> / <a href="#" class="cmb_remove_file_button" rel="', $field['id'], '">Remove</a>)';
+                }
+              endforeach;  
 						}
 					echo '</div>'; 
 				break;
@@ -469,7 +472,7 @@ class cmb_Meta_Box {
 			
 			if ( 'file' == $field['type'] ) {
 				$name = $field['id'] . "_id";
-				$old = get_post_meta( $post_id, $name, !$field['multiple'] /* If multicheck this can be multiple values */ );
+        $old = get_post_meta( $post_id, $name, !$field['multiple'] /* If multicheck this can be multiple values */ );
 				if ( isset( $field['save_id'] ) && $field['save_id'] ) {
 					$new = isset( $_POST[$name] ) ? $_POST[$name] : null;
 				} else {
