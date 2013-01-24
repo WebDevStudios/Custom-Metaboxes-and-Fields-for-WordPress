@@ -60,22 +60,19 @@ jQuery(document).ready(function ($) {
 	 * File and image upload handling
 	 */
 	$('.cmb_upload_file').change(function () {
-		formfield = $(this).attr('name');
+		formfield = $(this).attr('data-name');
 		$('#' + formfield + '_id').val("");
 	});
 
 	$('.cmb_upload_button').live('click', function () {
 		var buttonLabel;
-		formfield = $(this).prev('input').attr('name');
+		formfield = $(this).prev('input').attr('data-name');
 		buttonLabel = 'Use as ' + $('label[for=' + formfield + ']').text();
 		tb_show('', 'media-upload.php?post_id=' + $('#post_ID').val() + '&type=file&cmb_force_send=true&cmb_send_label=' + buttonLabel + '&TB_iframe=true');
 		return false;
 	});
 
 	$('.cmb_remove_file_button').live('click', function () {
-		formfield = $(this).attr('rel');
-		$('input#' + formfield).val('');
-		$('input#' + formfield + '_id').val('');
 		$(this).parent().remove();
 		return false;
 	});
@@ -106,17 +103,17 @@ jQuery(document).ready(function ($) {
 			image = /(jpe?g|png|gif|ico)$/gi;
 
 			if (itemurl.match(image)) {
-				uploadStatus = '<div class="img_status"><img src="' + itemurl + '" alt="" /><a href="#" class="cmb_remove_file_button" rel="' + formfield + '">Remove Image</a></div>';
+				uploadStatus = '<div class="img_status"><img src="' + itemurl + '" alt="" /><a href="#" class="cmb_remove_file_button" rel="' + formfield + '">Remove Image</a><input type="hidden" name="' + formfield + '[]" value="' + itemurl + '"/></div>';
 			} else {
 				// No output preview if it's not an image
 				// Standard generic output if it's not an image.
 				html = '<a href="' + itemurl + '" target="_blank" rel="external">View File</a>';
-				uploadStatus = '<div class="no_image"><span class="file_link">' + html + '</span>&nbsp;&nbsp;&nbsp;<a href="#" class="cmb_remove_file_button" rel="' + formfield + '">Remove</a></div>';
+				uploadStatus = '<div class="no_image"><span class="file_link">' + html + '</span>&nbsp;&nbsp;&nbsp;<a href="#" class="cmb_remove_file_button" rel="' + formfield + '">Remove</a><input type="hidden" name="' + formfield + '[]" value="' + itemurl + '"/></div>';
 			}
 
 			$('#' + formfield).val(itemurl);
 			$('#' + formfield + '_id').val(itemid);
-			$('#' + formfield).siblings('.cmb_upload_status').slideDown().html(uploadStatus);
+			$('#' + formfield).siblings('.cmb_upload_status').append(uploadStatus);
 			tb_remove();
 
 		} else {
