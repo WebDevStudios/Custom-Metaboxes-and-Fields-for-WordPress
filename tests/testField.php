@@ -16,6 +16,7 @@ class FieldTestCase extends WP_UnitTestCase {
 	}
 
 	function testSaveValues() {
+		
 		$field = new CMB_Text_Field( 'foo', 'Title', array( 1, 2 ) );
 
 		$post = reset( get_posts( 'showposts=1' ) );
@@ -23,14 +24,12 @@ class FieldTestCase extends WP_UnitTestCase {
 		if ( ! $post )
 			$this->markTestSkipped( 'Post not found' );
 
-		$field->save( $post->ID );
-
-		global $wpdb;
+		$field->save( $post->ID, array( 1, 2 ) );
 
 		$meta = get_post_meta( $post->ID, 'foo', false );
 		delete_post_meta( $post->ID , 'foo' );
 		
-		// order is not guerenteed
+		// Order is not guaranteed
 		sort( $meta );
 
 		$this->assertEquals( $meta, array( 1 , 2 ) );
@@ -38,6 +37,7 @@ class FieldTestCase extends WP_UnitTestCase {
 	}
 
 	function testSaveValuesOnRepeatable() {
+		
 		$field = new CMB_Text_Field( 'foo', 'Title', array( 1, 2 ), array( 'repeatable' => true ) );
 
 		$post = reset( get_posts( 'showposts=1' ) );
@@ -45,16 +45,17 @@ class FieldTestCase extends WP_UnitTestCase {
 		if ( ! $post )
 			$this->markTestSkipped( 'Post not found' );
 
-
-		$field->save( $post->ID );
+		$field->save( $post->ID, array( 1, 2 ) );
 
 		$meta = get_post_meta( $post->ID, 'foo', false );
 
 		delete_post_meta( $post->ID , 'foo' );
 
-		// order is not guerenteed
+		// Order is not guerenteed
 		sort( $meta );
 		
 		$this->assertEquals( $meta, array( 1, 2 ) );
+
 	}
+
 }
