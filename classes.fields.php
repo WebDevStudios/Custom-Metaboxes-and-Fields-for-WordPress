@@ -60,7 +60,13 @@ abstract class CMB_Field {
 			$this->args['options'] = $re_format;
 		}
 
-		$this->values 	= $values;
+		//If the field has a custom value populator callback
+		if ( ! empty( $args['values_callback'] ) )
+			$this->values = call_user_func( $args['values_callback'], get_the_id() );
+
+		else
+			$this->values = $values;
+
 		$this->value 	= reset( $this->values );
 
 		$this->description = ! empty( $this->args['desc'] ) ? $this->args['desc'] : '';
@@ -72,7 +78,10 @@ abstract class CMB_Field {
 	 *
 	 * @uses wp_enqueue_script()
 	 */
-	public function enqueue_scripts() {}
+	public function enqueue_scripts() {
+
+		wp_enqueue_script( 'cmb-scripts', CMB_URL . '/js/cmb.js', array( 'jquery', 'jquery-ui-core', 'jquery-ui-datepicker', 'media-upload', 'thickbox', 'farbtastic' ) );
+	}
 
 	/**
 	 * Method responsible for enqueueing any extra styles the field needs
@@ -107,6 +116,7 @@ abstract class CMB_Field {
 	}
 
 	public function get_values() {
+
 		return $this->values;
 	}
 
@@ -125,7 +135,21 @@ abstract class CMB_Field {
 
 	}
 
-	public function save( $post_id ) {
+	public function save( $post_id, $values ) {
+
+		$this->values = $values;
+		$this->parse_save_values();
+		// allow override from args
+		if ( ! empty( $this->args['save_callback'] ) ) {
+
+			call_user_func( $this->args['save_callback'], $this->values, $post_id );
+
+			return;
+		}
+
+		//If we are not on a post edit screen
+		if ( ! $post_id )
+			return;
 
 		delete_post_meta( $post_id, $this->id );
 
@@ -133,7 +157,6 @@ abstract class CMB_Field {
 
 			$this->value = $v;
 			$this->parse_save_value();
-
 
 			if ( $this->value || $this->value === '0' )
 				add_post_meta( $post_id, $this->id, $this->value );
@@ -157,14 +180,16 @@ abstract class CMB_Field {
 	public function display() {
 
 		// if there are no values and it's not repeateble, we want to do one with empty string
-		if ( empty( $this->values ) && !  $this->args['repeatable'] )
-			$this->values = array( '' );
+		if ( ! $this->get_values() && ! $this->args['repeatable'] )
+			$values = array( '' );
+		else
+			$values = $this->get_values();
 
 		$this->title();
 
 		$this->description();
 
-		foreach ( $this->values as $value ) {
+		foreach ( $values as $value ) {
 
 			$this->value = $value;
 
@@ -245,57 +270,39 @@ class CMB_Text_Small_Field extends CMB_Field {
  */
 class CMB_File_Field extends CMB_Field {
 
+	function enqueue_scripts() {
+
+		parent::enqueue_scripts();
+		wp_enqueue_script( 'cmb-file-upload', CMB_URL . '/js/file-upload.js', array( 'jquery' ) );
+		wp_enqueue_media();
+	}
+
 	public function html() {
 
-		$field = array(
-			'id' => $this->name,
-			'allow' => '',
-			'html_id' => str_replace( array( '[', ']' ),  '_', $this->name . rand(1,100) )
-		);
-
-		// value can be URL of file or id of image attachment
-
-		if ( is_numeric( $this->value ) ) {
-			if ( wp_get_attachment_image_src( $this->value, 'width=100&height=100' ) )
-				$meta = reset( wp_get_attachment_image_src( $this->value, 'width=100&height=100' ) );
-			else
-				$meta = '';
-		} else {
-			$meta = $this->value;
-		}
-
-		$input_type_url = "hidden";
-		if ( 'url' == $field['allow'] || ( is_array( $field['allow'] ) && in_array( 'url', $field['allow'] ) ) )
-			$input_type_url="text";
-
-		echo '<input class="cmb_upload_file" type="' . $input_type_url . '" size="45" id="', $field['html_id'], '" value="', $meta, '" />';
-		echo '<input class="cmb_upload_button button" type="button" value="Upload File" />';
-		echo '<input class="cmb_upload_file_id" type="hidden" id="', $field['html_id'], '_id" name="', $field['id'], '" value="', $this->value, '" />';
-		echo '<div id="', $field['html_id'], '_status" class="cmb_upload_status">';
-			if ( $meta != '' ) {
-				$check_image = preg_match( '/(^.*\.jpg|jpeg|png|gif|ico*)/i', $meta );
-				if ( $check_image ) {
-					echo '<div class="img_status">';
-					echo '<img src="', $meta, '" alt="" />';
-					echo '<a href="#" class="cmb_remove_file_button" rel="', $field['html_id'], '">Remove Image</a>';
-					echo '</div>';
-				} else {
-					?>
-					<div class="img_status">
-					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="<?php echo $meta ?>" target="_blank">View File</a>
-					<a href="#" class="cmb_remove_file_button" rel="<?php echo $field['html_id'] ?>">Remove</a>
-					</div>
-					<?php
-				}
-			}
-		echo '</div>';
-
+		?>
+		<a class="button cmb-file-upload <?php echo $this->get_value() ? 'hidden' : '' ?>" href="#">Upload file</a>
+		<div class="<?php echo $this->get_value() ? '' : 'hidden' ?>" style="width: 200px; padding: 5px; text-align: center;">
+			<div class="cmb-file-holder" style="text-align: center; vertical-align: middle;">
+				<?php if ( $this->get_value() ) : ?>
+					<?php echo wp_get_attachment_image( $this->get_value(),'thumbnail', true ) ?>
+				<?php endif; ?>
+			</div>
+			<strong style="font-size: 11px; line-height: 15px;" class="cmb-file-name">
+				<?php if ( $this->get_value() ) : ?>
+					<?php echo end( explode( DIRECTORY_SEPARATOR, get_attached_file( $this->get_value() ) ) ); ?>
+				<?php endif; ?>
+			</strong> <a href="#" class="cmb-remove-file danger">remove</a>
+		</div>
+		<input type="hidden" class="cmb-file-upload-input" name="<?php echo $this->name ?>" value="<?php echo $this->value ?>" />
+		<?php
 	}
 }
 
 class CMB_Image_Field extends CMB_Field {
 
 	function enqueue_scripts() {
+
+		parent::enqueue_scripts();
 		wp_enqueue_script( 'plupload-all' );
 		wp_enqueue_script( 'tf-well-plupload-image', CMB_URL . '/js/plupload-image.js', array( 'jquery-ui-sortable', 'wp-ajax-response', 'plupload-all' ), 1 );
 
@@ -610,19 +617,6 @@ class CMB_Oembed_Field extends CMB_Field {
 
 }
 
-function cmb_oembed_thumbnail( $return, $data, $url ) {
-
-	$backtrace = debug_backtrace();
-
-	if ( $data->type == 'video' && ! empty( $backtrace[5]['args'][1]['cmb_oembed'] ) )
-		return '<a href=""><img src="' . $data->thumbnail_url . '" /><span class="video_embed">' . $return . '</span></a>';
-
-	return $return;
-
-}
-
-add_filter( 'oembed_dataparse', 'cmb_oembed_thumbnail', 10, 3 );
-
 /**
  * Standard text field.
  *
@@ -695,6 +689,14 @@ class CMB_Select extends CMB_Field {
 		$this->args = wp_parse_args( $this->args, array( 'multiple' => false, 'ajax_url' => '' ) );
 	}
 
+	public function get_options() {
+
+		if ( $this->has_data_delegate() )
+			$this->args['options'] = $this->get_delegate_data();
+
+		return $this->args['options'];
+	}
+
 	public function enqueue_scripts() {
 
 		parent::enqueue_scripts();
@@ -721,7 +723,7 @@ class CMB_Select extends CMB_Field {
 			<?php if ( $this->args['ajax_url'] ) : ?>
 				<input value="<?php echo implode( ',' , (array) $this->value ) ?>" name="<?php echo $this->name ?>" style="width: 100%" class="<?php echo $id ?>" id="<?php echo $id ?>" />
 			<?php else : ?>
-				<select <?php echo ! empty( $this->args['multiple'] ) ? 'multiple' : '' ?> class="<?php echo $id ?>" name="<?php /*nasty hack*/ echo str_replace( '[', '[m', $this->name ) ?><?php echo ! empty( $this->args['multiple'] ) ? '[]' : '' ?>">
+				<select style="width: 100%" <?php echo ! empty( $this->args['multiple'] ) ? 'multiple' : '' ?> class="<?php echo $id ?>" name="<?php /*nasty hack*/ echo str_replace( '[', '[m', $this->name ) ?><?php echo ! empty( $this->args['multiple'] ) ? '[]' : '' ?>">
 
 					<?php if ( ! empty( $this->args['allow_none'] ) ) : ?>
 
@@ -998,6 +1000,9 @@ class CMB_Group_Field extends CMB_Field {
 	}
 
 	public function enqueue_scripts() {
+
+		parent::enqueue_scripts();
+
 		foreach ( $this->args['fields'] as $f ) {
 
 			$class = _cmb_field_class_for_type( $f['type'] );
