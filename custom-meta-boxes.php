@@ -168,7 +168,7 @@ function cmb_do_meta_boxes( $screen, $context, $object ) {
 			
 					$hidden_class = in_array($box['id'], $hidden) ? ' hide-if-js' : ''; ?>
 					
-					<div id="<?php esc_attr_e( $box['id']; ?>" class="<?php esc_attr_e( postbox_classes( $box['id'], $page ) . $hidden_class ); ?>">
+					<div id="<?php esc_attr_e( $box['id'] ); ?>" class="<?php esc_attr_e( postbox_classes( $box['id'], $page ) . $hidden_class ); ?>">
 					
 						<?php call_user_func( $box['callback'], $object, $box ); ?>
 					
