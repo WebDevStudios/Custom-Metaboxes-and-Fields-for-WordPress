@@ -101,29 +101,35 @@ class CMB_Meta_Box {
 			return false;
 
 		$this->init_fields( (int) $post_id );
+	
 	}
 
 	function enqueue_scripts() {
-		foreach ( $this->fields as $field ) {
+
+		foreach ( $this->fields as $field )
 			$field->enqueue_scripts();
-		}
+
 	}
 
 	function enqueue_styles() {
-		foreach ( $this->fields as $field ) {
+
+		foreach ( $this->fields as $field )
 			$field->enqueue_styles();
-		}
+	
 	}
 
-	function add_post_enctype() {
-		echo '
+	function add_post_enctype() { ?>
+
 		<script type="text/javascript">
+		
 		jQuery(document).ready(function(){
 			jQuery("#post").attr("enctype", "multipart/form-data");
 			jQuery("#post").attr("encoding", "multipart/form-data");
-		});
-		</script>';
-	}
+		} );
+		
+		</script>
+	
+	<?php }
 
 	// Add metaboxe
 	function add() {
@@ -189,12 +195,13 @@ class CMB_Meta_Box {
 	}
 	
 	// Show fields
-	function show() {
+	function show() { ?>
 
 		// Use nonce for verification
-		echo '<input type="hidden" name="wp_meta_box_nonce" value="', wp_create_nonce( basename(__FILE__) ), '" />';
+		<input type="hidden" name="wp_meta_box_nonce" value="esc_attr_e( wp_create_nonce( basename(__FILE__) ) ); ?>" />
 
-		self::layout_fields( $this->fields );
+		<?php self::layout_fields( $this->fields );
+	
 	}
 
 	/**
@@ -204,51 +211,52 @@ class CMB_Meta_Box {
 	 * 
 	 * @param  CMB_Field[]  $fields 
 	 */
-	static function layout_fields( array $fields ) {
-
-		?>
+	static function layout_fields( array $fields ) { ?>
 
 		<table class="form-table cmb_metabox">
 
-			<?php
-			$current_colspan = 0;
+			<?php $current_colspan = 0;
 
 			foreach ( $fields as $field ) :
 
-				if ( $current_colspan == 0 ) :
-					?>
+				if ( $current_colspan == 0 ) : ?>
+					
 					<tr>
+				
 				<?php endif;
 
-				$current_colspan += $field->args['cols'];
-				?>
+				$current_colspan += $field->args['cols']; ?>
 
-				<td style="width: <?php echo $field->args['cols'] / 12 * 100 ?>%" colspan="<?php echo $field->args['cols'] ?>">
-					<div class="field <?php echo !empty( $field->args['repeatable'] ) ? 'repeatable' : '' ?>">
+				<td style="width: <?php esc_attr_e( $field->args['cols'] / 12 * 100 ); ?>%" colspan="<?php esc_attr_e( $field->args['cols'] ); ?>">
+					<div class="field <?php echo ! empty( $field->args['repeatable'] ) ? 'repeatable' : '' ?>">
+						
 						<?php $field->display(); ?>
+					
 					</div>
 				</td>
 
 				<?php if ( $current_colspan == 12 ) :
-					$current_colspan = 0;
-					?>
+				
+					$current_colspan = 0; ?>
+					
 					</tr>
+				
 				<?php endif; ?>
 
-				<input type="hidden" name="_cmb_present_<?php echo $field->id ?>" value="1" />
+				<input type="hidden" name="_cmb_present_<?php esc_attr_e( $field->id ); ?>" value="1" />
+			
 			<?php endforeach; ?>
+		
 		</table>
 
-		<?php
-	}
+	<?php }
 
 	// Save data from metabox
 	function save( $post_id = 0 )  {
 
 		// verify nonce
-		if ( ! isset( $_POST['wp_meta_box_nonce'] ) || ! wp_verify_nonce( $_POST['wp_meta_box_nonce'], basename(__FILE__) ) ) {
+		if ( ! isset( $_POST['wp_meta_box_nonce'] ) || ! wp_verify_nonce( $_POST['wp_meta_box_nonce'], basename(__FILE__) ) )
 			return $post_id;
-		}
 
 		foreach ( $this->_meta_box['fields'] as $field ) {
 			
