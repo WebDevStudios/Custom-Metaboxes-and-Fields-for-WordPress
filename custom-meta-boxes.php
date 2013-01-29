@@ -6,7 +6,7 @@ Contributors: 	Andrew Norcross (@norcross / andrewnorcross.com)
 				Bill Erickson (@billerickson / billerickson.net)
 				Human Made Limited (@humanmadeltd)
 Description: 	This will create metaboxes with custom fields that will blow your mind.
-Version: 		1.0
+Version: 		1.0 - Beta 1
 */
 
 /**
