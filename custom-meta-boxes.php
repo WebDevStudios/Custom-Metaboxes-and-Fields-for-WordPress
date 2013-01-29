@@ -41,10 +41,7 @@ include_once( CMB_PATH . '/classes.fields.php' );
 include_once( CMB_PATH . '/class.cmb-meta-box.php' );
 //include_once( CMB_PATH . '/example-functions.php' );
 
-
 // get all the meta boxes on init
-add_action( 'init', 'cmb_init' );
-
 function cmb_init() {
 
 	if ( ! is_admin() )
@@ -57,15 +54,13 @@ function cmb_init() {
 			new CMB_Meta_Box( $meta_box );
 
 }
-
-//function cmb_enqueue_post_edit_scrips() {
-//	wp_enqueue_script('post');
-//}
+add_action( 'init', 'cmb_init' );
 
 /**
  * Adding scripts and styles
  */
 function cmb_scripts( $hook ) {
+	
 	if ( $hook == 'post.php' || $hook == 'post-new.php' || $hook == 'page-new.php' || $hook == 'page.php' || did_action( 'cmb_init_fields' ) ) {
 		wp_register_script( 'cmb-timepicker', CMB_URL . '/js/jquery.timePicker.min.js' );
 		wp_register_script( 'cmb-scripts', CMB_URL . '/js/cmb.js', array( 'jquery', 'jquery-ui-core', 'jquery-ui-datepicker', 'media-upload', 'thickbox', 'farbtastic' ) );
@@ -76,7 +71,6 @@ function cmb_scripts( $hook ) {
 	}
 }
 add_action( 'admin_enqueue_scripts', 'cmb_scripts', 10 );
-
 
 function _cmb_field_class_for_type( $type ) {
 
@@ -110,11 +104,13 @@ function _cmb_field_class_for_type( $type ) {
 
 }
 
-//Draw the meta boxes in places other than the post edit screen
+// Draw the meta boxes in places other than the post edit screen
 function cmb_draw_meta_boxes( $pages, $context = 'normal', $object = null ) {
 
 	cmb_do_meta_boxes( $pages, $context, $object );
+	
 	wp_enqueue_script('post');
+
 }
 
 /**
@@ -128,12 +124,14 @@ function cmb_draw_meta_boxes( $pages, $context = 'normal', $object = null ) {
  * @return int number of meta_boxes
  */
 function cmb_do_meta_boxes( $screen, $context, $object ) {
+	
 	global $wp_meta_boxes;
 
 	static $already_sorted = false;
 
 	if ( empty( $screen ) )
 		$screen = get_current_screen();
+	
 	elseif ( is_string( $screen ) )
 		$screen = convert_to_screen( $screen );
 
@@ -142,37 +140,47 @@ function cmb_do_meta_boxes( $screen, $context, $object ) {
 	$hidden = get_hidden_meta_boxes( $screen );
 
 	$i = 0;
+	
 	do {
 		// Grab the ones the user has manually sorted. Pull them out of their previous context/priority and into the one the user chose
-		if ( !$already_sorted && $sorted = get_user_option( "meta-box-order_$page" ) ) {
-			foreach ( $sorted as $box_context => $ids ) {
-				foreach ( explode(',', $ids ) as $id ) {
+	
+		if ( ! $already_sorted && $sorted = get_user_option( "meta-box-order_$page" ) )
+			foreach ( $sorted as $box_context => $ids )
+				foreach ( explode(',', $ids ) as $id )
 					if ( $id && 'dashboard_browser_nag' !== $id )
 						add_meta_box( $id, null, null, $screen, $box_context, 'sorted' );
-				}
-			}
-		}
+		
 		$already_sorted = true;
 
-		if ( !isset($wp_meta_boxes) || !isset($wp_meta_boxes[$page]) || !isset($wp_meta_boxes[$page][$context]) )
+		if ( ! isset( $wp_meta_boxes ) || ! isset( $wp_meta_boxes[$page] ) || ! isset( $wp_meta_boxes[$page][$context] ) )
 			break;
 
-		foreach ( array('high', 'sorted', 'core', 'default', 'low') as $priority ) {
-			if ( isset($wp_meta_boxes[$page][$context][$priority]) ) {
+		foreach ( array( 'high', 'sorted', 'core', 'default', 'low' ) as $priority ) {
+			
+			if ( isset( $wp_meta_boxes[$page][$context][$priority] ) ) {
+			
 				foreach ( (array) $wp_meta_boxes[$page][$context][$priority] as $box ) {
+			
 					if ( false == $box || ! $box['title'] )
 						continue;
 
 					$i++;
-					$style = '';
-					$hidden_class = in_array($box['id'], $hidden) ? ' hide-if-js' : '';
-					echo '<div id="' . $box['id'] . '" class=" ' . postbox_classes($box['id'], $page) . $hidden_class . '" ' . '>' . "\n";
-					call_user_func($box['callback'], $object, $box);
-					echo "</div>\n";
-				}
+			
+					$hidden_class = in_array($box['id'], $hidden) ? ' hide-if-js' : ''; ?>
+					
+					<div id="<?php esc_attr_e( $box['id']; ?>" class="<?php esc_attr_e( postbox_classes( $box['id'], $page ) . $hidden_class ); ?>">
+					
+						<?php call_user_func( $box['callback'], $object, $box ); ?>
+					
+					</div>
+				
+				<?php }
+			
 			}
+		
 		}
-	} while(0);
+	} while( 0 );
 
 	return $i;
+
 }
