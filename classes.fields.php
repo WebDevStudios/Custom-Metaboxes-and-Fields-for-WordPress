@@ -6,7 +6,6 @@
  *
  * @abstract
  */
-
 abstract class CMB_Field {
 
 	public $value;
@@ -30,16 +29,16 @@ abstract class CMB_Field {
 		$this->name		= $name . '[]';
 		$this->title 	= $title;
 		$this->args		= wp_parse_args( $args, array(
-			'repeatable' => false,
-			'std'        => '',
-			'default'    => '',
-			'show_label' => false,
-			'taxonomy'   => '',
-			'hide_empty' => false,
-			'data_delegate' => null,
-			'options'	=> array(),
-			'cols' 		=> '12',
-			'style' 	=> ''
+				'repeatable' 			=> false,
+				'std'        			=> '',
+				'default'    			=> '',
+				'show_label' 			=> false,
+				'taxonomy'   			=> '',
+				'hide_empty' 			=> false,
+				'data_delegate' 		=> null,
+				'options'				=> array(),
+				'cols' 					=> '12',
+				'style' 				=> '',
 			)
 		);
 
@@ -55,19 +54,21 @@ abstract class CMB_Field {
 			foreach ( $this->args['options'] as $option ) {
 				$re_format[$option['value']] = $option['name'];
 			}
+
+			// TODO this is incorrect
 			_deprecated_argument( 'CMB_Field', "'std' is deprecated, use 'default instead'", '0.9' );
 
 			$this->args['options'] = $re_format;
 		}
 
-		//If the field has a custom value populator callback
+		// If the field has a custom value populator callback
 		if ( ! empty( $args['values_callback'] ) )
 			$this->values = call_user_func( $args['values_callback'], get_the_id() );
 
 		else
 			$this->values = $values;
 
-		$this->value 	= reset( $this->values );
+		$this->value = reset( $this->values );
 
 		$this->description = ! empty( $this->args['desc'] ) ? $this->args['desc'] : '';
 
@@ -79,7 +80,6 @@ abstract class CMB_Field {
 	 * @uses wp_enqueue_script()
 	 */
 	public function enqueue_scripts() {
-
 		wp_enqueue_script( 'cmb-scripts', CMB_URL . '/js/cmb.js', array( 'jquery', 'jquery-ui-core', 'jquery-ui-datepicker', 'media-upload', 'thickbox', 'farbtastic' ) );
 	}
 
@@ -105,10 +105,12 @@ abstract class CMB_Field {
 	 * @return array mixed
 	 */
 	protected function get_delegate_data() {
+		
 		if ( $this->args['data_delegate'] )
 			return call_user_func_array( $this->args['data_delegate'], array( $this ) );
 
 		return array();
+	
 	}
 
 	public function get_value() {
@@ -116,38 +118,40 @@ abstract class CMB_Field {
 	}
 
 	public function get_values() {
-
 		return $this->values;
 	}
 
 	public function set_values( array $values ) {
+	
 		$this->values = $values;
 
 		unset( $this->value );
+	
 	}
 
+	public function parse_save_values() {}
 
-	public function parse_save_values() {
+	public function parse_save_value() {}
 
-	}
-
-	public function parse_save_value() {
-
-	}
-
+	/**
+	 * @todo this surely only works for posts
+	 * @todo why do values need to be passed in, they can already be passed in on construct
+	 */
 	public function save( $post_id, $values ) {
 
 		$this->values = $values;
 		$this->parse_save_values();
-		// allow override from args
+		
+		// Allow override from args
 		if ( ! empty( $this->args['save_callback'] ) ) {
 
 			call_user_func( $this->args['save_callback'], $this->values, $post_id );
 
 			return;
+		
 		}
 
-		//If we are not on a post edit screen
+		// If we are not on a post edit screen
 		if ( ! $post_id )
 			return;
 
@@ -160,20 +164,27 @@ abstract class CMB_Field {
 
 			if ( $this->value || $this->value === '0' )
 				add_post_meta( $post_id, $this->id, $this->value );
+		
 		}
 	}
 
 	public function title() {
 
-		if ( $this->title )
-			echo '<h4 class="field-title">' . $this->title . '</h4>';
+		if ( $this->title ) { ?>
+		
+			<h4 class="field-title"><?php esc_html_e( $this->title ); ?></h4>
+		
+		<?php }
 
 	}
 
 	public function description() {
 
-		if ( $this->description )
-			echo '<p class="cmb_metabox_description">' . $this->description . '</p>';
+		if ( $this->description ) { ?>
+			
+			<p class="cmb_metabox_description"><?php esc_html_e( $this->description ); ?></p>
+		
+		<?php }
 
 	}
 
@@ -182,6 +193,7 @@ abstract class CMB_Field {
 		// if there are no values and it's not repeateble, we want to do one with empty string
 		if ( ! $this->get_values() && ! $this->args['repeatable'] )
 			$values = array( '' );
+		
 		else
 			$values = $this->get_values();
 
@@ -208,7 +220,7 @@ abstract class CMB_Field {
 
 		}
 
-		// insert a hidden one if it's repeatable
+		// Insert a hidden one if it's repeatable
 		if ( $this->args['repeatable'] ) {
 			$this->value = '';
 
@@ -238,6 +250,7 @@ abstract class CMB_Field {
 /**
  * Standard text field.
  *
+ * @extends CMB_Field
  */
 class CMB_Text_Field extends CMB_Field {
 
@@ -303,6 +316,7 @@ class CMB_Image_Field extends CMB_Field {
 	function enqueue_scripts() {
 
 		parent::enqueue_scripts();
+		
 		wp_enqueue_script( 'plupload-all' );
 		wp_enqueue_script( 'tf-well-plupload-image', CMB_URL . '/js/plupload-image.js', array( 'jquery-ui-sortable', 'wp-ajax-response', 'plupload-all' ), 1 );
 
@@ -323,7 +337,7 @@ class CMB_Image_Field extends CMB_Field {
 				'action'    	=> 'plupload_image_upload'
 			)
 
-		));
+		) );
 
 	}
 
@@ -517,6 +531,7 @@ class CMB_Date_Timestamp_Field extends CMB_Field {
 	public function parse_save_value() {
 		$this->value = strtotime( $this->value );
 	}
+
 }
 
 /**
@@ -596,6 +611,7 @@ class CMB_Oembed_Field extends CMB_Field {
 				<?php endif; ?>
 
 					<a href="#" class="cmb_remove_file_button" onclick="jQuery( this ).closest('div').prev().removeClass('hidden').find('input').first().removeAttr('disabled')">Remove</a>
+
 				</div>
 
 			<?php endif; ?>
@@ -750,8 +766,11 @@ class CMB_Select extends CMB_Field {
 					var posts = [];
 
 					<?php if ( $this->args['multiple'] ) : ?>
+						
 						options.multiple = true;
+					
 					<?php endif; ?>
+					
 					<?php foreach ( array_filter( (array) $this->value ) as $post_id ) : ?>
 						posts.push( { id: <?php echo $post_id ?>, text: '<?php echo get_the_title( $post_id ) ?>' } )
 					<?php endforeach; ?>
@@ -772,6 +791,7 @@ class CMB_Select extends CMB_Field {
 					options.initSelection = function (element, callback) {
 						return posts;
 					}
+			
 				<?php endif; ?>
 
 				setInterval( function() {
@@ -781,13 +801,17 @@ class CMB_Select extends CMB_Field {
 							jQuery( this ).addClass('select2-added').select2( options );
 
 						}
-					});
+					} );
+				
 				}, 300 );
 
 			} );
+		
 		</script>
 		<?php
 	}
+		
+
 }
 
 /**
@@ -799,6 +823,7 @@ class CMB_Select extends CMB_Field {
 class CMB_Radio_Field extends CMB_Field {
 
 	public function html() {
+		
 		if ( $this->has_data_delegate() )
 			$this->args['options'] = $this->get_delegate_data();
 
@@ -812,6 +837,8 @@ class CMB_Radio_Field extends CMB_Field {
 		</p>
 		<?php
 	}
+	
+
 }
 
 /**
@@ -823,8 +850,10 @@ class CMB_Checkbox extends CMB_Field {
 	public function parse_save_values() {
 
 		$name = str_replace( '[]', '', $this->name );
+		
 		foreach ( $this->values as $key => $value )
 			$this->values[$key] = isset( $_POST['checkbox_' . $name][$key] ) ? $_POST['checkbox_' . $name][$key] : null;
+	
 	}
 
 	public function title() {
@@ -842,6 +871,8 @@ class CMB_Checkbox extends CMB_Field {
 		</p>
 		<?php
 	}
+		
+
 }
 
 
@@ -861,38 +892,44 @@ class CMB_Title extends CMB_Field {
  */
 class CMB_wysiwyg extends CMB_Field {
 
-	public function html() {
-
-		?>
+	public function html() { ?>
+		
 		<p>
 			<?php wp_editor( $this->get_value(), $this->name, $this->args['options'] );?>
 		</p>
-		<?php
-	}
+	
+	<?php }
 }
 
 class CMB_Taxonomy extends CMB_Select {
 
 	public function __construct() {
+		
 		$args = func_get_args();
+	
 		call_user_func_array( array( 'parent', '__construct' ), $args );
 
 		$this->args['data_delegate'] = array( $this, 'get_delegate_data' );
+	
 	}
 
 	public function get_delegate_data() {
+	
 		$terms = $this->get_terms();
+	
 		$term_options = array();
 
 		foreach ( $terms as $term )
 			$term_options[$term->term_id] = $term->name;
 
 		return $term_options;
+	
 	}
 
 	private function get_terms() {
 
 		return get_terms( $this->args['taxonomy'], array( 'hide_empty' => $this->args['hide_empty'] ) );
+	
 	}
 
 }
@@ -909,6 +946,7 @@ class CMB_Taxonomy extends CMB_Select {
 class CMB_Post_Select extends CMB_Select {
 
 	public function __construct() {
+		
 		$args = func_get_args();
 
 		call_user_func_array( array( 'parent', '__construct' ), $args );
@@ -919,14 +957,18 @@ class CMB_Post_Select extends CMB_Select {
 
 		if ( ! $this->args['use_ajax'] ) {
 			$this->args['data_delegate'] = array( $this, 'get_delegate_data' );
+		
 		} else {
+		
 			$this->args['ajax_url'] = add_query_arg( 'action', 'cmb_post_select', admin_url( 'admin-ajax.php' ) );
 			$this->args['ajax_args'] = $this->args['query'];
+		
 		}
 
 	}
 
 	public function get_delegate_data() {
+		
 		$posts = $this->get_posts();
 		$post_options = array();
 
@@ -934,22 +976,24 @@ class CMB_Post_Select extends CMB_Select {
 			$post_options[$post->ID] = get_the_title( $post->ID );
 
 		return $post_options;
+
 	}
 
 	private function get_posts() {
 
 		return get_posts( $this->args['query'] );
+
 	}
 
 	public function parse_save_value() {
 
 		if ( $this->args['ajax_url'] && $this->args['multiple'] )
 			$this->value = explode( ',', $this->value );
+
 	}
 }
 
-add_action( 'wp_ajax_cmb_post_select', 'cmb_ajax_post_select' );
-
+// TODO this should be in inside the class
 function cmb_ajax_post_select() {
 
 	$query = new WP_Query( $_GET );
@@ -963,8 +1007,9 @@ function cmb_ajax_post_select() {
 	echo json_encode( $json );
 
 	exit;
-}
 
+}
+add_action( 'wp_ajax_cmb_post_select', 'cmb_ajax_post_select' );
 
 /**
  * Field to group child fieids
@@ -985,13 +1030,14 @@ class CMB_Group_Field extends CMB_Field {
 
 		if ( ! empty( $this->args['fields'] ) ) {
 			foreach ( $this->args['fields'] as $f ) {
+			
 				$field_value = isset( $this->value[$f['id']] ) ? $this->value[$f['id']] : '';
 				$f['uid'] = $f['id'];
 
 				$class = _cmb_field_class_for_type( $f['type'] );
 				$f['show_label'] = true;
 
-				// Todo support for repeatble fields in groups
+				// Todo support for repeatable fields in groups
 				$this->add_field( new $class( $f['uid'], $f['name'], (array) $field_value, $f ) );
 
 			}
@@ -1067,11 +1113,11 @@ class CMB_Group_Field extends CMB_Field {
 		$field->id = $this->id . '[' . $field->id . '][]';
 		$field->name = $field->id . '[]';
 		$this->fields[$key] = $field;
+	
 	}
 
 	public function html() {
-
-		
+	
 		$value = $this->value;
 
 		if ( ! empty( $value ) ) {
@@ -1086,9 +1132,9 @@ class CMB_Group_Field extends CMB_Field {
 			}
 		}
 
-		$field = $this->args;
-		?>
-		<div class="group <?php echo !empty( $field['repeatable'] ) ? 'cloneable' : '' ?>" style="position: relative">
+		$field = $this->args; ?>
+		
+		<div class="group <?php echo ! empty( $field['repeatable'] ) ? 'cloneable' : '' ?>" style="position: relative">
 
 			<?php if ( $this->args['repeatable'] ) : ?>
 				<a class="delete-field button" style="position: absolute; top: -3px; right: -3px">X</a>
@@ -1098,10 +1144,10 @@ class CMB_Group_Field extends CMB_Field {
 
 		</div>
 
-		<?php
-	}
+	<?php }
 
 	public function parse_save_values() {
+	
 		$values = $this->values;
 
 		$this->values = array();
@@ -1114,7 +1160,7 @@ class CMB_Group_Field extends CMB_Field {
 
 			foreach ( $this->fields as $field ) {
 
-				// create the fiel object so it can sanitize it's data etc
+				// Create the field object so it can sanitize it's data etc
 				$field->values = (array) $values[$field->original_id][$key];
 				$field->parse_save_values();
 
@@ -1122,11 +1168,13 @@ class CMB_Group_Field extends CMB_Field {
 				// just store the first (and only) one directly
 				if ( $field->args['repeatable'] )
 					$meta[$field->original_id] = $field->values;
+			
 				else
 					$meta[$field->original_id] = reset( $field->values );
+
 			}
 
-			if( $this->isNotEmptyArray( $meta ) )
+			if ( $this->isNotEmptyArray( $meta ) )
 				$this->values[] = $meta;
 
 		}
@@ -1134,13 +1182,11 @@ class CMB_Group_Field extends CMB_Field {
 
 	private function isNotEmptyArray( $array ) {
 
-		foreach ($array as &$value){
-			if ( is_array( $value) ) {
-				$value = $this->isNotEmptyArray($value);
-			}
-		}
+		foreach ( $array as &$value )
+			if ( is_array( $value ) )
+				$value = $this->isNotEmptyArray( $value );
 
-		return array_filter($array);
+		return array_filter( $array );
 
 	}
 
@@ -1153,6 +1199,9 @@ class CMB_Group_Field extends CMB_Field {
 			foreach ( $value as $field => $field_value ) {
 				$this->fields[$field]->set_values( (array) $field_value );
 			}
+		
 		}
+
 	}
+
 }
