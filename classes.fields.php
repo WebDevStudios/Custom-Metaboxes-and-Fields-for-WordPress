@@ -95,9 +95,16 @@ abstract class CMB_Field {
 		 
 		if ( $class = implode( ' ', array_filter( array_unique( explode( ' ', $classes . ' ' . $this->args['class'] ) ) ) ) ) { ?>
 
-			class="<?php esc_attr_e( $class ); ?>" 
+			class="<?php esc_attr_e( sanitize_html_class( $class ) ); ?>" 
 
 		<?php }
+
+	}
+
+	public function boolean_attr() {
+
+		foreach ( $this->args['boolean_attr'] as $attr )
+			esc_attr_e( $attr . '="' . $attr . '"' );
 
 	}
 
