@@ -16,8 +16,8 @@ function cmb_sample_metaboxes( array $meta_boxes ) {
 		'show_names' => true, // Show field names on the left
 		'fields' => array(
 
-			array( 'id' => 'input', 'name' => 'A Normal text input', 'type' => 'text', 'cols' => 12 ),
-			array( 'id' => 'input2', 'name' => 'Test Repeatable Field', 'type' => 'text', 'cols' => 4, 'repeatable' => true ),
+			array( 'id' => 'input', 'name' => 'A Normal text input', 'type' => 'text', 'cols' => 12, 'readonly' => true ),
+			array( 'id' => 'input2', 'name' => 'Test Repeatable Field', 'type' => 'text', 'cols' => 4, 'repeatable' => true, 'disabled' => true ),
 			array( 'id' => 'input3', 'name' => 'URL Text Field', 'type' => 'url', 'cols' => 8 ),
 			array( 'id' => 'group-1', 'name' => 'Group of Fields (repeatable)', 'type' => 'group', 'style' => 'background: #f1f1f1; border-radius: 4px; border: 1px solid #e2e2e2; margin-bottom: 10px; padding: 10px', 'repeatable' => true, 'fields' => array(
 				array( 'id' => 'input3-1', 'name' => 'Image', 'type' => 'image', 'cols' => 4, 'size' => 'width=200&height=120' ),
