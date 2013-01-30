@@ -292,7 +292,7 @@ class CMB_Text_Small_Field extends CMB_Field {
 	public function html() { ?>
 		
 		<p>
-			<input type="text" name="<?php esc_attr_e( $this->name ); ?>" value="<?php esc_attr_e( $this->get_value() ); ?>" class="cmb_text_small"/>
+			<input <?php $this->class_attr( 'cmb_text_small' ); ?> type="text" name="<?php esc_attr_e( $this->name ); ?>" value="<?php esc_attr_e( $this->get_value() ); ?>" />
 		</p>
 		
 	<?php }
@@ -659,7 +659,7 @@ class CMB_Textarea_Field extends CMB_Field {
 	public function html() { ?>
 		
 		<p>
-			<textarea rows="<?php echo ! empty( $this->args['rows'] ) ? esc_attr( $this->args['rows'] ) : 4; ?>" name="<?php esc_attr_e( $this->name ); ?>"><?php esc_attr_e( $this->value ); ?></textarea>
+			<textarea <?php $this->class_attr(); ?> rows="<?php echo ! empty( $this->args['rows'] ) ? esc_attr( $this->args['rows'] ) : 4; ?>" name="<?php esc_attr_e( $this->name ); ?>"><?php esc_attr_e( $this->value ); ?></textarea>
 		</p>
 		
 	<?php }
@@ -852,7 +852,7 @@ class CMB_Radio_Field extends CMB_Field {
 			<?php foreach ( $this->args['options'] as $key => $value ): ?>
 		
 				<label><?php esc_html_e( $value ); ?></label>
-				<input type="radio" name="<?php esc_attr_e( $this->name ); ?>" value="<?php esc_attr_e( $key ); ?>" <?php checked( $key, $this->get_value() ); ?> />
+				<input <?php $this->class_attr(); ?> type="radio" name="<?php esc_attr_e( $this->name ); ?>" value="<?php esc_attr_e( $key ); ?>" <?php checked( $key, $this->get_value() ); ?> />
 		
 			<?php endforeach; ?>
 		
@@ -883,7 +883,7 @@ class CMB_Checkbox extends CMB_Field {
 		
 		<p>
 			<label>
-				<input type="checkbox" name="checkbox_<?php esc_attr_e( $this->name ); ?>" value="1" <?php checked( $this->get_value() ); ?> />
+				<input <?php $this->class_attr(); ?> type="checkbox" name="checkbox_<?php esc_attr_e( $this->name ); ?>" value="1" <?php checked( $this->get_value() ); ?> />
 				<?php esc_html_e( $this->args['name'] ); ?>
 			</label>
 			<input type="hidden" name="<?php esc_attr_e( $this->name ); ?>" value="1" />
