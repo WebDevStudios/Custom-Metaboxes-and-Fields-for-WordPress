@@ -41,6 +41,7 @@ class CMB_Meta_Box {
 
 		add_filter( 'cmb_show_on', array( &$this, 'add_for_id' ), 10, 2 );
 		add_filter( 'cmb_show_on', array( &$this, 'add_for_page_template' ), 10, 2 );
+	
 	}
 
 	public function init_fields( $post_id = 0 ) {
@@ -132,7 +133,7 @@ class CMB_Meta_Box {
 	
 	<?php }
 
-	// Add metaboxe
+	// Add metabox
 	function add() {
 		
 		$this->_meta_box['context'] = empty($this->_meta_box['context']) ? 'normal' : $this->_meta_box['context'];
@@ -268,7 +269,7 @@ class CMB_Meta_Box {
 	function save( $post_id = 0 )  {
 
 		// verify nonce
-		if ( ! isset( $_POST['wp_meta_box_nonce'] ) || ! wp_verify_nonce( $_POST['wp_meta_box_nonce'], basename(__FILE__) ) )
+		if ( ! isset( $_POST['wp_meta_box_nonce'] ) || ! wp_verify_nonce( $_POST['wp_meta_box_nonce'], basename( __FILE__ ) ) )
 			return $post_id;
 
 		foreach ( $this->_meta_box['fields'] as $field ) {
@@ -308,14 +309,14 @@ class CMB_Meta_Box {
 		}
 	}
 
-	//Save the on save_post hook
+	// Save the on save_post hook
 	function save_for_post( $post_id ) {
 
 		// check autosave
-		if ( defined('DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
+		if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE )
 			return $post_id;
-		}
 
 		$this->save( $post_id );
+	
 	}
 }

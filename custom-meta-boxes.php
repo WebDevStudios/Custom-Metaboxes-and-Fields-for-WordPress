@@ -41,7 +41,7 @@ include_once( CMB_PATH . '/classes.fields.php' );
 include_once( CMB_PATH . '/class.cmb-meta-box.php' );
 //include_once( CMB_PATH . '/example-functions.php' );
 
-// get all the meta boxes on init
+// Get all the meta boxes on init
 function cmb_init() {
 
 	if ( ! is_admin() )
