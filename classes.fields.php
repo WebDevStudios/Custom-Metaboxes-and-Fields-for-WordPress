@@ -40,6 +40,8 @@ abstract class CMB_Field {
 				'cols' 					=> '12',
 				'style' 				=> '',
 				'class'					=> '',
+				'readonly'				=> false,
+				'disabled'				=> false
 			)
 		);
 
@@ -101,10 +103,18 @@ abstract class CMB_Field {
 
 	}
 
-	public function boolean_attr() {
+	public function boolean_attr( $attrs = array() ) {
 
-		foreach ( $this->args['boolean_attr'] as $attr )
-			esc_attr_e( $attr . '="' . $attr . '"' );
+		if ( $this->args['readonly'] )
+			$attrs[] = 'readonly';
+		
+		if ( $this->args['disabled'] )
+			$attrs[] = 'disabled';
+
+		$attrs = array_filter( array_unique( $attrs ) );
+
+		foreach ( $attrs as $attr )
+			echo esc_html( $attr ) . '="' . esc_attr( $attr ) . '"';
 
 	}
 
@@ -281,7 +291,7 @@ class CMB_Text_Field extends CMB_Field {
 	public function html() { ?>
 	
 		<p>
-			<input <?php $this->class_attr(); ?> type="text" name="<?php esc_attr_e( $this->name ); ?>" value="<?php esc_attr_e( $this->get_value() ); ?>" />
+			<input <?php $this->boolean_attr(); ?> <?php $this->class_attr(); ?> type="text" name="<?php esc_attr_e( $this->name ); ?>" value="<?php esc_attr_e( $this->get_value() ); ?>" />
 		</p>
 	
 	<?php }
@@ -292,7 +302,7 @@ class CMB_Text_Small_Field extends CMB_Field {
 	public function html() { ?>
 		
 		<p>
-			<input <?php $this->class_attr( 'cmb_text_small' ); ?> type="text" name="<?php esc_attr_e( $this->name ); ?>" value="<?php esc_attr_e( $this->get_value() ); ?>" />
+			<input <?php $this->boolean_attr(); ?> <?php $this->class_attr( 'cmb_text_small' ); ?> type="text" name="<?php esc_attr_e( $this->name ); ?>" value="<?php esc_attr_e( $this->get_value() ); ?>" />
 		</p>
 		
 	<?php }
@@ -498,7 +508,7 @@ class CMB_URL_Field extends CMB_Field {
 	public function html() { ?>
 		
 		<p>
-			<input <?php $this->class_attr( 'cmb_text_url code' ); ?> type="text" name="<?php esc_attr_e( $this->name ); ?>" value="<?php esc_attr_e( esc_url( $this->value ) ); ?>" />
+			<input <?php $this->boolean_attr(); ?> <?php $this->class_attr( 'cmb_text_url code' ); ?> type="text" name="<?php esc_attr_e( $this->name ); ?>" value="<?php esc_attr_e( esc_url( $this->value ) ); ?>" />
 		</p>
 
 	<?php }
@@ -513,7 +523,7 @@ class CMB_Date_Field extends CMB_Field {
 	public function html() { ?>
 		
 		<p>
-			<input <?php $this->class_attr( 'cmb_text_small cmb_datepicker' ); ?> type="text" name="<?php esc_attr_e( $this->name ); ?>" value="<?php esc_attr_e( $this->value ); ?>" />
+			<input <?php $this->boolean_attr(); ?> <?php $this->class_attr( 'cmb_text_small cmb_datepicker' ); ?> type="text" name="<?php esc_attr_e( $this->name ); ?>" value="<?php esc_attr_e( $this->value ); ?>" />
 		</p>
 		
 	<?php }
@@ -524,7 +534,7 @@ class CMB_Time_Field extends CMB_Field {
 	public function html() { ?>
 		
 		<p>
-			<input <?php $this->class_attr( 'cmb_text_small cmb_timepicker' ); ?> type="text" name="<?php esc_attr_e( $this->name ); ?>" value="<?php esc_attr_e( $this->value ); ?>"/>
+			<input <?php $this->boolean_attr(); ?> <?php $this->class_attr( 'cmb_text_small cmb_timepicker' ); ?> type="text" name="<?php esc_attr_e( $this->name ); ?>" value="<?php esc_attr_e( $this->value ); ?>"/>
 		</p>
 	
 	<?php }
@@ -540,7 +550,7 @@ class CMB_Date_Timestamp_Field extends CMB_Field {
 	public function html() { ?>
 		
 		<p>
-			<input <?php class_attr( 'cmb_text_small cmb_datepicker' ); ?> type="text" name="<?php esc_attr_e( $this->name ); ?>" value="<?php echo $this->value ? esc_attr( date( 'm\/d\/Y', $this->value ) ) : '' ?>" />
+			<input <?php $this->boolean_attr(); ?> <?php class_attr( 'cmb_text_small cmb_datepicker' ); ?> type="text" name="<?php esc_attr_e( $this->name ); ?>" value="<?php echo $this->value ? esc_attr( date( 'm\/d\/Y', $this->value ) ) : '' ?>" />
 		</p>
 	
 	<?php }
@@ -560,8 +570,8 @@ class CMB_Datetime_Timestamp_Field extends CMB_Field {
 	public function html() { ?>
 
 		<p>
-			<input <?php class_attr( 'cmb_text_small cmb_datepicker' ); ?> type="text" name="<?php esc_attr_e( $this->id ); ?>[date][]" value="<?php echo $this->value ? esc_attr_e( date( 'm\/d\/Y', $this->value ) ) : '' ?>" />
-			<input <?php class_attr( 'cmb_text_small cmb_timepicker' ); ?> type="text" name="<?php esc_attr_e( $this->id ); ?>[time][]" value="<?php echo $this->value ? esc_attr_e( date( 'H:i A', $this->value ) ) : '' ?>" />
+			<input <?php $this->boolean_attr(); ?> <?php class_attr( 'cmb_text_small cmb_datepicker' ); ?> type="text" name="<?php esc_attr_e( $this->id ); ?>[date][]" value="<?php echo $this->value ? esc_attr_e( date( 'm\/d\/Y', $this->value ) ) : '' ?>" />
+			<input <?php $this->boolean_attr(); ?> <?php class_attr( 'cmb_text_small cmb_timepicker' ); ?> type="text" name="<?php esc_attr_e( $this->id ); ?>[time][]" value="<?php echo $this->value ? esc_attr_e( date( 'H:i A', $this->value ) ) : '' ?>" />
 		</p>
 
 	<?php }
@@ -659,7 +669,7 @@ class CMB_Textarea_Field extends CMB_Field {
 	public function html() { ?>
 		
 		<p>
-			<textarea <?php $this->class_attr(); ?> rows="<?php echo ! empty( $this->args['rows'] ) ? esc_attr( $this->args['rows'] ) : 4; ?>" name="<?php esc_attr_e( $this->name ); ?>"><?php esc_attr_e( $this->value ); ?></textarea>
+			<textarea <?php $this->boolean_attr(); ?> <?php $this->class_attr(); ?> rows="<?php echo ! empty( $this->args['rows'] ) ? esc_attr( $this->args['rows'] ) : 4; ?>" name="<?php esc_attr_e( $this->name ); ?>"><?php esc_attr_e( $this->value ); ?></textarea>
 		</p>
 		
 	<?php }
@@ -677,7 +687,7 @@ class CMB_Textarea_Field_Code extends CMB_Field {
 	public function html() { ?>
 		
 		<p>
-			<textarea <?php class_attr( 'cmb_textarea_code' ); ?> rows="<?php echo ! empty( $this->args['rows'] ) ? esc_attr( $this->args['rows'] ) : 4; ?>" name="<?php esc_attr_e( $this->name ); ?>"><?php esc_attr_e( $this->value ); ?></textarea>
+			<textarea <?php $this->boolean_attr(); ?> <?php class_attr( 'cmb_textarea_code' ); ?> rows="<?php echo ! empty( $this->args['rows'] ) ? esc_attr( $this->args['rows'] ) : 4; ?>" name="<?php esc_attr_e( $this->name ); ?>"><?php esc_attr_e( $this->value ); ?></textarea>
 		</p>
 		
 	<?php }
@@ -693,7 +703,7 @@ class CMB_Color_Picker extends CMB_Field {
 	public function html() { ?>
 		
 		<p>
-			<input <?php class_attr( 'cmb_colorpicker cmb_text_small' ); ?> type="text" name="<?php esc_attr_e( $this->name ); ?>" value="<?php esc_attr_e( $this->get_value() ); ?>" />
+			<input <?php $this->boolean_attr(); ?> <?php class_attr( 'cmb_colorpicker cmb_text_small' ); ?> type="text" name="<?php esc_attr_e( $this->name ); ?>" value="<?php esc_attr_e( $this->get_value() ); ?>" />
 		</p>
 	
 	<?php }
@@ -754,11 +764,11 @@ class CMB_Select extends CMB_Field {
 		
 			<?php if ( $this->args['ajax_url'] ) : ?>
 
-				<input value="<?php esc_attr_e( implode( ',' , (array) $this->value ) ); ?>" name="<?php esc_attr_e( $this->name ); ?>" style="width: 100%" class="<?php esc_attr_e( $id ); ?>" id="<?php esc_attr_e( $id ); ?>" />
+				<input <?php $this->boolean_attr(); ?> value="<?php esc_attr_e( implode( ',' , (array) $this->value ) ); ?>" name="<?php esc_attr_e( $this->name ); ?>" style="width: 100%" class="<?php esc_attr_e( $id ); ?>" id="<?php esc_attr_e( $id ); ?>" />
 
 			<?php else : ?>
 		
-				<select style="width: 100%" <?php echo ! empty( $this->args['multiple'] ) ? 'multiple' : '' ?> class="<?php esc_attr_e( $id ); ?>" name="<?php /*nasty hack*/ esc_attr_e( str_replace( '[', '[m', $this->name ) ); ?><?php echo ! empty( $this->args['multiple'] ) ? '[]' : ''; ?>">
+				<select <?php $this->boolean_attr(); ?> style="width: 100%" <?php echo ! empty( $this->args['multiple'] ) ? 'multiple' : '' ?> class="<?php esc_attr_e( $id ); ?>" name="<?php /*nasty hack*/ esc_attr_e( str_replace( '[', '[m', $this->name ) ); ?><?php echo ! empty( $this->args['multiple'] ) ? '[]' : ''; ?>">
 
 					<?php if ( ! empty( $this->args['allow_none'] ) ) : ?>
 
@@ -855,7 +865,7 @@ class CMB_Radio_Field extends CMB_Field {
 			<?php foreach ( $this->args['options'] as $key => $value ): ?>
 		
 				<label><?php esc_html_e( $value ); ?></label>
-				<input <?php $this->class_attr(); ?> type="radio" name="<?php esc_attr_e( $this->name ); ?>" value="<?php esc_attr_e( $key ); ?>" <?php checked( $key, $this->get_value() ); ?> />
+				<input <?php $this->boolean_attr(); ?> <?php $this->class_attr(); ?> type="radio" name="<?php esc_attr_e( $this->name ); ?>" value="<?php esc_attr_e( $key ); ?>" <?php checked( $key, $this->get_value() ); ?> />
 		
 			<?php endforeach; ?>
 		
@@ -885,11 +895,16 @@ class CMB_Checkbox extends CMB_Field {
 	public function html() { ?>
 		
 		<p>
+		
 			<label>
-				<input <?php $this->class_attr(); ?> type="checkbox" name="checkbox_<?php esc_attr_e( $this->name ); ?>" value="1" <?php checked( $this->get_value() ); ?> />
+		
+				<input <?php $this->boolean_attr(); ?> <?php $this->class_attr(); ?> type="checkbox" name="checkbox_<?php esc_attr_e( $this->name ); ?>" value="1" <?php checked( $this->get_value() ); ?> />
 				<?php esc_html_e( $this->args['name'] ); ?>
+		
 			</label>
+		
 			<input type="hidden" name="<?php esc_attr_e( $this->name ); ?>" value="1" />
+		
 		</p>
 		
 	<?php }
