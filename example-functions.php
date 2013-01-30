@@ -8,9 +8,6 @@
  */
 function cmb_sample_metaboxes( array $meta_boxes ) {
 
-	// Start with an underscore to hide fields from custom fields list
-	$prefix = '_cmb_';
-
 	$meta_boxes[] = array(
 		'title' => 'Test Meta Box',
 		'pages' => 'post',
