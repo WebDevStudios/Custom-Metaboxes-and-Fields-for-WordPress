@@ -211,7 +211,7 @@ class CMB_Meta_Box {
 	// Show fields
 	function show() { ?>
 
-		<input type="hidden" name="wp_meta_box_nonce" value="esc_attr_e( wp_create_nonce( basename(__FILE__) ) ); ?>" />
+		<input type="hidden" name="wp_meta_box_nonce" value="<?php esc_attr_e( wp_create_nonce( basename(__FILE__) ) ); ?>" />
 
 		<?php self::layout_fields( $this->fields );
 	
