@@ -742,6 +742,7 @@ class CMB_Select extends CMB_Field {
 	}
 
 	public function html() {
+		
 		if ( $this->has_data_delegate() )
 			$this->args['options'] = $this->get_delegate_data();
 
@@ -774,7 +775,9 @@ class CMB_Select extends CMB_Field {
 				</select>
 			<?php endif; ?>
 		</p>
+		
 		<script>
+		
 			jQuery( document ).ready( function() {
 
 				var options = { placeholder: "Type to search" };
