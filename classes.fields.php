@@ -210,7 +210,7 @@ abstract class CMB_Field {
 
 		if ( $this->description ) { ?>
 			
-			<p class="cmb_metabox_description"><?php esc_html_e( $this->description ); ?></p>
+			<p class="cmb_metabox_description"><?php echo wp_kses_post( $this->description ); ?></p>
 		
 		<?php }
 
