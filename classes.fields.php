@@ -94,10 +94,10 @@ abstract class CMB_Field {
 	public function enqueue_styles() {}
 
 	public function class_attr( $classes = '' ) {
-		 
-		if ( $class = implode( ' ', array_filter( array_unique( explode( ' ', $classes . ' ' . $this->args['class'] ) ) ) ) ) { ?>
 
-			class="<?php esc_attr_e( sanitize_html_class( $class ) ); ?>" 
+		if ( $classes = implode( ' ', array_map( 'sanitize_html_class', array_filter( array_unique( explode( ' ', $classes . ' ' . $this->args['class'] ) ) ) ) ) ) { ?>
+
+			class="<?php esc_attr_e( $classes ); ?>" 
 
 		<?php }
 
