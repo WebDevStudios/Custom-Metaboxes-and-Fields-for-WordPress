@@ -19,7 +19,7 @@ jQuery(document).ready(function ($) {
 	var formfield;
 	var formfieldobj;
 
-	jQuery( document ).on( 'click', 'a.delete-field', function( e ) {
+	jQuery( document ).on( 'click', '.delete-field', function( e ) {
 
 		e.preventDefault();
 		var a = jQuery( this );
@@ -155,19 +155,19 @@ jQuery(document).ready(function ($) {
 
 		formfield = '';
 	};
-	
-	jQuery( document ).on( 'click', 'a.repeat-field', function( e ) {
-		
-	    e.preventDefault();
-	    var a = jQuery( this );
 
-	    var newT = a.parent().prev().clone();
+	jQuery( document ).on( 'click', '.repeat-field', function( e ) {
+
+	    e.preventDefault();
+	    var el = jQuery( this );
+
+	    var newT = el.prev().clone();
 
 	    newT.removeClass('hidden');
 	    newT.find('input[type!="button"]').val('');
 	    newT.find( '.cmb_upload_status' ).html('');
-	    newT.insertBefore( a.parent().prev() );
-	    
+	    newT.insertBefore( el );
+
 	    // Reinitialize all the datepickers
 		jQuery('.cmb_datepicker' ).each(function () {
 			$(this).attr( 'id', '' ).removeClass( 'hasDatepicker' ).removeData( 'datepicker' ).unbind().datepicker();
