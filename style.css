@@ -334,3 +334,9 @@ div.time-picker li.selected { background: #0063CE; color: #fff; }
  .field.repeatable .field-item { margin-right: 25px; }
 .ui-icon.delete-field { position: absolute; top: 6px; right: -25px; cursor: pointer; opacity: 0.75; }
 .ui-icon.delete-field:hover { opacity: 1; }
+.CMB_Text_Small_Field.repeatable .field-item,
+.CMB_Date_Timestamp_Field.repeatable .field-item,
+.CMB_Date_Timestamp_Field.repeatable .field-item,
+.CMB_Datetime_Timestamp_Field.repeatable .field-item {
+	float: left; clear: both;
+}
