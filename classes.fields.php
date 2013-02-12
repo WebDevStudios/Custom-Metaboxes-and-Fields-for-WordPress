@@ -1171,7 +1171,11 @@ class CMB_Group_Field extends CMB_Field {
 		<div class="group <?php echo ! empty( $field['repeatable'] ) ? 'cloneable' : '' ?>" style="position: relative">
 
 			<?php if ( $this->args['repeatable'] ) : ?>
-				<a class="delete-field button" style="position: absolute; top: -3px; right: -3px">X</a>
+				<span class="cmb_element">
+					<span class="ui-state-default">
+						<a class="delete-field ui-icon-circle-close ui-icon">&times;</a>
+					</span>
+				</span>
 			<?php endif; ?>
 
 			<?php CMB_Meta_Box::layout_fields( $this->fields ); ?>
