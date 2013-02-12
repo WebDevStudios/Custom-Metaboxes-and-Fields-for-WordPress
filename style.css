@@ -4,7 +4,6 @@
 table.cmb_metabox tr td, table.cmb_metabox tr th { vertical-align: top; padding: 5px; }
 table.cmb_metabox th { text-align: right; font-weight:bold;}
 table.cmb_metabox th label { margin-top:5px; display:block;}
-.field-title { margin-bottom: 8px; }
 p.cmb_metabox_description { color: #AAA; font-style: italic; margin: 2px 0 16px !important;}
 span.cmb_metabox_description { color: #AAA; font-style: italic;}
 table.cmb_metabox input, table.cmb_metabox textarea { font-size:12px; padding: 5px; }
@@ -287,7 +286,7 @@ div.time-picker li.selected { background: #0063CE; color: #fff; }
  .cmb_element .ui-datepicker .ui-datepicker-title { margin: 0 2.3em; line-height: 1.8em; text-align: center; }
  .cmb_element .ui-datepicker .ui-datepicker-title select { font-size:1em; margin:1px 0; }
  .cmb_element .ui-datepicker select.ui-datepicker-month-year {width: 100%;}
- .cmb_element .ui-datepicker select.ui-datepicker-month, 
+ .cmb_element .ui-datepicker select.ui-datepicker-month,
  .cmb_element .ui-datepicker select.ui-datepicker-year { width: 49%;}
  .cmb_element .ui-datepicker table {width: 100%; font-size: .9em; border-collapse: collapse; margin:0 0 .4em; }
  .cmb_element .ui-datepicker th { padding: .7em .3em; text-align: center; font-weight: bold; border: 0;  }
@@ -328,3 +327,10 @@ div.time-picker li.selected { background: #0063CE; color: #fff; }
      width: 200px; /*must have*/
      height: 200px; /*must have*/
  }
+
+.field {  margin-bottom: 8px; }
+.field-title { margin-bottom: 8px; margin-top: 0; font-weight: bold; }
+
+ .field.repeatable .field-item { margin-right: 25px; }
+.ui-icon.delete-field { position: absolute; top: 6px; right: -25px; cursor: pointer; opacity: 0.75; }
+.ui-icon.delete-field:hover { opacity: 1; }
