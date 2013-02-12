@@ -331,9 +331,11 @@ div.time-picker li.selected { background: #0063CE; color: #fff; }
 .field {  margin-bottom: 8px; }
 .field-title { margin-bottom: 8px; margin-top: 0; font-weight: bold; }
 
- .field.repeatable .field-item { margin-right: 25px; }
-.ui-icon.delete-field { position: absolute; top: 6px; right: -25px; cursor: pointer; opacity: 0.75; }
+ .field.repeatable .field-item { padding-right: 25px; margin-bottom: 8px; }
+.ui-icon.delete-field { position: absolute; top: 6px; right: 0; cursor: pointer; opacity: 0.75; }
 .ui-icon.delete-field:hover { opacity: 1; }
+button.repeat-field { display: block !important; clear: both; }
+
 .CMB_Text_Small_Field.repeatable .field-item,
 .CMB_Date_Timestamp_Field.repeatable .field-item,
 .CMB_Date_Timestamp_Field.repeatable .field-item,
