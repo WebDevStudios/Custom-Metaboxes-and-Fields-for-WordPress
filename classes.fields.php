@@ -307,9 +307,7 @@ abstract class CMB_Field {
 
 			</div>
 
-			<p>
-				<a href="#" class="button repeat-field">Add New</a>
-			</p>
+			<button href="#" class="button repeat-field">Add New</button>
 
 		<?php }
 
@@ -1136,9 +1134,7 @@ class CMB_Group_Field extends CMB_Field {
 
 				</div>
 
-			<p style="margin-top: 12px;">
-				<a href="#" class="button repeat-field">Add New</a>
-			</p>
+			<button href="#" class="button repeat-field">Add New</button>
 
 		<?php }
 
