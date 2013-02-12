@@ -550,7 +550,7 @@ class CMB_Date_Timestamp_Field extends CMB_Field {
 	public function html() { ?>
 		
 		<p>
-			<input <?php $this->boolean_attr(); ?> <?php class_attr( 'cmb_text_small cmb_datepicker' ); ?> type="text" name="<?php esc_attr_e( $this->name ); ?>" value="<?php echo $this->value ? esc_attr( date( 'm\/d\/Y', $this->value ) ) : '' ?>" />
+			<input <?php $this->boolean_attr(); ?> <?php $this->class_attr( 'cmb_text_small cmb_datepicker' ); ?> type="text" name="<?php esc_attr_e( $this->name ); ?>" value="<?php echo $this->value ? esc_attr( date( 'm\/d\/Y', $this->value ) ) : '' ?>" />
 		</p>
 	
 	<?php }
@@ -570,8 +570,8 @@ class CMB_Datetime_Timestamp_Field extends CMB_Field {
 	public function html() { ?>
 
 		<p>
-			<input <?php $this->boolean_attr(); ?> <?php class_attr( 'cmb_text_small cmb_datepicker' ); ?> type="text" name="<?php esc_attr_e( $this->id ); ?>[date][]" value="<?php echo $this->value ? esc_attr_e( date( 'm\/d\/Y', $this->value ) ) : '' ?>" />
-			<input <?php $this->boolean_attr(); ?> <?php class_attr( 'cmb_text_small cmb_timepicker' ); ?> type="text" name="<?php esc_attr_e( $this->id ); ?>[time][]" value="<?php echo $this->value ? esc_attr_e( date( 'H:i A', $this->value ) ) : '' ?>" />
+			<input <?php $this->boolean_attr(); ?> <?php $this->class_attr( 'cmb_text_small cmb_datepicker' ); ?> type="text" name="<?php esc_attr_e( $this->id ); ?>[date][]" value="<?php echo $this->value ? esc_attr_e( date( 'm\/d\/Y', $this->value ) ) : '' ?>" />
+			<input <?php $this->boolean_attr(); ?> <?php $this->class_attr( 'cmb_text_small cmb_timepicker' ); ?> type="text" name="<?php esc_attr_e( $this->id ); ?>[time][]" value="<?php echo $this->value ? esc_attr_e( date( 'H:i A', $this->value ) ) : '' ?>" />
 		</p>
 
 	<?php }
@@ -687,7 +687,7 @@ class CMB_Textarea_Field_Code extends CMB_Field {
 	public function html() { ?>
 		
 		<p>
-			<textarea <?php $this->boolean_attr(); ?> <?php class_attr( 'cmb_textarea_code' ); ?> rows="<?php echo ! empty( $this->args['rows'] ) ? esc_attr( $this->args['rows'] ) : 4; ?>" name="<?php esc_attr_e( $this->name ); ?>"><?php esc_attr_e( $this->value ); ?></textarea>
+			<textarea <?php $this->boolean_attr(); ?> <?php $this->class_attr( 'cmb_textarea_code' ); ?> rows="<?php echo ! empty( $this->args['rows'] ) ? esc_attr( $this->args['rows'] ) : 4; ?>" name="<?php esc_attr_e( $this->name ); ?>"><?php esc_attr_e( $this->value ); ?></textarea>
 		</p>
 		
 	<?php }
@@ -703,7 +703,7 @@ class CMB_Color_Picker extends CMB_Field {
 	public function html() { ?>
 		
 		<p>
-			<input <?php $this->boolean_attr(); ?> <?php class_attr( 'cmb_colorpicker cmb_text_small' ); ?> type="text" name="<?php esc_attr_e( $this->name ); ?>" value="<?php esc_attr_e( $this->get_value() ); ?>" />
+			<input <?php $this->boolean_attr(); ?> <?php $this->class_attr( 'cmb_colorpicker cmb_text_small' ); ?> type="text" name="<?php esc_attr_e( $this->name ); ?>" value="<?php esc_attr_e( $this->get_value() ); ?>" />
 		</p>
 	
 	<?php }
