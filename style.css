@@ -344,3 +344,7 @@ button.repeat-field { display: block !important; clear: both; }
 .CMB_Datetime_Timestamp_Field.repeatable .field-item {
 	float: left; clear: both;
 }
+
+#poststuff .CMB_Group_Field h2 { padding: 0; margin: 8px 5px; }
+.CMB_Group_Field.repeatable > .field-item { padding: 0 9px; margin-bottom: 16px ; border: 1px solid #DDD; background: #FFF; }
+.CMB_Group_Field .cmb_element .ui-state-default .ui-icon { margin-right: -5px; margin-top: -5px; }
