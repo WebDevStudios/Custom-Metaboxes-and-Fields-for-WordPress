@@ -89,6 +89,7 @@ function _cmb_field_class_for_type( $type ) {
 		'datetime_unix'		=> 'CMB_Datetime_Timestamp_Field',
 		'time'				=> 'CMB_Time_Field',
 		'textarea'			=> 'CMB_Textarea_Field',
+		'textarea_code'		=> 'CMB_Textarea_Field_Code',
 		'taxonomy_select'	=> 'CMB_Taxonomy',
 		'select'			=> 'CMB_Select',
 		'wysiwyg'			=> 'CMB_wysiwyg',
