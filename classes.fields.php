@@ -570,19 +570,29 @@ class CMB_Datetime_Timestamp_Field extends CMB_Field {
 	public function html() { ?>
 
 		<p>
-			<input <?php $this->boolean_attr(); ?> <?php $this->class_attr( 'cmb_text_small cmb_datepicker' ); ?> type="text" name="<?php esc_attr_e( $this->id ); ?>[date][]" value="<?php echo $this->value ? esc_attr_e( date( 'm\/d\/Y', $this->value ) ) : '' ?>" />
-			<input <?php $this->boolean_attr(); ?> <?php $this->class_attr( 'cmb_text_small cmb_timepicker' ); ?> type="text" name="<?php esc_attr_e( $this->id ); ?>[time][]" value="<?php echo $this->value ? esc_attr_e( date( 'H:i A', $this->value ) ) : '' ?>" />
+			<input <?php $this->boolean_attr(); ?> <?php $this->class_attr( 'cmb_text_small cmb_datepicker' ); ?> type="text" name="datetime_<?php esc_attr_e( $this->id ); ?>[date][]" value="<?php echo $this->value ? esc_attr_e( date( 'm\/d\/Y', $this->value ) ) : '' ?>" />
+			<input <?php $this->boolean_attr(); ?> <?php $this->class_attr( 'cmb_text_small cmb_timepicker' ); ?> type="text" name="datetime_<?php esc_attr_e( $this->id ); ?>[time][]" value="<?php echo $this->value ? esc_attr_e( date( 'H:i A', $this->value ) ) : '' ?>" />
 		</p>
 
 	<?php }
 
 	public function parse_save_values() {
 
+		// We need to handle the post data slightly different from the standard CMB.
+		$values = isset( $_POST['datetime_' . $this->id] ) ? $_POST['datetime_' . $this->id] : arrat();
+
+		if ( ! empty( $this->args['repeatable'] ) )
+			foreach ( $values as &$value ) {
+				end( $value );
+				unset( $value[key( $value )] );
+				reset( $value );
+			}
+
 		$r = array();
 
-		for ( $i = 0; $i < count( $this->values['date'] ); $i++ )
-			if( ! empty( $this->values['date'][$i] ) )
-				$r[$i] = strtotime( $this->values['date'][$i] . ' ' . $this->values['time'][$i] );
+		for ( $i = 0; $i < count( $values['date'] ); $i++ )
+			if( ! empty( $values['date'][$i] ) )
+				$r[$i] = strtotime( $values['date'][$i] . ' ' . $values['time'][$i] );
 
 		sort( $r );
 
