@@ -265,7 +265,7 @@ abstract class CMB_Field {
 
 		foreach ( $values as $key => $value ) {
 
-			$this->current_field = $key;
+			$this->current_item = $key;
 			$this->value = $value; ?>
 
 			<div class="field-item" style="position: relative; <?php esc_attr_e( $this->args['style'] ); ?>">
