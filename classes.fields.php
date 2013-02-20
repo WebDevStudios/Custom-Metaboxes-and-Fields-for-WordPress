@@ -635,12 +635,12 @@ class CMB_Oembed_Field extends CMB_Field {
 
 				<?php if ( is_array( $this->value ) ) : ?>
 
-					<span class="cmb_oembed"><?php esc_attr_e( $this->value['object'] ); ?></span>
+					<span class="cmb_oembed"><?php echo $this->value['object']; ?></span>
 					<input type="hidden" name="<?php esc_attr_e( $this->name ); ?>" value="<?php esc_attr_e( serialize( $this->value ) ); ?>" />
 
 				<?php else : ?>
 
-					<span class="cmb_oembed"><?php esc_attr_e( $this->value ); ?></span>
+					<span class="cmb_oembed"><?php echo $this->value; ?></span>
 					<input type="hidden" name="<?php esc_attr_e( $this->name ); ?>" value="<?php esc_attr_e( $this->value ); ?>" />
 
 				<?php endif; ?>
