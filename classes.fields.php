@@ -244,7 +244,7 @@ abstract class CMB_Field {
 
 		if ( $this->description ) { ?>
 
-			<p class="cmb_metabox_description"><?php echo wp_kses_post( $this->description ); ?></p>
+			<div class="cmb_metabox_description"><?php echo wp_kses_post( $this->description ); ?></div>
 
 		<?php }
 
