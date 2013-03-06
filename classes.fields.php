@@ -600,7 +600,7 @@ class CMB_Datetime_Timestamp_Field extends CMB_Field {
 	public function parse_save_values() {
 
 		// We need to handle the post data slightly different from the standard CMB.
-		$values = isset( $_POST['datetime_' . $this->id] ) ? $_POST['datetime_' . $this->id] : arrat();
+		$values = isset( $_POST['datetime_' . $this->id] ) ? $_POST['datetime_' . $this->id] : array();
 
 		if ( ! empty( $this->args['repeatable'] ) )
 			foreach ( $values as &$value ) {
