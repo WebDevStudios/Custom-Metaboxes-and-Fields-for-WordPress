@@ -362,14 +362,17 @@ class CMB_File_Field extends CMB_Field {
 				<?php if ( $this->get_value() )
 					echo wp_get_attachment_image( $this->get_value(),'thumbnail', true ) ?>
 
+				<?php if ( $this->get_value() && ! wp_attachment_is_image( $this->value ) ) : ?>
+					<div class="cmb-file-name">
+						<strong>
+							<?php esc_html_e( end( explode( DIRECTORY_SEPARATOR, get_attached_file( $this->get_value() ) ) ) ); ?>
+						</strong>
+					</div>
+				<?php endif; ?>
+
 			</div>
 
-			<strong style="font-size: 11px; line-height: 15px;" class="cmb-file-name">
-
-				<?php if ( $this->get_value() )
-					esc_html_e( end( explode( DIRECTORY_SEPARATOR, get_attached_file( $this->get_value() ) ) ) ); ?>
-
-			</strong> <a href="#" class="cmb-remove-file danger">remove</a>
+			<a href="#" class="cmb-remove-file button">Remove</a>
 
 		</div>
 
