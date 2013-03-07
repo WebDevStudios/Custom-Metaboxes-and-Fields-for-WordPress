@@ -419,14 +419,14 @@ class CMB_Image_Field extends CMB_Field {
 
 		$args = wp_parse_args( $this->args, array(
 			'allowed_extensions' => array( 'jpg', 'gif', 'png', 'jpeg', 'bmp' ),
-			'size' => array( 'width' => 200, 'height' => 200, 'crop' => true )
+			'size' => array( 'width' => 150, 'height' => 150, 'crop' => true )
 		) );
 
-		$args['size'] = wp_parse_args( $args['size'], array( 'width' => 200, 'height' => 200, 'crop' => true ) );
+		$args['size'] = wp_parse_args( $args['size'], array( 'width' => 150, 'height' => 150, 'crop' => true ) );
 
 		$attachment_id = $this->get_value();
 		// Filter to change the drag & drop box background string
-		$drop_text = 'Upload image';
+		$drop_text = 'Drag & Drop files';
 		$extensions = implode( ',', $args['allowed_extensions'] );
 		$img_prefix	= $this->id;
 		$style = sprintf( 'width: %dpx; height: %dpx;', $args['size']['width'], $args['size']['height'] );
@@ -449,7 +449,7 @@ class CMB_Image_Field extends CMB_Field {
 				<?php endif; ?>
 
 				<div class="image-options">
-					<a href="#" class="delete-image button-secondary">Delete</a>
+					<a href="#" class="delete-image button-secondary">Remove</a>
 				</div>
 			</div>
 
