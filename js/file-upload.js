@@ -32,7 +32,7 @@ jQuery( document ).ready( function() {
 			container.find( '.cmb-file-holder' ).html( '' );
 			container.find( '.cmb-file-holder' ).parent().show();
 			jQuery( '<img />', {
-				src:    model.attributes.icon
+				src: model.attributes.type === 'image' ? model.attributes.sizes.thumbnail.url : model.attributes.icon
 			}).prependTo( container.find( '.cmb-file-holder' ) );
 
 			container.find( '.cmb-file-name' ).html( model.attributes.filename );
