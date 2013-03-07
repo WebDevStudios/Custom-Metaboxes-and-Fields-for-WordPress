@@ -30,6 +30,9 @@ jQuery( document ).ready( function() {
 			link.hide();
 
 			frame.close();
+
+			var fileClass = ( model.attributes.type === 'image' ) ? 'type-image' : 'type-file';
+			fileHolder.addClass( fileClass );
 			fileHolder.html( '' );
 			fileHolder.parent().show();
 			jQuery( '<img />', {
