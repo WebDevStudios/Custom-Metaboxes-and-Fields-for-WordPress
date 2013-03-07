@@ -353,7 +353,7 @@ class CMB_File_Field extends CMB_Field {
 
 	public function html() { ?>
 
-		<a class="button cmb-file-upload <?php echo esc_attr( $this->get_value() ) ? 'hidden' : '' ?>" href="#">Upload file</a>
+		<a class="button cmb-file-upload <?php echo esc_attr( $this->get_value() ) ? 'hidden' : '' ?>" href="#">Add Media</a>
 
 		<div class="<?php echo esc_attr( $this->get_value() ) ? '' : 'hidden' ?>" style="width: 200px; padding: 5px; text-align: center;">
 
