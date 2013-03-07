@@ -244,7 +244,7 @@ abstract class CMB_Field {
 
 		if ( $this->description ) { ?>
 
-			<p class="cmb_metabox_description"><?php echo wp_kses_post( $this->description ); ?></p>
+			<div class="cmb_metabox_description"><?php echo wp_kses_post( $this->description ); ?></div>
 
 		<?php }
 
@@ -601,7 +601,7 @@ class CMB_Datetime_Timestamp_Field extends CMB_Field {
 	public function parse_save_values() {
 
 		// We need to handle the post data slightly different from the standard CMB.
-		$values = isset( $_POST['datetime_' . $this->id] ) ? $_POST['datetime_' . $this->id] : arrat();
+		$values = isset( $_POST['datetime_' . $this->id] ) ? $_POST['datetime_' . $this->id] : array();
 
 		if ( ! empty( $this->args['repeatable'] ) )
 			foreach ( $values as &$value ) {
@@ -655,12 +655,12 @@ class CMB_Oembed_Field extends CMB_Field {
 
 				<?php if ( is_array( $this->value ) ) : ?>
 
-					<span class="cmb_oembed"><?php esc_attr_e( $this->value['object'] ); ?></span>
+					<span class="cmb_oembed"><?php echo $this->value['object']; ?></span>
 					<input type="hidden" name="<?php esc_attr_e( $this->name ); ?>" value="<?php esc_attr_e( serialize( $this->value ) ); ?>" />
 
 				<?php else : ?>
 
-					<span class="cmb_oembed"><?php esc_attr_e( $this->value ); ?></span>
+					<span class="cmb_oembed"><?php echo $this->value; ?></span>
 					<input type="hidden" name="<?php esc_attr_e( $this->name ); ?>" value="<?php esc_attr_e( $this->value ); ?>" />
 
 				<?php endif; ?>
