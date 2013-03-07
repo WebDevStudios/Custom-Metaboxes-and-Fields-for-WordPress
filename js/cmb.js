@@ -166,7 +166,7 @@ jQuery(document).ready(function ($) {
 	    newT.removeClass('hidden');
 	    newT.find('input[type!="button"]').val('');
 	    newT.find( '.cmb_upload_status' ).html('');
-	    newT.insertBefore( el );
+	    newT.insertBefore( el.prev() );
 
 	    // Reinitialize all the datepickers
 		jQuery('.cmb_datepicker' ).each(function () {
