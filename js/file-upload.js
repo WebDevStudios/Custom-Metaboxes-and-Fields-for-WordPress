@@ -39,7 +39,9 @@ jQuery( document ).ready( function() {
 				src: model.attributes.type === 'image' ? model.attributes.sizes.thumbnail.url : model.attributes.icon
 			}).prependTo( container.find( '.cmb-file-holder' ) );
 
-			container.find( '.cmb-file-name' ).html( model.attributes.filename );
+			if ( model.attributes.type !== 'image' )
+				fileHolder.append( jQuery('<div class="cmb-file-name" />').html( '<strong>' + model.attributes.filename + '</strong>' ) );
+
 		});
 
 	} );
