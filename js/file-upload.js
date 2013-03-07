@@ -1,7 +1,7 @@
 jQuery( document ).ready( function() {
 
-
 	jQuery( document ).on( 'click', '.cmb-file-upload', function(e) {
+
 		e.preventDefault();
 
 		var container = jQuery( this ).parent();
@@ -35,6 +35,7 @@ jQuery( document ).ready( function() {
 			fileHolder.addClass( fileClass );
 			fileHolder.html( '' );
 			fileHolder.parent().show();
+
 			jQuery( '<img />', {
 				src: model.attributes.type === 'image' ? model.attributes.sizes.thumbnail.url : model.attributes.icon
 			}).prependTo( container.find( '.cmb-file-holder' ) );
@@ -53,7 +54,7 @@ jQuery( document ).ready( function() {
 		container.find( '.cmb-file-upload-input' ).val( '' );
 		container.find( '.cmb-file-upload' ).show();
 	} );
-	
+
 	// wp.media.controller.FeaturedImage
 	// ---------------------------------
 	var CMBSelectFileController = wp.media.controller.Library.extend({
@@ -64,7 +65,6 @@ jQuery( document ).ready( function() {
 			toolbar:    'cmb-file',
 			title:      'Select File',
 			priority:   60,
-
 			syncSelection: false
 		}, wp.media.controller.Library.prototype.defaults ),
 
