@@ -23,14 +23,15 @@ jQuery( document ).ready( function() {
 		frame.state('cmb-file').on( 'select', function() {
 
 			var selection = frame.state().get('selection'),
-				model = selection.first();
+				model = selection.first(),
+				fileHolder = container.find( '.cmb-file-holder' );
 
 			jQuery( container ).find( '.cmb-file-upload-input' ).val( model.id );
 			link.hide();
 
 			frame.close();
-			container.find( '.cmb-file-holder' ).html( '' );
-			container.find( '.cmb-file-holder' ).parent().show();
+			fileHolder.html( '' );
+			fileHolder.parent().show();
 			jQuery( '<img />', {
 				src: model.attributes.type === 'image' ? model.attributes.sizes.thumbnail.url : model.attributes.icon
 			}).prependTo( container.find( '.cmb-file-holder' ) );
