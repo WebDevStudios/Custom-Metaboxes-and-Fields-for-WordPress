@@ -19,7 +19,7 @@ jQuery(document).ready(function ($) {
 	var formfield;
 	var formfieldobj;
 
-	jQuery( document ).on( 'click', 'a.delete-field', function( e ) {
+	jQuery( document ).on( 'click', '.delete-field', function( e ) {
 
 		e.preventDefault();
 		var a = jQuery( this );
@@ -71,24 +71,24 @@ jQuery(document).ready(function ($) {
 	 */
 	$('.cmb_upload_file').change(function () {
 		formfield = $(this).attr('id');
-		
+
 		formfieldobj = $(this).siblings( '.cmb_upload_file_id' );
-		
+
 		$('#' + formfield + '_id').val("");
-		
+
 	});
 
 	$('.cmb_upload_button').live('click', function () {
 		var buttonLabel;
 		formfield = $(this).prev('input').attr('id');
 		formfieldobj = $(this).siblings( '.cmb_upload_file_id' );
-		
+
 		if ( formfieldobj.siblings( 'label' ).length )
 			buttonLabel = 'Use as ' + formfieldobj.siblings( 'label' ).text();
-			
+
 		else
 			buttonLabel = 'Use as ' + $('label[for=' + formfield + ']').text();
-			
+
 		tb_show('', 'media-upload.php?post_id=' + $('#post_ID').val() + '&type=file&cmb_force_send=true&cmb_send_label=' + buttonLabel + '&TB_iframe=true');
 		return false;
 	});
@@ -106,7 +106,7 @@ jQuery(document).ready(function ($) {
     window.send_to_editor = function (html) {
 		var itemurl, itemclass, itemClassBits, itemid, htmlBits, itemtitle,
 			image, uploadStatus = true;
-		
+
 		if (formfield) {
 
 	        if ($(html).html(html).find('img').length > 0) {
@@ -135,18 +135,18 @@ jQuery(document).ready(function ($) {
 				html = '<a href="' + itemurl + '" target="_blank" rel="external">View File</a>';
 				uploadStatus = '<div class="no_image"><span class="file_link">' + html + '</span>&nbsp;&nbsp;&nbsp;<a href="#" class="cmb_remove_file_button" rel="' + formfield + '">Remove</a></div>';
 			}
-			
+
 			if ( formfieldobj ) {
-			
+
 				$(formfieldobj).val(itemid);
 				$(formfieldobj).siblings('.cmb_upload_status').slideDown().html(uploadStatus);
-				
+
 			} else {
 				$('#' + formfield).val(itemurl);
 				$('#' + formfield + '_id').val(itemid);
 				$('#' + formfield).siblings('.cmb_upload_status').slideDown().html(uploadStatus);
 			}
-			
+
 			tb_remove();
 
 		} else {
@@ -155,19 +155,19 @@ jQuery(document).ready(function ($) {
 
 		formfield = '';
 	};
-	
-	jQuery( document ).on( 'click', 'a.repeat-field', function( e ) {
-		
-	    e.preventDefault();
-	    var a = jQuery( this );
 
-	    var newT = a.parent().prev().clone();
+	jQuery( document ).on( 'click', '.repeat-field', function( e ) {
+
+	    e.preventDefault();
+	    var el = jQuery( this );
+
+	    var newT = el.prev().clone();
 
 	    newT.removeClass('hidden');
 	    newT.find('input[type!="button"]').val('');
 	    newT.find( '.cmb_upload_status' ).html('');
-	    newT.insertBefore( a.parent().prev() );
-	    
+	    newT.insertBefore( el.prev() );
+
 	    // Reinitialize all the datepickers
 		jQuery('.cmb_datepicker' ).each(function () {
 			$(this).attr( 'id', '' ).removeClass( 'hasDatepicker' ).removeData( 'datepicker' ).unbind().datepicker();

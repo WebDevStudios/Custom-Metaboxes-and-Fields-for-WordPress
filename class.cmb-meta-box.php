@@ -239,13 +239,19 @@ class CMB_Meta_Box {
 
 				<?php endif;
 
-				$current_colspan += $field->args['cols']; ?>
+				$current_colspan += $field->args['cols'];
+
+				$classes = array('field');
+
+				if ( ! empty( $field->args['repeatable'] ) )
+					$classes[] = 'repeatable';
+
+				$classes[] = get_class($field);
+				?>
 
 				<td style="width: <?php esc_attr_e( $field->args['cols'] / 12 * 100 ); ?>%" colspan="<?php esc_attr_e( $field->args['cols'] ); ?>">
-					<div class="field <?php echo ! empty( $field->args['repeatable'] ) ? 'repeatable' : '' ?>">
-						
+					<div class="<?php esc_attr_e( implode(' ', array_map( 'sanitize_html_class', $classes ) ) ); ?>">
 						<?php $field->display(); ?>
-					
 					</div>
 				</td>
 

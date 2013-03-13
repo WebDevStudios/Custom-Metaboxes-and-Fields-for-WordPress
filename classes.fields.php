@@ -307,9 +307,7 @@ abstract class CMB_Field {
 
 			</div>
 
-			<p>
-				<a href="#" class="button repeat-field">Add New</a>
-			</p>
+			<button href="#" class="button repeat-field">Add New</button>
 
 		<?php }
 
@@ -355,23 +353,26 @@ class CMB_File_Field extends CMB_Field {
 
 	public function html() { ?>
 
-		<a class="button cmb-file-upload <?php echo esc_attr( $this->get_value() ) ? 'hidden' : '' ?>" href="#">Upload file</a>
+		<a class="button cmb-file-upload <?php echo esc_attr( $this->get_value() ) ? 'hidden' : '' ?>" href="#">Add Media</a>
 
-		<div class="<?php echo esc_attr( $this->get_value() ) ? '' : 'hidden' ?>" style="width: 200px; padding: 5px; text-align: center;">
+		<div class="cmb-file <?php esc_attr_e( $this->get_value() ? '' : 'hidden' ); ?>" style="text-align: center;">
 
-			<div class="cmb-file-holder" style="text-align: center; vertical-align: middle;">
+			<div class="cmb-file-holder <?php if ( $this->value ) { esc_attr_e( wp_attachment_is_image( $this->value ) ? ' type-img' : ' type-file' ); } ?>" style="text-align: center; vertical-align: middle;">
 
 				<?php if ( $this->get_value() )
 					echo wp_get_attachment_image( $this->get_value(),'thumbnail', true ) ?>
 
+				<?php if ( $this->get_value() && ! wp_attachment_is_image( $this->value ) ) : ?>
+					<div class="cmb-file-name">
+						<strong>
+							<?php esc_html_e( end( explode( DIRECTORY_SEPARATOR, get_attached_file( $this->get_value() ) ) ) ); ?>
+						</strong>
+					</div>
+				<?php endif; ?>
+
 			</div>
 
-			<strong style="font-size: 11px; line-height: 15px;" class="cmb-file-name">
-
-				<?php if ( $this->get_value() )
-					esc_html_e( end( explode( DIRECTORY_SEPARATOR, get_attached_file( $this->get_value() ) ) ) ); ?>
-
-			</strong> <a href="#" class="cmb-remove-file danger">remove</a>
+			<a href="#" class="cmb-remove-file button">Remove</a>
 
 		</div>
 
@@ -418,14 +419,14 @@ class CMB_Image_Field extends CMB_Field {
 
 		$args = wp_parse_args( $this->args, array(
 			'allowed_extensions' => array( 'jpg', 'gif', 'png', 'jpeg', 'bmp' ),
-			'size' => array( 'width' => 200, 'height' => 200, 'crop' => true )
+			'size' => array( 'width' => 150, 'height' => 150, 'crop' => true )
 		) );
 
-		$args['size'] = wp_parse_args( $args['size'], array( 'width' => 200, 'height' => 200, 'crop' => true ) );
+		$args['size'] = wp_parse_args( $args['size'], array( 'width' => 150, 'height' => 150, 'crop' => true ) );
 
 		$attachment_id = $this->get_value();
 		// Filter to change the drag & drop box background string
-		$drop_text = 'Upload image';
+		$drop_text = 'Drag & Drop files';
 		$extensions = implode( ',', $args['allowed_extensions'] );
 		$img_prefix	= $this->id;
 		$style = sprintf( 'width: %dpx; height: %dpx;', $args['size']['width'], $args['size']['height'] );
@@ -448,7 +449,7 @@ class CMB_Image_Field extends CMB_Field {
 				<?php endif; ?>
 
 				<div class="image-options">
-					<a href="#" class="delete-image button-secondary">Delete</a>
+					<a href="#" class="delete-image button-secondary">Remove</a>
 				</div>
 			</div>
 
@@ -1146,9 +1147,7 @@ class CMB_Group_Field extends CMB_Field {
 
 				</div>
 
-			<p style="margin-top: 12px;">
-				<a href="#" class="button repeat-field">Add New</a>
-			</p>
+			<button href="#" class="button repeat-field">Add New</button>
 
 		<?php }
 
@@ -1185,7 +1184,11 @@ class CMB_Group_Field extends CMB_Field {
 		<div class="group <?php echo ! empty( $field['repeatable'] ) ? 'cloneable' : '' ?>" style="position: relative">
 
 			<?php if ( $this->args['repeatable'] ) : ?>
-				<a class="delete-field button" style="position: absolute; top: -3px; right: -3px">X</a>
+				<span class="cmb_element">
+					<span class="ui-state-default">
+						<a class="delete-field ui-icon-circle-close ui-icon">&times;</a>
+					</span>
+				</span>
 			<?php endif; ?>
 
 			<?php CMB_Meta_Box::layout_fields( $this->fields ); ?>

@@ -6,11 +6,13 @@ table.cmb_metabox th { text-align: right; font-weight:bold;}
 table.cmb_metabox th label { margin-top:5px; display:block;}
 div.cmb_metabox_description { color: #AAA; font-style: italic; margin: 2px 0 16px !important;}
 span.cmb_metabox_description { color: #AAA; font-style: italic;}
-table.cmb_metabox input, table.cmb_metabox textarea { font-size:12px; padding: 5px; }
+table.cmb_metabox input, table.cmb_metabox textarea { font-size:12px; padding: 5px; margin: 0; }
 table.cmb_metabox input[type=text], table.cmb_metabox textarea, table.cmb_metabox select { width: 100%; }
+table.cmb_metabox textarea.cmb_textarea_code,
+table.cmb_metabox textarea.cmb_textarea { vertical-align: top; margin: 0; }
 table.cmb_metabox textarea.cmb_textarea_code { font-family: Consolas,Monaco,monospace; line-height: 16px; }
-table.cmb_metabox input.cmb_text_small { width: 100px; margin-right: 15px;}
-table.cmb_metabox input.cmb_timepicker { width: 100px; margin-right: 15px;}
+table.cmb_metabox input.cmb_text_small { width: 100px; }
+table.cmb_metabox input.cmb_timepicker { width: 100px; margin-right: 0;}
 table.cmb_metabox input.cmb_text_money { width: 90px; margin-right: 15px;}
 table.cmb_metabox input.cmb_text_medium { width: 230px; margin-right: 15px;}
 table.cmb_metabox input.cmb_upload_file { width: 65%; }
@@ -71,7 +73,6 @@ div.time-picker li.selected { background: #0063CE; color: #fff; }
  .cmb_element .ui-widget-content a { color: #222222; }
  .cmb_element .ui-widget-header { border: 1px solid #aaaaaa; background: #cccccc url(images/ui-bg_highlight-soft_75_cccccc_1x100.png) 50% 50% repeat-x; color: #222222; font-weight: bold; }
  .cmb_element .ui-widget-header a { color: #222222; }
- .cmb_element .ui-state-default, .cmb_element .ui-widget-content .ui-state-default, .cmb_element .ui-widget-header .ui-state-default { border: 1px solid #d3d3d3; background: #e6e6e6 url(images/ui-bg_glass_75_e6e6e6_1x400.png) 50% 50% repeat-x; font-weight: normal; color: #555555; }
  .cmb_element .ui-state-default a, .cmb_element .ui-state-default a:link, .cmb_element .ui-state-default a:visited { color: #555555; text-decoration: none; }
  .cmb_element .ui-state-hover, .cmb_element .ui-widget-content .ui-state-hover, .cmb_element .ui-widget-header .ui-state-hover, .cmb_element .ui-state-focus, .cmb_element .ui-widget-content .ui-state-focus, .cmb_element .ui-widget-header .ui-state-focus { border: 1px solid #999999; background: #dadada url(images/ui-bg_glass_75_dadada_1x400.png) 50% 50% repeat-x; font-weight: normal; color: #212121; }
  .cmb_element .ui-state-hover a, .cmb_element .ui-state-hover a:hover { color: #212121; text-decoration: none; }
@@ -331,6 +332,39 @@ div.time-picker li.selected { background: #0063CE; color: #fff; }
 .field {  margin-bottom: 8px; }
 .field-title { margin-bottom: 8px; margin-top: 0; font-weight: bold; }
 
- .field.repeatable .field-item { margin-right: 25px; }
-.ui-icon.delete-field { position: absolute; top: 6px; right: -25px; cursor: pointer; opacity: 0.75; }
+ .field.repeatable .field-item { padding-right: 25px; margin-bottom: 8px; }
+.ui-icon.delete-field { position: absolute; top: 6px; right: 0; cursor: pointer; opacity: 0.75; }
 .ui-icon.delete-field:hover { opacity: 1; }
+button.repeat-field { display: block !important; clear: both; }
+
+.CMB_Text_Small_Field.repeatable .field-item,
+.CMB_Date_Timestamp_Field.repeatable .field-item,
+.CMB_Date_Timestamp_Field.repeatable .field-item,
+.CMB_Datetime_Timestamp_Field.repeatable .field-item {
+	float: left; clear: both;
+}
+.CMB_Datetime_Timestamp_Field input + input { margin-left: 4px; }
+
+#poststuff .CMB_Group_Field h2 { padding: 0; margin: 8px 5px; }
+.CMB_Group_Field.repeatable > .field-item { padding: 0 9px; margin-bottom: 16px ; border: 1px solid #DDD; background: #ECECEC; border-radius: 3px; }
+.CMB_Group_Field .cmb_element { display: block; height: 0;  }
+.CMB_Group_Field .cmb_element .ui-state-default { /*display: none;*/ margin-right: -3px; margin-top: -5px; }
+
+.field .hm-uploader .rwmb-drag-drop { -moz-box-sizing: border-box; box-sizing: border-box; }
+.field .hm-uploader .rwmb-drag-drop-inside p { font-size: 14px; }
+.field .hm-uploader .current-image { border: none; box-shadow: inset 0 0 15px rgba(0,0,0,0.1),inset 0 0 0 1px rgba(0,0,0,0.05); position: relative; }
+.field .hm-uploader .current-image::after { content: ''; display: block; position: absolute; top: 0; left: 0; right: 0; bottom: 0; box-shadow: inset 0 0 0 1px rgba(0,0,0,0.1); overflow: hidden; }
+.field .hm-uploader .current-image img { vertical-align: top !important; }
+.field .hm-uploader .current-image .image-options { z-index: 1; }
+
+.CMB_File_Field .field-item { width: 150px; height: 150px; float: left; margin: 0 8px 8px 0 !important; position: relative; text-align: center; line-height: 150px; padding: 0 !important; z-index: 1; }
+.CMB_File_Field .field-item::before { content: ' '; position: absolute; top: 0; left: 0; display: block; height: 142px; width: 142px; border: 4px dashed #DDD; z-index: -1; }
+.cmb-file-holder { position: relative; width: 150px; height: 150px; overflow: hidden; box-shadow: inset 0 0 15px rgba(0,0,0,0.1),inset 0 0 0 1px rgba(0,0,0,0.05); background: #eee; }
+.cmb-file-holder.type-file img { position: absolute; top: 43%; margin-top: -30px; left: 50%; margin-left: -23px; }
+.cmb-file-holder.type-img img { width: 100%; height: auto; margin-top: 0; }
+.cmb-file-holder.type-img::after { content: ''; display: block; position: absolute; top: 0; left: 0; right: 0; bottom: 0; box-shadow: inset 0 0 0 1px rgba(0,0,0,0.1); overflow: hidden; z-index: 1; }
+.cmb-file-name { position: absolute; left: 0; right: 0; bottom: 0; line-height: 1.4; overflow: hidden; max-height: 100%; word-wrap: break-word; text-align: center; font-weight: bold; background: rgba(255,255,255,0.8); box-shadow: inset 0 0 0 1px rgba(0,0,0,0.15); }
+.cmb-file-name strong { padding: 5px 10px; display: block;}
+.CMB_File_Field .cmb_element .ui-icon.delete-field { z-index: 10; top: 10px; right: 10px; }
+.CMB_File_Field .cmb-remove-file { position: absolute; top: 5px; right: 5px; z-index: 1; }
+.CMB_File_Field.repeatable .cmb-remove-file { display: none;  }
