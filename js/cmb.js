@@ -167,6 +167,10 @@ jQuery(document).ready(function ($) {
 
 	    var newT = el.prev().clone();
 
+	    //Make a colorpicker field repeatable
+	    newT.find('.wp-color-result').remove();
+		newT.find('input:text.cmb_colorpicker').wpColorPicker();
+
 	    newT.removeClass('hidden');
 	    newT.find('input[type!="button"]').val('');
 	    newT.find( '.cmb_upload_status' ).html('');
