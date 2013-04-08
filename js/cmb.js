@@ -194,4 +194,7 @@ jQuery(document).ready(function ($) {
 
 	} );
 
+	// Make group sortable
+	$('.CMB_Group_Field').sortable({ cursor: "move", items: "> .field-item" });
+
 });
