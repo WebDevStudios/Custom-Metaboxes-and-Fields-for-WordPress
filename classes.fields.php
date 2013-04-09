@@ -351,7 +351,13 @@ class CMB_File_Field extends CMB_Field {
 		wp_enqueue_media();
 	}
 
-	public function html() { ?>
+	public function html() { 
+
+		$args = wp_parse_args( $this->args, array(
+			'size' => array( 150, 150, 'crop' => true )
+		) );
+
+		?>
 
 		<a class="button cmb-file-upload <?php echo esc_attr( $this->get_value() ) ? 'hidden' : '' ?>" href="#">Add Media</a>
 
@@ -360,7 +366,7 @@ class CMB_File_Field extends CMB_Field {
 			<div class="cmb-file-holder <?php if ( $this->value ) { esc_attr_e( wp_attachment_is_image( $this->value ) ? ' type-img' : ' type-file' ); } ?>" style="text-align: center; vertical-align: middle;">
 
 				<?php if ( $this->get_value() )
-					echo wp_get_attachment_image( $this->get_value(),'thumbnail', true ) ?>
+					echo wp_get_attachment_image( $this->get_value(), $args['size'], true ) ?>
 
 				<?php if ( $this->get_value() && ! wp_attachment_is_image( $this->value ) ) : ?>
 					<div class="cmb-file-name">
