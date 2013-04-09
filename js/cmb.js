@@ -24,7 +24,13 @@ jQuery(document).ready(function ($) {
 		e.preventDefault();
 		var a = jQuery( this );
 
-		a.closest( '.field-item' ).remove();
+		var confirmation = true;
+		//Confirm group deletion
+		if(a.parents('.cmb_repeat_element').length != 0) 
+			confirmation = confirm("Do you confirm the deletion of this group ?");
+
+		if(confirmation === true)
+			a.closest( '.field-item' ).remove();
 
 	} );
 
@@ -111,7 +117,7 @@ jQuery(document).ready(function ($) {
 		tinyMCE.execCommand('mceAddControl', false, textarea_id);
 
 		//Add toggle to go back to textarea
-		$(this).find('.field-title').append("<button class='button togglewysiwyg ui-state-default' data-id='"+textarea_id+"''>⇄</button>");
+		$(this).find('.field-title').after("<button class='button togglewysiwyg ui-state-default' data-id='"+textarea_id+"'' style='margin-bottom:10px;'>⇄ Toggle Editor</button>");
 		$(".togglewysiwyg").toggle(
 			function(event){
 				tinyMCE.execCommand('mceRemoveControl', false, $(this).data('id'));
