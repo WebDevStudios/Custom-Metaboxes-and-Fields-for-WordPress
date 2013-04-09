@@ -106,7 +106,7 @@ jQuery(document).ready(function ($) {
 
 	// Make group sortable
 	var textarea_id;
-	$('.CMB_textarea_wysiwyg:not(:hidden)').each(function(){
+	$('.CMB_Textarea_wysiwyg:not(:hidden)').each(function(){
 		textarea_id = $(this).find('textarea').attr('id');
 		tinyMCE.execCommand('mceAddControl', false, textarea_id);
 
@@ -127,7 +127,7 @@ jQuery(document).ready(function ($) {
 		handle: '.move-field',
 		items: "> .field-item",
 		start: function(event, ui) { // turn TinyMCE off while sorting (if not, it won't work when resorted)
-			textarea_id = $(ui.item).find('.CMB_textarea_wysiwyg textarea').attr('id');
+			textarea_id = $(ui.item).find('.CMB_Textarea_wysiwyg textarea').attr('id');
 			tinyMCE.execCommand('mceRemoveControl', false, textarea_id);
 		},
 		stop: function(event, ui) { // re-initialize TinyMCE when sort is completed
