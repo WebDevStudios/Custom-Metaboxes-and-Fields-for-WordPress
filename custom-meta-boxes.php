@@ -7,6 +7,7 @@ Contributors: 	Andrew Norcross (@norcross / andrewnorcross.com)
 				Human Made Limited (@humanmadeltd)
 Description: 	This will create metaboxes with custom fields that will blow your mind.
 Version: 		1.0 - Beta 1
+Fork and maintained by : Jonathan Bardo
 */
 
 /**
@@ -64,18 +65,10 @@ function cmb_scripts( $hook ) {
 	// only enqueue our scripts/styles on the proper pages
 	if ( $hook == 'post.php' || $hook == 'post-new.php' || $hook == 'page-new.php' || $hook == 'page.php' || did_action( 'cmb_init_fields' ) ) {
 		// scripts required for cmb
-		$cmb_script_array = array( 'jquery', 'jquery-ui-core', 'jquery-ui-datepicker', 'jquery-ui-sortable', 'media-upload', 'thickbox' );
+		$cmb_script_array = array( 'jquery', 'jquery-ui-core', 'jquery-ui-datepicker', 'jquery-ui-sortable', 'media-upload', 'thickbox', 'wp-color-picker' );
 		// styles required for cmb
-		$cmb_style_array = array( 'thickbox' );
-		// if we're 3.5 or later, user wp-color-picker
-		if ( 3.5 <= $wp_version ) {
-			$cmb_script_array[] = 'wp-color-picker';
-			$cmb_style_array[] = 'wp-color-picker';
-		} else {
-			// otherwise use the older 'farbtastic'
-			$cmb_script_array[] = 'farbtastic';
-			$cmb_style_array[] = 'farbtastic';
-		}
+		$cmb_style_array = array( 'thickbox', 'wp-color-picker' );
+
 		wp_register_script( 'cmb-timepicker', CMB_URL . '/js/jquery.timePicker.min.js' );
 		wp_register_script( 'cmb-scripts', CMB_URL . '/js/cmb.js', $cmb_script_array );
 		wp_enqueue_script( 'cmb-timepicker' );
@@ -89,13 +82,11 @@ add_action( 'admin_enqueue_scripts', 'cmb_scripts', 10 );
 function _cmb_field_class_for_type( $type ) {
 
 	$map = apply_filters( 'cmb_field_types', array(
-
 		'text'				=> 'CMB_Text_Field',
 		'text_small' 		=> 'CMB_Text_Small_Field',
 		'text_url'			=> 'CMB_URL_Field',
 		'url'				=> 'CMB_URL_Field',
 		'file'				=> 'CMB_File_Field',
-		'image' 			=> 'CMB_Image_Field',
 		'group'				=> 'CMB_Group_Field',
 		'oembed'			=> 'CMB_Oembed_Field',
 		'date'				=> 'CMB_Date_Field',

@@ -85,7 +85,7 @@ abstract class CMB_Field {
 	 * @uses wp_enqueue_script()
 	 */
 	public function enqueue_scripts() {
-		wp_enqueue_script( 'cmb-scripts', CMB_URL . '/js/cmb.js', array( 'jquery', 'jquery-ui-core', 'jquery-ui-datepicker', 'media-upload', 'thickbox', 'farbtastic' ) );
+		wp_enqueue_script( 'cmb-scripts', CMB_URL . '/js/cmb.js', array( 'jquery', 'jquery-ui-core', 'jquery-ui-datepicker', 'jquery-ui-sortable', 'media-upload', 'thickbox', 'wp-color-picker' ) );
 	}
 
 	/**
@@ -380,156 +380,6 @@ class CMB_File_Field extends CMB_Field {
 
 	<?php }
 }
-
-class CMB_Image_Field extends CMB_Field {
-
-	function enqueue_scripts() {
-
-		parent::enqueue_scripts();
-
-		wp_enqueue_script( 'plupload-all' );
-		wp_enqueue_script( 'tf-well-plupload-image', CMB_URL . '/js/plupload-image.js', array( 'jquery-ui-sortable', 'wp-ajax-response', 'plupload-all' ), 1 );
-
-		wp_localize_script( 'tf-well-plupload-image', 'tf_well_plupload_defaults', array(
-			'runtimes'				=> 'html5,silverlight,flash,html4',
-			'file_data_name'		=> 'async-upload',
-			'multiple_queues'		=> true,
-			'max_file_size'			=> wp_max_upload_size().'b',
-			'url'					=> admin_url('admin-ajax.php'),
-			'flash_swf_url'			=> includes_url( 'js/plupload/plupload.flash.swf' ),
-			'silverlight_xap_url'	=> includes_url( 'js/plupload/plupload.silverlight.xap' ),
-			'filters'				=> array( array( 'title' => __( 'Allowed Image Files' ), 'extensions' => '*' ) ),
-			'multipart'				=> true,
-			'urlstream_upload'		=> true,
-			// additional post data to send to our ajax hook
-			'multipart_params'		=> array(
-				'_ajax_nonce'	=> wp_create_nonce( 'plupload_image' ),
-				'action'    	=> 'plupload_image_upload'
-			)
-
-		) );
-
-	}
-
-	function enqueue_styles() {
-		wp_enqueue_style( 'tf-well-plupload-image', CMB_URL . '/css/plupload-image.css', array() );
-	}
-
-	function html() {
-
-		$args = wp_parse_args( $this->args, array(
-			'allowed_extensions' => array( 'jpg', 'gif', 'png', 'jpeg', 'bmp' ),
-			'size' => array( 'width' => 150, 'height' => 150, 'crop' => true )
-		) );
-
-		$args['size'] = wp_parse_args( $args['size'], array( 'width' => 150, 'height' => 150, 'crop' => true ) );
-
-		$attachment_id = $this->get_value();
-		// Filter to change the drag & drop box background string
-		$drop_text = 'Drag & Drop files';
-		$extensions = implode( ',', $args['allowed_extensions'] );
-		$img_prefix	= $this->id;
-		$style = sprintf( 'width: %dpx; height: %dpx;', $args['size']['width'], $args['size']['height'] );
-
-		$size_str = sprintf( 'width=%d&height=%d&crop=%s', $args['size']['width'], $args['size']['height'], $args['size']['crop'] ); ?>
-
-		<div style="<?php esc_attr_e( $style ); ?>" class="hm-uploader <?php echo  $attachment_id ? 'with-image' : ''; ?>" id="<?php esc_attr_e( $img_prefix ); ?>-container">
-
-			<input type="hidden" class="field-id rwmb-image-prefix" value="<?php esc_attr_e( $img_prefix ); ?>" />
-
-			<input type="hidden" class="field-val" name="<?php esc_attr_e( $this->name ); ?>" value="<?php esc_attr_e( $attachment_id ); ?>" />
-
-			<div style="<?php esc_attr_e( $style ); ?><?php echo ( $attachment_id ) ? '' : 'display: none;' ?> line-height: <?php esc_attr_e( $args['size']['height'] ); ?>px;" class="current-image">
-
-				<?php if ( $attachment_id && wp_get_attachment_image( $attachment_id, $args['size'], false, 'id=' . $this->id ) ) : ?>
-					<?php echo wp_get_attachment_image( $attachment_id, $args['size'], false, 'id=' . $this->id ) ?>
-
-				<?php else : ?>
-					<img src="" />
-				<?php endif; ?>
-
-				<div class="image-options">
-					<a href="#" class="delete-image button-secondary">Remove</a>
-				</div>
-			</div>
-
-			<div style="<?php esc_attr_e( $style ); ?>" id="<?php esc_attr_e( $img_prefix ); ?>-dragdrop" data-extensions="<?php esc_attr_e( $extensions ); ?>" data-size="<?php esc_attr_e( $size_str ); ?>" class="rwmb-drag-drop upload-form">
-				<div class="rwmb-drag-drop-inside">
-					<p><?php esc_html_e( $drop_text ); ?></p>
-					<p>or</p>
-					<p><input id="<?php esc_html_e( $img_prefix ); ?>-browse-button" type="button" value="Select Files" class="button-secondary" /></p>
-				</div>
-			</div>
-
-			<div style="<?php esc_attr_e( $style ) ?>" class="loading-block hidden">
-				<img src="<?php esc_attr_e( esc_url( get_bloginfo( 'template_url' ) . '/framework/assets/images/spinner.gif' ) ); ?>" />
-			</div>
-
-
-		</div>
-
-	<?php }
-
-
-	/**
-	 * Upload
-	 * Ajax callback function
-	 *
-	 * @return error or (XML-)response
-	 */
-	static function handle_upload () {
-		header( 'Content-Type: text/html; charset=UTF-8' );
-
-		if ( ! defined('DOING_AJAX' ) )
-			define( 'DOING_AJAX', true );
-
-		check_ajax_referer('plupload_image');
-
-		$post_id = 0;
-		if ( is_numeric( $_REQUEST['post_id'] ) )
-			$post_id = (int) $_REQUEST['post_id'];
-
-		// you can use WP's wp_handle_upload() function:
-		$file = $_FILES['async-upload'];
-		$file_attr = wp_handle_upload( $file, array('test_form'=>true, 'action' => 'plupload_image_upload') );
-		$attachment = array(
-			'post_mime_type'	=> $file_attr['type'],
-			'post_title'		=> preg_replace( '/\.[^.]+$/', '', basename( $file['name'] ) ),
-			'post_content'		=> '',
-			'post_status'		=> 'inherit',
-
-		);
-
-		// Adds file as attachment to WordPress
-		$id = wp_insert_attachment( $attachment, $file_attr['file'], $post_id );
-		if ( ! is_wp_error( $id ) )
-		{
-			$response = new WP_Ajax_Response();
-			wp_update_attachment_metadata( $id, wp_generate_attachment_metadata( $id, $file_attr['file'] ) );
-			if ( isset( $_REQUEST['field_id'] ) )
-			{
-				// Save file ID in meta field
-				add_post_meta( $post_id, $_REQUEST['field_id'], $id, false );
-			}
-
-			$src = wp_get_attachment_image_src( $id, $_REQUEST['size'] );
-
-			$response->add( array(
-				'what'			=>'tf_well_image_response',
-				'data'			=> $id,
-				'supplemental'	=> array(
-					'thumbnail'	=>  $src[0],
-					'edit_link'	=> get_edit_post_link($id)
-				)
-			) );
-			$response->send();
-		}
-
-		exit;
-	}
-
-}
-add_action( 'wp_ajax_plupload_image_upload', array( 'CMB_Image_Field', 'handle_upload' ) );
 
 /**
  * Standard text meta box for a URL.
@@ -1035,32 +885,32 @@ class CMB_Post_Select extends CMB_Select {
 			$this->value = explode( ',', $this->value );
 
 	}
+
+	public static function cmb_ajax_post_select() {
+
+		$query = new WP_Query( $_GET );
+		$posts = $query->posts;
+
+		$json = array();
+
+		foreach ( $posts as $post )
+			$json[] = array( 'id' => $post->ID, 'text' => get_the_title( $post->ID ) );
+
+		echo json_encode( $json );
+
+		exit;
+
+	}
+
 }
 
-// TODO this should be in inside the class
-function cmb_ajax_post_select() {
+add_action( 'wp_ajax_cmb_post_select', 'CMB_Post_Select::cmb_ajax_post_select' );
 
-	$query = new WP_Query( $_GET );
-	$posts = $query->posts;
-
-	$json = array();
-
-	foreach ( $posts as $post )
-		$json[] = array( 'id' => $post->ID, 'text' => get_the_title( $post->ID ) );
-
-	echo json_encode( $json );
-
-	exit;
-
-}
-add_action( 'wp_ajax_cmb_post_select', 'cmb_ajax_post_select' );
 
 /**
  * Field to group child fieids
  * pass $args[fields] array for child fields
  * pass $args['repeatable'] for cloing all child fields (set)
- *
- * @todo remove global $post reference, somehow
  */
 class CMB_Group_Field extends CMB_Field {
 
@@ -1112,7 +962,7 @@ class CMB_Group_Field extends CMB_Field {
 
 	public function display() {
 
-		global $post;
+		// global $post;
 
 		$meta = $this->values;
 
@@ -1126,6 +976,8 @@ class CMB_Group_Field extends CMB_Field {
 			<h2 class="group-name"><?php esc_attr_e( $this->args['name'] ); ?></h2>
 
 		<?php endif;
+
+		$this->description();
 
 		foreach ( $meta as $value ) {
 

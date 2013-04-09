@@ -345,7 +345,7 @@ button.repeat-field { display: block !important; clear: both; }
 }
 .CMB_Datetime_Timestamp_Field input + input { margin-left: 4px; }
 
-#poststuff .CMB_Group_Field h2 { padding: 0; margin: 8px 5px; }
+#poststuff .CMB_Group_Field h2 { padding: 0; margin: 0px 0px; }
 .CMB_Group_Field.repeatable > .field-item { padding: 0 9px; margin-bottom: 16px ; border: 1px solid #DDD; background: #ECECEC; border-radius: 3px; }
 .CMB_Group_Field .cmb_element { display: block; height: 0;  }
 .CMB_Group_Field .cmb_element .ui-state-default { /*display: none;*/ margin-right: -3px; margin-top: -5px; }
