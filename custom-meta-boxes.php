@@ -95,6 +95,7 @@ function _cmb_field_class_for_type( $type ) {
 		'time'				=> 'CMB_Time_Field',
 		'textarea'			=> 'CMB_Textarea_Field',
 		'textarea_code'		=> 'CMB_Textarea_Field_Code',
+		'textarea_wysiwyg'	=> 'CMB_Textarea_wysiwyg',
 		'taxonomy_select'	=> 'CMB_Taxonomy',
 		'select'			=> 'CMB_Select',
 		'wysiwyg'			=> 'CMB_wysiwyg',

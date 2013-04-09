@@ -76,7 +76,6 @@ abstract class CMB_Field {
 		$this->value = reset( $this->values );
 
 		$this->description = ! empty( $this->args['desc'] ) ? $this->args['desc'] : '';
-
 	}
 
 	/**
@@ -569,6 +568,18 @@ class CMB_Textarea_Field_Code extends CMB_Field {
 
 }
 
+class CMB_Textarea_wysiwyg extends CMB_Field {
+
+	private static $number = 0;
+
+	public function html() { 
+		self::$number += 1;
+		?>
+			<textarea <?php $this->id_attr( (string) self::$number ); ?> <?php $this->boolean_attr(); ?> <?php $this->class_attr( 'cmb_textarea_code' ); ?> rows="<?php echo ! empty( $this->args['rows'] ) ? esc_attr( $this->args['rows'] ) : 4; ?>" name="<?php esc_attr_e( $this->name ); ?>"><?php esc_attr_e( $this->value ); ?></textarea> 
+
+	<?php }
+}
+
 /**
  *  Colour picker
  *
@@ -788,8 +799,10 @@ class CMB_Title extends CMB_Field {
  */
 class CMB_wysiwyg extends CMB_Field {
 
-	public function html() { ?>
+	private static $number = 0;
 
+	public function html() { 
+		?>
 			<?php wp_editor( $this->get_value(), $this->name, $this->args['options'] );?>
 
 	<?php }
@@ -1036,7 +1049,10 @@ class CMB_Group_Field extends CMB_Field {
 		<div class="group <?php echo ! empty( $field['repeatable'] ) ? 'cloneable' : '' ?>" style="position: relative">
 
 			<?php if ( $this->args['repeatable'] ) : ?>
-				<span class="cmb_element">
+				<span class="cmb_element cmb_repeat_element">
+					<span class="ui-state-default">
+						<a class="move-field ui-icon-arrow-4-diag ui-icon">&times;</a>
+					</span>
 					<span class="ui-state-default">
 						<a class="delete-field ui-icon-circle-close ui-icon">&times;</a>
 					</span>

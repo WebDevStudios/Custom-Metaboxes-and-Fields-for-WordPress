@@ -335,6 +335,8 @@ div.time-picker li.selected { background: #0063CE; color: #fff; }
  .field.repeatable .field-item { padding-right: 25px; margin-bottom: 8px; }
 .ui-icon.delete-field { position: absolute; top: 6px; right: 0; cursor: pointer; opacity: 0.75; }
 .ui-icon.delete-field:hover { opacity: 1; }
+.ui-icon.move-field { position: absolute; top: -5px; left: 0; cursor: move; opacity: 0.75; }
+.ui-icon.move-field:hover { opacity: 1; }
 button.repeat-field { display: block !important; clear: both; }
 
 .CMB_Text_Small_Field.repeatable .field-item,
@@ -348,6 +350,7 @@ button.repeat-field { display: block !important; clear: both; }
 #poststuff .CMB_Group_Field h2 { padding: 0; margin: 0px 0px; }
 .CMB_Group_Field.repeatable > .field-item { padding: 0 9px; margin-bottom: 16px ; border: 1px solid #DDD; background: #ECECEC; border-radius: 3px; }
 .CMB_Group_Field .cmb_element { display: block; height: 0;  }
+.CMB_Group_Field .cmb_element.cmb_repeat_element { display: block; height: 15px; }
 .CMB_Group_Field .cmb_element .ui-state-default { /*display: none;*/ margin-right: -3px; margin-top: -5px; }
 
 .field .hm-uploader .rwmb-drag-drop { -moz-box-sizing: border-box; box-sizing: border-box; }
