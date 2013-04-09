@@ -545,7 +545,6 @@ class CMB_Oembed_Field extends CMB_Field {
 class CMB_Textarea_Field extends CMB_Field {
 
 	public function html() { ?>
-
 		<textarea <?php $this->id_attr(); ?> <?php $this->boolean_attr(); ?> <?php $this->class_attr(); ?> rows="<?php echo ! empty( $this->args['rows'] ) ? esc_attr( $this->args['rows'] ) : 4; ?>" name="<?php esc_attr_e( $this->name ); ?>"><?php esc_attr_e( $this->value ); ?></textarea>
 
 	<?php }
@@ -566,18 +565,6 @@ class CMB_Textarea_Field_Code extends CMB_Field {
 
 	<?php }
 
-}
-
-class CMB_Textarea_wysiwyg extends CMB_Field {
-
-	private static $number = 0;
-
-	public function html() { 
-		self::$number += 1;
-		?>
-			<textarea <?php $this->id_attr( (string) self::$number ); ?> <?php $this->boolean_attr(); ?> <?php $this->class_attr( 'cmb_textarea_code' ); ?> rows="<?php echo ! empty( $this->args['rows'] ) ? esc_attr( $this->args['rows'] ) : 4; ?>" name="<?php esc_attr_e( $this->name ); ?>"><?php esc_attr_e( $this->value ); ?></textarea> 
-
-	<?php }
 }
 
 /**
@@ -799,11 +786,9 @@ class CMB_Title extends CMB_Field {
  */
 class CMB_wysiwyg extends CMB_Field {
 
-	private static $number = 0;
-
 	public function html() { 
 		?>
-			<?php wp_editor( $this->get_value(), $this->name, $this->args['options'] );?>
+			<textarea <?php $this->id_attr(); ?> <?php $this->boolean_attr(); ?> <?php $this->class_attr( 'cmb_wysiwyg' ); ?> rows="<?php echo ! empty( $this->args['rows'] ) ? esc_attr( $this->args['rows'] ) : 4; ?>" name="<?php esc_attr_e( $this->name ); ?>"><?php esc_attr_e( $this->value ); ?></textarea>
 
 	<?php }
 }
@@ -1078,6 +1063,10 @@ class CMB_Group_Field extends CMB_Field {
 			$meta = array();
 
 			foreach ( $this->fields as $field ) {
+				if( get_class($field) == 'CMB_Group_Field') {
+				// 	// $this->save(10, $field);
+					continue;
+				}
 
 				// Create the field object so it can sanitize it's data etc
 				$field->values = (array) $values[$field->original_id][$key];

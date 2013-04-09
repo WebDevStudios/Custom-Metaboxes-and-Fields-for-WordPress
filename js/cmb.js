@@ -30,7 +30,9 @@ jQuery(document).ready(function ($) {
 			confirmation = confirm("Do you confirm the deletion of this group ?");
 
 		if(confirmation === true)
-			a.closest( '.field-item' ).remove();
+			a.closest( '.field-item' ).fadeOut('normal', function(){
+				$(this).remove();
+			});
 
 	} );
 
@@ -76,6 +78,52 @@ jQuery(document).ready(function ($) {
 		});
 	}
 
+	// Make group sortable
+	var textarea_id;
+	var id = 1;
+	trigger_wysiwygs($('.CMB_wysiwyg:not(:hidden)'));
+
+	function trigger_wysiwygs($wysiwygs){
+		var $object;
+		$wysiwygs.each(function(){
+			$object = $(this).find('textarea');
+			id++;
+			$object.attr('id', $object.attr('id') + '-' + id);
+			textarea_id = $object.attr('id');
+			console.log(textarea_id);
+
+			//Add toggle to go back to textarea
+			$(this).find('.field-title').after("<a href='javascript:void(0);' class='button togglewysiwyg ui-state-default' data-id='"+textarea_id+"'' style='margin-bottom:10px;'>⇄ Toggle Editor</a>");
+			
+		});
+	}
+
+	function trigger_toggle_wysiwygs(){
+		 $(".togglewysiwyg").toggle(
+			function(event){
+				tinyMCE.execCommand('mceAddControl', false, $(this).data('id'));
+			},
+			function(){
+				tinyMCE.execCommand('mceRemoveControl', false, $(this).data('id'));
+			}
+		);
+		$(".togglewysiwyg").trigger('click');
+	}
+
+	trigger_toggle_wysiwygs();
+
+	$('.CMB_Group_Field').sortable({
+		cancel: '.mceStatusbar', 
+		handle: '.move-field',
+		items: "> .field-item",
+		start: function(event, ui) { // turn TinyMCE off while sorting (if not, it won't work when resorted)
+			tinyMCE.execCommand('mceRemoveControl', false, textarea_id);
+		},
+		stop: function(event, ui) { // re-initialize TinyMCE when sort is completed
+			tinyMCE.execCommand('mceAddControl', false, textarea_id);
+		}
+	});
+
 	jQuery( document ).on( 'click', '.repeat-field', function( e ) {
 
 	    e.preventDefault();
@@ -86,11 +134,16 @@ jQuery(document).ready(function ($) {
 	    //Make a colorpicker field repeatable
 	    newT.find('.wp-color-result').remove();
 		newT.find('input:text.cmb_colorpicker').wpColorPicker();
+		var $wysiwygs = newT.find('.CMB_wysiwyg');
+		trigger_wysiwygs($wysiwygs);
 
 	    newT.removeClass('hidden');
 	    newT.find('input[type!="button"]').val('');
 	    newT.find( '.cmb_upload_status' ).html('');
 	    newT.insertBefore( el.prev() );
+
+	    //Toggle wysiwyg at the end
+	    trigger_toggle_wysiwygs();
 
 	    // Reinitialize all the datepickers
 		jQuery('.cmb_datepicker' ).each(function () {
@@ -108,37 +161,6 @@ jQuery(document).ready(function ($) {
 			});
 		});
 
-	} );
-
-	// Make group sortable
-	var textarea_id;
-	$('.CMB_Textarea_wysiwyg:not(:hidden)').each(function(){
-		textarea_id = $(this).find('textarea').attr('id');
-		tinyMCE.execCommand('mceAddControl', false, textarea_id);
-
-		//Add toggle to go back to textarea
-		$(this).find('.field-title').after("<button class='button togglewysiwyg ui-state-default' data-id='"+textarea_id+"'' style='margin-bottom:10px;'>⇄ Toggle Editor</button>");
-		$(".togglewysiwyg").toggle(
-			function(event){
-				tinyMCE.execCommand('mceRemoveControl', false, $(this).data('id'));
-			},
-			function(){
-				tinyMCE.execCommand('mceAddControl', false, $(this).data('id'));
-			}
-		);
-	});
-
-	$('.CMB_Group_Field').sortable({
-		cancel: '.mceStatusbar', 
-		handle: '.move-field',
-		items: "> .field-item",
-		start: function(event, ui) { // turn TinyMCE off while sorting (if not, it won't work when resorted)
-			textarea_id = $(ui.item).find('.CMB_Textarea_wysiwyg textarea').attr('id');
-			tinyMCE.execCommand('mceRemoveControl', false, textarea_id);
-		},
-		stop: function(event, ui) { // re-initialize TinyMCE when sort is completed
-			tinyMCE.execCommand('mceAddControl', false, textarea_id);
-		}
 	});
 
 });
