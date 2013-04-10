@@ -83,8 +83,6 @@ function _cmb_field_class_for_type( $type ) {
 
 	$map = apply_filters( 'cmb_field_types', array(
 		'text'				=> 'CMB_Text_Field',
-		'text_small' 		=> 'CMB_Text_Small_Field',
-		'text_url'			=> 'CMB_URL_Field',
 		'url'				=> 'CMB_URL_Field',
 		'file'				=> 'CMB_File_Field',
 		'group'				=> 'CMB_Group_Field',
@@ -94,8 +92,6 @@ function _cmb_field_class_for_type( $type ) {
 		'datetime_unix'		=> 'CMB_Datetime_Timestamp_Field',
 		'time'				=> 'CMB_Time_Field',
 		'textarea'			=> 'CMB_Textarea_Field',
-		'textarea_code'		=> 'CMB_Textarea_Field_Code',
-		'textarea_wysiwyg'	=> 'CMB_Textarea_wysiwyg',
 		'taxonomy_select'	=> 'CMB_Taxonomy',
 		'select'			=> 'CMB_Select',
 		'wysiwyg'			=> 'CMB_wysiwyg',

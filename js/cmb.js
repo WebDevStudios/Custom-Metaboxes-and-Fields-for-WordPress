@@ -4,11 +4,12 @@
  * @author Andrew Norcross
  * @author Jared Atchison
  * @author Bill Erickson
- * @see    https://github.com/jaredatch/Custom-Metaboxes-and-Fields-for-WordPress
+ * @author Jonathan Bardo
+ * @see     https://github.com/jaredatch/Custom-Metaboxes-and-Fields-for-WordPress
+ * @see		https://github.com/jonathanbardo/custom-metaboxes
  */
 
 /*jslint browser: true, devel: true, indent: 4, maxerr: 50, sub: true */
-/*global jQuery, tb_show, tb_remove */
 
 /**
  * Custom jQuery for Custom Metaboxes and Fields
@@ -30,7 +31,7 @@ jQuery(document).ready(function ($) {
 			confirmation = confirm("Do you confirm the deletion of this group ?");
 
 		if(confirmation === true)
-			a.closest( '.field-item' ).fadeOut('normal', function(){
+			a.closest( '.field-item' ).slideToggle('normal', function(){
 				$(this).remove();
 			});
 
@@ -86,11 +87,10 @@ jQuery(document).ready(function ($) {
 	function trigger_wysiwygs($wysiwygs){
 		var $object;
 		$wysiwygs.each(function(){
-			$object = $(this).find('textarea');
 			id++;
+			$object = $(this).find('textarea');
 			$object.attr('id', $object.attr('id') + '-' + id);
 			textarea_id = $object.attr('id');
-			console.log(textarea_id);
 
 			//Add toggle to go back to textarea
 			$(this).find('.field-title').after("<a href='javascript:void(0);' class='button togglewysiwyg ui-state-default' data-id='"+textarea_id+"'' style='margin-bottom:10px;'>⇄ Toggle Editor</a>");
@@ -124,9 +124,9 @@ jQuery(document).ready(function ($) {
 		}
 	});
 
-	jQuery( document ).on( 'click', '.repeat-field', function( e ) {
+	jQuery( document ).on( 'click', '.repeat-field', function(event) {
+		event.preventDefault();
 
-	    e.preventDefault();
 	    var el = jQuery( this );
 
 	    var newT = el.prev().clone();
@@ -140,8 +140,9 @@ jQuery(document).ready(function ($) {
 	    newT.removeClass('hidden');
 	    newT.find('input[type!="button"]').val('');
 	    newT.find( '.cmb_upload_status' ).html('');
+	    newT.css('display', 'none');
 	    newT.insertBefore( el.prev() );
-
+		newT.slideToggle('normal');
 	    //Toggle wysiwyg at the end
 	    trigger_toggle_wysiwygs();
 
