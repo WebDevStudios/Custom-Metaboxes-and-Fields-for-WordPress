@@ -60,6 +60,9 @@ abstract class CMB_Field {
 				$re_format[$option['value']] = $option['name'];
 			}
 
+			// TODO this is incorrect
+			_deprecated_argument( 'CMB_Field', "'std' is deprecated, use 'default instead'", '0.9' );
+
 			$this->args['options'] = $re_format;
 		}
 
@@ -248,53 +251,65 @@ abstract class CMB_Field {
 
 	public function display() {
 
-		// if there are no values and it's not repeatable, we want to do one with empty string
+		// if there are no values and it's not repeateble, we want to do one with empty string
 		if ( ! $this->get_values() && ! $this->args['repeatable'] )
 			$values = array( '' );
+
 		else
 			$values = $this->get_values();
 
 		$this->title();
+
 		$this->description();
 
 		foreach ( $values as $key => $value ) {
+
 			$this->current_item = $key;
-			$this->value = $value;
+			$this->value = $value; ?>
 
-			$this->add_field_wrapper();
-		}
+			<div class="field-item" style="position: relative; <?php esc_attr_e( $this->args['style'] ); ?>">
 
-		// Insert a hidden one if it's repeatable
-		if ( $this->args['repeatable'] )
-			$this->add_field_wrapper(true);
+			<?php if ( $this->args['repeatable'] ) : ?>
 
-	}
-
-	private function add_field_wrapper($is_hidden = false){
-		// Insert a hidden one if it's repeatable
-		if($is_hidden) $this->value = ''; 
-
-		?>
-		<div class="field-item <?php if($is_hidden) echo 'hidden'; ?>" style="position: relative <?php if($is_hidden) esc_attr_e( $this->args['style'] ); ?>">
-
-		<?php if ( $this->args['repeatable'] ) : ?>
-
-			<span class="cmb_element">
-				<span class="ui-state-default">
-					<a class="delete-field ui-icon-circle-close ui-icon">&times;</a>
+				<span class="cmb_element">
+					<span class="ui-state-default">
+						<a class="delete-field ui-icon-circle-close ui-icon">&times;</a>
+					</span>
 				</span>
-			</span>
 
-		<?php 
-			endif;
-			$this->html(); 
-		?>
+			<?php endif; ?>
 
-		</div>
+			<?php $this->html(); ?>
 
-		<?php if($is_hidden): ?>
-		<button href="javascript:void(0);" class="button repeat-field"><?php _e('Add New','cmb') ?></button>
-		<?php endif;
+			</div>
+
+		<?php }
+
+		// Insert a hidden one if it's repeatable
+		if ( $this->args['repeatable'] ) {
+
+			$this->value = ''; ?>
+
+			<div class="field-item hidden" style="position: relative">
+
+			<?php if ( $this->args['repeatable'] ) : ?>
+
+				<span class="cmb_element">
+					<span class="ui-state-default">
+						<a class="delete-field ui-icon-circle-close ui-icon">&times;</a>
+					</span>
+				</span>
+
+			<?php endif; ?>
+
+			<?php $this->html(); ?>
+
+			</div>
+
+			<button href="#" class="button repeat-field">Add New</button>
+
+		<?php }
+
 	}
 }
 
@@ -307,7 +322,16 @@ class CMB_Text_Field extends CMB_Field {
 
 	public function html() { ?>
 
-		<input <?php $this->id_attr(); ?> <?php $this->boolean_attr(); ?> <?php $this->class_attr( $this->args['style'] ); ?> type="text" name="<?php esc_attr_e( $this->name ); ?>" value="<?php esc_attr_e( $this->get_value() ); ?>" />
+		<input <?php $this->id_attr(); ?> <?php $this->boolean_attr(); ?> <?php $this->class_attr(); ?> type="text" name="<?php esc_attr_e( $this->name ); ?>" value="<?php esc_attr_e( $this->get_value() ); ?>" />
+
+	<?php }
+}
+
+class CMB_Text_Small_Field extends CMB_Field {
+
+	public function html() { ?>
+
+		<input <?php $this->id_attr(); ?> <?php $this->boolean_attr(); ?> <?php $this->class_attr( 'cmb_text_small' ); ?> type="text" name="<?php esc_attr_e( $this->name ); ?>" value="<?php esc_attr_e( $this->get_value() ); ?>" />
 
 	<?php }
 }
@@ -326,7 +350,13 @@ class CMB_File_Field extends CMB_Field {
 		wp_enqueue_media();
 	}
 
-	public function html() { ?>
+	public function html() {
+
+		$args = wp_parse_args( $this->args, array(
+			'size' => array( 150, 150, 'crop' => true )
+		) );
+
+		?>
 
 		<a class="button cmb-file-upload <?php echo esc_attr( $this->get_value() ) ? 'hidden' : '' ?>" href="#">Add Media</a>
 
@@ -335,7 +365,7 @@ class CMB_File_Field extends CMB_Field {
 			<div class="cmb-file-holder <?php if ( $this->value ) { esc_attr_e( wp_attachment_is_image( $this->value ) ? ' type-img' : ' type-file' ); } ?>" style="text-align: center; vertical-align: middle;">
 
 				<?php if ( $this->get_value() )
-					echo wp_get_attachment_image( $this->get_value(),'thumbnail', true ) ?>
+					echo wp_get_attachment_image( $this->get_value(), $args['size'], true ) ?>
 
 				<?php if ( $this->get_value() && ! wp_attachment_is_image( $this->value ) ) : ?>
 					<div class="cmb-file-name">
@@ -521,7 +551,23 @@ class CMB_Oembed_Field extends CMB_Field {
 class CMB_Textarea_Field extends CMB_Field {
 
 	public function html() { ?>
-		<textarea <?php $this->id_attr(); ?> <?php $this->boolean_attr(); ?> <?php $this->class_attr( $this->args['style'] ); ?> rows="<?php echo ! empty( $this->args['rows'] ) ? esc_attr( $this->args['rows'] ) : 4; ?>" name="<?php esc_attr_e( $this->name ); ?>"><?php esc_attr_e( $this->value ); ?></textarea>
+		<textarea <?php $this->id_attr(); ?> <?php $this->boolean_attr(); ?> <?php $this->class_attr(); ?> rows="<?php echo ! empty( $this->args['rows'] ) ? esc_attr( $this->args['rows'] ) : 4; ?>" name="<?php esc_attr_e( $this->name ); ?>"><?php esc_attr_e( $this->value ); ?></textarea>
+
+	<?php }
+
+}
+
+/**
+ * Code style text field.
+ *
+ * Args:
+ *  - int "rows" - number of rows in the <textarea>
+ */
+class CMB_Textarea_Field_Code extends CMB_Field {
+
+	public function html() { ?>
+
+		<textarea <?php $this->id_attr(); ?> <?php $this->boolean_attr(); ?> <?php $this->class_attr( 'cmb_textarea_code' ); ?> rows="<?php echo ! empty( $this->args['rows'] ) ? esc_attr( $this->args['rows'] ) : 4; ?>" name="<?php esc_attr_e( $this->name ); ?>"><?php esc_attr_e( $this->value ); ?></textarea>
 
 	<?php }
 
@@ -868,7 +914,7 @@ add_action( 'wp_ajax_cmb_post_select', 'CMB_Post_Select::cmb_ajax_post_select' )
 /**
  * Field to group child fieids
  * pass $args[fields] array for child fields
- * pass $args['repeatable'] for cloning all child fields (set)
+ * pass $args['repeatable'] for cloing all child fields (set)
  */
 class CMB_Group_Field extends CMB_Field {
 
@@ -957,7 +1003,7 @@ class CMB_Group_Field extends CMB_Field {
 
 				</div>
 
-			<button href="javascript:void(0);" class="button repeat-field"><?php _e('Add New', 'cmb') ?></button>
+			<button href="#" class="button repeat-field">Add New</button>
 
 		<?php }
 
@@ -1028,7 +1074,7 @@ class CMB_Group_Field extends CMB_Field {
 				$field->values = (array) $values[$field->original_id][$key];
 				$field->parse_save_values();
 
-				// if the field is a repeatable field, store the whole array of them, if it's not repeatble,
+				// if the field is a repeatable field, store the whole array of them, if it's not repeatable,
 				// just store the first (and only) one directly
 				if ( $field->args['repeatable'] )
 					$meta[$field->original_id] = $field->values;
