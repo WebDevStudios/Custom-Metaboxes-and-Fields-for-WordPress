@@ -467,10 +467,9 @@ class CMB_Image_Field extends CMB_Field {
 				</div>
 			</div>
 
-			<div style="<?php esc_attr_e( $style ) ?>" class="loading-block hidden">
-				<img src="<?php esc_attr_e( esc_url( get_bloginfo( 'template_url' ) . '/framework/assets/images/spinner.gif' ) ); ?>" />
+			<div style="<?php esc_attr_e( $style ) ?> border-radius: 0 !important; background: #DEDEDE; box-shadow: 0 0 10px rgba(0,0,0,0.5) inset;" class="loading-block hidden">
+				<div style="height:100%; width: 100%; background: url('<?php echo esc_attr( esc_url( get_site_url() . '/wp-admin/images/wpspin_light-2x.gif' ) ); ?>') center center no-repeat; background-size: 16px 16px;"></div>
 			</div>
-
 
 		</div>
 
