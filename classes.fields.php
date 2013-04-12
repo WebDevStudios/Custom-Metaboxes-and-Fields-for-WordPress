@@ -232,7 +232,7 @@ abstract class CMB_Field {
 
 			<div class="field-title">
 				<label for="<?php echo esc_attr( $this->id . '-' . $this->current_item ); ?>">
-					<?php esc_html_e( $this->title ); ?>
+					<?php echo esc_html( $this->title ); ?>
 				</label>
 			</div>
 
@@ -372,7 +372,7 @@ class CMB_File_Field extends CMB_Field {
 				<?php if ( $this->get_value() && ! wp_attachment_is_image( $this->value ) ) : ?>
 					<div class="cmb-file-name">
 						<strong>
-							<?php esc_html_e( end( explode( DIRECTORY_SEPARATOR, get_attached_file( $this->get_value() ) ) ) ); ?>
+							<?php echo esc_html( end( explode( DIRECTORY_SEPARATOR, get_attached_file( $this->get_value() ) ) ) ); ?>
 						</strong>
 					</div>
 				<?php endif; ?>
@@ -462,9 +462,9 @@ class CMB_Image_Field extends CMB_Field {
 
 			<div style="<?php echo esc_attr( $style ); ?>" id="<?php echo esc_attr( $img_prefix ); ?>-dragdrop" data-extensions="<?php echo esc_attr( $extensions ); ?>" data-size="<?php echo esc_attr( $size_str ); ?>" class="rwmb-drag-drop upload-form">
 				<div class="rwmb-drag-drop-inside">
-					<p><?php esc_html_e( $drop_text ); ?></p>
+					<p><?php echo esc_html( $drop_text ); ?></p>
 					<p>or</p>
-					<p><input id="<?php esc_html_e( $img_prefix ); ?>-browse-button" type="button" value="Select Files" class="button-secondary" /></p>
+					<p><input id="<?php echo esc_html( $img_prefix ); ?>-browse-button" type="button" value="Select Files" class="button-secondary" /></p>
 				</div>
 			</div>
 
@@ -889,7 +889,7 @@ class CMB_Radio_Field extends CMB_Field {
 
 			<input <?php $this->id_attr( 'item-' . $key ); ?> <?php $this->boolean_attr(); ?> <?php $this->class_attr(); ?> type="radio" name="<?php echo esc_attr( $this->name ); ?>" value="<?php echo esc_attr( $key ); ?>" <?php checked( $key, $this->get_value() ); ?> />
 			<label <?php $this->for_attr( 'item-' . $key ); ?> style="margin-right: 20px;">
-				<?php esc_html_e( $value ); ?>
+				<?php echo esc_html( $value ); ?>
 			</label>
 
 			<?php endforeach; ?>
@@ -918,7 +918,7 @@ class CMB_Checkbox extends CMB_Field {
 	public function html() { ?>
 
 		<input <?php $this->id_attr(); ?> <?php $this->boolean_attr(); ?> <?php $this->class_attr(); ?> type="checkbox" name="checkbox_<?php echo esc_attr( $this->name ); ?>" value="1" <?php checked( $this->get_value() ); ?> />
-		<label <?php $this->for_attr(); ?>><?php esc_html_e( $this->args['name'] ); ?></label>
+		<label <?php $this->for_attr(); ?>><?php echo esc_html( $this->args['name'] ); ?></label>
 
 			<input type="hidden" name="<?php echo esc_attr( $this->name ); ?>" value="1" />
 
