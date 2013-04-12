@@ -331,6 +331,7 @@ div.time-picker li.selected { background: #0063CE; color: #fff; }
 
 .field {  margin-bottom: 8px; }
 .field-title { margin-bottom: 8px; margin-top: 0; font-weight: bold; }
+#poststuff .field-title h2 { margin: 0 !important; }
 
  .field.repeatable .field-item { padding-right: 25px; margin-bottom: 8px; }
 .ui-icon.delete-field { position: absolute; top: 6px; right: 0; cursor: pointer; opacity: 0.75; }
