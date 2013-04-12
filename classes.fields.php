@@ -364,7 +364,7 @@ class CMB_File_Field extends CMB_Field {
 
 		<div class="cmb-file <?php echo $this->get_value() ? '' : 'hidden'; ?>" style="text-align: center;">
 
-			<div class="cmb-file-holder <?php if ( $this->value ) { echo wp_attachment_is_image( $this->value ) ? ' type-img' : ' type-file' ); } ?>" style="text-align: center; vertical-align: middle;">
+			<div class="cmb-file-holder <?php if ( $this->value ) { echo wp_attachment_is_image( $this->value ) ? ' type-img' : ' type-file'; } ?>" style="text-align: center; vertical-align: middle;">
 
 				<?php if ( $this->get_value() )
 					echo wp_get_attachment_image( $this->get_value(), $args['size'], true ) ?>
