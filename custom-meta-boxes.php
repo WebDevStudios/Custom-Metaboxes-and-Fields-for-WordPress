@@ -41,7 +41,11 @@ include_once( CMB_PATH . '/classes.fields.php' );
 include_once( CMB_PATH . '/class.cmb-meta-box.php' );
 //include_once( CMB_PATH . '/example-functions.php' );
 
-// Get all the meta boxes on init
+/**
+ * Get all the meta boxes on init
+ * 
+ * @return null
+ */
 function cmb_init() {
 
 	if ( ! is_admin() )
@@ -57,7 +61,10 @@ function cmb_init() {
 add_action( 'init', 'cmb_init' );
 
 /**
- * Adding scripts and styles
+ * Enqueue scripts & styles.
+ * 
+ * @param  string $hook current admin screen.
+ * @return null
  */
 function cmb_scripts( $hook ) {
 
@@ -99,6 +106,12 @@ function _cmb_field_class_for_type( $type ) {
 		'title'				=> 'CMB_Title',
 	) );
 
+/**
+ * Get a field class by type
+ * 
+ * @param  string $type 
+ * @return string $class, or false if not found.
+ */
 	if ( isset( $map[$type] ) )
 		return $map[$type];
 
@@ -106,7 +119,11 @@ function _cmb_field_class_for_type( $type ) {
 
 }
 
-// Draw the meta boxes in places other than the post edit screen
+/**
+ * Draw the meta boxes in places other than the post edit screen
+ * 
+ * @return null
+ */
 function cmb_draw_meta_boxes( $pages, $context = 'normal', $object = null ) {
 
 	cmb_do_meta_boxes( $pages, $context, $object );
