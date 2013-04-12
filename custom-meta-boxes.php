@@ -96,6 +96,7 @@ function _cmb_field_class_for_type( $type ) {
 		'checkbox'			=> 'CMB_Checkbox',
 		'post_select'		=> 'CMB_Post_Select',
 		'radio'				=> 'CMB_Radio_Field'
+		'title'				=> 'CMB_Title',
 	) );
 
 	if ( isset( $map[$type] ) )

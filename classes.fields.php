@@ -933,6 +933,19 @@ class CMB_Checkbox extends CMB_Field {
  */
 class CMB_Title extends CMB_Field {
 
+	public function title() {
+		?>
+
+		<div class="field-title">
+			<h2>
+				<?php echo esc_html( $this->title ); ?>
+			</h2>
+		</div>
+
+		<?php
+
+	}
+
 	public function html() {}
 
 }
