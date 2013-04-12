@@ -93,7 +93,7 @@ jQuery(document).ready(function ($) {
 			textarea_id = $object.attr('id');
 
 			//Add toggle to go back to textarea
-			$(this).find('.field-title').after("<a href='javascript:void(0);' class='button togglewysiwyg ui-state-default' data-id='"+textarea_id+"'' style='margin-bottom:10px;'>⇄ Toggle Editor</a>");
+			$(this).find('.field-title').after("<a href='javascript:void(0);' class='button hidden togglewysiwyg ui-state-default' data-id='"+textarea_id+"'' style='margin-bottom:10px;'>⇄ Toggle Editor</a>");
 			
 		});
 	}
