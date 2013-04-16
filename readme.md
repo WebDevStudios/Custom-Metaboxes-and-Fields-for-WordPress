@@ -1,43 +1,37 @@
-# Custom Meta Boxes
+# HM Custom Meta Boxes for WordPress
 
-## Description
+Custom Meta Boxes is a framework for easily adding custom fields  to the WordPress post edit page.
 
-Custom Meta Boxes is a fork (non backwards compatible) of jaradatch's great https://github.com/jaredatch/Custom-Metaboxes-and-Fields-for-WordPress. 
+It includes several field types including WYSIWYG, media upload and dates ([see wiki for a full list](https://github.com/humanmade/Custom-Meta-Boxes/wiki)). It also supports repeatable and grouped fields.
 
-## Why fork?
+This project is aimed at developers and is easily extended and customised. It takes a highly modular, Object Orientated approach, with each field as an extension of the CMB_Field abstract class.
 
-We really liked the idea of the original Custom Metaboxes, but were not so keen on the implementation. That's not to say it wasn't good, it's just not how we envisioned somethign like working from an API point of view.
+The framework also features a basic layout engine for fields, allowing you to align fields to a simple 12 column grid.
 
-This fork attemps to make the framework much more modular, taking a more Object Orientated approach. Though the original CMB does use Classes it's in a fairly basic (simiilar to a lot of the Classes in WordPress it's self). In this fork, each field type is an extension of the `abstract class` `CMB_Field`. This makes maintability and extension much easier and also makes writing tests a lot better.
+![Overview](https://f.cloud.github.com/assets/494927/386456/1ea0d6f6-a6a7-11e2-88ab-ce6497c2b757.png)
 
-The fork also contains a new field type called `CMB_Group_Field` which supports sub-fields. Group Fields are clonable (or _repeatable_), for example a meta box would have a `Group field` "Price", which would contain 2 sub fields "currency" and "amount". These can then be cloned as a pair, and saved in custom meta as such too.
+## Usage
 
-This fork also simplifies the field types from the original. There is no "text", "text small", "text medium" as top level fields. There is only "text" which has a size property. This is the same for a lot of fields.
+* Include the custom-meta-boxes.php framework file. 
+  * In your theme: include the CMB directory to your theme directory, and add `require_once( 'Custom-Meta-Boxes/custom-meta-boxes.php' );` to functions.php  
+  * As an MU Plugin: [Refer to the WordPress Codex here for more information](http://codex.wordpress.org/Must_Use_Plugins)
+* Filter `cmb_meta_boxes` to add your own meta boxes. [The wiki has more details and example code](https://github.com/humanmade/Custom-Meta-Boxes/wiki/Create-a-Meta-Box)
 
-We have also added a basic layout engine for fields, any field has a `cols` argument. There is a maximum of 12 cols, so two fields of `6 cols` would give you a split down the middle (shown below).
+## Help
 
-![](https://dl.dropbox.com/u/238502/Captured/rjnI2.png)
+* For more information, including example code for usage of each field and instructions on how to create your own fields, refer to the [Wiki](https://github.com/humanmade/Custom-Meta-Boxes/wiki/).
+* Not covered in the Wiki? Need more help? Get in touch. support@humanmade.co.uk
+* Found a bug? Feature requests? [Create an issue - Thanks!](https://github.com/humanmade/Custom-Meta-Boxes/issues/new)
 
-### Field Types:
-* text
-* date picker
-* date picker (unix timestamp)
-* date time picker combo (unix timestamp)
-* time picker
-* color picker
-* textarea
-* select
-* radio 
-* radio inline
-* taxonomy radio
-* checkbox
-* multicheck
-* WYSIWYG/TinyMCE
-* file upload
-* DnD Image Upload Well
+## About
+
+This plugin is maintained by [Human Made Limited](http://hmn.md)
+
+It began as a fork of [Custom Meta Boxes](https://github.com/jaredatch/Custom-Metaboxes-and-Fields-for-WordPress), but is no longer compatible.
 
 ## Known Issues
-* Image Upload Well does not work as repeatable fields
+* Some fields do not work well as repeatable fields.
+* Some fields do not work well in repeatable groups.
 
-## To-do
-* Make hooking / registering nicer. Perhaps use callbacks to reduce overhead of adding boxes when they will not be displayed.
+## To Do
+* Make hooking / registering nicer.
