@@ -646,27 +646,17 @@ class CMB_Datetime_Timestamp_Field extends CMB_Field {
 
 	public function parse_save_values() {
 
-		// We need to handle the post data slightly different from the standard CMB.
-		$values = isset( $_POST['datetime_' . $this->id] ) ? $_POST['datetime_' . $this->id] : array();
+		// Convert all [date] and [time] values to a unix timestamp.
+		// If date is empty, assume delete. If time is empty, assume 00:00. 
+		foreach( $this->values as $key => &$value ) {
+			if ( empty( $value['date'] ) )
+				unset( $value );
+			else
+				$value = strtotime( $value['date'] . ' ' . $value['time'] );
+		}
 
-		if ( ! empty( $this->args['repeatable'] ) )
-			foreach ( $values as &$value ) {
-				end( $value );
-				unset( $value[key( $value )] );
-				reset( $value );
-			}
-
-		$r = array();
-
-		for ( $i = 0; $i < count( $values['date'] ); $i++ )
-			if( ! empty( $values['date'][$i] ) )
-				$r[$i] = strtotime( $values['date'][$i] . ' ' . $values['time'][$i] );
-
-		sort( $r );
-
-		$r[] = '';
-
-		$this->values = $r;
+		$this->values = array_filter( $this->values );
+		sort( $this->values );
 
 		parent::parse_save_values();
 
