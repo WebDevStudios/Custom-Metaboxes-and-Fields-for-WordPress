@@ -247,6 +247,7 @@ class CMB_Meta_Box {
 					$classes[] = 'repeatable';
 
 				$classes[] = get_class($field);
+
 				?>
 
 				<td style="width: <?php esc_attr_e( $field->args['cols'] / 12 * 100 ); ?>%" colspan="<?php esc_attr_e( $field->args['cols'] ); ?>">
@@ -271,6 +272,21 @@ class CMB_Meta_Box {
 
 	<?php }
 
+	function strip_repeatable( $values ) {
+
+		foreach ( $values as $key => $value ) {
+
+			if ( false !== strpos( $key, 'cmb-group-x' ) || false !==  strpos( $key, 'cmb-field-x' ) )
+				unset( $values[$key] ); 
+
+			elseif ( is_array( $value ) )
+				$values[$key] = $this->strip_repeatable( $value );
+
+		}
+
+		return $values;
+	}
+
 	// Save data from metabox
 	function save( $post_id = 0 )  {
 
@@ -289,12 +305,7 @@ class CMB_Meta_Box {
 			else
 				$value = array();
 
-			// if it's repeatable take off the last one
-			if ( ! empty( $field['repeatable'] ) && $field['type'] != 'group' ) {
-				end( $value );
-				unset( $value[key( $value )] );
-				reset( $value );
-			}
+			$value = $this->strip_repeatable( $value );
 
 			if ( ! $class = _cmb_field_class_for_type( $field['type'] ) ) {
 				do_action('cmb_save_' . $field['type'], $field, $value);
