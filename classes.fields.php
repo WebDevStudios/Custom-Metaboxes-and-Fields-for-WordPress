@@ -289,7 +289,6 @@ abstract class CMB_Field {
 		// if there are no values and it's not repeateble, we want to do one with empty string
 		if ( ! $this->get_values() && ! $this->args['repeatable'] )
 			$values = array( '' );
-
 		else
 			$values = $this->get_values();
 
@@ -626,7 +625,9 @@ class CMB_Date_Timestamp_Field extends CMB_Field {
 	<?php }
 
 	public function parse_save_value() {
+		
 		$this->value = strtotime( $this->value );
+	
 	}
 
 }
@@ -781,11 +782,13 @@ class CMB_Color_Picker extends CMB_Field {
 class CMB_Select extends CMB_Field {
 
 	public function __construct() {
+		
 		$args = func_get_args();
 
 		call_user_func_array( array( 'parent', '__construct' ), $args );
 
 		$this->args = wp_parse_args( $this->args, array( 'multiple' => false, 'ajax_url' => '' ) );
+
 	}
 
 	public function get_options() {
@@ -854,7 +857,7 @@ class CMB_Select extends CMB_Field {
 				var options = { placeholder: "Type to search" };
 
 				<?php if ( $this->args['ajax_url'] ) : ?>
- 
+
 					var query = JSON.parse( '<?php echo json_encode( $this->args['ajax_args'] ? wp_parse_args( $this->args['ajax_args'] ) : (object) array() ); ?>' );
 					var posts = [];
 
@@ -894,7 +897,6 @@ class CMB_Select extends CMB_Field {
 					jQuery( '.<?php echo esc_js( $id ); ?>' ).each( function( index, el ) {
 						if ( jQuery( el ).is( ':visible' ) && ! jQuery( el ).hasClass( 'select2-added' ) )
 							jQuery( this ).addClass( 'select2-added' ).select2( options );
-
 					} );
 
 				}, 300 );
@@ -1207,10 +1209,11 @@ class CMB_Group_Field extends CMB_Field {
 
 	public function add_field( CMB_Field $field ) {
 
-		$key = $field->id;
+		$key                = $field->id;
 		$field->original_id = $key;
-		$field->id = $this->id . '[' . $field->id . '][]';
-		$field->name = $field->id . '[]';
+		$field->id          = $this->id . '[' . $field->id . ']';
+		$field->name        = $field->id . '[]';
+		$field->group_index = $this->field_index;
 		$this->fields[$key] = $field;
 
 	}
@@ -1257,7 +1260,7 @@ class CMB_Group_Field extends CMB_Field {
 
 		$values = $this->values;
 
-		$this->values = array();
+		$this->values = array();		
 
 		$first = reset( $values );
 
@@ -1267,8 +1270,8 @@ class CMB_Group_Field extends CMB_Field {
 
 			foreach ( $this->fields as $field ) {
 
-				// Create the field object so it can sanitize it's data etc
 				$field->values = (array) $values[$field->original_id][$key];
+				
 				$field->parse_save_values();
 
 				// if the field is a repeatable field, store the whole array of them, if it's not repeatble,
@@ -1298,7 +1301,7 @@ class CMB_Group_Field extends CMB_Field {
 	}
 
 	public function set_values( array $values ) {
-
+		
 		$this->values = $values;
 
 		foreach ( $values as $value ) {
