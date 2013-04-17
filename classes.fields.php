@@ -244,7 +244,7 @@ abstract class CMB_Field {
 		if ( $this->title ) { ?>
 
 			<div class="field-title">
-				<label for="<?php echo esc_attr( $this->id . '-' . $this->current_item ); ?>">
+				<label <?php $this->for_attr(); ?>>
 					<?php echo esc_html( $this->title ); ?>
 				</label>
 			</div>
