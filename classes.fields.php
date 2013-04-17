@@ -276,9 +276,10 @@ abstract class CMB_Field {
 
 		$this->description();
 
+		$i = 0;
 		foreach ( $values as $key => $value ) {
 
-			$this->current_item = $key;
+			$this->field_index = $i;
 			$this->value = $value; ?>
 
 			<div class="field-item" style="position: relative; <?php echo esc_attr( $this->args['style'] ); ?>">
@@ -297,11 +298,16 @@ abstract class CMB_Field {
 
 			</div>
 
-		<?php }
+		<?php 
+
+			$i++;
+
+		}
 
 		// Insert a hidden one if it's repeatable
 		if ( $this->args['repeatable'] ) {
 
+			$this->field_index = 'x'; // x used to distinguish hidden fields.
 			$this->value = ''; ?>
 
 			<div class="field-item hidden" style="position: relative">
@@ -1159,18 +1165,27 @@ class CMB_Group_Field extends CMB_Field {
 
 		<?php endif;
 
+		$i = 0;
 		foreach ( $meta as $value ) {
 
-			$this->value = $value; ?>
+			$this->field_index = $i;
+			$this->value = $value; 	
+
+			?>
 
 			<div class="field-item" style="<?php echo esc_attr( $this->args['style'] ); ?>">
 				<?php $this->html(); ?>
 			</div>
 
-		<?php }
+			<?php
+
+			$i++;
+		
+		}	
 
 		if ( $this->args['repeatable'] ) {
 
+			$this->field_index = 'x'; // x used to distinguish hidden fields.
 			$this->value = ''; ?>
 
 				<div class="field-item hidden" style="<?php echo esc_attr( $this->args['style'] ); ?>">
