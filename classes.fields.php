@@ -99,6 +99,8 @@ abstract class CMB_Field {
 
 		$id = $this->id;
 
+		if ( isset( $this->group_index ) )
+			$id .= '-cmb-group-' . $this->group_index;
 
 		$id .= '-cmb-field-' . $this->field_index;
 
@@ -115,6 +117,8 @@ abstract class CMB_Field {
 
 		$for = $this->id;
 
+		if ( isset( $this->group_index ) )
+			$for .= '-cmb-group-' . $this->group_index;
 
 		$for .= '-cmb-field-' . $this->field_index;
 
@@ -1211,6 +1215,10 @@ class CMB_Group_Field extends CMB_Field {
 	}
 
 	public function html() {
+
+		// Set the group index for each field.
+		foreach ( $this->fields as $field => $field_value )
+			$this->fields[$field]->group_index = $this->field_index;
 
 		$value = $this->value;
 
