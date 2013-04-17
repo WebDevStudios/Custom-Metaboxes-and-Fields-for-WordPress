@@ -794,6 +794,13 @@ class CMB_Select extends CMB_Field {
 
 	}
 
+	public function parse_save_values(){
+
+		if ( isset( $this->group_index ) && isset( $this->args['multiple'] ) && $this->args['multiple'] )
+			$this->values = array( $this->values );
+
+	}
+
 	public function get_options() {
 
 		if ( $this->has_data_delegate() )
