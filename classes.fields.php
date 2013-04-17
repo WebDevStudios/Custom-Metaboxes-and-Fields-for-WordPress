@@ -825,7 +825,8 @@ class CMB_Select extends CMB_Field {
 				<?php if ( $this->args['ajax_url'] ) : ?>
  
 					var query = JSON.parse( '<?php echo json_encode( $this->args['ajax_args'] ? wp_parse_args( $this->args['ajax_args'] ) : (object) array() ); ?>' );
-					var posts = [];
+					
+					options.data = [];
 
 					<?php if ( $this->args['multiple'] ) : ?>
 
@@ -835,8 +836,8 @@ class CMB_Select extends CMB_Field {
 
 					<?php foreach ( array_filter( (array) $this->value ) as $post_id ) : ?>
 
-						posts.push( { id: <?php echo esc_js( $post_id ); ?>, text: '<?php echo esc_js( get_the_title( $post_id ) ); ?>' } );
-
+						options.data.push( { id: <?php echo esc_js( $post_id ); ?>, text: '<?php echo esc_js( get_the_title( $post_id ) ); ?>' } );
+						
 					<?php endforeach; ?>
 
 					options.ajax = {
@@ -851,12 +852,8 @@ class CMB_Select extends CMB_Field {
 							return { results: data }
 						}
 					}
-
-					options.initSelection = function (element, callback) {
-						return posts;
-					}
-
-				<?php endif; ?>
+					
+				<?php endif; ?>	
 
 				setInterval( function() {
 
@@ -1022,10 +1019,11 @@ class CMB_Post_Select extends CMB_Select {
 		$this->args['query'] = isset( $this->args['query'] ) ? $this->args['query'] : array();
 
 		if ( ! $this->args['use_ajax'] ) {
+			
 			$this->args['data_delegate'] = array( $this, 'get_delegate_data' );
 
 		} else {
-
+			
 			$this->args['ajax_url'] = add_query_arg( 'action', 'cmb_post_select', admin_url( 'admin-ajax.php' ) );
 			$this->args['ajax_args'] = $this->args['query'];
 
