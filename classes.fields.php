@@ -628,6 +628,8 @@ class CMB_Date_Timestamp_Field extends CMB_Field {
 		
 		foreach( $this->values as &$value )
 			$value = strtotime( $value );
+
+		sort( $this->values );
 	
 	}
 
