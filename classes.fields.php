@@ -9,7 +9,7 @@
 abstract class CMB_Field {
 
 	public $value;
-	public $current_item = 0;
+	public $field_index = 0;
 
 
 	/**
@@ -97,26 +97,35 @@ abstract class CMB_Field {
 
 	public function id_attr( $append = null ) {
 
-		$id = $this->id . '-' . $this->current_item;
+		$id = $this->id;
 
-		if ( $append )
+
+		$id .= '-cmb-field-' . $this->field_index;
+
+		if ( ! is_null( $append ) )
 			$id .= '-' . $append;
 
-		?>
+		$id = str_replace( array( '[', ']', '--' ), '-', $id );
 
-		id="<?php echo esc_attr( $id ); ?>"
-
-		<?php
+		printf( 'id="%s"', esc_attr( $id ) );
+		
 	}
 
 	public function for_attr( $append = null ) {
 
-		$for = $this->id . '-' . $this->current_item;
+		$for = $this->id;
 
-		if ( $append )
+
+		$for .= '-cmb-field-' . $this->field_index;
+
+		if ( ! is_null( $append ) )
 			$for .= '-' . $append;
 
-		?>
+		$for = str_replace( array( '[', ']', '--' ), '-', $for );
+
+		printf( 'for="%s"', esc_attr( $for ) );
+
+	}
 
 		for="<?php echo esc_attr( $for ); ?>"
 
