@@ -532,7 +532,7 @@ class CMB_Image_Field extends CMB_Field {
 		check_ajax_referer('plupload_image');
 
 		$post_id = 0;
-		if ( is_numeric( $_REQUEST['post_id'] ) )
+		if ( isset( $_REQUEST['post_id'] ) && is_numeric( $_REQUEST['post_id'] ) )
 			$post_id = (int) $_REQUEST['post_id'];
 
 		// you can use WP's wp_handle_upload() function:
