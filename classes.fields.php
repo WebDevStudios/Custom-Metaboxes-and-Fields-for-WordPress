@@ -624,9 +624,10 @@ class CMB_Date_Timestamp_Field extends CMB_Field {
 
 	<?php }
 
-	public function parse_save_value() {
+	public function parse_save_values() {
 		
-		$this->value = strtotime( $this->value );
+		foreach( $this->values as &$value )
+			$value = strtotime( $value );
 	
 	}
 
