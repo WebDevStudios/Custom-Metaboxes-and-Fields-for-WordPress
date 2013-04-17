@@ -164,7 +164,8 @@ jQuery(document).ready(function ($) {
 	    var newT = el.prev().clone();
 
 	    newT.removeClass('hidden');
-	    newT.find('input[type!="button"]').val('');
+	    
+	    newT.find('input[type!="button"]').not('[readonly]').val('');
 	    newT.find( '.cmb_upload_status' ).html('');
 	    newT.insertBefore( el.prev() );
 
