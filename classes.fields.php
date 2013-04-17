@@ -1271,7 +1271,7 @@ class CMB_Group_Field extends CMB_Field {
 
 			foreach ( $this->fields as $field ) {
 
-				$field->values = (array) $values[$field->original_id][$key];
+				$field->values = isset( $values[$field->original_id][$key] ) ? $values[$field->original_id][$key] : array();
 				
 				$field->parse_save_values();
 
