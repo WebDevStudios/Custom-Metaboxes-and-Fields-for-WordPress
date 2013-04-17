@@ -197,6 +197,10 @@ abstract class CMB_Field {
 	 */
 	public function save( $post_id, $values ) {
 
+		// Don't save readonly values.
+		if ( $this->args['readonly'] )
+			return;
+
 		$this->values = $values;
 		$this->parse_save_values();
 
