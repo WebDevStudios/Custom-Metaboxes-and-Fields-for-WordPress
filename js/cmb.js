@@ -37,6 +37,13 @@ jQuery(document).ready(function ($) {
 	 */
 	 $('.cmb_select2').select2({});
 
+	 /**
+	 * Initialize jQuery Tags Input
+	 */
+	 $('.cmb_tags_input').tagsInput({
+	 	defaultText: 'Add new'
+	 });
+
 	/**
 	 * Initialize jQuery UI datepicker (this will be moved inline in a future release)
 	 */
