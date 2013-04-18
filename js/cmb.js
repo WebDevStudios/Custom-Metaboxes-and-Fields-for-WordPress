@@ -177,15 +177,15 @@ jQuery(document).ready(function ($) {
 		
 		field.children('.field-item').not('.hidden').each( function() {
 
-			$(this).find('label,input,select,textarea').each( function() {
+			var search  = field.hasClass( 'CMB_Group_Field' ) ? /cmb-group-(\d|x)*/ : /cmb-field-(\d|x)*/;
+			var replace = field.hasClass( 'CMB_Group_Field' ) ? 'cmb-group-' + index : 'cmb-field-' + index;
 
-				var search  = field.hasClass( 'CMB_Group_Field' ) ? /cmb-group-(\d|x)*/ : /cmb-field-(\d|x)*/;
-				var replace = field.hasClass( 'CMB_Group_Field' ) ? 'cmb-group-' + index : 'cmb-field-' + index;
+			$(this).find('[id],[for],[name]').each( function() {
 
 				for ( var i = 0; i < attrs.length; i++ )
 					if ( typeof( $(this).attr( attrs[i] ) ) !== 'undefined' )
 						$(this).attr( attrs[i], $(this).attr( attrs[i] ).replace( search, replace ) );
-
+				
 			} );
 
 			index += 1;
