@@ -1,3 +1,6 @@
 [submodule "js/select2"]
 	path = js/select2
 	url = https://github.com/ivaynberg/select2.git
+[submodule "js/jQuery-Tags-Input"]
+	path = js/jQuery-Tags-Input
+	url = https://github.com/xoxco/jQuery-Tags-Input.git
