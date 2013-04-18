@@ -192,6 +192,19 @@ jQuery(document).ready(function ($) {
 
 		} );
 
+		if ( field.hasClass( 'CMB_wysiwyg' ) ) {
+			
+			newT.find( 'script' ).remove();
+
+			var mceID = 'cmb-field-' + (index+-1);
+			var mceID = 123;
+			var editor_code = cmbSampleEditor.replace( /cmb-field-(\d|x)*/g, mceID );
+			newT.html( $(editor_code) );
+			tinyMCE.execCommand( 'mceAddControl', true, newT.find('textarea').attr('id') );
+	    
+		}
+	    
+
 	    // Reinitialize all the datepickers
 		jQuery('.cmb_datepicker' ).each(function () {
 			$(this).attr( 'id', '' ).removeClass( 'hasDatepicker' ).removeData( 'datepicker' ).unbind().datepicker();

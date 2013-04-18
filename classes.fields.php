@@ -989,11 +989,25 @@ class CMB_Title extends CMB_Field {
  */
 class CMB_wysiwyg extends CMB_Field {
 
-	public function html() { ?>
+	public function html() { 
 
-			<?php wp_editor( $this->get_value(), $this->name, $this->args['options'] );?>
+		$name = $this->get_the_name_attr();
 
-	<?php }
+		if ( is_int( $this->field_index ) ) {
+
+			wp_editor( $this->get_value(), $name, $this->args['options'] );
+
+		} else {
+
+			ob_start();
+			wp_editor( $this->get_value(), $name, $this->args['options'] );
+			$editor = ob_get_clean();
+			$editor = str_replace( "\n", "", $editor );
+			printf( '<script>var cmbSampleEditor = \'%s\';</script>', $editor );
+		
+		}
+
+	}
 }
 
 class CMB_Taxonomy extends CMB_Select {
