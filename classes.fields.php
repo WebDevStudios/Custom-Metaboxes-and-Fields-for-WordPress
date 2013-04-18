@@ -995,7 +995,9 @@ class CMB_wysiwyg extends CMB_Field {
 
 		if ( is_int( $this->field_index ) ) {
 
+			echo '<div class="cmb-wysiwyg">';
 			wp_editor( $this->get_value(), $name, $this->args['options'] );
+			echo '</div>';
 
 		} else {
 
@@ -1003,7 +1005,9 @@ class CMB_wysiwyg extends CMB_Field {
 			wp_editor( $this->get_value(), $name, $this->args['options'] );
 			$editor = ob_get_clean();
 			$editor = str_replace( "\n", "", $editor );
-			printf( '<script>var cmbSampleEditor = \'%s\';</script>', $editor );
+			
+			printf( '<script>var cmbSampleEditorName = \'%s\'; var cmbSampleEditor = \'%s\';</script>', $name, $editor );
+			echo '<div class="cmb-wysiwyg"></div>';
 		
 		}
 

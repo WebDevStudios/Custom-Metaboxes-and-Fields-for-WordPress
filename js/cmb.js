@@ -196,11 +196,32 @@ jQuery(document).ready(function ($) {
 			
 			newT.find( 'script' ).remove();
 
-			var mceID = 'cmb-field-' + (index+-1);
-			var mceID = 123;
-			var editor_code = cmbSampleEditor.replace( /cmb-field-(\d|x)*/g, mceID );
-			newT.html( $(editor_code) );
-			tinyMCE.execCommand( 'mceAddControl', true, newT.find('textarea').attr('id') );
+			var randID = Math.floor( Math.random() * 1000 );
+
+			var el = newT.find( '.cmb-wysiwyg' ),
+				ed = cmbSampleEditor.replace( /cmb-field-(\d|x)*/g, 'cmb-field-' + randID );
+
+			el.html( $(ed) );
+			
+			var id = newT.find('textarea').attr('id');
+
+			// Setup settings for this tinyMCE.
+			var newSettings = jQuery.extend( {}, tinyMCEPreInit.mceInit[cmbSampleEditorName] );
+			for ( var prop in newSettings )
+				if ( 'string' === typeof( newSettings[prop] ) )
+					newSettings[prop] = newSettings[prop].replace( /cmb-field-(\d|x)*/g, 'cmb-field-' + randID );
+			tinyMCEPreInit.mceInit[ id ] = newSettings;
+
+			// Setup quicktags settings for this tinyMCE.
+			var newQTS = jQuery.extend( {}, tinyMCEPreInit.qtInit[cmbSampleEditorName] );
+			for ( var prop in newQTS )
+				if ( 'string' === typeof( newQTS[prop] ) )
+					newQTS[prop] = newQTS[prop].replace( /cmb-field-(\d|x)*/g, 'cmb-field-' + randID );
+			tinyMCEPreInit.qtInit[ id ] = newQTS;
+
+			// Init
+			quicktags( tinyMCEPreInit.qtInit[id] );
+			tinyMCE.init( tinyMCEPreInit.mceInit[id] );
 	    
 		}
 	    
