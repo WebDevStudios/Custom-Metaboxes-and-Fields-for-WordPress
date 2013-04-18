@@ -560,10 +560,15 @@ function cmb_scripts( $hook ) {
 		}
 		wp_register_script( 'cmb-timepicker', CMB_META_BOX_URL . 'js/jquery.timePicker.min.js' );
 		wp_register_script( 'cmb-scripts', CMB_META_BOX_URL . 'js/cmb.js', $cmb_script_array, '0.9.1' );
+		wp_register_script( 'cmb-advanced-select', CMB_META_BOX_URL . 'js/select2/select2.js' );
 		wp_localize_script( 'cmb-scripts', 'cmb_ajax_data', array( 'ajax_nonce' => wp_create_nonce( 'ajax_nonce' ), 'post_id' => get_the_ID() ) );
 		wp_enqueue_script( 'cmb-timepicker' );
 		wp_enqueue_script( 'cmb-scripts' );
+		wp_enqueue_script( 'cmb-advanced-select' );
+
+		wp_register_style( 'cmb-advanced-select', CMB_META_BOX_URL . 'js/select2/select2.css' );
 		wp_register_style( 'cmb-styles', CMB_META_BOX_URL . 'style.css', $cmb_style_array );
+		wp_enqueue_style( 'cmb-advanced-select' );
 		wp_enqueue_style( 'cmb-styles' );
 	}
 }
