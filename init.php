@@ -247,11 +247,28 @@ class cmb_Meta_Box {
 				case 'textarea_code':
 					echo '<textarea name="', $field['id'], '" id="', $field['id'], '" cols="60" rows="10" class="cmb_textarea_code">', '' !== $meta ? $meta : $field['std'], '</textarea>','<p class="cmb_metabox_description">', $field['desc'], '</p>';
 					break;
+				case 'advanced_select':
+				case 'advanced_multiselect':
+					// fall through
 				case 'select':
+					// Add the select2 class for both advanced_select and advanced_multiselect
+					$select_class = $field['type'] != 'select' ? 'cmb_select2' : '';
+					$multiple = $field['type'] == 'advanced_multiselect' ? 'multiple' : '';
+
+					$field_name = $field['id'];
+					if( $field['type'] == 'advanced_multiselect' ) {
+						$field_name =  $field['id'] . '[]';
+						$meta = unserialize($meta);
+					}
+
 					if( empty( $meta ) && !empty( $field['std'] ) ) $meta = $field['std'];
-					echo '<select name="', $field['id'], '" id="', $field['id'], '">';
+					if( ! isset( $select_class ) ) $select_class = '';
+
+					echo '<select name="', $field_name, '" id="', $field['id'], '" class="', $select_class, '"', $multiple ,'>';
 					foreach ($field['options'] as $option) {
-						echo '<option value="', $option['value'], '"', $meta == $option['value'] ? ' selected="selected"' : '', '>', $option['name'], '</option>';
+						$selected = ( is_array( $meta ) && in_array( $option['value'], $meta ) || $meta == $option['value'] ) ? ' selected="selected"' : '';
+
+						echo '<option value="', $option['value'], '"', $selected, '>', $option['name'], '</option>';
 					}
 					echo '</select>';
 					echo '<p class="cmb_metabox_description">', $field['desc'], '</p>';
@@ -455,6 +472,10 @@ class cmb_Meta_Box {
 
 			$old = get_post_meta( $post_id, $name, !$field['multiple'] /* If multicheck this can be multiple values */ );
 			$new = isset( $_POST[$field['id']] ) ? $_POST[$field['id']] : null;
+
+			if( $field['type'] == 'advanced_multiselect' ) {
+				$new = isset( $_POST[$field['id']] ) ? serialize($_POST[$field['id']]) : null;
+			}
 
 			if ( $type_comp == true && in_array( $field['type'], array( 'taxonomy_select', 'taxonomy_radio', 'taxonomy_multicheck' ) ) )  {
 				$new = wp_set_object_terms( $post_id, $new, $field['taxonomy'] );
