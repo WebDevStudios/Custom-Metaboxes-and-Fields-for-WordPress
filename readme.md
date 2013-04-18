@@ -34,6 +34,8 @@ Custom Metaboxes and Fields (CMB for short) will create metaboxes with custom fi
 * textarea small
 * textarea code
 * select
+* advanced select (using [select2](https://github.com/ivaynberg/select2.git))
+* advanced multi select (using [select2](https://github.com/ivaynberg/select2.git))
 * radio
 * radio inline
 * taxonomy radio
