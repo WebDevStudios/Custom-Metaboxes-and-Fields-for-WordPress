@@ -24,6 +24,11 @@ jQuery(document).ready(function ($) {
 		e.preventDefault();
 		var a = jQuery( this );
 
+		//Confirm group deletion
+		if ( a.closest('.field').hasClass('CMB_Group_Field') )
+			if ( ! confirm( "Delete Group?" ) )
+				return;
+
 		a.closest( '.field-item' ).remove();
 
 	} );
@@ -56,17 +61,8 @@ jQuery(document).ready(function ($) {
 	/**
 	 * Initialize color picker
 	 */
-    $('input:text.cmb_colorpicker').each(function (i) {
-        $(this).after('<div id="picker-' + i + '" style="z-index: 1000; background: #EEE; border: 1px solid #CCC; position: absolute; display: block;"></div>');
-        $('#picker-' + i).hide().farbtastic($(this));
-    })
-    .focus(function() {
-        $(this).next().show();
-    })
-    .blur(function() {
-        $(this).next().hide();
-    });
-
+	$('input:text.cmb_colorpicker').wpColorPicker();
+	
 	/**
 	 * File and image upload handling
 	 */
@@ -207,6 +203,11 @@ jQuery(document).ready(function ($) {
 				step: 30
 			});
 		});
+
+		//Reinitialize colorpickers
+	    newT.find('.wp-color-result').remove();
+		newT.find('input:text.cmb_colorpicker').wpColorPicker();
+		
 
 	} );
 
