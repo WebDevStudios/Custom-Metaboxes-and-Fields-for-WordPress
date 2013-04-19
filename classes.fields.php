@@ -97,6 +97,12 @@ abstract class CMB_Field {
 
 	public function id_attr( $append = null ) {
 
+		printf( 'id="%s"', esc_attr( $this->get_the_id_attr( $append ) ) );
+		
+	}
+
+	public function get_the_id_attr( $append = null ) {
+
 		$id = $this->id;
 
 		if ( isset( $this->group_index ) )
@@ -109,7 +115,7 @@ abstract class CMB_Field {
 
 		$id = str_replace( array( '[', ']', '--' ), '-', $id );
 
-		printf( 'id="%s"', esc_attr( $id ) );
+		return $id;
 		
 	}
 
