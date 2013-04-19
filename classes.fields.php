@@ -333,13 +333,15 @@ class CMB_Text_Field extends CMB_Field {
 	<?php }
 }
 
-class CMB_Text_Small_Field extends CMB_Field {
+class CMB_Text_Small_Field extends CMB_Text_Field {
 
-	public function html() { ?>
+	public function html() { 
 
-		<input <?php $this->id_attr(); ?> <?php $this->boolean_attr(); ?> <?php $this->class_attr( 'cmb_text_small' ); ?> type="text" name="<?php echo esc_attr( $this->name ); ?>" value="<?php echo esc_attr( $this->get_value() ); ?>" />
+		$this->args['class'] .= ' cmb_text_small';	
 
-	<?php }
+		parent::html();
+
+	}
 }
 
 /**
@@ -719,13 +721,15 @@ class CMB_Textarea_Field extends CMB_Field {
  * Args:
  *  - int "rows" - number of rows in the <textarea>
  */
-class CMB_Textarea_Field_Code extends CMB_Field {
+class CMB_Textarea_Field_Code extends CMB_Textarea_Field {
 
-	public function html() { ?>
+	public function html() {
 
-		<textarea <?php $this->id_attr(); ?> <?php $this->boolean_attr(); ?> <?php $this->class_attr( 'cmb_textarea_code' ); ?> rows="<?php echo ! empty( $this->args['rows'] ) ? esc_attr( $this->args['rows'] ) : 4; ?>" name="<?php echo esc_attr( $this->name ); ?>"><?php echo esc_attr( $this->value ); ?></textarea>
+		$this->args['class'] .= ' code';	
 
-	<?php }
+		parent::html();
+
+	}
 
 }
 
