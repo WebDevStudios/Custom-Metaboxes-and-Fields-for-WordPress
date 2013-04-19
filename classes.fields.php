@@ -989,9 +989,13 @@ class CMB_Title extends CMB_Field {
  */
 class CMB_wysiwyg extends CMB_Field {
 
-	public function html() { ?>
+	public function html() { 
 
-			<?php wp_editor( $this->get_value(), $this->name, $this->args['options'] );?>
+		$this->args['options']['textarea_name'] = $this->get_the_name_attr();
+
+		?>
+
+			<?php wp_editor( $this->get_value(), $this->get_the_id_attr(), $this->args['options'] );?>
 
 	<?php }
 }
