@@ -98,7 +98,7 @@ abstract class CMB_Field {
 	public function id_attr( $append = null ) {
 
 		printf( 'id="%s"', esc_attr( $this->get_the_id_attr( $append ) ) );
-		
+
 	}
 
 	public function get_the_id_attr( $append = null ) {
@@ -116,7 +116,7 @@ abstract class CMB_Field {
 		$id = str_replace( array( '[', ']', '--' ), '-', $id );
 
 		return $id;
-		
+
 	}
 
 	public function for_attr( $append = null ) {
@@ -353,7 +353,7 @@ abstract class CMB_Field {
 			</div>
 
 			<button class="button repeat-field">Add New</button>
-				
+
 		<?php }
 
 	}
@@ -374,13 +374,15 @@ class CMB_Text_Field extends CMB_Field {
 	<?php }
 }
 
-class CMB_Text_Small_Field extends CMB_Field {
+class CMB_Text_Small_Field extends CMB_Text_Field {
 
-	public function html() { ?>
+	public function html() { 
 
-		<input type="text" <?php $this->id_attr(); ?> <?php $this->boolean_attr(); ?> <?php $this->class_attr( 'cmb_text_small' ); ?> <?php $this->name_attr(); ?> value="<?php echo esc_attr( $this->get_value() ); ?>" />
+		$this->args['class'] .= ' cmb_text_small';	
 
-	<?php }
+		parent::html();
+
+	}
 }
 
 /**
@@ -647,7 +649,7 @@ class CMB_Date_Timestamp_Field extends CMB_Field {
  */
 class CMB_Datetime_Timestamp_Field extends CMB_Field {
 
-	public function html() { ?>		
+	public function html() { ?>
 
 		<input <?php $this->id_attr('date'); ?> <?php $this->boolean_attr(); ?> <?php $this->class_attr( 'cmb_text_small cmb_datepicker' ); ?> type="text" <?php $this->name_attr( '[date]' ); ?>  value="<?php echo $this->value ? esc_attr( date( 'm\/d\/Y', $this->value ) ) : '' ?>" />
 		<input <?php $this->id_attr('time'); ?> <?php $this->boolean_attr(); ?> <?php $this->class_attr( 'cmb_text_small cmb_timepicker' ); ?> type="text" <?php $this->name_attr( '[time]' ); ?> value="<?php echo $this->value ? esc_attr( date( 'H:i A', $this->value ) ) : '' ?>" />
@@ -663,7 +665,7 @@ class CMB_Datetime_Timestamp_Field extends CMB_Field {
 				unset( $value );
 			else
 				$value = strtotime( $value['date'] . ' ' . $value['time'] );
-		}
+			}
 
 		$this->values = array_filter( $this->values );
 		sort( $this->values );
@@ -755,13 +757,15 @@ class CMB_Textarea_Field extends CMB_Field {
  * Args:
  *  - int "rows" - number of rows in the <textarea>
  */
-class CMB_Textarea_Field_Code extends CMB_Field {
+class CMB_Textarea_Field_Code extends CMB_Textarea_Field {
 
-	public function html() { ?>
+	public function html() {
 
-		<textarea <?php $this->id_attr(); ?> <?php $this->boolean_attr(); ?> <?php $this->class_attr( 'cmb_textarea_code' ); ?> rows="<?php echo ! empty( $this->args['rows'] ) ? esc_attr( $this->args['rows'] ) : 4; ?>" <?php $this->name_attr(); ?>><?php echo esc_html( $this->value ); ?></textarea>
+		$this->args['class'] .= ' code';	
 
-	<?php }
+		parent::html();
+
+	}
 
 }
 
@@ -848,7 +852,7 @@ class CMB_Select extends CMB_Field {
 			<input <?php $this->id_attr(); ?> <?php $this->boolean_attr(); ?> value="<?php echo esc_attr( implode( ',' , (array) $this->value ) ); ?>" <?php $this->name_attr(); ?> style="width: 100%" class="<?php echo esc_attr( $id ); ?>" id="<?php echo esc_attr( $id ); ?>" />
 
 			<?php else : ?>
-			
+
 				<select <?php $this->id_attr(); ?> <?php $this->boolean_attr(); ?> <?php printf( 'name="%s"', esc_attr( $name ) ); ?> <?php echo ! empty( $this->args['multiple'] ) ? 'multiple' : '' ?> class="<?php echo esc_attr( $id ); ?>" style="width: 100%" >
 
 					<?php if ( ! empty( $this->args['allow_none'] ) ) : ?>
@@ -873,7 +877,7 @@ class CMB_Select extends CMB_Field {
 				var options = { placeholder: "Type to search" };
 
 				<?php if ( $this->args['ajax_url'] ) : ?>
-
+ 
 					var query = JSON.parse( '<?php echo json_encode( $this->args['ajax_args'] ? wp_parse_args( $this->args['ajax_args'] ) : (object) array() ); ?>' );
 					
 					options.data = [];
@@ -1227,10 +1231,10 @@ class CMB_Group_Field extends CMB_Field {
 
 	public function add_field( CMB_Field $field ) {
 
-		$key                = $field->id;
+		$key = $field->id;
 		$field->original_id = $key;
 		$field->id          = $this->id . '[' . $field->id . ']';
-		$field->name        = $field->id . '[]';
+		$field->name = $field->id . '[]';
 		$field->group_index = $this->field_index;
 		$this->fields[$key] = $field;
 
@@ -1278,7 +1282,7 @@ class CMB_Group_Field extends CMB_Field {
 
 		$values = $this->values;
 
-		$this->values = array();		
+		$this->values = array();
 
 		$first = reset( $values );
 
@@ -1319,7 +1323,7 @@ class CMB_Group_Field extends CMB_Field {
 	}
 
 	public function set_values( array $values ) {
-		
+
 		$this->values = $values;
 
 		foreach ( $values as $value ) {
