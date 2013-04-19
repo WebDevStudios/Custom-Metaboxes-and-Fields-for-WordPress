@@ -352,8 +352,8 @@ abstract class CMB_Field {
 
 			</div>
 
-			<button href="#" class="button repeat-field">Add New</button>
-
+			<button class="button repeat-field">Add New</button>
+				
 		<?php }
 
 	}
