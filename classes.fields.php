@@ -97,6 +97,12 @@ abstract class CMB_Field {
 
 	public function id_attr( $append = null ) {
 
+		printf( 'id="%s"', $this->get_the_id_attr( $append ) );
+		
+	}
+	
+	public function get_the_id_attr( $append = null ) {
+
 		$id = $this->id;
 
 		if ( isset( $this->group_index ) )
@@ -109,7 +115,7 @@ abstract class CMB_Field {
 
 		$id = str_replace( array( '[', ']', '--' ), '-', $id );
 
-		printf( 'id="%s"', esc_attr( $id ) );
+		return $id;
 		
 	}
 
@@ -989,27 +995,34 @@ class CMB_Title extends CMB_Field {
  */
 class CMB_wysiwyg extends CMB_Field {
 
+	public function display() { 
+
+		$args = array_merge( 
+			$this->args['options'], 
+			array( 'textarea_name' => 'cmb-placeholder-name-' . $this->id ) 
+		);
+
+		ob_start();
+		wp_editor( '', 'cmb-placeholder-id-' . $this->id , $args );
+		$editor = ob_get_clean();
+		$editor = str_replace( "\n", "", $editor );
+		echo '<script>if ( \'undefined\' === typeof( cmb_wysiwyg_editors ) ) { var cmb_wysiwyg_editors = {}; }</script>';
+		printf( '<script>cmb_wysiwyg_editors.%s = \'%s\';</script>', str_replace( '-', '_', $this->id ), $editor );
+
+		parent::display();
+
+	}
+
+
 	public function html() { 
 
-		$name = $this->get_the_name_attr();
+		$id   = $this->get_the_id_attr();
+		$name = $this->get_the_name_attr();		
+		$this->args['options']['textarea_name'] = $name;
 
-		if ( is_int( $this->field_index ) ) {
-
-			echo '<div class="cmb-wysiwyg">';
-			wp_editor( $this->get_value(), $name, $this->args['options'] );
-			echo '</div>';
-
-		} else {
-
-			ob_start();
-			wp_editor( $this->get_value(), $name, $this->args['options'] );
-			$editor = ob_get_clean();
-			$editor = str_replace( "\n", "", $editor );
-			
-			printf( '<script>var cmbSampleEditorName = \'%s\'; var cmbSampleEditor = \'%s\';</script>', $name, $editor );
-			echo '<div class="cmb-wysiwyg"></div>';
-		
-		}
+		echo '<div class="cmb-wysiwyg" data-id="' . $this->id . '" data-name="' . $name . '" data-placeholder="' . str_replace( '-', '_', $this->id ) . '">';
+		echo wp_editor( $this->get_value(), $this->get_the_id_attr(), $this->args['options'] );
+		echo '</div>';
 
 	}
 }

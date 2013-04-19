@@ -160,14 +160,16 @@ jQuery(document).ready(function ($) {
 	jQuery( document ).on( 'click', '.repeat-field', function( e ) {
 
 	    e.preventDefault();
+
 	    var el = jQuery( this );
 
 	    var newT = el.prev().clone();
-
-	    newT.removeClass('hidden');
 	    
+	    // Remove anything we no longer want. 
+	    newT.removeClass('hidden');
 	    newT.find('input[type!="button"]').not('[readonly]').val('');
 	    newT.find( '.cmb_upload_status' ).html('');
+	    
 	    newT.insertBefore( el.prev() );
 
 	    // Recalculate group ids & update the name fields..
@@ -177,53 +179,149 @@ jQuery(document).ready(function ($) {
 		
 		field.children('.field-item').not('.hidden').each( function() {
 
-			var search  = field.hasClass( 'CMB_Group_Field' ) ? /cmb-group-(\d|x)*/ : /cmb-field-(\d|x)*/;
+			var search  = field.hasClass( 'CMB_Group_Field' ) ? /cmb-group-(\d|x)*/g : /cmb-field-(\d|x)*/g;
 			var replace = field.hasClass( 'CMB_Group_Field' ) ? 'cmb-group-' + index : 'cmb-field-' + index;
 
-			$(this).find('[id],[for],[name]').each( function() {
-
-				for ( var i = 0; i < attrs.length; i++ )
-					if ( typeof( $(this).attr( attrs[i] ) ) !== 'undefined' )
-						$(this).attr( attrs[i], $(this).attr( attrs[i] ).replace( search, replace ) );
-				
-			} );
+			$(this).html( $(this).html().replace( search, replace ) );
 
 			index += 1;
 
 		} );
 
-		if ( field.hasClass( 'CMB_wysiwyg' ) ) {
+		var wysiwygField = field.hasClass( 'CMB_wysiwyg' ) ? field : field.find( '.CMB_wysiwyg' );
+		field.find( '.cmb-wysiwyg' ).each( function (i) {
+
+			var el   = $(this);
+			var id   = $(this).find( 'textarea' ).attr( 'id' );
+			var name = $(this).find( 'textarea' ).attr( 'name' );
+			var i    = id.match( /cmb-field-(\d|x)*/ )[0].match( /\d|x/ )[0];
+
+			if ( 'x' === i )
+				return;
+
+			tinyMCE.execCommand( 'mceRemoveControl', false, id );
+
+			$(this).html('');
+
+			var rand = Math.floor( Math.random() * 1000 );
+			var newEd = cmb_wysiwyg_editors[$(this).attr('data-placeholder')];
+			var pattern = new RegExp( 'cmb-placeholder-id-' + $(this).attr('data-id'), 'g' );
+			newEd = newEd.replace( pattern, id );
+
+			$(this).html( $(newEd) );
+
+			console.log( newEd );
+			return;
+			// el.html( $(newEd) );
+
+			var ed = tinyMCE.get(id), wrap_id, txtarea_el, dom = tinymce.DOM, mode;
+
+			wrap_id = 'wp-'+id+'-wrap';
+			txtarea_el = el.get(id);
+			mode = 'tmce';
 			
-			newT.find( 'script' ).remove();
+			txtarea_el = dom.get(id);
+			// console.log( txtarea_el );
+			// console.log( id );
+			// return;
 
-			var randID = Math.floor( Math.random() * 1000 );
+			// // Setup settings for this tinyMCE.
+			// if ( 'undefined' === typeof( ed ) ) {
 
-			var el = newT.find( '.cmb-wysiwyg' ),
-				ed = cmbSampleEditor.replace( /cmb-field-(\d|x)*/g, 'cmb-field-' + randID );
+			// 	var match = id.replace( 
+			// 		new RegExp( "cmb-field-" + i, "gi" ), 
+			// 		'cmb-field-x' 
+			// 	);				
 
-			el.html( $(ed) );
+			// 	var newSettings = jQuery.extend( {}, tinyMCEPreInit.mceInit[ match ] );
+			// 	for ( var prop in newSettings )
+			// 		if ( 'string' === typeof( newSettings[prop] ) )
+			// 			newSettings[prop] = newSettings[prop].replace( /cmb-field-x/g, 'cmb-field-' + i );
+			// 	tinyMCEPreInit.mceInit[ id ] = newSettings;
+
+			// 	// Setup quicktags settings for this tinyMCE.
+			// 	var newQTS = jQuery.extend( {}, tinyMCEPreInit.qtInit[ match ] );
+			// 	for ( var prop in newQTS )
+			// 		if ( 'string' === typeof( newQTS[prop] ) )
+			// 			newQTS[prop] = newQTS[prop].replace( /cmb-field-(\d|x)*/g, 'cmb-field-' + i );
+			// 	tinyMCEPreInit.qtInit[ id ] = newQTS;
+
+			// 	quicktags( tinyMCEPreInit.qtInit[ id ] );
+			// 	tinyMCE.execCommand( 'mceAddControl', false, id );
+			// }
+
+			console.log( tinyMCE.get(id));
+			// console.( tinyMCEPreInit.mceInit[ id ] );
+
+			// tinyMCE.execCommand( 'mceRemoveControl', false, id );
+			// quicktags( tinyMCEPreInit.qtInit[ id ] );
+			// tinyMCE.execCommand( 'mceAddControl', false, id );
+			//switchEditors.go( id, 'tmce' );
+
+
+			// if ( 'tmce' == mode || 'tinymce' == mode ) {
+				
+			// 	console.log( ed );
+			// 	if ( ed && ! ed.isHidden() )
+			// 		return false;
+
+			// 	if ( typeof(QTags) != 'undefined' )
+			// 		QTags.closeAllTags(id);
+
+			// 	if ( tinyMCEPreInit.mceInit[id] && tinyMCEPreInit.mceInit[id].wpautop )
+			// 		txtarea_el.value = t.wpautop( txtarea_el.value );
+
+			// 	if ( ed ) {
+			// 		ed.show();
+			// 	} else {
+			// 		ed = new tinymce.Editor(id, tinyMCEPreInit.mceInit[id]);
+			// 		ed.render();
+			// 	}
+
+			// 	dom.removeClass(wrap_id, 'html-active');
+			// 	dom.addClass(wrap_id, 'tmce-active');
+			// 	setUserSetting('editor', 'tinymce');
+			// }
+
+
+
+			//switchEditors.go( id );
+
+			// tinyMCE.execCommand( 'mceRemoveControl', false, id );
+			// tinyMCE.execCommand( 'mceRemoveControl', false, 'field-7-cmb-field-0 ' );
+			// // quicktags( tinyMCEPreInit.qtInit[ id ] );
+			// tinyMCE.execCommand( 'mceAddControl', false, id );
+			// tinyMCE.init( tinyMCEPreInit.mceInit[ id ] );
+
+			// console.log( el.html() );
+
+
+			// newT.find( 'script' ).remove();
+
+			// var newIndex = Math.floor( Math.random() * 1000 ),
+			//     el       = newT.find( '.cmb-wysiwyg' ),
+			//     ed       = cmbSampleEditor.replace( /cmb-field-(\d|x)*/g, 'cmb-field-' + newIndex );
+
+			// txtarea_el = el.get(id);
+
+			// Insert editor markup.
+			// el.html( $(ed) );
 			
-			var id = newT.find('textarea').attr('id');
+			// var fieldID = newT.find('textarea').attr('id');
 
-			// Setup settings for this tinyMCE.
-			var newSettings = jQuery.extend( {}, tinyMCEPreInit.mceInit[cmbSampleEditorName] );
-			for ( var prop in newSettings )
-				if ( 'string' === typeof( newSettings[prop] ) )
-					newSettings[prop] = newSettings[prop].replace( /cmb-field-(\d|x)*/g, 'cmb-field-' + randID );
-			tinyMCEPreInit.mceInit[ id ] = newSettings;
+			// // Setup settings for this tinyMCE.
+			// var newSettings = jQuery.extend( {}, tinyMCEPreInit.mceInit[cmbSampleEditorName] );
+			// for ( var prop in newSettings )
+			// 	if ( 'string' === typeof( newSettings[prop] ) )
+			// 		newSettings[prop] = newSettings[prop].replace( /cmb-field-(\d|x)*/g, 'cmb-field-' + newIndex );
+			// tinyMCEPreInit.mceInit[ fieldID ] = newSettings;
 
-			// Setup quicktags settings for this tinyMCE.
-			var newQTS = jQuery.extend( {}, tinyMCEPreInit.qtInit[cmbSampleEditorName] );
-			for ( var prop in newQTS )
-				if ( 'string' === typeof( newQTS[prop] ) )
-					newQTS[prop] = newQTS[prop].replace( /cmb-field-(\d|x)*/g, 'cmb-field-' + randID );
-			tinyMCEPreInit.qtInit[ id ] = newQTS;
-
-			// Init
-			quicktags( tinyMCEPreInit.qtInit[id] );
-			tinyMCE.init( tinyMCEPreInit.mceInit[id] );
+			
+			// // Init
+			// quicktags( tinyMCEPreInit.qtInit[ fieldID ] );
+			// tinyMCE.init( tinyMCEPreInit.mceInit[ fieldID ] );
 	    
-		}
+		} );
 	    
 
 	    // Reinitialize all the datepickers
