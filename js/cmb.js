@@ -215,6 +215,9 @@ jQuery(document).ready(function ($) {
 			var nameRegex = new RegExp( 'cmb-placeholder-name-' + fieldID, 'g' );
 			var idRegex   = new RegExp( 'cmb-placeholder-id-' + fieldID, 'g' );
 
+			if ( i === 'x' || tinyMCE.DOM.get( id ) )
+				return;
+			
 			// Placeholder markup for the new wysiwyg is stored as a prop on var cmb_wysiwyg_editors
 			// Copy, update ids & names & insert.
 			el.html( cmb_wysiwyg_editors[fieldID].replace( nameRegex, name ).replace( idRegex, id ) );
@@ -237,17 +240,18 @@ jQuery(document).ready(function ($) {
 				tinyMCEPreInit.qtInit[ id ] = newQTS;
 			}
 
-			quicktags( tinyMCEPreInit.qtInit[ id ] );
-
 			var mode = el.find('.wp-editor-wrap').hasClass('tmce-active') ? 'tmce' : 'html';
-			
+
 			if ( 'tmce' === mode ) {
 				
-				var ed = new tinymce.Editor(id, tinyMCEPreInit.mceInit[id]);
+				var ed = new tinymce.Editor( id, tinyMCEPreInit.mceInit[id] );
 				ed.render();
 
-			} 
-	    
+			}
+			
+			QTags.instances[0] = undefined;
+			try { quicktags( tinyMCEPreInit.qtInit[id] ); } catch(e){}
+
 		} );
 	    
 
