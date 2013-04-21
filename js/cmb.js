@@ -206,25 +206,36 @@ jQuery(document).ready(function ($) {
 		var wysiwygField = field.hasClass( 'CMB_wysiwyg' ) ? field : field.find( '.CMB_wysiwyg' );
 		field.find( '.cmb-wysiwyg' ).each( function (i) {
 
-			var el   = $(this),
-			    id   = el.attr( 'data-id' ),
-			    name = el.attr( 'data-name' ),
-			    i    = id.match( /cmb-field-(\d|x)*/ )[0].match( /\d|x/ )[0];
+			var el, id, name, ed, dom, i, fieldId, nameRegex, idRegex;
 			
-			var fieldID = el.attr('data-field-id');
-			var nameRegex = new RegExp( 'cmb-placeholder-name-' + fieldID, 'g' );
-			var idRegex   = new RegExp( 'cmb-placeholder-id-' + fieldID, 'g' );
-
-			if ( i === 'x' || tinyMCE.DOM.get( id ) )
+			el      = $(this);
+			id      = el.attr( 'data-id' );
+			name    = el.attr( 'data-name' );
+			ed      = tinyMCE.get(id);
+			fieldId = el.attr('data-field-id'); //Field identifier, not including field/group index., 
+			
+			if ( ed )
 				return;
-			
+
+			// Return if this is placeholder field item.
+			if ( field.hasClass( 'CMB_Group_Field' ) )
+				i = id.match( /cmb-group-(\d|x)*/ )[0].match( /\d|x/ )[0];
+			else
+				i = id.match( /cmb-field-(\d|x)*/ )[0].match( /\d|x/ )[0];
+
+			if ( 'x' === i )
+				return;
+		
+			nameRegex = new RegExp( 'cmb-placeholder-name-' + fieldId, 'g' );
+			idRegex   = new RegExp( 'cmb-placeholder-id-' + fieldId, 'g' );
+
 			// Placeholder markup for the new wysiwyg is stored as a prop on var cmb_wysiwyg_editors
 			// Copy, update ids & names & insert.
-			el.html( cmb_wysiwyg_editors[fieldID].replace( nameRegex, name ).replace( idRegex, id ) );
-				
+			el.html( cmb_wysiwyg_editors[fieldId].replace( nameRegex, name ).replace( idRegex, id ) );
+	
 			// If no settings for this field. Clone from placeholder.
 			if ( typeof( tinyMCEPreInit.mceInit[ id ] ) === 'undefined' ) {
-				var newSettings = jQuery.extend( {}, tinyMCEPreInit.mceInit[ 'cmb-placeholder-id-' + fieldID ] );
+				var newSettings = jQuery.extend( {}, tinyMCEPreInit.mceInit[ 'cmb-placeholder-id-' + fieldId ] );
 				for ( var prop in newSettings )
 					if ( 'string' === typeof( newSettings[prop] ) )
 						newSettings[prop] = newSettings[prop].replace( idRegex, id ).replace( nameRegex, name );
@@ -233,7 +244,7 @@ jQuery(document).ready(function ($) {
 			
 			// If no Quicktag settings for this field. Clone from placeholder.
 			if ( typeof( tinyMCEPreInit.qtInit[ id ] ) === 'undefined' ) {
-				var newQTS = jQuery.extend( {}, tinyMCEPreInit.qtInit[ 'cmb-placeholder-id-' + fieldID ] );
+				var newQTS = jQuery.extend( {}, tinyMCEPreInit.qtInit[ 'cmb-placeholder-id-' + fieldId ] );
 				for ( var prop in newQTS )
 					if ( 'string' === typeof( newQTS[prop] ) )
 						newQTS[prop] = newQTS[prop].replace( idRegex, id ).replace( nameRegex, name );
@@ -242,13 +253,13 @@ jQuery(document).ready(function ($) {
 
 			var mode = el.find('.wp-editor-wrap').hasClass('tmce-active') ? 'tmce' : 'html';
 
-			if ( 'tmce' === mode ) {
-				
+			// If current mode is visual, create the tinyMCE.
+			if ( 'tmce' === mode ) {				
 				var ed = new tinymce.Editor( id, tinyMCEPreInit.mceInit[id] );
 				ed.render();
-
 			}
-			
+				
+			// Init Quicktags.
 			QTags.instances[0] = undefined;
 			try { quicktags( tinyMCEPreInit.qtInit[id] ); } catch(e){}
 

@@ -995,37 +995,41 @@ class CMB_Title extends CMB_Field {
  */
 class CMB_wysiwyg extends CMB_Field {
 
-	public function display() { 
 
-		$field_id = str_replace( array( '-', '[', ']', '--' ),'_', $this->id );
-		$args = array_merge( 
-			$this->args['options'], 
-			array( 'textarea_name' => 'cmb-placeholder-name-' . $field_id ) 
-		);
+	public function is_placeholder() {
 
-		ob_start();
-		wp_editor( '', 'cmb-placeholder-id-' . $field_id, $args );
-		$editor = ob_get_clean();
-		$editor = str_replace( "\n", "", $editor );
-		echo '<script>if ( \'undefined\' === typeof( cmb_wysiwyg_editors ) ) { var cmb_wysiwyg_editors = {}; }</script>';
-		printf( '<script>cmb_wysiwyg_editors.%s = \'%s\';</script>', $field_id, $editor );
+		if ( isset( $this->group_index ) && ! is_int( $this->group_index ) )
+			return true;
 
-		parent::display();
+		else return ! is_int( $this->field_index );
 
 	}
-
 
 	public function html() { 
 
 		$id   = $this->get_the_id_attr();
 		$name = $this->get_the_name_attr();		
-		$this->args['options']['textarea_name'] = $name;
+
 		$field_id = str_replace( array( '-', '[', ']', '--' ),'_', $this->id );
 
-		echo '<div class="cmb-wysiwyg" data-id="' . $id. '" data-field-id="' . $field_id . '">';
+		printf( '<div class="cmb-wysiwyg" data-id="%s" data-name="%s" data-field-id="%s">', $id, $name, $field_id );
+	
+		if ( $this->is_placeholder() ) 	{
+
+			ob_start();
+			$this->args['options']['textarea_name'] = 'cmb-placeholder-name-' . $field_id;
+			wp_editor( '', 'cmb-placeholder-id-' . $field_id, $this->args['options'] );
+			$editor = ob_get_clean();
+			$editor = str_replace( "\n", "", $editor );
+			echo '<script>if ( \'undefined\' === typeof( cmb_wysiwyg_editors ) ) { var cmb_wysiwyg_editors = {}; }</script>';
+			printf( '<script>cmb_wysiwyg_editors.%s = \'%s\';</script>', $field_id, $editor );
 		
-		if ( $this->field_index !== 'x' )
-		echo wp_editor( $this->get_value(), $id, $this->args['options'] );
+		} else {
+
+			$this->args['options']['textarea_name'] = $name;
+			echo wp_editor( $this->get_value(), $id, $this->args['options'] );
+		
+		}
 
 		echo '</div>';
 
