@@ -997,17 +997,18 @@ class CMB_wysiwyg extends CMB_Field {
 
 	public function display() { 
 
+		$field_id = str_replace( array( '-', '[', ']', '--' ),'_', $this->id );
 		$args = array_merge( 
 			$this->args['options'], 
-			array( 'textarea_name' => 'cmb-placeholder-name-' . $this->id ) 
+			array( 'textarea_name' => 'cmb-placeholder-name-' . $field_id ) 
 		);
 
 		ob_start();
-		wp_editor( '', 'cmb-placeholder-id-' . $this->id , $args );
+		wp_editor( '', 'cmb-placeholder-id-' . $field_id, $args );
 		$editor = ob_get_clean();
 		$editor = str_replace( "\n", "", $editor );
 		echo '<script>if ( \'undefined\' === typeof( cmb_wysiwyg_editors ) ) { var cmb_wysiwyg_editors = {}; }</script>';
-		printf( '<script>cmb_wysiwyg_editors.%s = \'%s\';</script>', str_replace( '-', '_', $this->id ), $editor );
+		printf( '<script>cmb_wysiwyg_editors.%s = \'%s\';</script>', $field_id, $editor );
 
 		parent::display();
 
@@ -1019,9 +1020,13 @@ class CMB_wysiwyg extends CMB_Field {
 		$id   = $this->get_the_id_attr();
 		$name = $this->get_the_name_attr();		
 		$this->args['options']['textarea_name'] = $name;
+		$field_id = str_replace( array( '-', '[', ']', '--' ),'_', $this->id );
 
-		echo '<div class="cmb-wysiwyg" data-id="' . $this->id . '" data-name="' . $name . '" data-placeholder="' . str_replace( '-', '_', $this->id ) . '">';
-		echo wp_editor( $this->get_value(), $this->get_the_id_attr(), $this->args['options'] );
+		echo '<div class="cmb-wysiwyg" data-id="' . $id. '" data-field-id="' . $field_id . '">';
+		
+		if ( $this->field_index !== 'x' )
+		echo wp_editor( $this->get_value(), $id, $this->args['options'] );
+
 		echo '</div>';
 
 	}
