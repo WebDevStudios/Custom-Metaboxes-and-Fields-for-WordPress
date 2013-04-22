@@ -92,31 +92,6 @@ jQuery(document).ready(function ($) {
 	} );
 
 	/**
-	 * Initialize timepicker (this will be moved inline in a future release)
-	 */
-	$('.cmb_timepicker').each(function () {
-		$( this ).timePicker({
-			startTime: "07:00",
-			endTime: "22:00",
-			show24Hours: false,
-			separator: ':',
-			step: 30
-		});
-	});
-
-	/**
-	 * Initialize jQuery UI datepicker (this will be moved inline in a future release)
-	 */
-	$('.cmb_datepicker').each(function () {
-		$( this ).datepicker();
-		// $('#' + jQuery(this).attr('id')).datepicker({ dateFormat: 'yy-mm-dd' });
-		// For more options see http://jqueryui.com/demos/datepicker/#option-dateFormat
-	});
-	
-	// Wrap date picker in class to narrow the scope of jQuery UI CSS and prevent conflicts
-	$("#ui-datepicker-div").wrap('<div class="cmb_element" />');
-
-	/**
 	 * Initialize color picker
 	 */
     $('input:text.cmb_colorpicker').each(function (i) {
@@ -255,21 +230,60 @@ jQuery(document).ready(function ($) {
 
 		} );
 
-			$(this).attr( 'id', '' ).removeClass( 'hasDatepicker' ).removeData( 'datepicker' ).unbind().datepicker();
 	    CMB.clonedField( newT )
-		});
-
-		// Reinitialize all the timepickers.
-		jQuery('.cmb_timepicker' ).each(function () {
-			$(this).timePicker({
-				startTime: "07:00",
-				endTime: "22:00",
-				show24Hours: false,
-				separator: ':',
-				step: 30
-			});
-		});
 
 	} );
 
 });
+
+
+
+
+
+CMB.addCallbackForClonedField( ['CMB_Date_Field', 'CMB_Time_Field', 'CMB_Date_Timestamp_Field', 'CMB_Datetime_Timestamp_Field' ], function( newT ) {
+
+    // Reinitialize all the datepickers
+	newT.find( '.cmb_datepicker' ).each(function () {
+		jQuery(this).attr( 'id', '' ).removeClass( 'hasDatepicker' ).removeData( 'datepicker' ).unbind().datepicker();
+	});
+
+	// Reinitialize all the timepickers.
+	newT.find('.cmb_timepicker' ).each(function () {
+		jQuery(this).timePicker({
+			startTime: "07:00",
+			endTime: "22:00",
+			show24Hours: false,
+			separator: ':',
+			step: 30
+		});
+	});
+
+} );
+
+CMB.addCallbackForInit( function() {
+
+	/**
+	 * Initialize jQuery UI datepicker (this will be moved inline in a future release)
+	 */
+	jQuery('.cmb_datepicker').each(function () {
+		jQuery(this).datepicker();
+	});
+	
+	// Wrap date picker in class to narrow the scope of jQuery UI CSS and prevent conflicts
+	jQuery("#ui-datepicker-div").wrap('<div class="cmb_element" />');
+
+	/**
+	 * Initialize timepicker
+	 */
+	jQuery('.cmb_timepicker').each(function () {
+		jQuery(this).timePicker({
+			startTime: "07:00",
+			endTime: "22:00",
+			show24Hours: false,
+			separator: ':',
+			step: 30
+		});
+	});
+
+} );
+
