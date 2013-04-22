@@ -999,6 +999,11 @@ class CMB_Title extends CMB_Field {
  */
 class CMB_wysiwyg extends CMB_Field {
 
+	function enqueue_scripts() {
+		parent::enqueue_scripts();
+		wp_enqueue_script( 'cmb-wysiwyg', CMB_URL . '/js/wysiwyg.js', array( 'jquery' ) );
+	}
+
 	public function html() { 
 
 		$id   = $this->get_the_id_attr();
