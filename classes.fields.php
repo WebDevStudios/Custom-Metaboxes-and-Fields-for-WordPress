@@ -1035,7 +1035,7 @@ class CMB_wysiwyg extends CMB_Field {
 	 * Check if this is a placeholder field.
 	 * Either the field itself, or because it is part of a repeatable group.
 	 * 
-	 * @return boolean is_placeholder.
+	 * @return bool
 	 */
 	public function is_placeholder() {
 
