@@ -238,8 +238,6 @@ jQuery(document).ready(function ($) {
 	    
 	    newT.insertBefore( el.prev() );
 
-	    CMB.clonedField( newT )
-
 	    // Recalculate group ids & update the name fields..
 		var index = 0;
 		var field = $(this).closest('.field' );
@@ -324,6 +322,7 @@ jQuery(document).ready(function ($) {
 
 		} );
 	    
+		CMB.clonedField( newT );	    
 
 	    // Reinitialize all the datepickers
 		jQuery('.cmb_datepicker' ).each(function () {
