@@ -63,12 +63,10 @@ var CMB = {
 		
 		var callbacks = _this._initCallbacks;
 		
-		if ( callbacks ) {
-			for ( var a = 0; a < callbacks.length; a++) {
+		if ( callbacks )
+			for ( var a = 0; a < callbacks.length; a++)
 				callbacks[a]();
-			}
-		}
-
+			
 	}
 
 };
@@ -90,20 +88,6 @@ jQuery(document).ready(function ($) {
 		a.closest( '.field-item' ).remove();
 
 	} );
-
-	/**
-	 * Initialize color picker
-	 */
-    $('input:text.cmb_colorpicker').each(function (i) {
-        $(this).after('<div id="picker-' + i + '" style="z-index: 1000; background: #EEE; border: 1px solid #CCC; position: absolute; display: block;"></div>');
-        $('#picker-' + i).hide().farbtastic($(this));
-    })
-    .focus(function() {
-        $(this).next().show();
-    })
-    .blur(function() {
-        $(this).next().hide();
-    });
 
 	/**
 	 * File and image upload handling
@@ -237,12 +221,33 @@ jQuery(document).ready(function ($) {
 });
 
 
+/**
+ * ColorPickers
+ */
+
+CMB.addCallbackForInit( function() {
+
+	// Colorpicker
+	$('input:text.cmb_colorpicker').wpColorPicker();
+
+} );
+
+CMB.addCallbackForClonedField( 'CMB_Color_Picker', function( newT ) {
+
+	// Reinitialize colorpickers
+    newT.find('.wp-color-result').remove();
+	newT.find('input:text.cmb_colorpicker').wpColorPicker();
+
+} );
 
 
+/**
+ * Date & Time Fields
+ */
 
 CMB.addCallbackForClonedField( ['CMB_Date_Field', 'CMB_Time_Field', 'CMB_Date_Timestamp_Field', 'CMB_Datetime_Timestamp_Field' ], function( newT ) {
 
-    // Reinitialize all the datepickers
+	// Reinitialize all the datepickers
 	newT.find( '.cmb_datepicker' ).each(function () {
 		jQuery(this).attr( 'id', '' ).removeClass( 'hasDatepicker' ).removeData( 'datepicker' ).unbind().datepicker();
 	});
@@ -262,9 +267,7 @@ CMB.addCallbackForClonedField( ['CMB_Date_Field', 'CMB_Time_Field', 'CMB_Date_Ti
 
 CMB.addCallbackForInit( function() {
 
-	/**
-	 * Initialize jQuery UI datepicker (this will be moved inline in a future release)
-	 */
+	// Datepicker
 	jQuery('.cmb_datepicker').each(function () {
 		jQuery(this).datepicker();
 	});
@@ -272,9 +275,7 @@ CMB.addCallbackForInit( function() {
 	// Wrap date picker in class to narrow the scope of jQuery UI CSS and prevent conflicts
 	jQuery("#ui-datepicker-div").wrap('<div class="cmb_element" />');
 
-	/**
-	 * Initialize timepicker
-	 */
+	// Timepicker
 	jQuery('.cmb_timepicker').each(function () {
 		jQuery(this).timePicker({
 			startTime: "07:00",
@@ -283,7 +284,6 @@ CMB.addCallbackForInit( function() {
 			separator: ':',
 			step: 30
 		});
-	});
+	} );
 
-} );
-
+});
