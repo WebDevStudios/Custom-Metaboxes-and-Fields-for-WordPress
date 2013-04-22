@@ -90,11 +90,6 @@ jQuery(document).ready(function ($) {
 	} );
 
 	/**
-	 * Initialize color picker
-	 */
-	$('input:text.cmb_colorpicker').wpColorPicker();
-
-	/**
 	 * File and image upload handling
 	 */
 	$('.cmb_upload_file').change(function () {
@@ -221,14 +216,34 @@ jQuery(document).ready(function ($) {
 
 	    CMB.clonedField( newT )
 
-		//Reinitialize colorpickers
-	    newT.find('.wp-color-result').remove();
-		newT.find('input:text.cmb_colorpicker').wpColorPicker();
-
 	} );
 
 });
 
+
+/**
+ * ColorPickers
+ */
+
+CMB.addCallbackForInit( function() {
+
+	// Colorpicker
+	$('input:text.cmb_colorpicker').wpColorPicker();
+
+} );
+
+CMB.addCallbackForClonedField( 'CMB_Color_Picker', function( newT ) {
+
+	// Reinitialize colorpickers
+    newT.find('.wp-color-result').remove();
+	newT.find('input:text.cmb_colorpicker').wpColorPicker();
+
+} );
+
+
+/**
+ * Date & Time Fields
+ */
 
 CMB.addCallbackForClonedField( ['CMB_Date_Field', 'CMB_Time_Field', 'CMB_Date_Timestamp_Field', 'CMB_Datetime_Timestamp_Field' ], function( newT ) {
 
