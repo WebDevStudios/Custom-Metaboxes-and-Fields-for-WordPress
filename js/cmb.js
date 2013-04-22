@@ -49,6 +49,7 @@ jQuery(document).ready(function ($) {
 		// $('#' + jQuery(this).attr('id')).datepicker({ dateFormat: 'yy-mm-dd' });
 		// For more options see http://jqueryui.com/demos/datepicker/#option-dateFormat
 	});
+	
 	// Wrap date picker in class to narrow the scope of jQuery UI CSS and prevent conflicts
 	$("#ui-datepicker-div").wrap('<div class="cmb_element" />');
 
@@ -168,6 +169,28 @@ jQuery(document).ready(function ($) {
 	    newT.find('input[type!="button"]').not('[readonly]').val('');
 	    newT.find( '.cmb_upload_status' ).html('');
 	    newT.insertBefore( el.prev() );
+
+	    // Recalculate group ids & update the name fields..
+		var index = 0;
+		var field = $(this).closest('.field' );
+		var attrs = ['id','name','for'];	
+		
+		field.children('.field-item').not('.hidden').each( function() {
+
+			var search  = field.hasClass( 'CMB_Group_Field' ) ? /cmb-group-(\d|x)*/ : /cmb-field-(\d|x)*/;
+			var replace = field.hasClass( 'CMB_Group_Field' ) ? 'cmb-group-' + index : 'cmb-field-' + index;
+
+			$(this).find('[id],[for],[name]').each( function() {
+
+				for ( var i = 0; i < attrs.length; i++ )
+					if ( typeof( $(this).attr( attrs[i] ) ) !== 'undefined' )
+						$(this).attr( attrs[i], $(this).attr( attrs[i] ).replace( search, replace ) );
+				
+			} );
+
+			index += 1;
+
+		} );
 
 	    // Reinitialize all the datepickers
 		jQuery('.cmb_datepicker' ).each(function () {
