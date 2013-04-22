@@ -18,6 +18,10 @@ var CMB = {
 	_callbacks: [],
 	addCallbackForClonedField: function( fieldName, callback ) {
 
+		if ( jQuery.isArray( fieldName ) )
+			for ( var i = 0; i < fieldName.length; i++ )
+				CMB.addCallbackForClonedField( fieldName[i], callback );
+
 		this._callbacks[fieldName] = this._callbacks[fieldName] ? this._callbacks[fieldName] : []
 		this._callbacks[fieldName].push( callback )
 	},
