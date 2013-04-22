@@ -999,16 +999,7 @@ class CMB_Title extends CMB_Field {
  */
 class CMB_wysiwyg extends CMB_Field {
 
-
-	public function is_placeholder() {
-
-		if ( isset( $this->group_index ) && ! is_int( $this->group_index ) )
-			return true;
-
-		else return ! is_int( $this->field_index );
-
-	}
-
+	
 	public function html() { 
 
 		$id   = $this->get_the_id_attr();
@@ -1020,6 +1011,7 @@ class CMB_wysiwyg extends CMB_Field {
 	
 		if ( $this->is_placeholder() ) 	{
 
+			// For placeholder, output the markup for the editor in a JS var.
 			ob_start();
 			$this->args['options']['textarea_name'] = 'cmb-placeholder-name-' . $field_id;
 			wp_editor( '', 'cmb-placeholder-id-' . $field_id, $this->args['options'] );
@@ -1038,6 +1030,22 @@ class CMB_wysiwyg extends CMB_Field {
 		echo '</div>';
 
 	}
+
+	/**
+	 * Check if this is a placeholder field.
+	 * Either the field itself, or because it is part of a repeatable group.
+	 * 
+	 * @return boolean is_placeholder.
+	 */
+	public function is_placeholder() {
+
+		if ( isset( $this->group_index ) && ! is_int( $this->group_index ) )
+			return true;
+
+		else return ! is_int( $this->field_index );
+
+	}
+
 }
 
 class CMB_Taxonomy extends CMB_Select {
