@@ -16,9 +16,38 @@
 
 var CMB = {
 	
+	_initCallbacks: [],
+
+	addCallbackForInit: function( callback ) {
+
+		this._initCallbacks.push( callback )
+	
+	},
+
+	init: function() {
+
+		var _this = this;
+		
+		// also check child elements
+		
+		var callbacks = _this._initCallbacks;
+		
+		if ( callbacks ) {
+			for ( var a = 0; a < callbacks.length; a++) {
+				callbacks[a]();
+			}
+		}
+
+	},
+	
 	_clonedFieldCallbacks: [],
 
 	addCallbackForClonedField: function( fieldName, callback ) {
+
+		if ( jQuery.isArray( fieldName ) )
+			for ( var i = 0; i < fieldName.length; i++ )
+				CMB.addCallbackForClonedField( fieldName[i], callback );
+
 		this._clonedFieldCallbacks[fieldName] = this._clonedFieldCallbacks[fieldName] ? this._clonedFieldCallbacks[fieldName] : []
 		this._clonedFieldCallbacks[fieldName].push( callback )
 	},
@@ -41,14 +70,19 @@ var CMB = {
 
 		})
 	},
-	
+
+	_deletedFieldCallbacks: [],
+
 	addCallbackForDeletedField: function( fieldName, callback ) {
+		
+		if ( jQuery.isArray( fieldName ) )
+			for ( var i = 0; i < fieldName.length; i++ )
+				CMB.addCallbackForClonedField( fieldName[i], callback );
+		
 		this._deletedFieldCallbacks[fieldName] = this._deletedFieldCallbacks[fieldName] ? this._deletedFieldCallbacks[fieldName] : []
 		this._deletedFieldCallbacks[fieldName].push( callback )
 	},
 	
-	_deletedFieldCallbacks: [],
-
 	deletedField: function( el ) {
 
 		var _this = this
@@ -71,55 +105,32 @@ var CMB = {
 }
 
 jQuery(document).ready(function ($) {
+
 	'use strict';
 
 	var formfield;
 	var formfieldobj;
 
+	CMB.init();
+
 	jQuery( document ).on( 'click', '.delete-field', function( e ) {
 
 		e.preventDefault();
-		
+
 		var fieldItem = jQuery(this).closest( '.field-item' );
 
 		CMB.deletedField( fieldItem );	
 
 		fieldItem.remove();
 
-	} );
-
-	/**
-	 * Initialize timepicker (this will be moved inline in a future release)
-	 */
-	$('.cmb_timepicker').each(function () {
-		$( this ).timePicker({
-			startTime: "07:00",
-			endTime: "22:00",
-			show24Hours: false,
-			separator: ':',
-			step: 30
-		});
-	});
-
-	/**
-	 * Initialize jQuery UI datepicker (this will be moved inline in a future release)
-	 */
-	$('.cmb_datepicker').each(function () {
-		$( this ).datepicker();
-		// $('#' + jQuery(this).attr('id')).datepicker({ dateFormat: 'yy-mm-dd' });
-		// For more options see http://jqueryui.com/demos/datepicker/#option-dateFormat
 	});
 	
-	// Wrap date picker in class to narrow the scope of jQuery UI CSS and prevent conflicts
-	$("#ui-datepicker-div").wrap('<div class="cmb_element" />');
-
 	/**
 	 * Initialize color picker
 	 */
     $('input:text.cmb_colorpicker').each(function (i) {
         $(this).after('<div id="picker-' + i + '" style="z-index: 1000; background: #EEE; border: 1px solid #CCC; position: absolute; display: block;"></div>');
-        $('#picker-' + i).hide().farbtastic($(this)
-        	);
+        $('#picker-' + i).hide().farbtastic($(this));
     })
     .focus(function() {
         $(this).next().show();
@@ -225,19 +236,17 @@ jQuery(document).ready(function ($) {
 	    var el = jQuery( this );
 
 	    var newT = el.prev().clone();
-	    
-	    // Remove anything we no longer want. 
+
 	    newT.removeClass('hidden');
 	    newT.find('input[type!="button"]').not('[readonly]').val('');
 	    newT.find( '.cmb_upload_status' ).html('');
-	    
 	    newT.insertBefore( el.prev() );
 
 	    // Recalculate group ids & update the name fields..
 		var index = 0;
 		var field = $(this).closest('.field' );
 		var attrs = ['id','name','for','data-id','data-name'];	
-	
+		
 		field.children('.field-item').not('.hidden').each( function() {
 
 			var search  = field.hasClass( 'CMB_Group_Field' ) ? /cmb-group-(\d|x)*/g : /cmb-field-(\d|x)*/g;
@@ -255,24 +264,56 @@ jQuery(document).ready(function ($) {
 
 		} );
 
-		CMB.clonedField( newT );	    
-
-	    // Reinitialize all the datepickers
-		jQuery('.cmb_datepicker' ).each(function () {
-			$(this).attr( 'id', '' ).removeClass( 'hasDatepicker' ).removeData( 'datepicker' ).unbind().datepicker();
-		});
-
-		// Reinitialize all the timepickers.
-		jQuery('.cmb_timepicker' ).each(function () {
-			$(this).timePicker({
-				startTime: "07:00",
-				endTime: "22:00",
-				show24Hours: false,
-				separator: ':',
-				step: 30
-			});
-		});
+	    CMB.clonedField( newT )
 
 	} );
 
 });
+
+
+CMB.addCallbackForClonedField( ['CMB_Date_Field', 'CMB_Time_Field', 'CMB_Date_Timestamp_Field', 'CMB_Datetime_Timestamp_Field' ], function( newT ) {
+
+    // Reinitialize all the datepickers
+	newT.find('.cmb_datepicker' ).each(function () {
+		jQuery(this).attr( 'id', '' ).removeClass( 'hasDatepicker' ).removeData( 'datepicker' ).unbind().datepicker();
+	});
+
+	// Reinitialize all the timepickers.
+	newT.find('.cmb_timepicker' ).each(function () {
+		jQuery(this).timePicker({
+			startTime: "07:00",
+			endTime: "22:00",
+			show24Hours: false,
+			separator: ':',
+			step: 30
+		});
+	});
+
+} );
+
+CMB.addCallbackForInit( function() {
+
+	/**
+	 * Initialize jQuery UI datepicker (this will be moved inline in a future release)
+	 */
+	jQuery('.cmb_datepicker' ).each(function () {
+		jQuery(this).datepicker();
+	});
+
+	// Wrap date picker in class to narrow the scope of jQuery UI CSS and prevent conflicts
+	jQuery("#ui-datepicker-div").wrap('<div class="cmb_element" />');
+
+	/**
+	 * Initialize timepicker
+	 */
+	jQuery('.cmb_timepicker' ).each(function () {
+		jQuery(this).timePicker({
+			startTime: "07:00",
+			endTime: "22:00",
+			show24Hours: false,
+			separator: ':',
+			step: 30
+		});
+	});
+
+} );
