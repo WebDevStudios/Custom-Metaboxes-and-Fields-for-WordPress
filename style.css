@@ -339,6 +339,8 @@ div.time-picker li.selected { background: #0063CE; color: #fff; }
 button.repeat-field { display: block !important; clear: both; }
 
 .CMB_Text_Small_Field.repeatable .field-item,
+.CMB_Date_Field.repeatable .field-item,
+.CMB_Time_Field.repeatable .field-item,
 .CMB_Date_Timestamp_Field.repeatable .field-item,
 .CMB_Date_Timestamp_Field.repeatable .field-item,
 .CMB_Datetime_Timestamp_Field.repeatable .field-item {
