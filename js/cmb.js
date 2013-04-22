@@ -15,7 +15,9 @@
  */
 
 var CMB = {
+	
 	_callbacks: [],
+	
 	addCallbackForClonedField: function( fieldName, callback ) {
 
 		if ( jQuery.isArray( fieldName ) )
@@ -25,6 +27,7 @@ var CMB = {
 		this._callbacks[fieldName] = this._callbacks[fieldName] ? this._callbacks[fieldName] : []
 		this._callbacks[fieldName].push( callback )
 	},
+	
 	clonedField: function( el ) {
 
 		var _this = this
@@ -42,14 +45,42 @@ var CMB = {
 			}
 
 		})
+	},
+
+	_initCallbacks: [],
+
+	addCallbackForInit: function( callback ) {
+
+		this._initCallbacks.push( callback )
+	
+	},
+
+	init: function() {
+
+		var _this = this;
+		
+		// also check child elements
+		
+		var callbacks = _this._initCallbacks;
+		
+		if ( callbacks ) {
+			for ( var a = 0; a < callbacks.length; a++) {
+				callbacks[a]();
+			}
+		}
+
 	}
-}
+
+};
 
 jQuery(document).ready(function ($) {
+
 	'use strict';
 
 	var formfield;
 	var formfieldobj;
+
+	CMB.init();
 
 	jQuery( document ).on( 'click', '.delete-field', function( e ) {
 
