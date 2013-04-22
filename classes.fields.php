@@ -803,6 +803,14 @@ class CMB_Textarea_Field_Code extends CMB_Textarea_Field {
  */
 class CMB_Color_Picker extends CMB_Field {
 
+	public function enqueue_scripts() {
+
+		parent::enqueue_scripts();
+
+		wp_enqueue_script( 'cmb_colorpicker', trailingslashit( CMB_URL ) . 'js/field.colorpicker.js', array( 'jquery' ) );
+	
+	}
+
 	public function html() { ?>
 
 		<input <?php $this->id_attr(); ?> <?php $this->boolean_attr(); ?> <?php $this->class_attr( 'cmb_colorpicker cmb_text_small' ); ?> type="text" <?php $this->name_attr(); ?> value="<?php echo esc_attr( $this->get_value() ); ?>" />
