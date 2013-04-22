@@ -98,9 +98,9 @@ abstract class CMB_Field {
 	public function id_attr( $append = null ) {
 
 		printf( 'id="%s"', esc_attr( $this->get_the_id_attr( $append ) ) );
-
+		
 	}
-
+	
 	public function get_the_id_attr( $append = null ) {
 
 		$id = $this->id;
@@ -116,7 +116,7 @@ abstract class CMB_Field {
 		$id = str_replace( array( '[', ']', '--' ), '-', $id );
 
 		return $id;
-
+		
 	}
 
 	public function for_attr( $append = null ) {
@@ -677,7 +677,7 @@ class CMB_Datetime_Timestamp_Field extends CMB_Field {
 		wp_enqueue_script( 'cmb_datetime', trailingslashit( CMB_URL ) . 'js/field.datetime.js', array( 'jquery' ) );
 	}
 
-	public function html() { ?>
+	public function html() { ?>		
 
 		<input <?php $this->id_attr('date'); ?> <?php $this->boolean_attr(); ?> <?php $this->class_attr( 'cmb_text_small cmb_datepicker' ); ?> type="text" <?php $this->name_attr( '[date]' ); ?>  value="<?php echo $this->value ? esc_attr( date( 'm\/d\/Y', $this->value ) ) : '' ?>" />
 		<input <?php $this->id_attr('time'); ?> <?php $this->boolean_attr(); ?> <?php $this->class_attr( 'cmb_text_small cmb_timepicker' ); ?> type="text" <?php $this->name_attr( '[time]' ); ?> value="<?php echo $this->value ? esc_attr( date( 'H:i A', $this->value ) ) : '' ?>" />
@@ -693,7 +693,7 @@ class CMB_Datetime_Timestamp_Field extends CMB_Field {
 				unset( $value );
 			else
 				$value = strtotime( $value['date'] . ' ' . $value['time'] );
-			}
+		}
 
 		$this->values = array_filter( $this->values );
 		sort( $this->values );
@@ -888,7 +888,7 @@ class CMB_Select extends CMB_Field {
 			<input <?php $this->id_attr(); ?> <?php $this->boolean_attr(); ?> value="<?php echo esc_attr( implode( ',' , (array) $this->value ) ); ?>" <?php $this->name_attr(); ?> style="width: 100%" class="<?php echo esc_attr( $id ); ?>" id="<?php echo esc_attr( $id ); ?>" />
 
 			<?php else : ?>
-
+			
 				<select <?php $this->id_attr(); ?> <?php $this->boolean_attr(); ?> <?php printf( 'name="%s"', esc_attr( $name ) ); ?> <?php echo ! empty( $this->args['multiple'] ) ? 'multiple' : '' ?> class="<?php echo esc_attr( $id ); ?>" style="width: 100%" >
 
 					<?php if ( ! empty( $this->args['allow_none'] ) ) : ?>
@@ -913,7 +913,7 @@ class CMB_Select extends CMB_Field {
 				var options = { placeholder: "Type to search" };
 
 				<?php if ( $this->args['ajax_url'] ) : ?>
- 
+
 					var query = JSON.parse( '<?php echo json_encode( $this->args['ajax_args'] ? wp_parse_args( $this->args['ajax_args'] ) : (object) array() ); ?>' );
 					
 					options.data = [];
@@ -1035,15 +1035,65 @@ class CMB_Title extends CMB_Field {
  */
 class CMB_wysiwyg extends CMB_Field {
 
+	function enqueue_scripts() {
+		parent::enqueue_scripts();
+		wp_enqueue_script( 'cmb-wysiwyg', CMB_URL . '/js/field-wysiwyg.js', array( 'jquery' ) );
+	}
+
 	public function html() { 
 
-		$this->args['options']['textarea_name'] = $this->get_the_name_attr();
+		$id   = $this->get_the_id_attr();
+		$name = $this->get_the_name_attr();		
 
-		?>
+		$field_id = str_replace( array( '-', '[', ']', '--' ),'_', $this->id );
 
-			<?php wp_editor( $this->get_value(), $this->get_the_id_attr(), $this->args['options'] );?>
+		printf( '<div class="cmb-wysiwyg" data-id="%s" data-name="%s" data-field-id="%s">', $id, $name, $field_id );
+	
+		if ( $this->is_placeholder() ) 	{
 
-	<?php }
+			// For placeholder, output the markup for the editor in a JS var.
+			ob_start();
+			$this->args['options']['textarea_name'] = 'cmb-placeholder-name-' . $field_id;
+			wp_editor( '', 'cmb-placeholder-id-' . $field_id, $this->args['options'] );
+			$editor = ob_get_clean();
+			$editor = str_replace( "\n", "", $editor );
+
+			?>
+			
+			<script>
+				if ( 'undefined' === typeof( cmb_wysiwyg_editors ) ) 
+					var cmb_wysiwyg_editors = {};
+				cmb_wysiwyg_editors.<?php echo $field_id; ?> = '<?php echo $editor; ?>';
+			</script>
+
+			<?php
+		
+		} else {
+
+			$this->args['options']['textarea_name'] = $name;
+			echo wp_editor( $this->get_value(), $id, $this->args['options'] );
+		
+		}
+
+		echo '</div>';
+
+	}
+
+	/**
+	 * Check if this is a placeholder field.
+	 * Either the field itself, or because it is part of a repeatable group.
+	 * 
+	 * @return bool
+	 */
+	public function is_placeholder() {
+
+		if ( isset( $this->group_index ) && ! is_int( $this->group_index ) )
+			return true;
+
+		else return ! is_int( $this->field_index );
+
+	}
+
 }
 
 class CMB_Taxonomy extends CMB_Select {
@@ -1267,10 +1317,10 @@ class CMB_Group_Field extends CMB_Field {
 
 	public function add_field( CMB_Field $field ) {
 
-		$key = $field->id;
+		$key                = $field->id;
 		$field->original_id = $key;
 		$field->id          = $this->id . '[' . $field->id . ']';
-		$field->name = $field->id . '[]';
+		$field->name        = $field->id . '[]';
 		$field->group_index = $this->field_index;
 		$this->fields[$key] = $field;
 
@@ -1318,7 +1368,7 @@ class CMB_Group_Field extends CMB_Field {
 
 		$values = $this->values;
 
-		$this->values = array();
+		$this->values = array();		
 
 		$first = reset( $values );
 
@@ -1359,7 +1409,7 @@ class CMB_Group_Field extends CMB_Field {
 	}
 
 	public function set_values( array $values ) {
-
+		
 		$this->values = $values;
 
 		foreach ( $values as $value ) {

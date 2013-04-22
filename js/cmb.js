@@ -11,39 +11,9 @@
  * Use the methods addCallbackForInit, addCallbackForClonedField and addCallbackForDeleteField
  * Use these to add custom code for your fields.
  */
+
 var CMB = {
 	
-	_callbacks: [],
-	
-	addCallbackForClonedField: function( fieldName, callback ) {
-
-		if ( jQuery.isArray( fieldName ) )
-			for ( var i = 0; i < fieldName.length; i++ )
-				CMB.addCallbackForClonedField( fieldName[i], callback );
-
-		this._callbacks[fieldName] = this._callbacks[fieldName] ? this._callbacks[fieldName] : []
-		this._callbacks[fieldName].push( callback )
-	},
-	
-	clonedField: function( el ) {
-
-		var _this = this
-		
-		// also check child elements
-		el.add( el.find( 'div[data-class]' ) ).each( function(i, el) {
-
-			el = jQuery( el )
-			var callbacks = _this._callbacks[el.attr( 'data-class') ]
-		
-			if ( callbacks ) {
-				for (var a = 0; a < callbacks.length; a++) {
-					callbacks[a]( el )
-				}
-			}
-
-		})
-	},
-
 	_initCallbacks: [],
 
 	addCallbackForInit: function( callback ) {
@@ -54,19 +24,78 @@ var CMB = {
 
 	init: function() {
 
-		var _this = this;
+		var _this = this,
+			callbacks = _this._initCallbacks;
+		
+		if ( callbacks ) {
+			for ( var a = 0; a < callbacks.length; a++) {
+				callbacks[a]();
+			}
+		}
+
+	},
+	
+	_clonedFieldCallbacks: [],
+	
+	addCallbackForClonedField: function( fieldName, callback ) {
+		
+		if ( jQuery.isArray( fieldName ) )
+			for ( var i = 0; i < fieldName.length; i++ )
+				CMB.addCallbackForClonedField( fieldName[i], callback );
+
+		this._clonedFieldCallbacks[fieldName] = this._clonedFieldCallbacks[fieldName] ? this._clonedFieldCallbacks[fieldName] : []
+		this._clonedFieldCallbacks[fieldName].push( callback )
+	
+	},
+	
+	clonedField: function( el ) {
+
+		var _this = this
 		
 		// also check child elements
+		el.add( el.find( 'div[data-class]' ) ).each( function(i, el) {
+
+			el = jQuery( el )
+			var callbacks = _this._clonedFieldCallbacks[el.attr( 'data-class') ]
 		
-		var callbacks = _this._initCallbacks;
+			if ( callbacks )
+				for ( var a = 0; a < callbacks.length; a++ )
+					callbacks[a]( el );
+
+		})
+	},
+
+	_deletedFieldCallbacks: [],
+
+	addCallbackForDeletedField: function( fieldName, callback ) {
+
+		if ( jQuery.isArray( fieldName ) )
+			for ( var i = 0; i < fieldName.length; i++ )
+				CMB.addCallbackForClonedField( fieldName[i], callback );
+	
+		this._deletedFieldCallbacks[fieldName] = this._deletedFieldCallbacks[fieldName] ? this._deletedFieldCallbacks[fieldName] : []
+		this._deletedFieldCallbacks[fieldName].push( callback )
+	
+	},
+
+	deletedField: function( el ) {
+
+		var _this = this
 		
-		if ( callbacks )
-			for ( var a = 0; a < callbacks.length; a++)
-				callbacks[a]();
-			
+		// also check child elements
+		el.add( el.find( 'div[data-class]' ) ).each( function(i, el) {
+		
+			el = jQuery( el )
+			var callbacks = _this._deletedFieldCallbacks[el.attr( 'data-class') ]
+		
+			if ( callbacks )
+				for ( var a = 0; a < callbacks.length; a++ )
+					callbacks[a]( el )
+				
+		})
 	}
 
-};
+}
 
 jQuery(document).ready(function ($) {
 
@@ -80,9 +109,12 @@ jQuery(document).ready(function ($) {
 	jQuery( document ).on( 'click', '.delete-field', function( e ) {
 
 		e.preventDefault();
-		var a = jQuery( this );
 
-		a.closest( '.field-item' ).remove();
+		var fieldItem = jQuery(this).closest( '.field-item' );
+
+		CMB.deletedField( fieldItem );	
+
+		fieldItem.remove();
 
 	} );
 
@@ -94,7 +126,6 @@ jQuery(document).ready(function ($) {
 	    var newT = el.prev().clone();
 
 	    newT.removeClass('hidden');
-	    
 	    newT.find('input[type!="button"]').not('[readonly]').val('');
 	    newT.find( '.cmb_upload_status' ).html('');
 	    newT.insertBefore( el.prev() );
@@ -102,14 +133,14 @@ jQuery(document).ready(function ($) {
 	    // Recalculate group ids & update the name fields..
 		var index = 0;
 		var field = $(this).closest('.field' );
-		var attrs = ['id','name','for'];	
+		var attrs = ['id','name','for','data-id','data-name'];	
 		
 		field.children('.field-item').not('.hidden').each( function() {
 
-			var search  = field.hasClass( 'CMB_Group_Field' ) ? /cmb-group-(\d|x)*/ : /cmb-field-(\d|x)*/;
+			var search  = field.hasClass( 'CMB_Group_Field' ) ? /cmb-group-(\d|x)*/g : /cmb-field-(\d|x)*/g;
 			var replace = field.hasClass( 'CMB_Group_Field' ) ? 'cmb-group-' + index : 'cmb-field-' + index;
 
-			$(this).find('[id],[for],[name]').each( function() {
+			$(this).find( '[' + attrs.join('],[') + ']' ).each( function() {
 
 				for ( var i = 0; i < attrs.length; i++ )
 					if ( typeof( $(this).attr( attrs[i] ) ) !== 'undefined' )
