@@ -267,9 +267,7 @@ CMB.addCallbackForClonedField( ['CMB_Date_Field', 'CMB_Time_Field', 'CMB_Date_Ti
 
 CMB.addCallbackForInit( function() {
 
-	/**
-	 * Initialize jQuery UI datepicker (this will be moved inline in a future release)
-	 */
+	// Datepicker
 	jQuery('.cmb_datepicker').each(function () {
 		jQuery(this).datepicker();
 	});
@@ -277,9 +275,7 @@ CMB.addCallbackForInit( function() {
 	// Wrap date picker in class to narrow the scope of jQuery UI CSS and prevent conflicts
 	jQuery("#ui-datepicker-div").wrap('<div class="cmb_element" />');
 
-	/**
-	 * Initialize timepicker
-	 */
+	// Timepicker
 	jQuery('.cmb_timepicker').each(function () {
 		jQuery(this).timePicker({
 			startTime: "07:00",
