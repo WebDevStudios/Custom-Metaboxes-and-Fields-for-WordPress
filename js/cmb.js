@@ -5,6 +5,12 @@
 /*jslint browser: true, devel: true, indent: 4, maxerr: 50, sub: true */
 /*global jQuery, tb_show, tb_remove */
 
+/**
+ * Callback handler.
+ *
+ * Use the methods addCallbackForInit, addCallbackForClonedField and addCallbackForDeleteField
+ * Use these to add custom code for your fields.
+ */
 var CMB = {
 	
 	_callbacks: [],
