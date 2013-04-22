@@ -999,7 +999,6 @@ class CMB_Title extends CMB_Field {
  */
 class CMB_wysiwyg extends CMB_Field {
 
-	
 	public function html() { 
 
 		$id   = $this->get_the_id_attr();
@@ -1017,8 +1016,16 @@ class CMB_wysiwyg extends CMB_Field {
 			wp_editor( '', 'cmb-placeholder-id-' . $field_id, $this->args['options'] );
 			$editor = ob_get_clean();
 			$editor = str_replace( "\n", "", $editor );
-			echo '<script>if ( \'undefined\' === typeof( cmb_wysiwyg_editors ) ) { var cmb_wysiwyg_editors = {}; }</script>';
-			printf( '<script>cmb_wysiwyg_editors.%s = \'%s\';</script>', $field_id, $editor );
+
+			?>
+			
+			<script>
+				if ( 'undefined' === typeof( cmb_wysiwyg_editors ) ) 
+					var cmb_wysiwyg_editors = {};
+				cmb_wysiwyg_editors.<?php echo $field_id; ?> = '<?php echo $editor; ?>';
+			</script>
+
+			<?php
 		
 		} else {
 
