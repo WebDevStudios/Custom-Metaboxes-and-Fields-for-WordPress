@@ -206,6 +206,10 @@ class cmb_Meta_Box {
 				case 'text':
 					echo '<input type="text" name="', $field['id'], '" id="', $field['id'], '" value="', '' !== $meta ? $meta : $field['std'], '" />','<p class="cmb_metabox_description">', $field['desc'], '</p>';
 					break;
+				case 'tag_input':
+					if( $meta ) $meta = implode( ',', unserialize( $meta ) );
+					echo '<input type="text" name="', $field['id'], '" id="', $field['id'], '" value="', '' !== $meta ? $meta : $field['std'], '" class="cmb_tags_input" />','<p class="cmb_metabox_description">', $field['desc'], '</p>';
+					break;
 				case 'text_small':
 					echo '<input class="cmb_text_small" type="text" name="', $field['id'], '" id="', $field['id'], '" value="', '' !== $meta ? $meta : $field['std'], '" /><span class="cmb_metabox_description">', $field['desc'], '</span>';
 					break;
@@ -475,6 +479,10 @@ class cmb_Meta_Box {
 
 			if( $field['type'] == 'advanced_multiselect' ) {
 				$new = isset( $_POST[$field['id']] ) ? serialize($_POST[$field['id']]) : null;
+			}
+
+			if( $field['type'] == 'tag_input' ) {
+				$new = isset( $_POST[$field['id']] ) ? serialize( explode( ',', $_POST[$field['id']] ) ) : null;
 			}
 
 			if ( $type_comp == true && in_array( $field['type'], array( 'taxonomy_select', 'taxonomy_radio', 'taxonomy_multicheck' ) ) )  {
