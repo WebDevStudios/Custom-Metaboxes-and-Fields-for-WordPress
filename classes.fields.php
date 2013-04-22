@@ -308,7 +308,7 @@ abstract class CMB_Field {
 			$this->field_index = $i;
 			$this->value = $value; ?>
 
-			<div class="field-item" style="position: relative; <?php echo esc_attr( $this->args['style'] ); ?>">
+			<div class="field-item" data-class="<?php echo esc_attr( get_called_class() ) ?>" style="position: relative; <?php echo esc_attr( $this->args['style'] ); ?>">
 
 			<?php if ( $this->args['repeatable'] ) : ?>
 
@@ -336,7 +336,7 @@ abstract class CMB_Field {
 			$this->field_index = 'x'; // x used to distinguish hidden fields.
 			$this->value = ''; ?>
 
-			<div class="field-item hidden" style="position: relative">
+			<div class="field-item hidden" data-class="<?php echo esc_attr( get_called_class() ) ?>" style="position: relative">
 
 			<?php if ( $this->args['repeatable'] ) : ?>
 
@@ -1202,7 +1202,7 @@ class CMB_Group_Field extends CMB_Field {
 
 			?>
 
-			<div class="field-item" style="<?php echo esc_attr( $this->args['style'] ); ?>">
+			<div class="field-item" data-class="<?php echo esc_attr( get_called_class() ) ?>" style="<?php echo esc_attr( $this->args['style'] ); ?>">
 				<?php $this->html(); ?>
 			</div>
 
@@ -1217,7 +1217,7 @@ class CMB_Group_Field extends CMB_Field {
 			$this->field_index = 'x'; // x used to distinguish hidden fields.
 			$this->value = ''; ?>
 
-				<div class="field-item hidden" style="<?php echo esc_attr( $this->args['style'] ); ?>">
+				<div class="field-item hidden" data-class="<?php echo esc_attr( get_called_class() ) ?>" style="<?php echo esc_attr( $this->args['style'] ); ?>">
 
 					<?php $this->html(); ?>
 
