@@ -13,6 +13,34 @@
 /**
  * Custom jQuery for Custom Metaboxes and Fields
  */
+
+var CMB = {
+	_callbacks: [],
+	addCallbackForClonedField: function( fieldName, callback ) {
+
+		this._callbacks[fieldName] = this._callbacks[fieldName] ? this._callbacks[fieldName] : []
+		this._callbacks[fieldName].push( callback )
+	},
+	clonedField: function( el ) {
+
+		var _this = this
+		
+		// also check child elements
+		el.add( el.find( 'div[data-class]' ) ).each( function(i, el) {
+
+			el = jQuery( el )
+			var callbacks = _this._callbacks[el.attr( 'data-class') ]
+		
+			if ( callbacks ) {
+				for (var a = 0; a < callbacks.length; a++) {
+					callbacks[a]( el )
+				}
+			}
+
+		})
+	}
+}
+
 jQuery(document).ready(function ($) {
 	'use strict';
 
@@ -169,6 +197,8 @@ jQuery(document).ready(function ($) {
 	    newT.find('input[type!="button"]').not('[readonly]').val('');
 	    newT.find( '.cmb_upload_status' ).html('');
 	    newT.insertBefore( el.prev() );
+
+	    CMB.clonedField( newT )
 
 	    // Recalculate group ids & update the name fields..
 		var index = 0;
