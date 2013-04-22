@@ -1,18 +1,9 @@
 /**
- * Controls the behaviours of custom metabox fields.
- *
- * @author Andrew Norcross
- * @author Jared Atchison
- * @author Bill Erickson
- * @see    https://github.com/jaredatch/Custom-Metaboxes-and-Fields-for-WordPress
+ * Custom jQuery for Custom Metaboxes and Fields
  */
 
 /*jslint browser: true, devel: true, indent: 4, maxerr: 50, sub: true */
 /*global jQuery, tb_show, tb_remove */
-
-/**
- * Custom jQuery for Custom Metaboxes and Fields
- */
 
 var CMB = {
 	
@@ -89,96 +80,6 @@ jQuery(document).ready(function ($) {
 
 	} );
 
-	/**
-	 * File and image upload handling
-	 */
-	$('.cmb_upload_file').change(function () {
-		formfield = $(this).attr('id');
-
-		formfieldobj = $(this).siblings( '.cmb_upload_file_id' );
-
-		$('#' + formfield + '_id').val("");
-
-	});
-
-	$('.cmb_upload_button').live('click', function () {
-		var buttonLabel;
-		formfield = $(this).prev('input').attr('id');
-		formfieldobj = $(this).siblings( '.cmb_upload_file_id' );
-
-		if ( formfieldobj.siblings( 'label' ).length )
-			buttonLabel = 'Use as ' + formfieldobj.siblings( 'label' ).text();
-
-		else
-			buttonLabel = 'Use as ' + $('label[for=' + formfield + ']').text();
-
-		tb_show('', 'media-upload.php?post_id=' + $('#post_ID').val() + '&type=file&cmb_force_send=true&cmb_send_label=' + buttonLabel + '&TB_iframe=true');
-		return false;
-	});
-
-	$('.cmb_remove_file_button').live('click', function () {
-		formfield = $(this).attr('rel');
-		formfieldobj = $(this).closest('.cmb_upload_status').siblings( '.cmb_upload_file_id' );
-		$('input#' + formfield).val('');
-		$('input#' + formfield + '_id').val('');
-		$(this).parent().remove();
-		return false;
-	});
-
-	window.original_send_to_editor = window.send_to_editor;
-    window.send_to_editor = function (html) {
-		var itemurl, itemclass, itemClassBits, itemid, htmlBits, itemtitle,
-			image, uploadStatus = true;
-
-		if (formfield) {
-
-	        if ($(html).html(html).find('img').length > 0) {
-				itemurl = $(html).html(html).find('img').attr('src'); // Use the URL to the size selected.
-				itemclass = $(html).html(html).find('img').attr('class'); // Extract the ID from the returned class name.
-				itemClassBits = itemclass.split(" ");
-				itemid = itemClassBits[itemClassBits.length - 1];
-				itemid = itemid.replace('wp-image-', '');
-	        } else {
-				// It's not an image. Get the URL to the file instead.
-				htmlBits = html.split("'"); // jQuery seems to strip out XHTML when assigning the string to an object. Use alternate method.
-				itemurl = htmlBits[1]; // Use the URL to the file.
-				itemtitle = htmlBits[2];
-				itemtitle = itemtitle.replace('>', '');
-				itemtitle = itemtitle.replace('</a>', '');
-				itemid = itemurl; // TO DO: Get ID for non-image attachments.
-			}
-
-			image = /(jpe?g|png|gif|ico)$/gi;
-
-			if (itemurl.match(image)) {
-				uploadStatus = '<div class="img_status"><img src="' + itemurl + '" alt="" /><a href="#" class="cmb_remove_file_button" rel="' + formfield + '">Remove Image</a></div>';
-			} else {
-				// No output preview if it's not an image
-				// Standard generic output if it's not an image.
-				html = '<a href="' + itemurl + '" target="_blank" rel="external">View File</a>';
-				uploadStatus = '<div class="no_image"><span class="file_link">' + html + '</span>&nbsp;&nbsp;&nbsp;<a href="#" class="cmb_remove_file_button" rel="' + formfield + '">Remove</a></div>';
-			}
-
-			if ( formfieldobj ) {
-
-				$(formfieldobj).val(itemid);
-				$(formfieldobj).siblings('.cmb_upload_status').slideDown().html(uploadStatus);
-
-			} else {
-				$('#' + formfield).val(itemurl);
-				$('#' + formfield + '_id').val(itemid);
-				$('#' + formfield).siblings('.cmb_upload_status').slideDown().html(uploadStatus);
-			}
-
-			tb_remove();
-
-		} else {
-			window.original_send_to_editor(html);
-		}
-
-		formfield = '';
-	};
-
 	jQuery( document ).on( 'click', '.repeat-field', function( e ) {
 
 	    e.preventDefault();
@@ -228,7 +129,7 @@ jQuery(document).ready(function ($) {
 CMB.addCallbackForInit( function() {
 
 	// Colorpicker
-	$('input:text.cmb_colorpicker').wpColorPicker();
+	jQuery('input:text.cmb_colorpicker').wpColorPicker();
 
 } );
 
