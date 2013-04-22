@@ -15,12 +15,14 @@
  */
 
 var CMB = {
-	_callbacks: [],
-	addCallbackForClonedField: function( fieldName, callback ) {
+	
+	_clonedFieldCallbacks: [],
 
-		this._callbacks[fieldName] = this._callbacks[fieldName] ? this._callbacks[fieldName] : []
-		this._callbacks[fieldName].push( callback )
+	addCallbackForClonedField: function( fieldName, callback ) {
+		this._clonedFieldCallbacks[fieldName] = this._clonedFieldCallbacks[fieldName] ? this._clonedFieldCallbacks[fieldName] : []
+		this._clonedFieldCallbacks[fieldName].push( callback )
 	},
+	
 	clonedField: function( el ) {
 
 		var _this = this
@@ -29,7 +31,33 @@ var CMB = {
 		el.add( el.find( 'div[data-class]' ) ).each( function(i, el) {
 
 			el = jQuery( el )
-			var callbacks = _this._callbacks[el.attr( 'data-class') ]
+			var callbacks = _this._clonedFieldCallbacks[el.attr( 'data-class') ]
+		
+			if ( callbacks ) {
+				for (var a = 0; a < callbacks.length; a++) {
+					callbacks[a]( el )
+				}
+			}
+
+		})
+	},
+	
+	addCallbackForDeletedField: function( fieldName, callback ) {
+		this._deletedFieldCallbacks[fieldName] = this._deletedFieldCallbacks[fieldName] ? this._deletedFieldCallbacks[fieldName] : []
+		this._deletedFieldCallbacks[fieldName].push( callback )
+	},
+	
+	_deletedFieldCallbacks: [],
+
+	deletedField: function( el ) {
+
+		var _this = this
+		
+		// also check child elements
+		el.add( el.find( 'div[data-class]' ) ).each( function(i, el) {
+
+			el = jQuery( el )
+			var callbacks = _this._deletedFieldCallbacks[el.attr( 'data-class') ]
 		
 			if ( callbacks ) {
 				for (var a = 0; a < callbacks.length; a++) {
@@ -39,6 +67,7 @@ var CMB = {
 
 		})
 	}
+
 }
 
 jQuery(document).ready(function ($) {
