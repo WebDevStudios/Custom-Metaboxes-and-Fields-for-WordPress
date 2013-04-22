@@ -233,8 +233,6 @@ jQuery(document).ready(function ($) {
 	    newT.find( '.cmb_upload_status' ).html('');
 	    newT.insertBefore( el.prev() );
 
-	    CMB.clonedField( newT )
-
 	    // Recalculate group ids & update the name fields..
 		var index = 0;
 		var field = $(this).closest('.field' );
@@ -257,9 +255,8 @@ jQuery(document).ready(function ($) {
 
 		} );
 
-	    // Reinitialize all the datepickers
-		jQuery('.cmb_datepicker' ).each(function () {
 			$(this).attr( 'id', '' ).removeClass( 'hasDatepicker' ).removeData( 'datepicker' ).unbind().datepicker();
+	    CMB.clonedField( newT )
 		});
 
 		// Reinitialize all the timepickers.
