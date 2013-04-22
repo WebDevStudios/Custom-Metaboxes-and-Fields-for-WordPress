@@ -5,16 +5,82 @@
 /*jslint browser: true, devel: true, indent: 4, maxerr: 50, sub: true */
 /*global jQuery, tb_show, tb_remove */
 
-/**
- * Callback handler.
- *
- * Use the methods addCallbackForInit, addCallbackForClonedField and addCallbackForDeleteField
- * Use these to add custom code for your fields.
- */
-
 var CMB = {
-	
+
 	_initCallbacks: [],
+	_clonedFieldCallbacks: [],
+	_deletedFieldCallbacks: [],
+
+	init : function() {
+	
+		'use strict';
+		
+		var _this = this;
+
+		jQuery(document).ready( function ($) {
+
+			jQuery( document ).on( 'click', '.delete-field', _this.deleteField );
+			jQuery( document ).on( 'click', '.repeat-field', _this.repeatField );
+
+			_this.doneInit();
+			
+		} );
+
+	},
+
+	repeatField : function( e ) {
+		
+		e.preventDefault();
+
+	    var btn, newT, field, index, attr;
+
+	    btn  = jQuery(this);
+	    newT = btn.prev().clone();
+
+	    newT.removeClass('hidden');
+	    newT.find('input[type!="button"]').not('[readonly]').val('');
+	    newT.find( '.cmb_upload_status' ).html('');
+	    newT.insertBefore( btn.prev() );
+
+	    // Recalculate group ids & update the name fields..
+		index = 0;
+		field = jQuery(this).closest('.field' );
+		attr  = ['id','name','for','data-id','data-name'];	
+		
+		field.children('.field-item').not('.hidden').each( function() {
+
+			var search  = field.hasClass( 'CMB_Group_Field' ) ? /cmb-group-(\d|x)*/g : /cmb-field-(\d|x)*/g;
+			var replace = field.hasClass( 'CMB_Group_Field' ) ? 'cmb-group-' + index : 'cmb-field-' + index;
+
+			jQuery(this).find( '[' + attr.join('],[') + ']' ).each( function() {
+
+				for ( var i = 0; i < attr.length; i++ )
+					if ( typeof( jQuery(this).attr( attr[i] ) ) !== 'undefined' )
+						jQuery(this).attr( attr[i], jQuery(this).attr( attr[i] ).replace( search, replace ) );
+				
+			} );
+
+			index += 1;
+
+		} );
+
+		// TODO, can we pass _this, instead of using CMB?
+	    CMB.clonedField( newT )
+
+	},
+
+	deleteField : function( e ) {
+		
+		e.preventDefault();
+		
+		var fieldItem = jQuery(this).closest( '.field-item' );
+
+		// TODO, can we pass _this, instead of using CMB?
+		CMB.deletedField( fieldItem );	
+
+		fieldItem.remove();
+
+	},	
 
 	addCallbackForInit: function( callback ) {
 
@@ -22,7 +88,11 @@ var CMB = {
 	
 	},
 
-	init: function() {
+	/**
+	 * Fire init callbacks. 
+	 * Called when CMB has been set up.
+	 */
+	doneInit: function() {
 
 		var _this = this,
 			callbacks = _this._initCallbacks;
@@ -35,8 +105,6 @@ var CMB = {
 
 	},
 	
-	_clonedFieldCallbacks: [],
-	
 	addCallbackForClonedField: function( fieldName, callback ) {
 		
 		if ( jQuery.isArray( fieldName ) )
@@ -48,6 +116,10 @@ var CMB = {
 	
 	},
 	
+	/**
+	 * Fire clonedField callbacks. 
+	 * Called when a field has been cloned.
+	 */
 	clonedField: function( el ) {
 
 		var _this = this
@@ -65,8 +137,6 @@ var CMB = {
 		})
 	},
 
-	_deletedFieldCallbacks: [],
-
 	addCallbackForDeletedField: function( fieldName, callback ) {
 
 		if ( jQuery.isArray( fieldName ) )
@@ -78,6 +148,10 @@ var CMB = {
 	
 	},
 
+	/**
+	 * Fire deletedField callbacks. 
+	 * Called when a field has been cloned.
+	 */
 	deletedField: function( el ) {
 
 		var _this = this
@@ -97,63 +171,4 @@ var CMB = {
 
 }
 
-jQuery(document).ready(function ($) {
-
-	'use strict';
-
-	var formfield;
-	var formfieldobj;
-
-	CMB.init();
-
-	jQuery( document ).on( 'click', '.delete-field', function( e ) {
-
-		e.preventDefault();
-
-		var fieldItem = jQuery(this).closest( '.field-item' );
-
-		CMB.deletedField( fieldItem );	
-
-		fieldItem.remove();
-
-	} );
-
-	jQuery( document ).on( 'click', '.repeat-field', function( e ) {
-
-	    e.preventDefault();
-	    var el = jQuery( this );
-
-	    var newT = el.prev().clone();
-
-	    newT.removeClass('hidden');
-	    newT.find('input[type!="button"]').not('[readonly]').val('');
-	    newT.find( '.cmb_upload_status' ).html('');
-	    newT.insertBefore( el.prev() );
-
-	    // Recalculate group ids & update the name fields..
-		var index = 0;
-		var field = $(this).closest('.field' );
-		var attrs = ['id','name','for','data-id','data-name'];	
-		
-		field.children('.field-item').not('.hidden').each( function() {
-
-			var search  = field.hasClass( 'CMB_Group_Field' ) ? /cmb-group-(\d|x)*/g : /cmb-field-(\d|x)*/g;
-			var replace = field.hasClass( 'CMB_Group_Field' ) ? 'cmb-group-' + index : 'cmb-field-' + index;
-
-			$(this).find( '[' + attrs.join('],[') + ']' ).each( function() {
-
-				for ( var i = 0; i < attrs.length; i++ )
-					if ( typeof( $(this).attr( attrs[i] ) ) !== 'undefined' )
-						$(this).attr( attrs[i], $(this).attr( attrs[i] ).replace( search, replace ) );
-				
-			} );
-
-			index += 1;
-
-		} );
-
-	    CMB.clonedField( newT )
-
-	} );
-
-});
+CMB.init();
