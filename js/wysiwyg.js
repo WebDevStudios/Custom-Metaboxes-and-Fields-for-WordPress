@@ -1,8 +1,8 @@
-CMB.addCallbackForDeletedField( 'CMB_wysiwyg', function( newT ) {
+CMB.addCallbackForDeletedField( 'CMB_wysiwyg', function( el ) {
 
 	// Destroy WYSIWYG editors instances.
-	fieldItem.find( '.cmb-wysiwyg textarea' ).each( function() {
-		var instance = tinyMCE.get( $(this).attr('id') );
+	el.find( '.cmb-wysiwyg textarea' ).each( function() {
+		var instance = tinyMCE.get( jQuery(this).attr('id') );
 		if ( typeof( instance ) !== 'undefined' ) 
 			instance.remove();
 	} );
