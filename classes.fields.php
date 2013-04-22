@@ -1037,7 +1037,7 @@ class CMB_wysiwyg extends CMB_Field {
 
 	function enqueue_scripts() {
 		parent::enqueue_scripts();
-		wp_enqueue_script( 'cmb-wysiwyg', CMB_URL . '/js/wysiwyg.js', array( 'jquery' ) );
+		wp_enqueue_script( 'cmb-wysiwyg', CMB_URL . '/js/field-wysiwyg.js', array( 'jquery' ) );
 	}
 
 	public function html() { 
