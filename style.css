@@ -369,3 +369,6 @@ button.repeat-field { display: block !important; clear: both; }
 .CMB_File_Field .cmb_element .ui-icon.delete-field { z-index: 10; top: 10px; right: 10px; }
 .CMB_File_Field .cmb-remove-file { position: absolute; top: 5px; right: 5px; z-index: 1; }
 .CMB_File_Field.repeatable .cmb-remove-file { display: none;  }
+
+
+.CMB_Color_Picker .field-item { float: left; clear: both; }
