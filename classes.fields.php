@@ -885,7 +885,7 @@ class CMB_Select extends CMB_Field {
 
 			<?php if ( $this->args['ajax_url'] ) : ?>
 
-			<input <?php $this->id_attr(); ?> <?php $this->boolean_attr(); ?> value="<?php echo esc_attr( implode( ',' , (array) $this->value ) ); ?>" <?php $this->name_attr(); ?> style="width: 100%" class="<?php echo esc_attr( $id ); ?>" id="<?php echo esc_attr( $id ); ?>" />
+				<input <?php $this->id_attr(); ?> value="<?php echo esc_attr( implode( ',' , (array) $this->value ) ); ?>" <?php $this->boolean_attr(); ?> <?php printf( 'name="%s"', esc_attr( $name ) ); ?> <?php echo ! empty( $this->args['multiple'] ) ? 'multiple' : '' ?> class="<?php echo esc_attr( $id ); ?>" style="width: 100%" />
 
 			<?php else : ?>
 			
@@ -948,7 +948,7 @@ class CMB_Select extends CMB_Field {
 				setInterval( function() {
 					jQuery( '#<?php echo esc_js( $id ); ?>' ).each( function( index, el ) {
 						if ( jQuery( el ).is( ':visible' ) && ! jQuery( el ).hasClass( 'select2-added' ) )
-							jQuery( this ).addClass( 'select2-added' ).select2( {} );
+							jQuery(el).addClass( 'select2-added' ).select2( options );
 					} );
 
 				}, 300 );
