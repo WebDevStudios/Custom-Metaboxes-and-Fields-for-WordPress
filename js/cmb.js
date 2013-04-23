@@ -5,6 +5,8 @@
 /*jslint browser: true, devel: true, indent: 4, maxerr: 50, sub: true */
 /*global jQuery, tb_show, tb_remove */
 
+'use strict';
+
 var CMB = {
 
 	_initCallbacks: [],
@@ -12,15 +14,14 @@ var CMB = {
 	_deletedFieldCallbacks: [],
 
 	init : function() {
-	
-		'use strict';
-		
+			
 		var _this = this;
 
-		jQuery(document).ready( function ($) {
-
-			jQuery( document ).on( 'click', '.delete-field', _this.deleteField );
-			jQuery( document ).on( 'click', '.repeat-field', _this.repeatField );
+		jQuery(document).ready( function () {
+				
+			jQuery( document ).on( 'click', '.delete-field', function(e) { _this.deleteField.call( _this, e, this ); } );
+			
+			jQuery( document ).on( 'click', '.repeat-field', function(e) { _this.repeatField.call( _this, e, this ); } );
 
 			_this.doneInit();
 			
@@ -28,23 +29,23 @@ var CMB = {
 
 	},
 
-	repeatField : function( e ) {
-		
+	repeatField : function( e, btn ) {
+			
 		e.preventDefault();
+		
+	    var _this, btn, newT, field, index, attr;
 
-	    var btn, newT, field, index, attr;
-
-	    btn  = jQuery(this);
-	    newT = btn.prev().clone();
-
+	    _this = this;
+	    
+	    newT = jQuery(btn).prev().clone();
 	    newT.removeClass('hidden');
 	    newT.find('input[type!="button"]').not('[readonly]').val('');
 	    newT.find( '.cmb_upload_status' ).html('');
-	    newT.insertBefore( btn.prev() );
+	    newT.insertBefore( jQuery(btn).prev() );
 
 	    // Recalculate group ids & update the name fields..
 		index = 0;
-		field = jQuery(this).closest('.field' );
+		field = jQuery(btn).closest('.field' );
 		attr  = ['id','name','for','data-id','data-name'];	
 		
 		field.children('.field-item').not('.hidden').each( function() {
@@ -64,19 +65,17 @@ var CMB = {
 
 		} );
 
-		// TODO, can we pass _this, instead of using CMB?
-	    CMB.clonedField( newT )
+	    _this.clonedField( newT )
 
 	},
 
-	deleteField : function( e ) {
+	deleteField : function( e, btn ) {
 		
 		e.preventDefault();
-		
-		var fieldItem = jQuery(this).closest( '.field-item' );
+	
+		var fieldItem = jQuery(btn).closest( '.field-item' );
 
-		// TODO, can we pass _this, instead of using CMB?
-		CMB.deletedField( fieldItem );	
+		this.deletedField( fieldItem );	
 
 		fieldItem.remove();
 
@@ -125,7 +124,7 @@ var CMB = {
 		var _this = this
 		
 		// also check child elements
-		el.add( el.find( 'div[data-class]' ) ).each( function(i, el) {
+		el.add( el.find( 'div[data-class]' ) ).each( function( i, el ) {
 
 			el = jQuery( el )
 			var callbacks = _this._clonedFieldCallbacks[el.attr( 'data-class') ]
@@ -154,7 +153,7 @@ var CMB = {
 	 */
 	deletedField: function( el ) {
 
-		var _this = this
+		var _this = this;
 		
 		// also check child elements
 		el.add( el.find( 'div[data-class]' ) ).each( function(i, el) {
