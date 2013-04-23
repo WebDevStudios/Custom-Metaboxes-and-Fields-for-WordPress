@@ -874,8 +874,8 @@ class CMB_Select extends CMB_Field {
 		if ( $this->has_data_delegate() )
 			$this->args['options'] = $this->get_delegate_data();
 
-		$id = 'select-' . rand( 0, 1000 );
-
+		$id = $this->get_the_id_attr();
+		
 		$name = $this->get_the_name_attr();
 		$name .= ! empty( $this->args['multiple'] ) ? '[]' : null;
 
@@ -944,12 +944,11 @@ class CMB_Select extends CMB_Field {
 					}
 					
 				<?php endif; ?>	
-
+				
 				setInterval( function() {
-
-					jQuery( '.<?php echo esc_js( $id ); ?>' ).each( function( index, el ) {
+					jQuery( '#<?php echo esc_js( $id ); ?>' ).each( function( index, el ) {
 						if ( jQuery( el ).is( ':visible' ) && ! jQuery( el ).hasClass( 'select2-added' ) )
-							jQuery( this ).addClass( 'select2-added' ).select2( options );
+							jQuery( this ).addClass( 'select2-added' ).select2( {} );
 					} );
 
 				}, 300 );
