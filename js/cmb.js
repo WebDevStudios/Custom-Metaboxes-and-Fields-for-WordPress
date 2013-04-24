@@ -140,7 +140,7 @@ var CMB = {
 
 		if ( jQuery.isArray( fieldName ) )
 			for ( var i = 0; i < fieldName.length; i++ )
-				CMB.addCallbackForClonedField( fieldName[i], callback );
+				CMB._deletedFieldCallbacks( fieldName[i], callback );
 	
 		this._deletedFieldCallbacks[fieldName] = this._deletedFieldCallbacks[fieldName] ? this._deletedFieldCallbacks[fieldName] : []
 		this._deletedFieldCallbacks[fieldName].push( callback )
