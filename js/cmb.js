@@ -12,6 +12,9 @@ var CMB = {
 	_initCallbacks: [],
 	_clonedFieldCallbacks: [],
 	_deletedFieldCallbacks: [],
+	
+	_sortStartCallbacks: [],
+	_sortEndCallbacks: [],
 
 	init : function() {
 			
@@ -24,6 +27,9 @@ var CMB = {
 			jQuery( document ).on( 'click', '.repeat-field', function(e) { _this.repeatField.call( _this, e, this ); } );
 
 			_this.doneInit();
+
+			jQuery('.field.sortable' ).each( function() { _this.sortableInit.call( _this, this ); } );
+			
 			
 		} );
 
@@ -66,6 +72,8 @@ var CMB = {
 		} );
 
 	    _this.clonedField( newT )
+	    
+	    _this.sortableInit( field );
 
 	},
 
@@ -166,7 +174,89 @@ var CMB = {
 					callbacks[a]( el )
 				
 		})
-	}
+	},
+
+	sortableInit : function( field ) {
+
+		var _this = this;
+
+		field = jQuery(field);
+
+		var items = field.find('.field-item').not('.hidden');
+
+		field.find( '.handle' ).remove();
+		items.each( function() {
+			jQuery(this).append( '<div class="handle"></div>' );
+		} );
+		
+		field.sortable( { 
+			handle: ".handle" ,
+			cursor: "move",
+			items: ".field-item",
+			beforeStop: function( event, ui ) { _this.sortStart( jQuery( ui.item[0] ) ); },
+			deactivate: function( event, ui ) { _this.sortEnd( jQuery( ui.item[0] ) ); },
+		} );
+		
+	},
+
+	sortStart : function ( el ) {
+
+		var _this = this;
+		
+		// also check child elements
+		el.add( el.find( 'div[data-class]' ) ).each( function(i, el) {
+		
+			el = jQuery( el )
+			var callbacks = _this._sortStartCallbacks[el.attr( 'data-class') ]
+		
+			if ( callbacks )
+				for ( var a = 0; a < callbacks.length; a++ )
+					callbacks[a]( el )
+				
+		})
+
+	},
+
+	addCallbackForSortStart: function( fieldName, callback ) {
+		
+		if ( jQuery.isArray( fieldName ) )
+			for ( var i = 0; i < fieldName.length; i++ )
+				CMB.addCallbackForSortStart( fieldName[i], callback );
+	
+		this._sortStartCallbacks[fieldName] = this._sortStartCallbacks[fieldName] ? this._sortStartCallbacks[fieldName] : []
+		this._sortStartCallbacks[fieldName].push( callback )
+	
+	},
+
+	sortEnd : function ( el ) {
+
+		var _this = this;
+		
+		// also check child elements
+		el.add( el.find( 'div[data-class]' ) ).each( function(i, el) {
+		
+			el = jQuery( el )
+			var callbacks = _this._sortEndCallbacks[el.attr( 'data-class') ]
+		
+			if ( callbacks )
+				for ( var a = 0; a < callbacks.length; a++ )
+					callbacks[a]( el )
+				
+		})
+
+	},
+
+	addCallbackForSortEnd: function( fieldName, callback ) {
+
+		if ( jQuery.isArray( fieldName ) )
+			for ( var i = 0; i < fieldName.length; i++ )
+				CMB.addCallbackForSortEnd( fieldName[i], callback );
+	
+		this._sortEndCallbacks[fieldName] = this._sortEndCallbacks[fieldName] ? this._sortEndCallbacks[fieldName] : []
+		this._sortEndCallbacks[fieldName].push( callback )
+	
+	},
+	
 
 }
 

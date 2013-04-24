@@ -76,12 +76,13 @@ function cmb_scripts( $hook ) {
 
 		$cmb_scripts = array( 
 			'jquery', 
+			'jquery-ui-sortable',
 			'jquery-ui-core', 
 			'jquery-ui-datepicker', 
 			'media-upload', 
 			'thickbox', 
 			'wp-color-picker',
-			'cmb-timepicker' 
+			'cmb-timepicker'
 		);
 		
 		$cmb_styles = array( 

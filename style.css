@@ -372,5 +372,7 @@ button.repeat-field { display: block !important; clear: both; }
 .CMB_File_Field .cmb-remove-file { position: absolute; top: 5px; right: 5px; z-index: 1; }
 .CMB_File_Field.repeatable .cmb-remove-file { display: none;  }
 
-
 .CMB_Color_Picker .field-item { float: left; clear: both; }
+
+.sortable .field-item { padding-left: 20px; }
+.sortable .handle { height: 100%; width: 10px; position: absolute; top: 0; left: 0; background: rgba(0,0,0,0.1); cursor: move; }
