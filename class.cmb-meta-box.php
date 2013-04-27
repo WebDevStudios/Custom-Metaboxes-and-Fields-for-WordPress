@@ -138,7 +138,13 @@ class CMB_Meta_Box {
 
 		$this->_meta_box['context'] = empty($this->_meta_box['context']) ? 'normal' : $this->_meta_box['context'];
 		$this->_meta_box['priority'] = empty($this->_meta_box['priority']) ? 'low' : $this->_meta_box['priority'];
-		$this->_meta_box['show_on'] = empty( $this->_meta_box['show_on'] ) ? array('key' => false, 'value' => false) : $this->_meta_box['show_on'];
+		
+		// Backwards compatablilty.
+		if ( isset( $this->_meta_box['show_on']['key'] ) ) {
+			$this->_meta_box['show_on'][ $this->_meta_box['show_on']['key'] ] = $this->_meta_box['show_on']['value'];
+			unset( $this->_meta_box['show_on']['key'] );
+			unset( $this->_meta_box['show_on']['value'] );
+		}
 
 		foreach ( (array) $this->_meta_box['pages'] as $page )
 			if ( apply_filters( 'cmb_show_on', true, $this->_meta_box ) )
@@ -155,57 +161,41 @@ class CMB_Meta_Box {
 	// Add for ID
 	function add_for_id( $display, $meta_box ) {
 
-		if ( 'id' !== $meta_box['show_on']['key'] )
+		$post_id = isset( $_GET['post'] ) ? $_GET['post'] : null;
+
+		if ( ! $post_id ) 
+			$post_id  = isset( $_POST['post_id'] ) ? $_POST['post_id'] : null;
+
+		if ( ! $post_id || ! isset( $meta_box['show_on']['id'] ) )
 			return $display;
 
-		// If we're showing it based on ID, get the current ID
-		if ( isset( $_GET['post'] ) )
-			$post_id = $_GET['post'];
-
-		elseif ( isset( $_POST['post_ID'] ) )
-			$post_id = $_POST['post_ID'];
-
-		if ( ! isset( $post_id ) )
-			return false;
+		
 
 		// If value isn't an array, turn it into one
-		$meta_box['show_on']['value'] = !is_array( $meta_box['show_on']['value'] ) ? array( $meta_box['show_on']['value'] ) : $meta_box['show_on']['value'];
-
-		// If current page id is in the included array, display the metabox
-		if ( in_array( $post_id, $meta_box['show_on']['value'] ) )
-			return true;
-
-
-		return false;
+		$meta_box['show_on']['id'] = ! is_array( $meta_box['show_on']['id'] ) ? array( $meta_box['show_on']['id'] ) : $meta_box['show_on']['id'];
+		
+		return in_array( $post_id, $meta_box['show_on']['id'] );
 
 	}
 
 	// Add for Page Template
 	function add_for_page_template( $display, $meta_box ) {
-		if( 'page-template' !== $meta_box['show_on']['key'] )
+		
+		$post_id = isset( $_GET['post'] ) ? $_GET['post'] : null;
+
+		if ( ! $post_id ) 
+			$post_id  = isset( $_POST['post_id'] ) ? $_POST['post_id'] : null;
+
+		if ( ! $post_id || ! isset( $meta_box['show_on']['page-template'] ) )
 			return $display;
-
-		// Get the current ID
-		if ( isset( $_GET['post'] ) )
-				$post_id = $_GET['post'];
-
-		elseif ( isset( $_POST['post_ID'] ) )
-				$post_id = $_POST['post_ID'];
-
-		if ( ! ( isset( $post_id ) || is_page() ) )
-			return false;
 
 		// Get current template
 		$current_template = get_post_meta( $post_id, '_wp_page_template', true );
 
 		// If value isn't an array, turn it into one
-		$meta_box['show_on']['value'] = !is_array( $meta_box['show_on']['value'] ) ? array( $meta_box['show_on']['value'] ) : $meta_box['show_on']['value'];
-
-		// See if there's a match
-		if ( in_array( $current_template, $meta_box['show_on']['value'] ) )
-			return true;
-
-		return false;
+		$meta_box['show_on']['page-template'] = !is_array( $meta_box['show_on']['page-template'] ) ? array( $meta_box['show_on']['page-template'] ) : $meta_box['show_on']['page-template'];
+		
+		return in_array( $current_template, $meta_box['show_on']['page-template'] );
 
 	}
 
