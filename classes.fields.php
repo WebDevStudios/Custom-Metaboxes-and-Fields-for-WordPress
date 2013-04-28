@@ -690,7 +690,7 @@ class CMB_Datetime_Timestamp_Field extends CMB_Field {
 		// If date is empty, assume delete. If time is empty, assume 00:00. 
 		foreach( $this->values as $key => &$value ) {
 			if ( empty( $value['date'] ) )
-				unset( $value );
+				unset( $this->values[$key] );
 			else
 				$value = strtotime( $value['date'] . ' ' . $value['time'] );
 		}
