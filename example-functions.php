@@ -21,7 +21,7 @@ function cmb_sample_metaboxes( array $meta_boxes ) {
 		array( 'id' => 'field-6',  'name' => 'Radio input field', 'type' => 'radio', 'options' => array( 'Option 1', 'Option 2' ) ),
 		array( 'id' => 'field-7',  'name' => 'Checkbox field', 'type' => 'checkbox' ),
 		
-		array( 'id' => 'field-8',  'name' => 'WYSIWYG field', 'type' => 'wysiwyg',),
+		array( 'id' => 'field-8',  'name' => 'WYSIWYG field', 'type' => 'wysiwyg', 'options' => array( 'editor_height' => '100' ) ),
 
 		array( 'id' => 'field-9',  'name' => 'Textarea field', 'type' => 'textarea' ),
 		array( 'id' => 'field-10',  'name' => 'Code textarea field', 'type' => 'textarea_code' ),
