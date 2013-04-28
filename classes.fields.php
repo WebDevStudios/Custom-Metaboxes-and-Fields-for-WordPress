@@ -1055,7 +1055,7 @@ class CMB_wysiwyg extends CMB_Field {
 			$this->args['options']['textarea_name'] = 'cmb-placeholder-name-' . $field_id;
 			wp_editor( '', 'cmb-placeholder-id-' . $field_id, $this->args['options'] );
 			$editor = ob_get_clean();
-			$editor = str_replace( "\n", "", $editor );
+			$editor = str_replace( array( "\n", "\r" ), "", $editor );
 
 			?>
 			
