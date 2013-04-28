@@ -374,10 +374,10 @@ button.repeat-field { display: block !important; clear: both; }
 
 .CMB_Color_Picker .field-item { float: left; clear: both; }
 
-.sortable .field-item { padding-left: 20px; }
+.sortable > .field-item { padding-left: 20px; }
 .sortable .handle { height: 100%; width: 10px; position: absolute; top: 0; left: 0; background: rgba(0,0,0,0.1); cursor: move; }
 
-.CMB_File_Field.sortable .field-item { margin-left: 20px !important; }
+.CMB_File_Field.sortable > .field-item { margin-left: 20px !important; }
 .CMB_File_Field.sortable .handle { margin-left: -20px !important; }
 
 .CMB_Group_Field.sortable > .field-item { position: relative; padding-top: 10px; }

@@ -182,17 +182,17 @@ var CMB = {
 
 		field = jQuery(field);
 
-		var items = field.find('.field-item').not('.hidden');
+		var items = field.find(' > .field-item').not('.hidden');
 
-		field.find( '.handle' ).remove();
+		field.find( '> .field-item > .handle' ).remove();
 		items.each( function() {
 			jQuery(this).append( '<div class="handle"></div>' );
 		} );
 		
 		field.sortable( { 
-			handle: ".handle" ,
+			handle: "> .handle" ,
 			cursor: "move",
-			items: ".field-item",
+			items: " > .field-item",
 			beforeStop: function( event, ui ) { _this.sortStart( jQuery( ui.item[0] ) ); },
 			deactivate: function( event, ui ) { _this.sortEnd( jQuery( ui.item[0] ) ); },
 		} );
