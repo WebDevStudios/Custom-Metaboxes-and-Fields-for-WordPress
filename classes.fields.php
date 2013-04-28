@@ -921,7 +921,7 @@ class CMB_Select extends CMB_Field {
 						options.multiple = true;
 
 					<?php endif; ?>
-
+					
 					<?php if ( ! empty( $this->value ) ) : ?>
 
 						options.initSelection = function( element, callback ) {
@@ -930,8 +930,8 @@ class CMB_Select extends CMB_Field {
 								
 								var data = [];
 								
-								<?php foreach ( (array) $this->value as $post_id ) : ?>
-									data.push = <?php echo sprintf( '{ id: %d, text: "%s" }', $this->value, get_the_title( $this->value ) ); ?>;
+								<?php foreach ( explode( ',', $this->value ) as $post_id ) : ?>
+									data.push( <?php echo sprintf( '{ id: %d, text: "%s" }', $post_id, get_the_title( $post_id ) ); ?> );
 								<?php endforeach; ?>
 							
 							<?php else : ?>
@@ -939,7 +939,7 @@ class CMB_Select extends CMB_Field {
 								var data = <?php echo sprintf( '{ id: %d, text: "%s" }', $this->value, get_the_title( $this->value ) ); ?>;
 							
 							<?php endif; ?>
-
+							
 							callback( data );
 							
 						};
@@ -1197,11 +1197,12 @@ class CMB_Post_Select extends CMB_Select {
 	}
 
 	public function parse_save_value() {
-
-		if ( $this->args['ajax_url'] && $this->args['multiple'] )
-			$this->value = explode( ',', $this->value );
+		
+		if ( $this->args['multiple'] && is_array( $this->value ) )
+			$this->value = reset( $this->value );
 
 	}
+	
 }
 
 // TODO this should be in inside the class
