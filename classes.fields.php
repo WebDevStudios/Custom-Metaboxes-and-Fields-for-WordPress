@@ -915,8 +915,6 @@ class CMB_Select extends CMB_Field {
 				<?php if ( $this->args['ajax_url'] ) : ?>
 
 					var query = JSON.parse( '<?php echo json_encode( $this->args['ajax_args'] ? wp_parse_args( $this->args['ajax_args'] ) : (object) array() ); ?>' );
-					
-					options.data = [];
 
 					<?php if ( $this->args['multiple'] ) : ?>
 
@@ -924,11 +922,29 @@ class CMB_Select extends CMB_Field {
 
 					<?php endif; ?>
 
-					<?php foreach ( array_filter( (array) $this->value ) as $post_id ) : ?>
+					<?php if ( ! empty( $this->value ) ) : ?>
 
-						options.data.push( { id: <?php echo esc_js( $post_id ); ?>, text: '<?php echo esc_js( get_the_title( $post_id ) ); ?>' } );
-						
-					<?php endforeach; ?>
+						options.initSelection = function( element, callback ) {
+								
+							<?php if ( $this->args['multiple'] ) : ?>
+								
+								var data = [];
+								
+								<?php foreach ( (array) $this->value as $post_id ) : ?>
+									data.push = <?php echo sprintf( '{ id: %d, text: "%s" }', $this->value, get_the_title( $this->value ) ); ?>;
+								<?php endforeach; ?>
+							
+							<?php else : ?>
+							
+								var data = <?php echo sprintf( '{ id: %d, text: "%s" }', $this->value, get_the_title( $this->value ) ); ?>;
+							
+							<?php endif; ?>
+
+							callback( data );
+							
+						};
+
+					<?php endif; ?>
 
 					options.ajax = {
 						url: '<?php echo esc_js( $this->args['ajax_url'] ); ?>',
