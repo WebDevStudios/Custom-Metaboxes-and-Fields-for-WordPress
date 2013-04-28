@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Define the metabox and field configurations.
  *
@@ -8,111 +7,90 @@
  */
 function cmb_sample_metaboxes( array $meta_boxes ) {
 
-	$meta_boxes[] = array(
-		'title' => 'Test Meta Box',
-		'pages' => 'post',
-		'context'    => 'normal',
-		'priority'   => 'high',
-		'show_names' => true, // Show field names on the left
-		'fields' => array(
-
-			array( 'id' => 'input', 'name' => 'A Normal text input', 'type' => 'text', 'cols' => 12, 'readonly' => true ),
-			array( 'id' => 'input2', 'name' => 'Test Repeatable Field', 'type' => 'text', 'cols' => 4, 'repeatable' => true ),
-			array( 'id' => 'input3', 'name' => 'URL Text Field', 'type' => 'url', 'cols' => 8 ),
-			array( 'id' => 'input4', 'name' => 'File field', 'type' => 'file' ),
-			
-			array( 'id' => 'input5', 'name' => 'Image', 'type' => 'image' ),
-			array( 'id' => 'input6', 'name' => 'Select Category', 'type' => 'taxonomy_select', 'taxonomy' => 'category' ),
-			array( 'id' => 'input7', 'name' => 'Checkbox 1', 'type' => 'checkbox' ),
-
-			array( 'id' => 'group-1', 'name' => 'Group of Fields', 'type' => 'group', 'style' => 'background: #f1f1f1; border-radius: 4px; border: 1px solid #e2e2e2; margin-bottom: 10px; padding: 10px', 'repeatable' => false, 'fields' => array(
-				array( 'id' => 'group-1-1', 'name' => 'A Normal text input', 'type' => 'text' ),
-				array( 'id' => 'group-1-2', 'name' => 'Image', 'type' => 'image', 'cols' => 3, 'size' => 'width=200&height=120' ),
-				array( 'id' => 'group-1-3', 'name' => 'Select Category', 'type' => 'taxonomy_select', 'cols' => 5, 'taxonomy' => 'category' ),
-				array( 'id' => 'group-1-4', 'name' => 'Checkbox 1', 'type' => 'checkbox', 'cols' => 2, 'style' => 'margin-top: 35px; margin-left: 20px;' ),
-				array( 'id' => 'group-1-5', 'name' => 'Checkbox 2', 'type' => 'checkbox', 'cols' => 2, 'style' => 'margin-top: 35px' )
-			) )
-
-		)
-	);
+	// Example of all available fields
 	
-	// Posts Select meta boxe
-	$meta_boxes[] = array(
-		'title' => 'Posts Select',
-		'pages' => 'post',
-		'context'    => 'normal',
-		'priority'   => 'high',
-		'show_names' => true, // Show field names on the left
-		'fields' => array(
+	$fields = array(
+		
+		array( 'id' => 'field-1',  'name' => 'Text input field', 'type' => 'text' ),
+		array( 'id' => 'field-2', 'name' => 'Read-only text input field', 'type' => 'text', 'readonly' => true, 'default' => 'READ ONLY' ),
+ 		array( 'id' => 'field-3', 'name' => 'Repeatable text input field', 'type' => 'text', 'repeatable' => true, 'repeatable_min' => 5, 'repeatable_max' => 5 ),
 
-			array( 
-				'id' => 'select-posts', 
-				'name' => 'Single Posts Select', 
-				'type' => 'post_select', 
-				'cols' => 6, 
-				'allow_none' => true, 
-				'multiple' => false,
-				'query' => 'showposts=5'
-			),
+		array( 'id' => 'field-4',  'name' => 'Small text input field', 'type' => 'text_small' ),
+		array( 'id' => 'field-5',  'name' => 'URL field', 'type' => 'url' ),
+		
+		array( 'id' => 'field-6',  'name' => 'Radio input field', 'type' => 'radio', 'options' => array( 'Option 1', 'Option 2' ) ),
+		array( 'id' => 'field-7',  'name' => 'Checkbox field', 'type' => 'checkbox' ),
+		
+		array( 'id' => 'field-8',  'name' => 'WYSIWYG field', 'type' => 'wysiwyg',),
 
-			array( 
-				'id' => 'select-multiple', 
-				'name' => 'Multiple Posts Select', 
-				'type' => 'post_select', 
-				'cols' => 6, 
-				'allow_none' => true, 
-				'multiple' => true 
-			),
+		array( 'id' => 'field-9',  'name' => 'Textarea field', 'type' => 'textarea' ),
+		array( 'id' => 'field-10',  'name' => 'Code textarea field', 'type' => 'textarea_code' ),
 
-			array( 
-				'id' => 'select-posts-ajax', 
-				'name' => 'Single Posts Ajax Select', 
-				'type' => 'post_select', 
-				'cols' => 6, 
-				'allow_none' => true, 
-				'multiple' => false ,
-				'use_ajax' => true
-			),
+		array( 'id' => 'field-11', 'name' => 'File field', 'type' => 'file', 'file_type' => 'image', 'repeatable' => 1, 'sortable' => 1 ),
+		array( 'id' => 'field-12', 'name' => 'Image upload field', 'type' => 'image', 'repeatable' => false ),
+		
+		array( 'id' => 'field-13', 'name' => 'Select field', 'type' => 'select', 'options' => array( 'option-1' => 'Option 1', 'option-2' => 'Option 2', 'option-3' => 'Option 3' ), 'allow_none' => true ),
+		array( 'id' => 'field-14', 'name' => 'Select field', 'type' => 'select', 'options' => array( 'option-1' => 'Option 1', 'option-2' => 'Option 2', 'option-3' => 'Option 3' ), 'multiple' => true ),
+		array( 'id' => 'field-15', 'name' => 'Select taxonomy field', 'type' => 'taxonomy_select',  'taxonomy' => 'category' ),
+		array( 'id' => 'field-16', 'name' => 'Post select field', 'type' => 'post_select', 'use_ajax' => false, 'query' => array( 'showposts' => -1 ) ),
+		array( 'id' => 'field-17', 'name' => 'Post select field (AJAX)', 'type' => 'post_select', 'use_ajax' => true, 'query' => array( 'showposts' => -1 ) ),
+		
+		array( 'id' => 'field-18', 'name' => 'Date input field', 'type' => 'date' ),
+		array( 'id' => 'field-19', 'name' => 'Time input field', 'type' => 'time' ),
+		array( 'id' => 'field-20', 'name' => 'Date (unix) input field', 'type' => 'date_unix' ),
+		array( 'id' => 'field-21', 'name' => 'Date & Time (unix) input field', 'type' => 'datetime_unix' ),
+		
+		array( 'id' => 'field-22', 'name' => 'Color', 'type' => 'colorpicker' ),
+		array( 'id' => 'field-23', 'name' => 'Oembed field', 'type' => 'oembed' ),
 
-			array( 
-				'id' => 'select-multiple-ajax', 
-				'name' => 'Mutliple Posts Ajax Select', 
-				'type' => 'post_select', 
-				'cols' => 6, 
-				'allow_none' => true, 
-				'multiple' => true,
-				'use_ajax' => true
-			)
-		)
+		array( 'id' => 'field-24', 'name' => 'Title Field', 'type' => 'title' ),
 	);
 
-	// repeatble groups test
 	$meta_boxes[] = array(
-		'title' => 'Repeatable Group',
+		'title' => 'CMB Test - all fields',
 		'pages' => 'post',
-		'context'    => 'normal',
-		'priority'   => 'high',
-		'show_names' => true, // Show field names on the left
-		'fields' => array(
+		'fields' => $fields
+	);
 
+	// Examples of Groups and Columns
+
+	$groups_and_cols = array(
+		array( 'id' => 'gac-1',  'name' => 'Text input field', 'type' => 'text', 'cols' => 4 ),
+		array( 'id' => 'gac-2',  'name' => 'Text input field', 'type' => 'text', 'cols' => 4 ),
+		array( 'id' => 'gac-3',  'name' => 'Text input field', 'type' => 'text', 'cols' => 4 ),
+		array( 'id' => 'gac-4', 'name' => 'Group (4 columns)', 'type' => 'group', 'cols' => 4, 'fields' => array(
+			array( 'id' => 'gac-4-f-1',  'name' => 'Textarea field', 'type' => 'textarea' )
+		) ),
+		array( 'id' => 'gac-5', 'name' => 'Group (8 columns)', 'type' => 'group', 'cols' => 8, 'fields' => array(
+			array( 'id' => 'gac-4-f-1',  'name' => 'Text input field', 'type' => 'text' ),
+			array( 'id' => 'gac-4-f-2',  'name' => 'Text input field', 'type' => 'text' ),
+		) ),
+	);
+
+	$meta_boxes[] = array(
+		'title' => 'Groups and Columns',
+		'pages' => 'post',
+		'fields' => $groups_and_cols
+	);
+
+	// Example of repeatable group. Using all fields.
+	// For this example, copy fields from $fields, update I
+	$group_fields = $fields;
+	foreach ( $group_fields as &$field ) {
+		$field['id'] = str_replace( 'field', 'gfield', $field['id'] );
+	}
+
+	$meta_boxes[] = array(
+		'title' => 'CMB Test - group (all fields)',
+		'pages' => 'post',
+		'fields' => array(
 			array( 
-				'id' => 'simple-group', 
-				'name' => 'Simple Repeatable Group', 
+				'id' => 'gp', 
+				'name' => 'Repeatable Group', 
 				'type' => 'group', 
-				'cols' => 12, 
 				'repeatable' => true,
-				'fields' => array( 
-					array(
-						'id' => 'simple-group-text-1',
-						'name' => 'Text Input 1',
-						'type' => 'text'
-					),
-					array(
-						'id' => 'simple-group-text-2',
-						'name' => 'Text Input 2',
-						'type' => 'text'
-					)
-				)
+				'sortable' => true,
+				'fields' => $group_fields
 			)
 		)
 	);
