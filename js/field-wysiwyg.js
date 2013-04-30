@@ -78,8 +78,13 @@ CMB.addCallbackForSortStart( 'CMB_wysiwyg', function( el ) {
 CMB.addCallbackForSortEnd( 'CMB_wysiwyg', function( el ) {
 
 	el.find( '.wp-editor-area' ).each(function(){
-		var id = jQuery(this).attr('id');
-		tinyMCE.execCommand('mceAddControl', false, id);
+		
+		var id   = jQuery(this).attr('id'),
+		    mode = jQuery(this).closest('.wp-editor-wrap').hasClass('tmce-active') ? 'tmce' : 'html';
+		
+		if ( 'tmce' === mode )
+			tinyMCE.execCommand('mceAddControl', false, id);
+	
 	});
 
 } );
