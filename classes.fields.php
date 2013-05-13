@@ -910,7 +910,10 @@ class CMB_Select extends CMB_Field {
 
 			jQuery( document ).ready( function() {
 
-				var options = { placeholder: "Type to search" };
+				var options = { 
+					placeholder: "Type to search" ,
+					allowClear: true
+				};
 
 				<?php if ( $this->args['ajax_url'] ) : ?>
 
