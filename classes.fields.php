@@ -1072,6 +1072,7 @@ class CMB_wysiwyg extends CMB_Field {
 			wp_editor( '', 'cmb-placeholder-id-' . $field_id, $this->args['options'] );
 			$editor = ob_get_clean();
 			$editor = str_replace( array( "\n", "\r" ), "", $editor );
+			$editor = str_replace( array( "'" ), '"', $editor );
 
 			?>
 			
