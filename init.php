@@ -204,7 +204,7 @@ class cmb_Meta_Box {
 			switch ( $field['type'] ) {
 
 				case 'text':
-					echo '<input type="text" name="', $field['id'], '" id="', $field['id'], '" value="', '' !== $meta ? $meta : $field['std'], '" />','<p class="cmb_metabox_description">', $field['desc'], '</p>';
+					echo "<input type='text' name='", $field['id'], "' id='", $field['id'], "' value='", "" !== $meta ? $meta : $field['std'], "' />","<p class='cmb_metabox_description'>", $field['desc'], "</p>";
 					break;
 				case 'tag_input':
 					if( $meta ) $meta = implode( ',', unserialize( $meta ) );
