@@ -308,7 +308,7 @@ abstract class CMB_Field {
 			$this->field_index = $i;
 			$this->value = $value; ?>
 
-			<div class="field-item" data-class="<?php echo esc_attr( get_called_class() ) ?>" style="position: relative; <?php echo esc_attr( $this->args['style'] ); ?>">
+			<div class="field-item" data-class="<?php echo esc_attr( get_class($this) ) ?>" style="position: relative; <?php echo esc_attr( $this->args['style'] ); ?>">
 
 			<?php if ( $this->args['repeatable'] ) : ?>
 
@@ -336,7 +336,7 @@ abstract class CMB_Field {
 			$this->field_index = 'x'; // x used to distinguish hidden fields.
 			$this->value = ''; ?>
 
-			<div class="field-item hidden" data-class="<?php echo esc_attr( get_called_class() ) ?>" style="position: relative">
+			<div class="field-item hidden" data-class="<?php echo esc_attr( get_class($this) ) ?>" style="position: relative">
 
 			<?php if ( $this->args['repeatable'] ) : ?>
 
@@ -690,7 +690,7 @@ class CMB_Datetime_Timestamp_Field extends CMB_Field {
 		// If date is empty, assume delete. If time is empty, assume 00:00. 
 		foreach( $this->values as $key => &$value ) {
 			if ( empty( $value['date'] ) )
-				unset( $value );
+				unset( $this->values[$key] );
 			else
 				$value = strtotime( $value['date'] . ' ' . $value['time'] );
 		}
@@ -910,7 +910,10 @@ class CMB_Select extends CMB_Field {
 
 			jQuery( document ).ready( function() {
 
-				var options = { placeholder: "Type to search" };
+				var options = { 
+					placeholder: "Type to search" ,
+					allowClear: true
+				};
 
 				<?php if ( $this->args['ajax_url'] ) : ?>
 
@@ -921,7 +924,7 @@ class CMB_Select extends CMB_Field {
 						options.multiple = true;
 
 					<?php endif; ?>
-					
+
 					<?php if ( ! empty( $this->value ) ) : ?>
 
 						options.initSelection = function( element, callback ) {
@@ -930,8 +933,8 @@ class CMB_Select extends CMB_Field {
 								
 								var data = [];
 								
-								<?php foreach ( explode( ',', $this->value ) as $post_id ) : ?>
-									data.push( <?php echo sprintf( '{ id: %d, text: "%s" }', $post_id, get_the_title( $post_id ) ); ?> );
+								<?php foreach ( (array) $this->value as $post_id ) : ?>
+									data.push = <?php echo sprintf( '{ id: %d, text: "%s" }', $this->value, get_the_title( $this->value ) ); ?>;
 								<?php endforeach; ?>
 							
 							<?php else : ?>
@@ -939,7 +942,7 @@ class CMB_Select extends CMB_Field {
 								var data = <?php echo sprintf( '{ id: %d, text: "%s" }', $this->value, get_the_title( $this->value ) ); ?>;
 							
 							<?php endif; ?>
-							
+
 							callback( data );
 							
 						};
@@ -1072,6 +1075,7 @@ class CMB_wysiwyg extends CMB_Field {
 			wp_editor( '', 'cmb-placeholder-id-' . $field_id, $this->args['options'] );
 			$editor = ob_get_clean();
 			$editor = str_replace( array( "\n", "\r" ), "", $editor );
+			$editor = str_replace( array( "'" ), '"', $editor );
 
 			?>
 			
@@ -1197,12 +1201,11 @@ class CMB_Post_Select extends CMB_Select {
 	}
 
 	public function parse_save_value() {
-		
-		if ( $this->args['multiple'] && is_array( $this->value ) )
-			$this->value = reset( $this->value );
+
+		if ( $this->args['ajax_url'] && $this->args['multiple'] )
+			$this->value = explode( ',', $this->value );
 
 	}
-	
 }
 
 // TODO this should be in inside the class
@@ -1304,7 +1307,7 @@ class CMB_Group_Field extends CMB_Field {
 
 			?>
 
-			<div class="field-item" data-class="<?php echo esc_attr( get_called_class() ) ?>" style="<?php echo esc_attr( $this->args['style'] ); ?>">
+			<div class="field-item" data-class="<?php echo esc_attr( get_class($this) ) ?>" style="<?php echo esc_attr( $this->args['style'] ); ?>">
 				<?php $this->html(); ?>
 			</div>
 
@@ -1319,13 +1322,13 @@ class CMB_Group_Field extends CMB_Field {
 			$this->field_index = 'x'; // x used to distinguish hidden fields.
 			$this->value = ''; ?>
 
-				<div class="field-item hidden" data-class="<?php echo esc_attr( get_called_class() ) ?>" style="<?php echo esc_attr( $this->args['style'] ); ?>">
+				<div class="field-item hidden" data-class="<?php echo esc_attr( get_class($this) ) ?>" style="<?php echo esc_attr( $this->args['style'] ); ?>">
 
 					<?php $this->html(); ?>
 
 				</div>
 
-			<button href="#" class="button repeat-field">Add New</button>
+				<button class="button repeat-field">Add New</button>
 
 		<?php }
 
