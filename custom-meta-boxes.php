@@ -40,7 +40,7 @@ define( 'CMB_URL', str_replace( str_replace( '\\', '/', WP_CONTENT_DIR ), str_re
 
 include_once( CMB_PATH . '/classes.fields.php' );
 include_once( CMB_PATH . '/class.cmb-meta-box.php' );
-include_once( CMB_PATH . '/example-functions.php' );
+// include_once( CMB_PATH . '/example-functions.php' );
 
 /**
  * Get all the meta boxes on init
