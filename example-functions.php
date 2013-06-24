@@ -29,6 +29,18 @@ function cmb_sample_metaboxes( array $meta_boxes ) {
 		'show_names' => true, // Show field names on the left
 		'fields'     => array(
 			array(
+				'name' => 'Test Advanced Select',
+				'desc' => 'field description (optional)',
+				'id'   => $prefix . 'test_advanced_select',
+				'type' => 'text',
+			),
+			array(
+				'name' => 'Test Advanced Multi Select',
+				'desc' => 'field description (optional)',
+				'id'   => $prefix . 'test_advanced_multiselect',
+				'type' => 'text',
+			),
+			array(
 				'name' => 'Test Text',
 				'desc' => 'field description (optional)',
 				'id'   => $prefix . 'test_text',
@@ -154,6 +166,7 @@ function cmb_sample_metaboxes( array $meta_boxes ) {
 				'type'     => 'taxonomy_select',
 				'taxonomy' => '', // Taxonomy Slug
 			),
+
 			array(
 				'name'		=> 'Test Taxonomy Multi Checkbox',
 				'desc'		=> 'field description (optional)',
