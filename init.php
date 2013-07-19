@@ -375,9 +375,10 @@ class cmb_Meta_Box {
 					echo '<input class="cmb_upload_file_id" type="hidden" id="', $field['id'], '_id" name="', $field['id'], '_id" value="', get_post_meta( $post->ID, $field['id'] . "_id",true), '" />';
 					echo '<p class="cmb_metabox_description">', $field['desc'], '</p>';
 					echo '<div id="', $field['id'], '_status" class="cmb_media_status">';
-						if ( $meta != '' ) {
+						if ( $meta != '' ) { 
 							$valid = array('jpg', 'jpeg', 'png', 'gif', 'ico', 'icon');
-							$ext = strtolower(pathinfo($meta, PATHINFO_EXTENSION));
+							$meta_validator = parse_url($meta, PHP_URL_PATH);
+							$ext = strtolower(pathinfo($meta_validator, PATHINFO_EXTENSION));
 							if (in_array($ext, $valid)) {
 								echo '<div class="img_status">';
 								echo '<img src="', $meta, '" alt="" />';
