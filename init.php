@@ -190,15 +190,26 @@ class cmb_Meta_Box {
 
 			$meta = get_post_meta( $post->ID, $field['id'], 'multicheck' != $field['type'] /* If multicheck this can be multiple values */ );
 
-			echo '<tr class="cmb-type-'. sanitize_html_class( $field['type'] ) .' cmb_id_'. sanitize_html_class( $field['id'] ) .'">';
+			if ( $field['display'] != "half_second" ) {
+				echo '<tr class="cmb-type-'. sanitize_html_class( $field['type'] ) .' cmb_id_'. sanitize_html_class( $field['id'] ) .'">';
+			}
+			if ( $field['display'] == "half_first" ) {
+				echo '<td colspan="2" class="inner">';
+				echo '<table class="form-table cmb_metabox inner">';
+				echo '<tr class="cmb-type-'. sanitize_html_class( $field['type'] ) .' cmb_id_'. sanitize_html_class( $field['id'] ) .'">';
+			}
 
 			if ( $field['type'] == "title" ) {
 				echo '<td colspan="2">';
 			} else {
 				if( $this->_meta_box['show_names'] == true ) {
-					echo '<th style="width:18%"><label for="', $field['id'], '">', $field['name'], '</label></th>';
+					echo '<th style="width:15%"><label for="', $field['id'], '">', $field['name'], '</label></th>';
 				}
-				echo '<td>';
+				if ( $field['display'] == "half_first" || $field['display'] == "half_second" ) {
+					echo '<td style="width:32.5%">';
+				} else {
+					echo '<td style="width:80%">';
+				}
 			}
 
 			switch ( $field['type'] ) {
@@ -216,12 +227,11 @@ class cmb_Meta_Box {
 					echo '<input class="cmb_text_small cmb_datepicker" type="text" name="', $field['id'], '" id="', $field['id'], '" value="', '' !== $meta ? $meta : $field['std'], '" /><span class="cmb_metabox_description">', $field['desc'], '</span>';
 					break;
 				case 'text_date_timestamp':
-					echo '<input class="cmb_text_small cmb_datepicker" type="text" name="', $field['id'], '" id="', $field['id'], '" value="', '' !== $meta ? date( 'm\/d\/Y', $meta ) : $field['std'], '" /><span class="cmb_metabox_description">', $field['desc'], '</span>';
+					echo '<input class="cmb_text_small cmb_datepicker" type="text" name="', $field['id'], '" id="', $field['id'], '" value="', '' !== $meta ? date( 'd-m-Y', $meta ) : $field['std'], '" /><span class="cmb_metabox_description">', $field['desc'], '</span>';
 					break;
-
 				case 'text_datetime_timestamp':
-					echo '<input class="cmb_text_small cmb_datepicker" type="text" name="', $field['id'], '[date]" id="', $field['id'], '_date" value="', '' !== $meta ? date( 'm\/d\/Y', $meta ) : $field['std'], '" />';
-					echo '<input class="cmb_timepicker text_time" type="text" name="', $field['id'], '[time]" id="', $field['id'], '_time" value="', '' !== $meta ? date( 'h:i A', $meta ) : $field['std'], '" /><span class="cmb_metabox_description" >', $field['desc'], '</span>';
+					echo '<input class="cmb_text_small cmb_datepicker" type="text" name="', $field['id'], '[date]" id="', $field['id'], '_date" value="', '' !== $meta ? date( 'd-m-Y', $meta ) : $field['std'], '" />';
+					echo '<input class="cmb_timepicker text_time" type="text" name="', $field['id'], '[time]" id="', $field['id'], '_time" value="', '' !== $meta ? date( 'H:i', $meta ) : $field['std'], '" /><span class="cmb_metabox_description" >', $field['desc'], '</span>';
 					break;
 				case 'text_time':
 					echo '<input class="cmb_timepicker text_time" type="text" name="', $field['id'], '" id="', $field['id'], '" value="', '' !== $meta ? $meta : $field['std'], '" /><span class="cmb_metabox_description">', $field['desc'], '</span>';
@@ -302,18 +312,76 @@ class cmb_Meta_Box {
 					wp_editor( $meta ? $meta : $field['std'], $field['id'], isset( $field['options'] ) ? $field['options'] : array() );
 			        echo '<p class="cmb_metabox_description">', $field['desc'], '</p>';
 					break;
+				case 'posttype_select':
+					echo '<select name="', $field['id'], '" id="', $field['id'], '">';
+					echo '<option value="">'. __( 'Please choose from list', 'cmb' ) .'</option>';
+					$term = $field["term"];
+					$taxonomy = $field["taxonomy"];
+					$args = array(
+						'post_type' => $field["posttype"],
+						$taxonomy => $term,
+						'numberposts' => -1,
+						'suppress_filters' => 0,
+						);
+					$terms = get_posts( $args );
+    					$saved_thing = get_post_meta($post->ID, $field['id'] ,true);
+    					$select_options = '';
+    					foreach ( $terms as $item ) {
+        					$option = '<option value="'.$item->ID.'">';
+        					$option .= $item->post_title;
+        					$option .= '</option>';
+        				$select_options .= $option;
+    					}
+    					$select_options = str_replace(
+						'value="'.$saved_thing.'"',
+						'value="'.$saved_thing.'" selected="selected"',
+						$select_options);
+    					echo $select_options;
+				    	echo '</select>';
+					echo '<p class="cmb_metabox_description">', $field['desc'], '</p>';
+					break;
+				case 'term_select':
+					echo '<select name="', $field['id'], '" id="', $field['id'], '">';
+					echo '<option value="">'. __( 'Please choose from list', 'cmb' ) .'</option>';
+					$terms = get_terms( $field['taxonomy'], 'hide_empty=0' );
+    					$saved_thing = get_post_meta($post->ID, $field['id'] ,true);
+    					$select_options = '';
+    					foreach ( $terms as $item ) {
+        					$option = '<option value="'.$item->slug.'">';
+        					$option .= $item->name;
+        					$option .= '</option>';
+        					$select_options .= $option;
+    					}
+    					$select_options = str_replace(
+						'value="'.$saved_thing.'"',
+						'value="'.$saved_thing.'" selected="selected"',
+						$select_options);
+    					echo $select_options;
+				    	echo '</select>';
+					echo '<p class="cmb_metabox_description">', $field['desc'], '</p>';
 				case 'taxonomy_select':
 					echo '<select name="', $field['id'], '" id="', $field['id'], '">';
-					$names= wp_get_object_terms( $post->ID, $field['taxonomy'] );
-					$terms = get_terms( $field['taxonomy'], 'hide_empty=0' );
-					foreach ( $terms as $term ) {
-						if (!is_wp_error( $names ) && !empty( $names ) && !strcmp( $term->slug, $names[0]->slug ) ) {
-							echo '<option value="' . $term->slug . '" selected>' . $term->name . '</option>';
-						} else {
-							echo '<option value="' . $term->slug . '  ' , $meta == $term->slug ? $meta : ' ' ,'  ">' . $term->name . '</option>';
-						}
-					}
-					echo '</select>';
+					echo '<option value="">'. __( 'Please choose from list', 'cmb' ) .'</option>';
+					$args = array(
+						'type' => $field["posttype"],
+						'taxonomy' => $field["taxonomy"],
+						'hide_empty' => 0,
+						);
+					$terms = get_categories( $args );
+    					$saved_thing = get_post_meta($post->ID, $field['id'] ,true);
+    					$select_options = '';
+    					foreach ( $terms as $item ) {
+        					$option = '<option value="'.$item->slug.'">';
+        					$option .= $item->name;
+        					$option .= '</option>';
+        					$select_options .= $option;
+    					}
+    					$select_options = str_replace(
+						'value="'.$saved_thing.'"',
+						'value="'.$saved_thing.'" selected="selected"',
+						$select_options);
+    					echo $select_options;
+				    	echo '</select>';
 					echo '<p class="cmb_metabox_description">', $field['desc'], '</p>';
 					break;
 				case 'taxonomy_radio':
@@ -346,7 +414,7 @@ class cmb_Meta_Box {
 				break;
 				case 'file_list':
 					echo '<input class="cmb_upload_file" type="text" size="36" name="', $field['id'], '" value="" />';
-					echo '<input class="cmb_upload_button button" type="button" value="Upload File" />';
+					echo '<input class="cmb_upload_button button" type="button" value="'. __('Upload File','cmb') .'" />';
 					echo '<p class="cmb_metabox_description">', $field['desc'], '</p>';
 						$args = array(
 								'post_type' => 'attachment',
@@ -358,7 +426,7 @@ class cmb_Meta_Box {
 							if ($attachments) {
 								echo '<ul class="attach_list">';
 								foreach ($attachments as $attachment) {
-									echo '<li>'.wp_get_attachment_link($attachment->ID, 'thumbnail', 0, 0, 'Download');
+									echo '<li>'.wp_get_attachment_link($attachment->ID, 'thumbnail', 0, 0, __('Download','cmb') );
 									echo '<span>';
 									echo apply_filters('the_title', '&nbsp;'.$attachment->post_title);
 									echo '</span></li>';
@@ -371,7 +439,7 @@ class cmb_Meta_Box {
 					if ( 'url' == $field['allow'] || ( is_array( $field['allow'] ) && in_array( 'url', $field['allow'] ) ) )
 						$input_type_url="text";
 					echo '<input class="cmb_upload_file" type="' . $input_type_url . '" size="45" id="', $field['id'], '" name="', $field['id'], '" value="', $meta, '" />';
-					echo '<input class="cmb_upload_button button" type="button" value="Upload File" />';
+					echo '<input class="cmb_upload_button button" type="button" value="'. __('Upload File','cmb') .'" />';
 					echo '<input class="cmb_upload_file_id" type="hidden" id="', $field['id'], '_id" name="', $field['id'], '_id" value="', get_post_meta( $post->ID, $field['id'] . "_id",true), '" />';
 					echo '<p class="cmb_metabox_description">', $field['desc'], '</p>';
 					echo '<div id="', $field['id'], '_status" class="cmb_media_status">';
@@ -380,14 +448,14 @@ class cmb_Meta_Box {
 							if ( $check_image ) {
 								echo '<div class="img_status">';
 								echo '<img src="', $meta, '" alt="" />';
-								echo '<a href="#" class="cmb_remove_file_button" rel="', $field['id'], '">Remove Image</a>';
+								echo '<a href="#" class="cmb_remove_file_button" rel="', $field['id'], '">'. __('Remove Image','cmb') .'</a>';
 								echo '</div>';
 							} else {
 								$parts = explode( '/', $meta );
 								for( $i = 0; $i < count( $parts ); ++$i ) {
 									$title = $parts[$i];
 								}
-								echo 'File: <strong>', $title, '</strong>&nbsp;&nbsp;&nbsp; (<a href="', $meta, '" target="_blank" rel="external">Download</a> / <a href="#" class="cmb_remove_file_button" rel="', $field['id'], '">Remove</a>)';
+								echo __('File','cmb') .': <strong>', $title, '</strong>&nbsp;&nbsp;&nbsp; (<a href="', $meta, '" target="_blank" rel="external">Download</a> / <a href="#" class="cmb_remove_file_button" rel="', $field['id'], '">'. __('Remove','cmb') .'</a>)';
 							}
 						}
 					echo '</div>';
@@ -401,7 +469,7 @@ class cmb_Meta_Box {
 							if ( $check_embed ) {
 								echo '<div class="embed_status">';
 								echo $check_embed;
-								echo '<a href="#" class="cmb_remove_file_button" rel="', $field['id'], '">Remove Embed</a>';
+								echo '<a href="#" class="cmb_remove_file_button" rel="', $field['id'], '">'. __('Remove Embed','cmb') .'</a>';
 								echo '</div>';
 							} else {
 								echo 'URL is not a valid oEmbed URL.';
@@ -414,7 +482,15 @@ class cmb_Meta_Box {
 					do_action('cmb_render_' . $field['type'] , $field, $meta);
 			}
 
-			echo '</td>','</tr>';
+			echo '</td>';
+			if ( $field['display'] == "half_second" ) {
+				echo '</tr>';
+				echo '</table>';
+				echo '</td>';
+			}
+			if ( $field['display'] != "half_first" ) {
+				echo '</tr>';
+			}
 		}
 		echo '</table>';
 	}
