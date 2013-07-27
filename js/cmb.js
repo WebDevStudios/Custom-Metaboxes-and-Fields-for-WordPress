@@ -26,7 +26,7 @@ jQuery(document).ready(function ($) {
 		$('#' + jQuery(this).attr('id')).timePicker({
 			startTime: "07:00",
 			endTime: "22:00",
-			show24Hours: false,
+			show24Hours: true,
 			separator: ':',
 			step: 30
 		});
@@ -36,7 +36,7 @@ jQuery(document).ready(function ($) {
 	 * Initialize jQuery UI datepicker (this will be moved inline in a future release)
 	 */
 	$('.cmb_datepicker').each(function () {
-		$('#' + jQuery(this).attr('id')).datepicker();
+		$('#' + jQuery(this).attr('id')).datepicker({ dateFormat: 'dd-mm-yy' });
 		// $('#' + jQuery(this).attr('id')).datepicker({ dateFormat: 'yy-mm-dd' });
 		// For more options see http://jqueryui.com/demos/datepicker/#option-dateFormat
 	});
