@@ -1,6 +1,9 @@
 /**
  * CMB Styling
  */
+table.cmb_metabox.inner td,
+table.cmb_metabox.inner th { border-bottom: 0px solid #E9E9E9; }
+table.cmb_metabox td.inner { padding:0; }
 table.cmb_metabox td, table.cmb_metabox th { border-bottom: 1px solid #E9E9E9; }
 table.cmb_metabox th { text-align: right; font-weight:bold;}
 table.cmb_metabox th label { margin-top:5px; display:block;}
