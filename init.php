@@ -250,6 +250,7 @@ class cmb_Meta_Box {
 				case 'select':
 					if( empty( $meta ) && !empty( $field['std'] ) ) $meta = $field['std'];
 					echo '<select name="', $field['id'], '" id="', $field['id'], '">';
+					echo '<option>' . _e( '--SELECT--', 'cmb' ) . '</option>';
 					foreach ($field['options'] as $option) {
 						echo '<option value="', $option['value'], '"', $meta == $option['value'] ? ' selected="selected"' : '', '>', $option['name'], '</option>';
 					}
@@ -304,6 +305,7 @@ class cmb_Meta_Box {
 					break;
 				case 'taxonomy_select':
 					echo '<select name="', $field['id'], '" id="', $field['id'], '">';
+					echo '<option>' . _e( '--SELECT--', 'cmb' ) . '</option>';
 					$names= wp_get_object_terms( $post->ID, $field['taxonomy'] );
 					$terms = get_terms( $field['taxonomy'], 'hide_empty=0' );
 					foreach ( $terms as $term ) {
