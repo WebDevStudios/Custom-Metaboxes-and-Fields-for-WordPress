@@ -33,6 +33,7 @@ function cmb_sample_metaboxes( array $meta_boxes ) {
 				'desc' => 'field description (optional)',
 				'id'   => $prefix . 'test_text',
 				'type' => 'text',
+				'default'	=> 'Hello World',
 			),
 			array(
 				'name' => 'Test Text Small',

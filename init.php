@@ -183,12 +183,36 @@ class cmb_Meta_Box {
 			// Set up blank or default values for empty ones
 			if ( !isset( $field['name'] ) ) $field['name'] = '';
 			if ( !isset( $field['desc'] ) ) $field['desc'] = '';
-			if ( !isset( $field['std'] ) ) $field['std'] = '';
 			if ( 'file' == $field['type'] && !isset( $field['allow'] ) ) $field['allow'] = array( 'url', 'attachment' );
 			if ( 'file' == $field['type'] && !isset( $field['save_id'] ) )  $field['save_id']  = false;
 			if ( 'multicheck' == $field['type'] ) $field['multiple'] = true;
 
 			$meta = get_post_meta( $post->ID, $field['id'], 'multicheck' != $field['type'] /* If multicheck this can be multiple values */ );
+			$default = "";
+
+			//if $meta is either empty string or empty array
+			//order of looking: $meta > $field["default"] > $field["std"]
+			if( ( false == $field['multiple'] && '' == $meta ) ||
+				( true == $field['multiple'] && array() == $meta ) ) {
+
+				if( isset( $field['default'] ) && !empty( $field['default'] ) ) {
+					$default = $field['default'];
+				} else {
+					$default = isset( $field['std'] ) && !empty( $field['std'] ) ? $field['std'] : '';
+				}
+
+			} else {
+
+				if( 'text_date_timestamp' == $field['type'] ) {
+					$default = date( 'm\/d\/Y', $meta );
+				} else if( 'text_datetime_timestamp' == $field['type'] ) {
+					$default["date"] = date( 'm\/d\/Y', $meta );
+					$default["time"] = date( 'h:i A', $meta );
+				} else {
+					$default = $meta;
+				}
+				
+			}
 
 			echo '<tr class="cmb-type-'. sanitize_html_class( $field['type'] ) .' cmb_id_'. sanitize_html_class( $field['id'] ) .'">';
 
@@ -204,82 +228,79 @@ class cmb_Meta_Box {
 			switch ( $field['type'] ) {
 
 				case 'text':
-					echo '<input type="text" name="', $field['id'], '" id="', $field['id'], '" value="', '' !== $meta ? $meta : $field['std'], '" />','<p class="cmb_metabox_description">', $field['desc'], '</p>';
+					echo '<input type="text" name="', $field['id'], '" id="', $field['id'], '" value="', $default, '" />','<p class="cmb_metabox_description">', $field['desc'], '</p>';
 					break;
 				case 'text_small':
-					echo '<input class="cmb_text_small" type="text" name="', $field['id'], '" id="', $field['id'], '" value="', '' !== $meta ? $meta : $field['std'], '" /><span class="cmb_metabox_description">', $field['desc'], '</span>';
+					echo '<input class="cmb_text_small" type="text" name="', $field['id'], '" id="', $field['id'], '" value="', $default, '" /><span class="cmb_metabox_description">', $field['desc'], '</span>';
 					break;
 				case 'text_medium':
-					echo '<input class="cmb_text_medium" type="text" name="', $field['id'], '" id="', $field['id'], '" value="', '' !== $meta ? $meta : $field['std'], '" /><span class="cmb_metabox_description">', $field['desc'], '</span>';
+					echo '<input class="cmb_text_medium" type="text" name="', $field['id'], '" id="', $field['id'], '" value="', $default, '" /><span class="cmb_metabox_description">', $field['desc'], '</span>';
 					break;
 				case 'text_date':
-					echo '<input class="cmb_text_small cmb_datepicker" type="text" name="', $field['id'], '" id="', $field['id'], '" value="', '' !== $meta ? $meta : $field['std'], '" /><span class="cmb_metabox_description">', $field['desc'], '</span>';
+					echo '<input class="cmb_text_small cmb_datepicker" type="text" name="', $field['id'], '" id="', $field['id'], '" value="', $default, '" /><span class="cmb_metabox_description">', $field['desc'], '</span>';
 					break;
 				case 'text_date_timestamp':
-					echo '<input class="cmb_text_small cmb_datepicker" type="text" name="', $field['id'], '" id="', $field['id'], '" value="', '' !== $meta ? date( 'm\/d\/Y', $meta ) : $field['std'], '" /><span class="cmb_metabox_description">', $field['desc'], '</span>';
+					echo '<input class="cmb_text_small cmb_datepicker" type="text" name="', $field['id'], '" id="', $field['id'], '" value="', $default, '" /><span class="cmb_metabox_description">', $field['desc'], '</span>';
 					break;
 
 				case 'text_datetime_timestamp':
-					echo '<input class="cmb_text_small cmb_datepicker" type="text" name="', $field['id'], '[date]" id="', $field['id'], '_date" value="', '' !== $meta ? date( 'm\/d\/Y', $meta ) : $field['std'], '" />';
-					echo '<input class="cmb_timepicker text_time" type="text" name="', $field['id'], '[time]" id="', $field['id'], '_time" value="', '' !== $meta ? date( 'h:i A', $meta ) : $field['std'], '" /><span class="cmb_metabox_description" >', $field['desc'], '</span>';
+					echo '<input class="cmb_text_small cmb_datepicker" type="text" name="', $field['id'], '[date]" id="', $field['id'], '_date" value="', $default['date'], '" />';
+					echo '<input class="cmb_timepicker text_time" type="text" name="', $field['id'], '[time]" id="', $field['id'], '_time" value="', $default['time'], '" /><span class="cmb_metabox_description" >', $field['desc'], '</span>';
 					break;
 				case 'text_time':
-					echo '<input class="cmb_timepicker text_time" type="text" name="', $field['id'], '" id="', $field['id'], '" value="', '' !== $meta ? $meta : $field['std'], '" /><span class="cmb_metabox_description">', $field['desc'], '</span>';
+					echo '<input class="cmb_timepicker text_time" type="text" name="', $field['id'], '" id="', $field['id'], '" value="', $default, '" /><span class="cmb_metabox_description">', $field['desc'], '</span>';
 					break;
 				case 'text_money':
-					echo '$ <input class="cmb_text_money" type="text" name="', $field['id'], '" id="', $field['id'], '" value="', '' !== $meta ? $meta : $field['std'], '" /><span class="cmb_metabox_description">', $field['desc'], '</span>';
+					echo '$ <input class="cmb_text_money" type="text" name="', $field['id'], '" id="', $field['id'], '" value="', $default, '" /><span class="cmb_metabox_description">', $field['desc'], '</span>';
 					break;
 				case 'colorpicker':
-					$meta = '' !== $meta ? $meta : $field['std'];
 					$hex_color = '(([a-fA-F0-9]){3}){1,2}$';
-					if ( preg_match( '/^' . $hex_color . '/i', $meta ) ) // Value is just 123abc, so prepend #.
-						$meta = '#' . $meta;
-					elseif ( ! preg_match( '/^#' . $hex_color . '/i', $meta ) ) // Value doesn't match #123abc, so sanitize to just #.
-						$meta = "#";
-					echo '<input class="cmb_colorpicker cmb_text_small" type="text" name="', $field['id'], '" id="', $field['id'], '" value="', $meta, '" /><span class="cmb_metabox_description">', $field['desc'], '</span>';
+					if ( preg_match( '/^' . $hex_color . '/i', $default ) ) // Value is just 123abc, so prepend #.
+						$default = '#' . $default;
+					elseif ( ! preg_match( '/^#' . $hex_color . '/i', $default ) ) // Value doesn't match #123abc, so sanitize to just #.
+						$default = "#";
+					echo '<input class="cmb_colorpicker cmb_text_small" type="text" name="', $field['id'], '" id="', $field['id'], '" value="', $default, '" /><span class="cmb_metabox_description">', $field['desc'], '</span>';
 					break;
 				case 'textarea':
-					echo '<textarea name="', $field['id'], '" id="', $field['id'], '" cols="60" rows="10">', '' !== $meta ? $meta : $field['std'], '</textarea>','<p class="cmb_metabox_description">', $field['desc'], '</p>';
+					echo '<textarea name="', $field['id'], '" id="', $field['id'], '" cols="60" rows="10">', $default, '</textarea>','<p class="cmb_metabox_description">', $field['desc'], '</p>';
 					break;
 				case 'textarea_small':
-					echo '<textarea name="', $field['id'], '" id="', $field['id'], '" cols="60" rows="4">', '' !== $meta ? $meta : $field['std'], '</textarea>','<p class="cmb_metabox_description">', $field['desc'], '</p>';
+					echo '<textarea name="', $field['id'], '" id="', $field['id'], '" cols="60" rows="4">', $default, '</textarea>','<p class="cmb_metabox_description">', $field['desc'], '</p>';
 					break;
 				case 'textarea_code':
-					echo '<textarea name="', $field['id'], '" id="', $field['id'], '" cols="60" rows="10" class="cmb_textarea_code">', '' !== $meta ? $meta : $field['std'], '</textarea>','<p class="cmb_metabox_description">', $field['desc'], '</p>';
+					echo '<textarea name="', $field['id'], '" id="', $field['id'], '" cols="60" rows="10" class="cmb_textarea_code">', $default, '</textarea>','<p class="cmb_metabox_description">', $field['desc'], '</p>';
 					break;
 				case 'select':
-					if( empty( $meta ) && !empty( $field['std'] ) ) $meta = $field['std'];
 					echo '<select name="', $field['id'], '" id="', $field['id'], '">';
+					echo '<option>' . _e( '--SELECT--', 'cmb' ) . '</option>';
 					foreach ($field['options'] as $option) {
-						echo '<option value="', $option['value'], '"', $meta == $option['value'] ? ' selected="selected"' : '', '>', $option['name'], '</option>';
+						echo '<option value="', $option['value'], '"', $default == $option['value'] ? ' selected="selected"' : '', '>', $option['name'], '</option>';
 					}
 					echo '</select>';
 					echo '<p class="cmb_metabox_description">', $field['desc'], '</p>';
 					break;
 				case 'radio_inline':
-					if( empty( $meta ) && !empty( $field['std'] ) ) $meta = $field['std'];
 					echo '<div class="cmb_radio_inline">';
 					$i = 1;
 					foreach ($field['options'] as $option) {
-						echo '<div class="cmb_radio_inline_option"><input type="radio" name="', $field['id'], '" id="', $field['id'], $i, '" value="', $option['value'], '"', $meta == $option['value'] ? ' checked="checked"' : '', ' /><label for="', $field['id'], $i, '">', $option['name'], '</label></div>';
+						echo '<div class="cmb_radio_inline_option"><input type="radio" name="', $field['id'], '" id="', $field['id'], $i, '" value="', $option['value'], '"', $default == $option['value'] ? ' checked="checked"' : '', ' /><label for="', $field['id'], $i, '">', $option['name'], '</label></div>';
 						$i++;
 					}
 					echo '</div>';
 					echo '<p class="cmb_metabox_description">', $field['desc'], '</p>';
 					break;
 				case 'radio':
-					if( empty( $meta ) && !empty( $field['std'] ) ) $meta = $field['std'];
 					echo '<ul>';
 					$i = 1;
 					foreach ($field['options'] as $option) {
-						echo '<li><input type="radio" name="', $field['id'], '" id="', $field['id'], $i,'" value="', $option['value'], '"', $meta == $option['value'] ? ' checked="checked"' : '', ' /><label for="', $field['id'], $i, '">', $option['name'].'</label></li>';
+						echo '<li><input type="radio" name="', $field['id'], '" id="', $field['id'], $i,'" value="', $option['value'], '"', $default == $option['value'] ? ' checked="checked"' : '', ' /><label for="', $field['id'], $i, '">', $option['name'].'</label></li>';
 						$i++;
 					}
 					echo '</ul>';
 					echo '<p class="cmb_metabox_description">', $field['desc'], '</p>';
 					break;
 				case 'checkbox':
-					echo '<input type="checkbox" name="', $field['id'], '" id="', $field['id'], '"', $meta ? ' checked="checked"' : '', ' />';
+					echo '<input type="checkbox" name="', $field['id'], '" id="', $field['id'], '"', $default ? ' checked="checked"' : '', ' />';
 					echo '<span class="cmb_metabox_description">', $field['desc'], '</span>';
 					break;
 				case 'multicheck':
@@ -288,7 +309,7 @@ class cmb_Meta_Box {
 					foreach ( $field['options'] as $value => $name ) {
 						// Append `[]` to the name to get multiple values
 						// Use in_array() to check whether the current option should be checked
-						echo '<li><input type="checkbox" name="', $field['id'], '[]" id="', $field['id'], $i, '" value="', $value, '"', in_array( $value, $meta ) ? ' checked="checked"' : '', ' /><label for="', $field['id'], $i, '">', $name, '</label></li>';
+						echo '<li><input type="checkbox" name="', $field['id'], '[]" id="', $field['id'], $i, '" value="', $value, '"', in_array( $value, $default ) ? ' checked="checked"' : '', ' /><label for="', $field['id'], $i, '">', $name, '</label></li>';
 						$i++;
 					}
 					echo '</ul>';
@@ -299,18 +320,19 @@ class cmb_Meta_Box {
 					echo '<p class="cmb_metabox_description">', $field['desc'], '</p>';
 					break;
 				case 'wysiwyg':
-					wp_editor( $meta ? $meta : $field['std'], $field['id'], isset( $field['options'] ) ? $field['options'] : array() );
+					wp_editor( $default, $field['id'], isset( $field['options'] ) ? $field['options'] : array() );
 			        echo '<p class="cmb_metabox_description">', $field['desc'], '</p>';
 					break;
 				case 'taxonomy_select':
 					echo '<select name="', $field['id'], '" id="', $field['id'], '">';
+					echo '<option>' . _e( '--SELECT--', 'cmb' ) . '</option>';
 					$names= wp_get_object_terms( $post->ID, $field['taxonomy'] );
 					$terms = get_terms( $field['taxonomy'], 'hide_empty=0' );
 					foreach ( $terms as $term ) {
 						if (!is_wp_error( $names ) && !empty( $names ) && !strcmp( $term->slug, $names[0]->slug ) ) {
 							echo '<option value="' . $term->slug . '" selected>' . $term->name . '</option>';
 						} else {
-							echo '<option value="' . $term->slug . '  ' , $meta == $term->slug ? $meta : ' ' ,'  ">' . $term->name . '</option>';
+							echo '<option value="' . $term->slug . '  ' , $default == $term->slug ? $default : ' ' ,'  ">' . $term->name . '</option>';
 						}
 					}
 					echo '</select>';
@@ -324,7 +346,7 @@ class cmb_Meta_Box {
 						if ( !is_wp_error( $names ) && !empty( $names ) && !strcmp( $term->slug, $names[0]->slug ) ) {
 							echo '<li><input type="radio" name="', $field['id'], '" value="'. $term->slug . '" checked>' . $term->name . '</li>';
 						} else {
-							echo '<li><input type="radio" name="', $field['id'], '" value="' . $term->slug . '  ' , $meta == $term->slug ? $meta : ' ' ,'  ">' . $term->name .'</li>';
+							echo '<li><input type="radio" name="', $field['id'], '" value="' . $term->slug . '  ' , $default == $term->slug ? $default : ' ' ,'  ">' . $term->name .'</li>';
 						}
 					}
 					echo '</ul>';
@@ -370,34 +392,34 @@ class cmb_Meta_Box {
 					$input_type_url = "hidden";
 					if ( 'url' == $field['allow'] || ( is_array( $field['allow'] ) && in_array( 'url', $field['allow'] ) ) )
 						$input_type_url="text";
-					echo '<input class="cmb_upload_file" type="' . $input_type_url . '" size="45" id="', $field['id'], '" name="', $field['id'], '" value="', $meta, '" />';
+					echo '<input class="cmb_upload_file" type="' . $input_type_url . '" size="45" id="', $field['id'], '" name="', $field['id'], '" value="', $default, '" />';
 					echo '<input class="cmb_upload_button button" type="button" value="Upload File" />';
 					echo '<input class="cmb_upload_file_id" type="hidden" id="', $field['id'], '_id" name="', $field['id'], '_id" value="', get_post_meta( $post->ID, $field['id'] . "_id",true), '" />';
 					echo '<p class="cmb_metabox_description">', $field['desc'], '</p>';
 					echo '<div id="', $field['id'], '_status" class="cmb_media_status">';
-						if ( $meta != '' ) {
-							$check_image = preg_match( '/(^.*\.jpg|jpeg|png|gif|ico*)/i', $meta );
+						if ( $default != '' ) {
+							$check_image = preg_match( '/(^.*\.jpg|jpeg|png|gif|ico*)/i', $default );
 							if ( $check_image ) {
 								echo '<div class="img_status">';
-								echo '<img src="', $meta, '" alt="" />';
+								echo '<img src="', $default, '" alt="" />';
 								echo '<a href="#" class="cmb_remove_file_button" rel="', $field['id'], '">Remove Image</a>';
 								echo '</div>';
 							} else {
-								$parts = explode( '/', $meta );
+								$parts = explode( '/', $default );
 								for( $i = 0; $i < count( $parts ); ++$i ) {
 									$title = $parts[$i];
 								}
-								echo 'File: <strong>', $title, '</strong>&nbsp;&nbsp;&nbsp; (<a href="', $meta, '" target="_blank" rel="external">Download</a> / <a href="#" class="cmb_remove_file_button" rel="', $field['id'], '">Remove</a>)';
+								echo 'File: <strong>', $title, '</strong>&nbsp;&nbsp;&nbsp; (<a href="', $default, '" target="_blank" rel="external">Download</a> / <a href="#" class="cmb_remove_file_button" rel="', $field['id'], '">Remove</a>)';
 							}
 						}
 					echo '</div>';
 				break;
 				case 'oembed':
-					echo '<input class="cmb_oembed" type="text" name="', $field['id'], '" id="', $field['id'], '" value="', '' !== $meta ? $meta : $field['std'], '" />','<p class="cmb_metabox_description">', $field['desc'], '</p>';
+					echo '<input class="cmb_oembed" type="text" name="', $field['id'], '" id="', $field['id'], '" value="', $default, '" />','<p class="cmb_metabox_description">', $field['desc'], '</p>';
 					echo '<p class="cmb-spinner spinner"></p>';
 					echo '<div id="', $field['id'], '_status" class="cmb_media_status ui-helper-clearfix embed_wrap">';
-						if ( $meta != '' ) {
-							$check_embed = $GLOBALS['wp_embed']->run_shortcode( '[embed]'. esc_url( $meta ) .'[/embed]' );
+						if ( $default != '' ) {
+							$check_embed = $GLOBALS['wp_embed']->run_shortcode( '[embed]'. esc_url( $default ) .'[/embed]' );
 							if ( $check_embed ) {
 								echo '<div class="embed_status">';
 								echo $check_embed;
@@ -411,7 +433,7 @@ class cmb_Meta_Box {
 					break;
 
 				default:
-					do_action('cmb_render_' . $field['type'] , $field, $meta);
+					do_action('cmb_render_' . $field['type'] , $field, $default);
 			}
 
 			echo '</td>','</tr>';
@@ -456,7 +478,7 @@ class cmb_Meta_Box {
 			$old = get_post_meta( $post_id, $name, !$field['multiple'] /* If multicheck this can be multiple values */ );
 			$new = isset( $_POST[$field['id']] ) ? $_POST[$field['id']] : null;
 
-			if ( $type_comp == true && in_array( $field['type'], array( 'taxonomy_select', 'taxonomy_radio', 'taxonomy_multicheck' ) ) )  {
+			if ( $type_comp == true && !empty( $new ) && in_array( $field['type'], array( 'taxonomy_select', 'taxonomy_radio', 'taxonomy_multicheck' ) ) )  {
 				$new = wp_set_object_terms( $post_id, $new, $field['taxonomy'] );
 			}
 
