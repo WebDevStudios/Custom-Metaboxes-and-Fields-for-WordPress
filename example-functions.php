@@ -65,11 +65,11 @@ function cmb_sample_metaboxes( array $meta_boxes ) {
 				'type' => 'text_datetime_timestamp',
 			),
 			array(
-	            'name' => 'Test Time',
-	            'desc' => 'field description (optional)',
-	            'id'   => $prefix . 'test_time',
-	            'type' => 'text_time',
-	        ),
+	            		'name' => 'Test Time',
+	            		'desc' => 'field description (optional)',
+			        'id'   => $prefix . 'test_time',
+			        'type' => 'text_time',
+	                ),
 			array(
 				'name' => 'Test Money',
 				'desc' => 'field description (optional)',
@@ -77,12 +77,12 @@ function cmb_sample_metaboxes( array $meta_boxes ) {
 				'type' => 'text_money',
 			),
 			array(
-	            'name' => 'Test Color Picker',
-	            'desc' => 'field description (optional)',
-	            'id'   => $prefix . 'test_colorpicker',
-	            'type' => 'colorpicker',
+	            		'name' => 'Test Color Picker',
+	            		'desc' => 'field description (optional)',
+	            		'id'   => $prefix . 'test_colorpicker',
+	            		'type' => 'colorpicker',
 				'std'  => '#ffffff'
-	        ),
+	        	),
 			array(
 				'name' => 'Test Text Area',
 				'desc' => 'field description (optional)',
