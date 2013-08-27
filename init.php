@@ -245,7 +245,7 @@ class cmb_Meta_Box {
 					break;
 				case 'select_timezone':
 					$meta = '' !== $meta ? $meta : $field['std'];
-					if ('' !== $meta) {
+					if ('' === $meta) {
 						$meta = cmb_timezone_string();
 					}
 
@@ -510,9 +510,6 @@ class cmb_Meta_Box {
 				if (array_key_exists('timezone', $new)) {
 					$tzstring = $new['timezone'];
 				}
-
-				// $offset = cmb_timezone_offset($tzstring);
-				// $timestamp = strtotime( $string ) + $offset;
 
 				$new = new DateTime($string, new DateTimeZone($tzstring));
 				$new = serialize($new);
