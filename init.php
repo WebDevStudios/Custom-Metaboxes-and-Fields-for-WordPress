@@ -226,6 +226,16 @@ class cmb_Meta_Box {
 				case 'text_time':
 					echo '<input class="cmb_timepicker text_time" type="text" name="', $field['id'], '" id="', $field['id'], '" value="', '' !== $meta ? $meta : $field['std'], '" /><span class="cmb_metabox_description">', $field['desc'], '</span>';
 					break;
+				case 'select_timezone':
+					$meta = '' !== $meta ? $meta : $field['std'];
+					if (empty($meta)) {
+						$meta = cmb_timezone_string();
+					}
+
+					echo '<select name="', $field['id'], '" id="', $field['id'], '">';
+					echo wp_timezone_choice( $meta );
+					echo '</select>';
+					break;
 				case 'text_money':
 					echo '$ <input class="cmb_text_money" type="text" name="', $field['id'], '" id="', $field['id'], '" value="', '' !== $meta ? $meta : $field['std'], '" /><span class="cmb_metabox_description">', $field['desc'], '</span>';
 					break;
@@ -662,6 +672,30 @@ function cmb_oembed_ajax_results() {
 	// send back our encoded data
 	echo json_encode( array( 'result' => $return, 'id' => $found ) );
 	die();
+}
+
+/*
+ * Returns a timezone string representing the default timezone for the site.
+ *
+ * Roughly copied from WordPress, as get_option('timezone_string') will return
+ * and empty string if no value has beens set on the options page.
+ * A timezone string is required by the wp_timezone_choice() used by the
+ * select_timezone field.
+ */
+function cmb_timezone_string() {
+	$current_offset = get_option('gmt_offset');
+	$tzstring = get_option('timezone_string');
+
+	if ( empty($tzstring) ) { // Create a UTC+- zone if no timezone string exists
+		if ( 0 == $current_offset )
+			$tzstring = 'UTC+0';
+		elseif ($current_offset < 0)
+			$tzstring = 'UTC' . $current_offset;
+		else
+			$tzstring = 'UTC+' . $current_offset;
+	}
+
+	return $tzstring;
 }
 
 // End. That's it, folks! //
