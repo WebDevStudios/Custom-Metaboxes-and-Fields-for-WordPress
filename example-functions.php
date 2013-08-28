@@ -65,10 +65,22 @@ function cmb_sample_metaboxes( array $meta_boxes ) {
 				'type' => 'text_datetime_timestamp',
 			),
 			array(
+			    'name' => 'Test Date/Time Picker/Time zone Combo (serialized DateTime object)',
+			    'desc' => 'field description (optional)',
+			    'id'   => $prefix . 'test_datetime_timestamp_timezone',
+			    'type' => 'text_datetime_timestamp_timezone',
+			),
+			array(
 	            'name' => 'Test Time',
 	            'desc' => 'field description (optional)',
 	            'id'   => $prefix . 'test_time',
 	            'type' => 'text_time',
+	        ),
+	        array(
+	            'name' => 'Time zone',
+	            'desc' => 'Time zone'
+	            'id'   => $prefix . 'timezone',
+	            'type' => 'select_timezone',
 	        ),
 			array(
 				'name' => 'Test Money',
