@@ -220,24 +220,36 @@ class cmb_Meta_Box {
 					break;
 
 				case 'text_datetime_timestamp':
+
+					$tz_offset = cmb_field_timezone_offset($field, $post->ID);
+					if (!empty($tz_offset)) {
+						$meta -= $tz_offset;
+					}
+
 					echo '<input class="cmb_text_small cmb_datepicker" type="text" name="', $field['id'], '[date]" id="', $field['id'], '_date" value="', '' !== $meta ? date( 'm\/d\/Y', $meta ) : $field['std'], '" />';
 					echo '<input class="cmb_timepicker text_time" type="text" name="', $field['id'], '[time]" id="', $field['id'], '_time" value="', '' !== $meta ? date( 'h:i A', $meta ) : $field['std'], '" /><span class="cmb_metabox_description" >', $field['desc'], '</span>';
 					break;
 				case 'text_datetime_timestamp_timezone':
 
-					$meta = $datetime = unserialize($meta);
+					$datetime = unserialize($meta);
+					$meta = $tzstring = false;
 
-					$tz = $datetime->getTimezone();
-					$tzstring = $tz->getName();
 
-					$meta = $datetime->getTimestamp() + $tz->getOffset( new DateTime('NOW') );
+					if ($datetime && $datetime instanceof DateTime) {
+						$tz = $datetime->getTimezone();
+						$tzstring = $tz->getName();
 
-					echo '<input class="cmb_text_small cmb_datepicker" type="text" name="', $field['id'], '[date]" id="', $field['id'], '_date" value="', '' !== $meta ? date( 'm\/d\/Y', (int)$meta ) : $field['std'], '" />';
-					echo '<input class="cmb_timepicker text_time" type="text" name="', $field['id'], '[time]" id="', $field['id'], '_time" value="', '' !== $meta ? date( 'h:i A', (int)$meta ) : $field['std'], '" /><span class="cmb_metabox_description" >', $field['desc'], '</span>';
+						$meta = $datetime->getTimestamp() + $tz->getOffset( new DateTime('NOW') );
+					}
+
+					echo '<input class="cmb_text_small cmb_datepicker" type="text" name="', $field['id'], '[date]" id="', $field['id'], '_date" value="', '' !== $meta ? date( 'm\/d\/Y', $meta ) : $field['std'], '" />';
+					echo '<input class="cmb_timepicker text_time" type="text" name="', $field['id'], '[time]" id="', $field['id'], '_time" value="', '' !== $meta ? date( 'h:i A', $meta ) : $field['std'], '" />';
 
 					echo '<select name="', $field['id'], '[timezone]" id="', $field['id'], '_timezone">';
 					echo wp_timezone_choice( $tzstring );
 					echo '</select>';
+
+					echo '<span class="cmb_metabox_description" >', $field['desc'], '</span>';
 
 					break;
 				case 'text_time':
@@ -506,13 +518,31 @@ class cmb_Meta_Box {
 
 			if ( $type_comp == true && $field['type'] == 'text_datetime_timestamp_timezone' ) {
 				$string = $new['date'] . ' ' . $new['time'];
-				$tzstring = cmb_timezone_string();
+				$tzstring = null;
 				if (array_key_exists('timezone', $new)) {
 					$tzstring = $new['timezone'];
 				}
 
+				if (empty($tzstring)) {
+					$tzstring = cmb_timezone_string();
+				}
+
+				$offset = cmb_timezone_offset($tzstring);
+
+				if (substr($tzstring, 0, 3) === 'UTC') {
+					$tzstring = timezone_name_from_abbr("", $offset, 0);
+				}
+
 				$new = new DateTime($string, new DateTimeZone($tzstring));
 				$new = serialize($new);
+			}
+
+			if ( $type_comp == true && $field['type'] == 'text_datetime_timestamp' ) {
+
+				$tz_offset = cmb_field_timezone_offset($field, $post_id);
+				if (!empty($tz_offset)) {
+					$new += $tz_offset;
+				}
 			}
 
 			$new = apply_filters('cmb_validate_' . $field['type'], $new, $post_id, $field);
@@ -726,30 +756,44 @@ function cmb_timezone_string() {
 	return $tzstring;
 }
 
+function cmb_timezone_offset($tzstring) {
+	if (!empty($tzstring)) {
 
-/*
- * Returns the timezone offset in seconds between the supplied timezone string
- * and the servers current timezone settings.
- */
-function cmb_timezone_offset( $tzstring ) {
-
-	if (substr($tzstring, 0, 3) !== 'UTC') {
-
-		$allowed_zones = timezone_identifiers_list();
-
-		if ( in_array( $tzstring, $allowed_zones) ) {
-			$date_time_zone_selected = new DateTimeZone($tzstring);
-			$tz_offset = timezone_offset_get($date_time_zone_selected, date_create());
-
-			return $tz_offset;
+		if (substr($tzstring, 0, 3) === 'UTC') {
+			$tzstring = str_replace(array(':15',':30',':45'), array('.25','.5','.75'), $tzstring);
+			return intval(floatval(substr($tzstring, 3)) * HOUR_IN_SECONDS);
 		}
 
-	} else {
-		$tzstring = str_replace(array(':15',':30',':45'), array('.25','.5','.75'), $tzstring);
-		return intval(floatval(substr($tzstring, 3)) * HOUR_IN_SECONDS);
+		$date_time_zone_selected = new DateTimeZone($tzstring);
+		$tz_offset = timezone_offset_get($date_time_zone_selected, date_create());
+
+		return $tz_offset;
 	}
 
 	return 0;
 }
+
+function cmb_field_timezone_offset($field, $post_id) {
+
+	$tzstring = cmb_field_timezone($field, $post_id);
+
+	return cmb_timezone_offset($tzstring);
+}
+
+function cmb_field_timezone($field, $post_id) {
+	$tzstring = null;
+	if (array_key_exists('timezone', $field) && $field['timezone']) {
+		$tzstring = $field['timezone'];
+	} else if (array_key_exists('timezone_meta_key', $field) && $field['timezone_meta_key']) {
+		$timezone_meta_key = $field['timezone_meta_key'];
+
+		$tzstring = get_post_meta( $post_id, $timezone_meta_key, true );
+
+		return $tzstring;
+	}
+
+	return false;
+}
+
 
 // End. That's it, folks! //
