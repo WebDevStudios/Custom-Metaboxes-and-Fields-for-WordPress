@@ -399,40 +399,91 @@ class CMB_File_Field extends CMB_Field {
 		wp_enqueue_media();
 	}
 
-	public function html() { 
+	public function html() {
+
+		if ( isset( $this->args['size'] ) && is_string( $this->args['size'] ) )
+			$this->args['size'] = $this->get_image_size( $this->args['size'] );
 
 		$args = wp_parse_args( $this->args, array(
 			'size' => array( 150, 150, 'crop' => true )
 		) );
 
+		if ( $this->get_value() )
+			$image = wp_get_attachment_image_src( $this->get_value(), $args['size'], true );
+
+		$crop = ( isset( $args['size']['crop'] ) && $args['size']['crop'] ) ? 1 : 0;
+
+		$styles  = 'width: ' . intval( $args['size'][0] ) . 'px; ';
+		$styles .= 'height: ' . intval( $args['size'][1] ) . 'px; ';
+		$styles .= 'line-height: ' . intval( $args['size'][1] ) . 'px';
+
+		$placeholder_styles  = 'width: ' . ( intval( $args['size'][0] ) - 8 ) . 'px; ';
+		$placeholder_styles .= 'height: ' . ( intval( $args['size'][1] ) - 8 ) . 'px; ';
+
+		$data_type = ( ! empty( $args['library-type'] ) ? implode( ',', $args['library-type'] ) : null );
+
 		?>
 
-		<a class="button cmb-file-upload <?php echo esc_attr( $this->get_value() ) ? 'hidden' : '' ?>" href="#">Add Media</a>
+		<div class="cmb-file-wrap" style="<?php echo esc_attr( $styles ); ?>" <?php echo 'data-type="' . esc_attr( $data_type ) . '"'; ?>>
 
-		<div class="cmb-file <?php echo $this->get_value() ? '' : 'hidden'; ?>" style="text-align: center;">
+			<div class="cmb-file-wrap-placeholder" style="<?php echo esc_attr( $placeholder_styles ); ?>"></div>
 
-			<div class="cmb-file-holder <?php if ( $this->value ) { echo wp_attachment_is_image( $this->value ) ? ' type-img' : ' type-file'; } ?>" style="text-align: center; vertical-align: middle;">
+			<a class="button cmb-file-upload <?php echo esc_attr( $this->get_value() ) ? 'hidden' : '' ?>" href="#">Add Media</a>
 
-				<?php if ( $this->get_value() )
-					echo wp_get_attachment_image( $this->get_value(), $args['size'], true ) ?>
+			<div class="cmb-file <?php echo $this->get_value() ? '' : 'hidden'; ?>">
 
-				<?php if ( $this->get_value() && ! wp_attachment_is_image( $this->value ) ) : ?>
-					<div class="cmb-file-name">
-						<strong>
-							<?php echo esc_html( end( explode( DIRECTORY_SEPARATOR, get_attached_file( $this->get_value() ) ) ) ); ?>
-						</strong>
-					</div>
-				<?php endif; ?>
+				<div class="cmb-file-holder <?php if ( $this->value ) { echo wp_attachment_is_image( $this->value ) ? ' type-img' : ' type-file'; } ?>" style="<?php echo esc_attr( $styles ); ?>" data-crop="<?php echo (string) $crop; ?>">
+
+					<?php if ( $image ) : ?>
+						<img src="<?php echo esc_url( $image[0] ); ?>" width="<?php echo intval( $image[1] ); ?>" height="<?php echo intval( $image[2] ); ?>" />
+					<?php endif; ?>
+
+					<?php if ( $this->get_value() && ! wp_attachment_is_image( $this->value ) ) : ?>
+						<div class="cmb-file-name">
+							<strong><?php echo esc_html( basename(  get_attached_file( $this->get_value() ) ) ); ?></strong>
+						</div>
+					<?php endif; ?>
+
+				</div>
+
+				<a href="#" class="cmb-remove-file button">Remove</a>
 
 			</div>
 
-			<a href="#" class="cmb-remove-file button">Remove</a>
+			<input type="hidden" class="cmb-file-upload-input" <?php $this->name_attr(); ?> value="<?php echo esc_attr( $this->value ); ?>" />
 
 		</div>
 
-		<input type="hidden" class="cmb-file-upload-input" <?php $this->name_attr(); ?> value="<?php echo esc_attr( $this->value ); ?>" />
-
 	<?php }
+
+	/**
+	 * Gets the dimensions from a registered image size.
+	 *
+	 * @param  string $size
+	 * @return array dimensions.
+	 */
+	private function get_image_size( $size ) {
+
+		if ( in_array( $size, array( 'thumbnail', 'medium', 'large' ) ) ) {
+			return array(
+				get_option( $size . '_size_w' ),
+				get_option( $size . '_size_h' ),
+				'crop' => get_option( $size . '_crop' )
+			);
+		}
+
+		global $_wp_additional_image_sizes;
+		if ( isset( $_wp_additional_image_sizes[$size] ) ) {
+			return array(
+				$_wp_additional_image_sizes[$size]['width'],
+				$_wp_additional_image_sizes[$size]['height'],
+				'crop' => $_wp_additional_image_sizes[$size]['crop']
+			);
+		}
+
+		return false;
+
+	}
 }
 
 class CMB_Image_Field extends CMB_Field {
