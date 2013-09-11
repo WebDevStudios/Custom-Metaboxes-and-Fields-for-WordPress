@@ -484,7 +484,30 @@ class CMB_File_Field extends CMB_Field {
 		return false;
 
 	}
+
+	/**
+	 * Ajax callback for outputing an image src based on post data.
+	 *
+	 * @return null
+	 */
+	static function request_image_ajax_callback() {
+
+		$id = intval( $_POST['id'] );
+
+		$size = array(
+			intval( $_POST['width'] ),
+			intval( $_POST['height'] ),
+			'crop' => (bool) $_POST['crop']
+		);
+
+		$image = wp_get_attachment_image_src( $id, $size );
+		echo reset( $image );
+
+		die(); // this is required to return a proper result
+	}
+
 }
+add_action( 'wp_ajax_cmb_request_image', array( 'CMB_File_Field', 'request_image_ajax_callback' ) );
 
 class CMB_Image_Field extends CMB_Field {
 
