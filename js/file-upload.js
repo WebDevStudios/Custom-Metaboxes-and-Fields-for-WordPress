@@ -78,4 +78,45 @@ jQuery( document ).ready( function() {
 
 	} );
 
+	/**
+	 * Recalculate the dimensions of the file upload field.
+	 * It should never be larger than the available width.
+	 * It should maintain the aspect ratio of the original field.
+	 * It should recalculate when resized.
+	 * @return {[type]} [description]
+	 */
+	var recalculateFileFieldSize = function() {
+
+		jQuery( '.CMB_File_Field .cmb-file-wrap' ).each( function() {
+
+			var el        = jQuery(this),
+				container = el.closest( '.postbox' ),
+				width     = container.width() - 12 - 10 - 10,
+				ratio     =  el.height() / el.width();
+
+			if ( el.attr( 'data-original-width' ) )
+				el.width( el.attr( 'data-original-width' ) );
+			else
+				el.attr( 'data-original-width', el.width() );
+
+			if ( el.attr( 'data-original-height' ) )
+				el.height( el.attr( 'data-original-height' ) );
+			else
+				el.attr( 'data-original-height', el.height() );
+
+			if ( el.width() > width ) {
+				el.width( width );
+				el.find( '.cmb-file-wrap-placeholder' ).width( width - 8 );
+				el.height( width * ratio );
+				el.css( 'line-height', ( width * ratio ) + 'px' );
+				el.find( '.cmb-file-wrap-placeholder' ).height( ( width * ratio ) - 8 );
+			}
+
+
+		} );
+	}
+
+	recalculateFileFieldSize();
+	jQuery(window).resize( recalculateFileFieldSize );
+
 } );
