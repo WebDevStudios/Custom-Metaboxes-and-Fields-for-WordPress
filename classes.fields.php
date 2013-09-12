@@ -98,9 +98,9 @@ abstract class CMB_Field {
 	public function id_attr( $append = null ) {
 
 		printf( 'id="%s"', esc_attr( $this->get_the_id_attr( $append ) ) );
-		
+
 	}
-	
+
 	public function get_the_id_attr( $append = null ) {
 
 		$id = $this->id;
@@ -116,7 +116,7 @@ abstract class CMB_Field {
 		$id = str_replace( array( '[', ']', '--' ), '-', $id );
 
 		return $id;
-		
+
 	}
 
 	public function for_attr( $append = null ) {
@@ -138,9 +138,9 @@ abstract class CMB_Field {
 	}
 
 	public function name_attr( $append = null ) {
-	
+
 		printf( 'name="%s"', esc_attr( $this->get_the_name_attr( $append ) ) );
-	
+
 	}
 
 	public function get_the_name_attr( $append = null ) {
@@ -324,7 +324,7 @@ abstract class CMB_Field {
 
 			</div>
 
-		<?php 
+		<?php
 
 			$i++;
 
@@ -376,9 +376,9 @@ class CMB_Text_Field extends CMB_Field {
 
 class CMB_Text_Small_Field extends CMB_Text_Field {
 
-	public function html() { 
+	public function html() {
 
-		$this->args['class'] .= ' cmb_text_small';	
+		$this->args['class'] .= ' cmb_text_small';
 
 		parent::html();
 
@@ -393,7 +393,6 @@ class CMB_Text_Small_Field extends CMB_Text_Field {
 class CMB_File_Field extends CMB_Field {
 
 	function enqueue_scripts() {
-
 		parent::enqueue_scripts();
 		wp_enqueue_script( 'cmb-file-upload', CMB_URL . '/js/file-upload.js', array( 'jquery' ) );
 		wp_enqueue_media();
@@ -401,12 +400,64 @@ class CMB_File_Field extends CMB_Field {
 
 	public function html() {
 
-		if ( isset( $this->args['size'] ) && is_string( $this->args['size'] ) )
-			$this->args['size'] = $this->get_image_size( $this->args['size'] );
+		$args = wp_parse_args( $this->args, array(
+			'library-type' => array( 'video', 'audio', 'text', 'application' )
+		) );
+
+		if ( $this->get_value() ) {
+			$src = wp_mime_type_icon( $this->get_value() );
+			$size = getimagesize($src);
+			$icon_img = '<img src="' . $src . '" ' . $size[3] . ' />';
+		}
+
+		$styles  = 'width: 150px; height: 150px; line-height: 150px;';
+		$placeholder_styles  = 'width: 142px; height: 142px;';
+
+		$data_type = ( ! empty( $args['library-type'] ) ? implode( ',', $args['library-type'] ) : null );
+
+		?>
+
+		<div class="cmb-file-wrap" style="<?php echo esc_attr( $styles ); ?>" <?php echo 'data-type="' . esc_attr( $data_type ) . '"'; ?>>
+
+			<div class="cmb-file-wrap-placeholder" style="<?php echo esc_attr( $placeholder_styles ); ?>"></div>
+
+			<button class="button cmb-file-upload <?php echo esc_attr( $this->get_value() ) ? 'hidden' : '' ?>" href="#">Add File</button>
+
+			<div class="cmb-file-holder type-file <?php echo $this->get_value() ? '' : 'hidden'; ?>">
+
+				<?php if ( $this->get_value() ) : ?>
+
+					<?php if ( isset( $icon_img ) ) echo $icon_img; ?>
+
+					<div class="cmb-file-name">
+						<strong><?php echo esc_html( basename(  get_attached_file( $this->get_value() ) ) ); ?></strong>
+					</div>
+				<?php endif; ?>
+
+			</div>
+
+			<button class="cmb-remove-file button <?php echo $this->get_value() ? '' : 'hidden'; ?>">Remove</button>
+
+			<input type="hidden" class="cmb-file-upload-input" <?php $this->name_attr(); ?> value="<?php echo esc_attr( $this->value ); ?>" />
+
+		</div>
+
+	<?php }
+
+}
+
+class CMB_Image_Field extends CMB_File_Field {
+
+	public function html() {
 
 		$args = wp_parse_args( $this->args, array(
-			'size' => array( 150, 150, 'crop' => true )
+			'size' => 'thumbnail',
+			'type' => array( 'image' )
 		) );
+
+		// If image size keyword used, convert to array of dimensions.
+		if ( is_string( $this->args['size'] ) )
+			$this->args['size'] = $this->get_image_size( $this->args['size'] );
 
 		if ( $this->get_value() )
 			$image = wp_get_attachment_image_src( $this->get_value(), $args['size'], true );
@@ -424,31 +475,23 @@ class CMB_File_Field extends CMB_Field {
 
 		?>
 
-		<div class="cmb-file-wrap" style="<?php echo esc_attr( $styles ); ?>" <?php echo 'data-type="' . esc_attr( $data_type ) . '"'; ?>>
+		<div class="cmb-file-wrap" style="<?php echo esc_attr( $styles ); ?>" data-type="<?php echo esc_attr( $data_type ); ?>">
 
-			<div class="cmb-file-wrap-placeholder" style="<?php echo esc_attr( $placeholder_styles ); ?>"></div>
+			<div class="cmb-file-wrap-placeholder" style="<?php echo esc_attr( $placeholder_styles ); ?>">
+				<span class="dimensions"><?php echo intval( $args['size'][0] ); ?>px &times; <?php echo intval( $args['size'][1] ); ?>px </span>
+			</div>
 
-			<a class="button cmb-file-upload <?php echo esc_attr( $this->get_value() ) ? 'hidden' : '' ?>" href="#">Add Media</a>
+			<button class="button cmb-file-upload <?php echo esc_attr( $this->get_value() ) ? 'hidden' : '' ?>" href="#">Add Image</button>
 
-			<div class="cmb-file <?php echo $this->get_value() ? '' : 'hidden'; ?>">
+			<div class="cmb-file-holder type-img  <?php echo $this->get_value() ? '' : 'hidden'; ?>" data-crop="<?php echo (string) $crop; ?>">
 
-				<div class="cmb-file-holder <?php if ( $this->value ) { echo wp_attachment_is_image( $this->value ) ? ' type-img' : ' type-file'; } ?>" data-crop="<?php echo (string) $crop; ?>">
-
-					<?php if ( isset( $image ) && $image ) : ?>
-						<img src="<?php echo esc_url( $image[0] ); ?>" width="<?php echo intval( $image[1] ); ?>" height="<?php echo intval( $image[2] ); ?>" />
-					<?php endif; ?>
-
-					<?php if ( $this->get_value() && ! wp_attachment_is_image( $this->value ) ) : ?>
-						<div class="cmb-file-name">
-							<strong><?php echo esc_html( basename(  get_attached_file( $this->get_value() ) ) ); ?></strong>
-						</div>
-					<?php endif; ?>
-
-				</div>
-
-				<a href="#" class="cmb-remove-file button">Remove</a>
+				<?php if ( ! empty( $image ) ) : ?>
+					<img src="<?php echo esc_url( $image[0] ); ?>" width="<?php echo intval( $image[1] ); ?>" height="<?php echo intval( $image[2] ); ?>" />
+				<?php endif; ?>
 
 			</div>
+
+			<button class="cmb-remove-file button <?php echo $this->get_value() ? '' : 'hidden'; ?>">Remove</button>
 
 			<input type="hidden" class="cmb-file-upload-input" <?php $this->name_attr(); ?> value="<?php echo esc_attr( $this->value ); ?>" />
 
@@ -507,156 +550,7 @@ class CMB_File_Field extends CMB_Field {
 	}
 
 }
-add_action( 'wp_ajax_cmb_request_image', array( 'CMB_File_Field', 'request_image_ajax_callback' ) );
-
-class CMB_Image_Field extends CMB_Field {
-
-	function enqueue_scripts() {
-
-		parent::enqueue_scripts();
-
-		wp_enqueue_script( 'plupload-all' );
-		wp_enqueue_script( 'tf-well-plupload-image', CMB_URL . '/js/plupload-image.js', array( 'jquery-ui-sortable', 'wp-ajax-response', 'plupload-all' ), 1 );
-
-		wp_localize_script( 'tf-well-plupload-image', 'tf_well_plupload_defaults', array(
-			'runtimes'				=> 'html5,silverlight,flash,html4',
-			'file_data_name'		=> 'async-upload',
-			'multiple_queues'		=> true,
-			'max_file_size'			=> wp_max_upload_size().'b',
-			'url'					=> admin_url('admin-ajax.php'),
-			'flash_swf_url'			=> includes_url( 'js/plupload/plupload.flash.swf' ),
-			'silverlight_xap_url'	=> includes_url( 'js/plupload/plupload.silverlight.xap' ),
-			'filters'				=> array( array( 'title' => __( 'Allowed Image Files' ), 'extensions' => '*' ) ),
-			'multipart'				=> true,
-			'urlstream_upload'		=> true,
-			// additional post data to send to our ajax hook
-			'multipart_params'		=> array(
-				'_ajax_nonce'	=> wp_create_nonce( 'plupload_image' ),
-				'action'    	=> 'plupload_image_upload'
-			)
-
-		) );
-
-	}
-
-	function enqueue_styles() {
-		wp_enqueue_style( 'tf-well-plupload-image', CMB_URL . '/css/plupload-image.css', array() );
-	}
-
-	function html() {
-
-		$args = wp_parse_args( $this->args, array(
-			'allowed_extensions' => array( 'jpg', 'gif', 'png', 'jpeg', 'bmp' ),
-			'size' => array( 'width' => 150, 'height' => 150, 'crop' => true )
-		) );
-
-		$args['size'] = wp_parse_args( $args['size'], array( 'width' => 150, 'height' => 150, 'crop' => true ) );
-
-		$attachment_id = $this->get_value();
-		// Filter to change the drag & drop box background string
-		$drop_text = 'Drag & Drop files';
-		$extensions = implode( ',', $args['allowed_extensions'] );
-		$img_prefix	= $this->id;
-		$style = sprintf( 'width: %dpx; height: %dpx;', $args['size']['width'], $args['size']['height'] );
-
-		$size_str = sprintf( 'width=%d&height=%d&crop=%s', $args['size']['width'], $args['size']['height'], $args['size']['crop'] ); ?>
-
-		<div style="<?php echo esc_attr( $style ); ?>" class="hm-uploader <?php echo  $attachment_id ? 'with-image' : ''; ?>" id="<?php echo esc_attr( $img_prefix ); ?>-container">
-
-			<input type="hidden" class="field-id rwmb-image-prefix" value="<?php echo esc_attr( $img_prefix ); ?>" />
-
-			<input type="hidden" class="field-val" <?php $this->name_attr(); ?> value="<?php echo esc_attr( $attachment_id ); ?>" />
-
-			<div style="<?php echo esc_attr( $style ); ?><?php echo ( $attachment_id ) ? '' : 'display: none;' ?> line-height: <?php echo esc_attr( $args['size']['height'] ); ?>px;" class="current-image">
-
-				<?php if ( $attachment_id && wp_get_attachment_image( $attachment_id, $args['size'], false, 'id=' . $this->id ) ) : ?>
-					<?php echo wp_get_attachment_image( $attachment_id, $args['size'], false, 'id=' . $this->id ) ?>
-
-				<?php else : ?>
-					<img src="" />
-				<?php endif; ?>
-
-				<div class="image-options">
-					<a href="#" class="delete-image button-secondary">Remove</a>
-				</div>
-			</div>
-
-			<div style="<?php echo esc_attr( $style ); ?>" id="<?php echo esc_attr( $img_prefix ); ?>-dragdrop" data-extensions="<?php echo esc_attr( $extensions ); ?>" data-size="<?php echo esc_attr( $size_str ); ?>" class="rwmb-drag-drop upload-form">
-				<div class="rwmb-drag-drop-inside">
-					<p><?php echo esc_html( $drop_text ); ?></p>
-					<p>or</p>
-					<p><input id="<?php echo esc_html( $img_prefix ); ?>-browse-button" type="button" value="Select Files" class="button-secondary" /></p>
-				</div>
-			</div>
-
-			<div style="<?php echo esc_attr( $style ) ?> border-radius: 0 !important; background: #DEDEDE; box-shadow: 0 0 10px rgba(0,0,0,0.5) inset;" class="loading-block hidden">
-				<div style="height:100%; width: 100%; background: url('<?php echo esc_attr( esc_url( get_site_url() . '/wp-admin/images/wpspin_light-2x.gif' ) ); ?>') center center no-repeat; background-size: 16px 16px;"></div>
-			</div>
-
-		</div>
-
-	<?php }
-
-
-	/**
-	 * Upload
-	 * Ajax callback function
-	 *
-	 * @return error or (XML-)response
-	 */
-	static function handle_upload () {
-		header( 'Content-Type: text/html; charset=UTF-8' );
-
-		if ( ! defined('DOING_AJAX' ) )
-			define( 'DOING_AJAX', true );
-
-		check_ajax_referer('plupload_image');
-
-		$post_id = 0;
-		if ( isset( $_REQUEST['post_id'] ) && is_numeric( $_REQUEST['post_id'] ) )
-			$post_id = (int) $_REQUEST['post_id'];
-
-		// you can use WP's wp_handle_upload() function:
-		$file = $_FILES['async-upload'];
-		$file_attr = wp_handle_upload( $file, array('test_form'=>true, 'action' => 'plupload_image_upload') );
-		$attachment = array(
-			'post_mime_type'	=> $file_attr['type'],
-			'post_title'		=> preg_replace( '/\.[^.]+$/', '', basename( $file['name'] ) ),
-			'post_content'		=> '',
-			'post_status'		=> 'inherit',
-
-		);
-
-		// Adds file as attachment to WordPress
-		$id = wp_insert_attachment( $attachment, $file_attr['file'], $post_id );
-		if ( ! is_wp_error( $id ) )
-		{
-			$response = new WP_Ajax_Response();
-			wp_update_attachment_metadata( $id, wp_generate_attachment_metadata( $id, $file_attr['file'] ) );
-			if ( isset( $_REQUEST['field_id'] ) )
-			{
-				// Save file ID in meta field
-				add_post_meta( $post_id, $_REQUEST['field_id'], $id, false );
-			}
-
-			$src = wp_get_attachment_image_src( $id, $_REQUEST['size'] );
-
-			$response->add( array(
-				'what'			=>'tf_well_image_response',
-				'data'			=> $id,
-				'supplemental'	=> array(
-					'thumbnail'	=>  $src[0],
-					'edit_link'	=> get_edit_post_link($id)
-				)
-			) );
-			$response->send();
-		}
-
-		exit;
-	}
-
-}
-add_action( 'wp_ajax_plupload_image_upload', array( 'CMB_Image_Field', 'handle_upload' ) );
+add_action( 'wp_ajax_cmb_request_image', array( 'CMB_Image_Field', 'request_image_ajax_callback' ) );
 
 /**
  * Standard text meta box for a URL.
@@ -728,12 +622,12 @@ class CMB_Date_Timestamp_Field extends CMB_Field {
 	<?php }
 
 	public function parse_save_values() {
-		
+
 		foreach( $this->values as &$value )
 			$value = strtotime( $value );
 
 		sort( $this->values );
-	
+
 	}
 
 }
@@ -743,7 +637,7 @@ class CMB_Date_Timestamp_Field extends CMB_Field {
  *
  */
 class CMB_Datetime_Timestamp_Field extends CMB_Field {
-	
+
 	public function enqueue_scripts() {
 
 		parent::enqueue_scripts();
@@ -751,7 +645,7 @@ class CMB_Datetime_Timestamp_Field extends CMB_Field {
 		wp_enqueue_script( 'cmb_datetime', trailingslashit( CMB_URL ) . 'js/field.datetime.js', array( 'jquery' ) );
 	}
 
-	public function html() { ?>		
+	public function html() { ?>
 
 		<input <?php $this->id_attr('date'); ?> <?php $this->boolean_attr(); ?> <?php $this->class_attr( 'cmb_text_small cmb_datepicker' ); ?> type="text" <?php $this->name_attr( '[date]' ); ?>  value="<?php echo $this->value ? esc_attr( date( 'm\/d\/Y', $this->value ) ) : '' ?>" />
 		<input <?php $this->id_attr('time'); ?> <?php $this->boolean_attr(); ?> <?php $this->class_attr( 'cmb_text_small cmb_timepicker' ); ?> type="text" <?php $this->name_attr( '[time]' ); ?> value="<?php echo $this->value ? esc_attr( date( 'H:i A', $this->value ) ) : '' ?>" />
@@ -761,7 +655,7 @@ class CMB_Datetime_Timestamp_Field extends CMB_Field {
 	public function parse_save_values() {
 
 		// Convert all [date] and [time] values to a unix timestamp.
-		// If date is empty, assume delete. If time is empty, assume 00:00. 
+		// If date is empty, assume delete. If time is empty, assume 00:00.
 		foreach( $this->values as $key => &$value ) {
 			if ( empty( $value['date'] ) )
 				unset( $this->values[$key] );
@@ -863,7 +757,7 @@ class CMB_Textarea_Field_Code extends CMB_Textarea_Field {
 
 	public function html() {
 
-		$this->args['class'] .= ' code';	
+		$this->args['class'] .= ' code';
 
 		parent::html();
 
@@ -882,7 +776,7 @@ class CMB_Color_Picker extends CMB_Field {
 		parent::enqueue_scripts();
 
 		wp_enqueue_script( 'cmb_colorpicker', trailingslashit( CMB_URL ) . 'js/field.colorpicker.js', array( 'jquery' ) );
-	
+
 	}
 
 	public function html() { ?>
@@ -905,7 +799,7 @@ class CMB_Color_Picker extends CMB_Field {
 class CMB_Select extends CMB_Field {
 
 	public function __construct() {
-		
+
 		$args = func_get_args();
 
 		call_user_func_array( array( 'parent', '__construct' ), $args );
@@ -949,7 +843,7 @@ class CMB_Select extends CMB_Field {
 			$this->args['options'] = $this->get_delegate_data();
 
 		$id = $this->get_the_id_attr();
-		
+
 		$name = $this->get_the_name_attr();
 		$name .= ! empty( $this->args['multiple'] ) ? '[]' : null;
 
@@ -962,7 +856,7 @@ class CMB_Select extends CMB_Field {
 				<input <?php $this->id_attr(); ?> value="<?php echo esc_attr( implode( ',' , (array) $this->value ) ); ?>" <?php $this->boolean_attr(); ?> <?php printf( 'name="%s"', esc_attr( $name ) ); ?> <?php echo ! empty( $this->args['multiple'] ) ? 'multiple' : '' ?> class="<?php echo esc_attr( $id ); ?>" style="width: 100%" />
 
 			<?php else : ?>
-			
+
 				<select <?php $this->id_attr(); ?> <?php $this->boolean_attr(); ?> <?php printf( 'name="%s"', esc_attr( $name ) ); ?> <?php echo ! empty( $this->args['multiple'] ) ? 'multiple' : '' ?> class="<?php echo esc_attr( $id ); ?>" style="width: 100%" >
 
 					<?php if ( ! empty( $this->args['allow_none'] ) ) : ?>
@@ -984,7 +878,7 @@ class CMB_Select extends CMB_Field {
 
 			jQuery( document ).ready( function() {
 
-				var options = { 
+				var options = {
 					placeholder: "Type to search" ,
 					allowClear: true
 				};
@@ -1002,23 +896,23 @@ class CMB_Select extends CMB_Field {
 					<?php if ( ! empty( $this->value ) ) : ?>
 
 						options.initSelection = function( element, callback ) {
-								
+
 							<?php if ( $this->args['multiple'] ) : ?>
-								
+
 								var data = [];
-								
+
 								<?php foreach ( (array) $this->value as $post_id ) : ?>
 									data.push = <?php echo sprintf( '{ id: %d, text: "%s" }', $this->value, get_the_title( $this->value ) ); ?>;
 								<?php endforeach; ?>
-							
+
 							<?php else : ?>
-							
+
 								var data = <?php echo sprintf( '{ id: %d, text: "%s" }', $this->value, get_the_title( $this->value ) ); ?>;
-							
+
 							<?php endif; ?>
 
 							callback( data );
-							
+
 						};
 
 					<?php endif; ?>
@@ -1035,9 +929,9 @@ class CMB_Select extends CMB_Field {
 							return { results: data }
 						}
 					}
-					
-				<?php endif; ?>	
-				
+
+				<?php endif; ?>
+
 				setInterval( function() {
 					jQuery( '#<?php echo esc_js( $id ); ?>' ).each( function( index, el ) {
 						if ( jQuery( el ).is( ':visible' ) && ! jQuery( el ).hasClass( 'select2-added' ) )
@@ -1132,15 +1026,15 @@ class CMB_wysiwyg extends CMB_Field {
 		wp_enqueue_script( 'cmb-wysiwyg', CMB_URL . '/js/field-wysiwyg.js', array( 'jquery' ) );
 	}
 
-	public function html() { 
+	public function html() {
 
 		$id   = $this->get_the_id_attr();
-		$name = $this->get_the_name_attr();		
+		$name = $this->get_the_name_attr();
 
 		$field_id = str_replace( array( '-', '[', ']', '--' ),'_', $this->id );
 
 		printf( '<div class="cmb-wysiwyg" data-id="%s" data-name="%s" data-field-id="%s">', $id, $name, $field_id );
-	
+
 		if ( $this->is_placeholder() ) 	{
 
 			// For placeholder, output the markup for the editor in a JS var.
@@ -1152,20 +1046,20 @@ class CMB_wysiwyg extends CMB_Field {
 			$editor = str_replace( array( "'" ), '"', $editor );
 
 			?>
-			
+
 			<script>
-				if ( 'undefined' === typeof( cmb_wysiwyg_editors ) ) 
+				if ( 'undefined' === typeof( cmb_wysiwyg_editors ) )
 					var cmb_wysiwyg_editors = {};
 				cmb_wysiwyg_editors.<?php echo $field_id; ?> = '<?php echo $editor; ?>';
 			</script>
 
 			<?php
-		
+
 		} else {
 
 			$this->args['options']['textarea_name'] = $name;
 			echo wp_editor( $this->get_value(), $id, $this->args['options'] );
-		
+
 		}
 
 		echo '</div>';
@@ -1175,7 +1069,7 @@ class CMB_wysiwyg extends CMB_Field {
 	/**
 	 * Check if this is a placeholder field.
 	 * Either the field itself, or because it is part of a repeatable group.
-	 * 
+	 *
 	 * @return bool
 	 */
 	public function is_placeholder() {
@@ -1244,11 +1138,11 @@ class CMB_Post_Select extends CMB_Select {
 		$this->args['query'] = isset( $this->args['query'] ) ? $this->args['query'] : array();
 
 		if ( ! $this->args['use_ajax'] ) {
-			
+
 			$this->args['data_delegate'] = array( $this, 'get_delegate_data' );
 
 		} else {
-			
+
 			$this->args['ajax_url'] = add_query_arg( 'action', 'cmb_post_select', admin_url( 'admin-ajax.php' ) );
 			$this->args['ajax_args'] = $this->args['query'];
 
@@ -1286,7 +1180,7 @@ class CMB_Post_Select extends CMB_Select {
 function cmb_ajax_post_select() {
 
 	$query = new WP_Query( $_GET );
-	
+
 	$posts = $query->posts;
 
 	$json = array();
@@ -1377,7 +1271,7 @@ class CMB_Group_Field extends CMB_Field {
 		foreach ( $meta as $value ) {
 
 			$this->field_index = $i;
-			$this->value = $value; 	
+			$this->value = $value;
 
 			?>
 
@@ -1388,8 +1282,8 @@ class CMB_Group_Field extends CMB_Field {
 			<?php
 
 			$i++;
-		
-		}	
+
+		}
 
 		if ( $this->args['repeatable'] ) {
 
@@ -1461,7 +1355,7 @@ class CMB_Group_Field extends CMB_Field {
 
 		$values = $this->values;
 
-		$this->values = array();		
+		$this->values = array();
 
 		$first = reset( $values );
 
@@ -1472,7 +1366,7 @@ class CMB_Group_Field extends CMB_Field {
 			foreach ( $this->fields as $field ) {
 
 				$field->values = isset( $values[$field->original_id][$key] ) ? $values[$field->original_id][$key] : array();
-				
+
 				$field->parse_save_values();
 
 				// if the field is a repeatable field, store the whole array of them, if it's not repeatble,
@@ -1502,7 +1396,7 @@ class CMB_Group_Field extends CMB_Field {
 	}
 
 	public function set_values( array $values ) {
-		
+
 		$this->values = $values;
 
 		foreach ( $values as $value ) {

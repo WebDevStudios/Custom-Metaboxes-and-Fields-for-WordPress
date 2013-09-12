@@ -30,12 +30,13 @@ jQuery( document ).ready( function() {
 
 			CMB_Frame.close();
 
-			var fileClass = ( model.attributes.type === 'image' ) ? 'type-image' : 'type-file';
-			fileHolder.addClass( fileClass );
 			fileHolder.html( '' );
-			fileHolder.parent().show();
+			fileHolder.show();
+			fileHolder.siblings( '.cmb-remove-file' ).show();
 
-			if ( model.attributes.type === 'image' ) {
+			var fieldType = container.closest( '.field-item' ).attr( 'data-class' );
+
+			if ( 'CMB_Image_Field' === fieldType ) {
 
 				var data = {
 					action: 'cmb_request_image',
@@ -72,9 +73,10 @@ jQuery( document ).ready( function() {
 
 		var container = jQuery( this ).parent().parent();
 
-		container.find( '.cmb-file-holder' ).html( '' ).parent().hide();
+		container.find( '.cmb-file-holder' ).html( '' ).hide();
 		container.find( '.cmb-file-upload-input' ).val( '' );
 		container.find( '.cmb-file-upload' ).show().css( 'display', 'inline-block' );
+		container.find( '.cmb-remove-file' ).hide();
 
 	} );
 
