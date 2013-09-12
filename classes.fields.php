@@ -434,7 +434,7 @@ class CMB_File_Field extends CMB_Field {
 
 				<div class="cmb-file-holder <?php if ( $this->value ) { echo wp_attachment_is_image( $this->value ) ? ' type-img' : ' type-file'; } ?>" data-crop="<?php echo (string) $crop; ?>">
 
-					<?php if ( $image ) : ?>
+					<?php if ( isset( $image ) && $image ) : ?>
 						<img src="<?php echo esc_url( $image[0] ); ?>" width="<?php echo intval( $image[1] ); ?>" height="<?php echo intval( $image[2] ); ?>" />
 					<?php endif; ?>
 
