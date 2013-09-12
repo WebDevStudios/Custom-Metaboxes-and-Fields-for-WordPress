@@ -405,7 +405,8 @@ class CMB_File_Field extends CMB_Field {
 			$this->args['size'] = $this->get_image_size( $this->args['size'] );
 
 		$args = wp_parse_args( $this->args, array(
-			'size' => array( 150, 150, 'crop' => true )
+			'size' => array( 150, 150, 'crop' => true ),
+			'show_dimensions' => true
 		) );
 
 		if ( $this->get_value() )
@@ -426,7 +427,11 @@ class CMB_File_Field extends CMB_Field {
 
 		<div class="cmb-file-wrap" style="<?php echo esc_attr( $styles ); ?>" <?php echo 'data-type="' . esc_attr( $data_type ) . '"'; ?>>
 
-			<div class="cmb-file-wrap-placeholder" style="<?php echo esc_attr( $placeholder_styles ); ?>"></div>
+			<div class="cmb-file-wrap-placeholder" style="<?php echo esc_attr( $placeholder_styles ); ?>">
+				<?php if ( $args['show_dimensions'] ) : ?>
+				<span class="dimensions"><?php echo intval( $args['size'][0] ); ?>px &times; <?php echo intval( $args['size'][1] ); ?>px </span>
+				<?php endif; ?>
+			</div>
 
 			<a class="button cmb-file-upload <?php echo esc_attr( $this->get_value() ) ? 'hidden' : '' ?>" href="#">Add Media</a>
 
