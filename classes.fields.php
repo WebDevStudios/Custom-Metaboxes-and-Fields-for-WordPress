@@ -457,7 +457,7 @@ class CMB_Image_Field extends CMB_File_Field {
 
 		// If image size keyword used, convert to array of dimensions.
 		if ( is_string( $this->args['size'] ) )
-			$this->args['size'] = $this->get_image_size( $this->args['size'] );
+			$args['size'] = $this->get_image_size( $this->args['size'] );
 
 		if ( $this->get_value() )
 			$image = wp_get_attachment_image_src( $this->get_value(), $args['size'], true );
