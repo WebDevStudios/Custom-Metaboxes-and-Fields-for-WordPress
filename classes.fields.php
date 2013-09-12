@@ -452,7 +452,7 @@ class CMB_Image_Field extends CMB_File_Field {
 
 		$args = wp_parse_args( $this->args, array(
 			'size' => 'thumbnail',
-			'type' => array( 'image' )
+			'library-type' => array( 'image' )
 		) );
 
 		// If image size keyword used, convert to array of dimensions.
