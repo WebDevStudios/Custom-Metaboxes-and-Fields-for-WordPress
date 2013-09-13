@@ -883,15 +883,7 @@ class CMB_Select extends CMB_Field {
 
 		?>
 
-			<?php if ( $this->args['ajax_url'] ) : ?>
-
-				<input <?php $this->id_attr(); ?> value="<?php echo esc_attr( implode( ',' , (array) $this->value ) ); ?>" <?php $this->boolean_attr(); ?> <?php printf( 'name="%s"', esc_attr( $name ) ); ?> <?php echo ! empty( $this->args['multiple'] ) ? 'multiple' : '' ?> class="<?php echo esc_attr( $id ); ?>" style="width: 100%" />
-
-			<?php else : ?>
-			
-				<select <?php $this->id_attr(); ?> <?php $this->boolean_attr(); ?> <?php printf( 'name="%s"', esc_attr( $name ) ); ?> <?php echo ! empty( $this->args['multiple'] ) ? 'multiple' : '' ?> class="<?php echo esc_attr( $id ); ?>" style="width: 100%" >
-
-					<?php if ( ! empty( $this->args['allow_none'] ) ) : ?>
+		<?php if ( $this->args['ajax_url'] ) : ?>
 
 						<option value="">None</option>
 
