@@ -47,6 +47,13 @@ function cmb_sample_metaboxes( array $meta_boxes ) {
 				'type' => 'text_medium',
 			),
 			array(
+			    'name' => 'Test Text Email'
+			    'desc' => 'field description (optional)',
+			    'id'   => $prefix . 'email',
+			    'type' => 'text_email',
+			    'require_valid' => true, // Will ensure entered value is a valid email adress
+			),
+			array(
 				'name' => 'Test Time',
 				'desc' => 'field description (optional)',
 				'id'   => $prefix . 'test_time',
@@ -54,7 +61,7 @@ function cmb_sample_metaboxes( array $meta_boxes ) {
 			),
 			array(
 				'name' => 'Time zone',
-				'desc' => 'Time zone'
+				'desc' => 'Time zone',
 				'id'   => $prefix . 'timezone',
 				'type' => 'select_timezone',
 			),
