@@ -912,11 +912,16 @@ class CMB_Select extends CMB_Field {
 
 				var options = {
 					placeholder: "Type to search" ,
-					allowClear: true,
-					multiple: <?php echo ( $this->args['multiple'] ) ? 'true' : 'false'; ?>
+					allowClear: true
 				};
 
 				<?php if ( $this->args['ajax_url'] ) : ?>
+
+					<?php if ( $this->args['multiple'] ) : ?>
+
+						options.multiple = true;
+
+					<?php endif; ?>
 
 					<?php if ( ! empty( $this->value ) ) : ?>
 
