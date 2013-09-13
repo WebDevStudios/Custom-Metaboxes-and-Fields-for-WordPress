@@ -114,6 +114,7 @@ var CMB = {
 
 		// Show all the remove field buttons.
 		field.find( '> .field-item > .cmb_element > .ui-state-default > .delete-field' ).show();
+		field.find( '> .field-item > .group > .cmb_element > .ui-state-default > .delete-field' ).show();
 
 		if ( typeof( max ) === 'undefined' )
 			return false;
@@ -158,8 +159,10 @@ var CMB = {
 	    }
 
 	    // Hide the remove field buttons?
-		if ( count <= parseInt( min, 10 ) )
+		if ( count <= parseInt( min, 10 ) ) {
 			field.find( '> .field-item > .cmb_element > .ui-state-default > .delete-field' ).hide();
+			field.find( '> .field-item > .group > .cmb_element > .ui-state-default > .delete-field' ).hide();
+		}
 
 		if ( count < parseInt( min, 10 ) )
 			return true;
