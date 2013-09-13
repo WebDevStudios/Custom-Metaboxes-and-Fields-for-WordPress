@@ -23,7 +23,7 @@ var CMB = {
 			
 			jQuery( document ).on( 'click', '.repeat-field', function(e) { _this.repeatField.call( _this, e, this ); } );
 
-			jQuery( '.field.repeatable' ).each( function() { _this.isMinFields( jQuery(this) ); } );
+			jQuery( '.field.repeatable' ).each( function() { _this.checkMinFields( jQuery(this) ); } );
 
 			_this.doneInit();
 			
@@ -70,7 +70,7 @@ var CMB = {
 
 		} );
 
-	    _this.isMaxFields( field );
+	    _this.checkMaxFields( field );
 
 	    _this.clonedField( newT );
 
@@ -80,54 +80,60 @@ var CMB = {
 		
 		e.preventDefault();
 	
+		var field     = jQuery(btn).closest( '.field' );
 		var fieldItem = jQuery(btn).closest( '.field-item' );
 
 		this.deletedField( fieldItem );	
 
 		fieldItem.remove();
 
-		this.isMinFields( field );
+		this.checkMinFields( field );
 
 	},
 
-	isMaxFields: function( field ) {
+	checkMaxFields: function( field ) {
 
 		var count, addBtn, min, max, count;
 
 		addBtn = field.children( '.repeat-field' );
 		count  = field.children('.field-item').not('.hidden').length;
-		max    = parseInt( field.attr( 'data-rep-max' ), 10 );
+		max    = field.attr( 'data-rep-max' );
 
+		if ( typeof( max ) === 'undefined' )
+			return;
+
+		// Show all the remove field buttons.
 		field.find( '> .field-item > .cmb_element > .ui-state-default > .delete-field' ).show();
 
-	    if ( count >= max ) {
+		// IF max, disable add new button.
+	    if ( count >= parseInt( max, 10 ) )
 	    	addBtn.attr( 'disabled', 'disabled' );
-	    	return true;
-	    }
 
-	   	return false;
 	},
 
-	isMinFields: function( field ) {
+	checkMinFields: function( field ) {
 
 		var count, addBtn, min, max, count;
 
 		addBtn = field.children( '.repeat-field' );
 		count  = field.children('.field-item').not('.hidden').length;
-	    min    = parseInt( field.attr( 'data-rep-min' ), 10 );
+	    min    = field.attr( 'data-rep-min' );
 
-	    while ( count < min ) {
+		if ( typeof( min ) === 'undefined' )
+			return;
+
+	    addBtn.removeAttr( 'disabled' );
+
+	    // Make sure at least the minimum number of fields exists.
+	    while ( count < parseInt( min, 10 ) ) {
 	    	 this.repeatField.call( this, null, addBtn );
 	    	 count = field.children('.field-item').not('.hidden').length;
 	    }
 
-		addBtn.removeAttr( 'disabled' );
-
-		if ( count <= min ) {
+	    // Show/Hide the remove field buttons.
+		if ( count <= parseInt( min, 10 ) )
 			field.find( '> .field-item > .cmb_element > .ui-state-default > .delete-field' ).hide();
-		}
 
-	   	return false;
 	},
 
 	addCallbackForInit: function( callback ) {
