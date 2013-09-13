@@ -23,6 +23,8 @@ var CMB = {
 			
 			jQuery( document ).on( 'click', '.repeat-field', function(e) { _this.repeatField.call( _this, e, this ); } );
 
+			jQuery( '.field.repeatable' ).each( function() { _this.isMinFields( jQuery(this) ); } );
+
 			_this.doneInit();
 			
 		} );
@@ -30,24 +32,27 @@ var CMB = {
 	},
 
 	repeatField : function( e, btn ) {
-			
-		e.preventDefault();
-		
+
+		if ( e && 'preventDefault' in e )
+			e.preventDefault();
+
 	    var _this, btn, newT, field, index, attr;
 
 	    _this = this;
-	    
-	    newT = jQuery(btn).prev().clone();
+
+	    btn   = jQuery(btn);
+	    field = btn.closest('.field' );
+
+	    newT = btn.prev().clone();
 	    newT.removeClass('hidden');
 	    newT.find('input[type!="button"]').not('[readonly]').val('');
 	    newT.find( '.cmb_upload_status' ).html('');
-	    newT.insertBefore( jQuery(btn).prev() );
+	    newT.insertBefore( btn.prev() );
 
 	    // Recalculate group ids & update the name fields..
 		index = 0;
-		field = jQuery(btn).closest('.field' );
-		attr  = ['id','name','for','data-id','data-name'];	
-		
+		attr  = ['id','name','for','data-id','data-name'];
+
 		field.children('.field-item').not('.hidden').each( function() {
 
 			var search  = field.hasClass( 'CMB_Group_Field' ) ? /cmb-group-(\d|x)*/g : /cmb-field-(\d|x)*/g;
@@ -65,7 +70,9 @@ var CMB = {
 
 		} );
 
-	    _this.clonedField( newT )
+	    _this.isMaxFields( field );
+
+	    _this.clonedField( newT );
 
 	},
 
@@ -79,7 +86,49 @@ var CMB = {
 
 		fieldItem.remove();
 
-	},	
+		this.isMinFields( field );
+
+	},
+
+	isMaxFields: function( field ) {
+
+		var count, addBtn, min, max, count;
+
+		addBtn = field.children( '.repeat-field' );
+		count  = field.children('.field-item').not('.hidden').length;
+		max    = parseInt( field.attr( 'data-rep-max' ), 10 );
+
+		field.find( '> .field-item > .cmb_element > .ui-state-default > .delete-field' ).show();
+
+	    if ( count >= max ) {
+	    	addBtn.attr( 'disabled', 'disabled' );
+	    	return true;
+	    }
+
+	   	return false;
+	},
+
+	isMinFields: function( field ) {
+
+		var count, addBtn, min, max, count;
+
+		addBtn = field.children( '.repeat-field' );
+		count  = field.children('.field-item').not('.hidden').length;
+	    min    = parseInt( field.attr( 'data-rep-min' ), 10 );
+
+	    while ( count < min ) {
+	    	 this.repeatField.call( this, null, addBtn );
+	    	 count = field.children('.field-item').not('.hidden').length;
+	    }
+
+		addBtn.removeAttr( 'disabled' );
+
+		if ( count <= min ) {
+			field.find( '> .field-item > .cmb_element > .ui-state-default > .delete-field' ).hide();
+		}
+
+	   	return false;
+	},
 
 	addCallbackForInit: function( callback ) {
 
