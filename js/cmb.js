@@ -45,8 +45,6 @@ var CMB = {
 
 	    _this = this;
 
-	    // btn = field.children( '.repeat-field' );
-
 	    templateField = field.children('.field-item.hidden');
 
 	    newT = templateField.clone();
