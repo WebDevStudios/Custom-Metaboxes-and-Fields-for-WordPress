@@ -20,7 +20,7 @@ var CMB = {
 		jQuery(document).ready( function () {
 
 			jQuery( '.field.repeatable' ).each( function() {
-				_this.checkMinFields( jQuery(this) );
+				_this.isMinFields( jQuery(this) );
 			} );
 
 			jQuery( document ).on( 'click', '.delete-field', function(e) {
@@ -44,6 +44,9 @@ var CMB = {
 	    var _this, templateField, newT, field, index, attr;
 
 	    _this = this;
+
+		if ( _this.isMaxFields( field, 1 ) )
+			return;
 
 	    templateField = field.children('.field-item.hidden');
 
@@ -74,20 +77,19 @@ var CMB = {
 
 		} );
 
-	    _this.checkMaxFields( field );
-
 	    _this.clonedField( newT );
 
 	},
 
 	deleteField : function( fieldItem  ) {
 
-		var field = fieldItem.closest( '.field' ); // Get field before we delete fieldItem!
+		var field = fieldItem.closest( '.field' );
+
+	    if ( this.isMinFields( field, -1 ) )
+	    	return;
 
 		this.deletedField( fieldItem );
 		fieldItem.remove();
-
-		this.checkMinFields( field );
 
 	},
 
@@ -96,44 +98,52 @@ var CMB = {
 	 * When called, if there is the maximum, disable .repeat-field button.
 	 * Note: Information Passed using data-max attribute on the .field element.
 	 *
-	 * @param  jQuery .field
+	 * @param jQuery .field
+	 * @param int modifier - adjust count by this ammount. 1 If adding a field, 0 if checking, -1 if removing a field... etc
 	 * @return null
 	 */
-	checkMaxFields: function( field ) {
+	isMaxFields: function( field, modifier ) {
 
 		var count, addBtn, min, max, count;
 
+		modifier = (modifier) ? parseInt( modifier, 10 ) : 0;
+
 		addBtn = field.children( '.repeat-field' );
-		count  = field.children('.field-item').not('.hidden').length;
+		count  = field.children('.field-item').not('.hidden').length + modifier; // Count after anticipated action (modifier)
 		max    = field.attr( 'data-rep-max' );
 
 		// Show all the remove field buttons.
 		field.find( '> .field-item > .cmb_element > .ui-state-default > .delete-field' ).show();
 
 		if ( typeof( max ) === 'undefined' )
-			return;
+			return false;
 
-		// IF max, disable add new button.
-	    if ( count >= parseInt( max, 10 ) )
-	    	addBtn.attr( 'disabled', 'disabled' );
+		// Disable the add new field button?
+		if ( count >= parseInt( max, 10 ) )
+			addBtn.attr( 'disabled', 'disabled' );
+
+	    if ( count > parseInt( max, 10 ) )
+	    	return true;
 
 	},
 
 	/**
 	 * Prevent having less than minimum number of repeatable fields.
-	 * If there is less, create the minimium required number.
 	 * When called, if there is the minimum, hide all 'remove' buttons.
 	 * Note: Information Passed using data-min attribute on the .field element.
 	 *
 	 * @param  jQuery .field
+	 * @param int modifier - adjust count by this ammount. 1 If adding a field, 0 if checking, -1 if removing a field... etc
 	 * @return null
 	 */
-	checkMinFields: function( field ) {
+	isMinFields: function( field, modifier ) {
 
 		var count, addBtn, min, max, count;
 
+		modifier = (modifier) ? parseInt( modifier, 10 ) : 0;
+
 		addBtn = field.children( '.repeat-field' );
-		count  = field.children('.field-item').not('.hidden').length;
+		count  = field.children('.field-item').not('.hidden').length + modifier; // Count after anticipated action (modifier)
 	    min    = field.attr( 'data-rep-min' );
 
 	    addBtn.removeAttr( 'disabled' );
@@ -143,13 +153,16 @@ var CMB = {
 
 	    // Make sure at least the minimum number of fields exists.
 	    while ( count < parseInt( min, 10 ) ) {
-	    	 this.repeatField.call( this, null, addBtn );
-	    	 count = field.children('.field-item').not('.hidden').length;
+	    	this.repeatField( field );
+	    	count = field.children('.field-item').not('.hidden').length;
 	    }
 
-	    // Show/Hide the remove field buttons.
+	    // Hide the remove field buttons?
 		if ( count <= parseInt( min, 10 ) )
 			field.find( '> .field-item > .cmb_element > .ui-state-default > .delete-field' ).hide();
+
+		if ( count < parseInt( min, 10 ) )
+			return true;
 
 	},
 
