@@ -860,6 +860,8 @@ class CMB_Select extends CMB_Field {
 		parent::enqueue_scripts();
 
 		wp_enqueue_script( 'select2', trailingslashit( CMB_URL ) . 'js/select2/select2.js', array( 'jquery' ) );
+		wp_enqueue_script( 'field-select', trailingslashit( CMB_URL ) . 'js/field.select.js', array( 'jquery' ) );
+
 	}
 
 	public function enqueue_styles() {
@@ -870,6 +872,8 @@ class CMB_Select extends CMB_Field {
 	}
 
 	public function html() {
+
+		$field_id = str_replace( array( '-', '[', ']', '--' ),'_', $this->id ); // JS friendly ID
 
 		if ( $this->has_data_delegate() )
 			$this->args['options'] = $this->get_delegate_data();
@@ -883,25 +887,21 @@ class CMB_Select extends CMB_Field {
 
 		?>
 
-			<?php if ( $this->args['ajax_url'] ) : ?>
+		<?php if ( $this->args['ajax_url'] ) : ?>
 
-				<input <?php $this->id_attr(); ?> value="<?php echo esc_attr( implode( ',' , (array) $this->value ) ); ?>" <?php $this->boolean_attr(); ?> <?php printf( 'name="%s"', esc_attr( $name ) ); ?> <?php echo ! empty( $this->args['multiple'] ) ? 'multiple' : '' ?> class="<?php echo esc_attr( $id ); ?>" style="width: 100%" />
+			<input <?php $this->id_attr(); ?> value="<?php echo esc_attr( implode( ',' , (array) $this->value ) ); ?>" <?php $this->boolean_attr(); ?> <?php printf( 'name="%s"', esc_attr( $name ) ); ?> <?php echo ! empty( $this->args['multiple'] ) ? 'multiple' : '' ?> class="cmb_select" data-field-id="<?php echo esc_attr( $field_id ); ?>" style="width: 100%" />
 
-			<?php else : ?>
-			
-				<select <?php $this->id_attr(); ?> <?php $this->boolean_attr(); ?> <?php printf( 'name="%s"', esc_attr( $name ) ); ?> <?php echo ! empty( $this->args['multiple'] ) ? 'multiple' : '' ?> class="<?php echo esc_attr( $id ); ?>" style="width: 100%" >
+		<?php else : ?>
 
-					<?php if ( ! empty( $this->args['allow_none'] ) ) : ?>
+			<select <?php $this->id_attr(); ?> <?php $this->boolean_attr(); ?> <?php printf( 'name="%s"', esc_attr( $name ) ); ?> <?php echo ! empty( $this->args['multiple'] ) ? 'multiple' : '' ?> class="cmb_select" data-field-id="<?php echo esc_attr( $field_id ); ?>" style="width: 100%" >
 
-						<option value="">None</option>
+				<?php if ( ! empty( $this->args['allow_none'] ) ) : ?>
+					<option value="">None</option>
+				<?php endif; ?>
 
-					<?php endif; ?>
-
-					<?php foreach ( $this->args['options'] as $value => $name ): ?>
-
-					   <option <?php selected( in_array( $value, $val ) ) ?> value="<?php echo esc_attr( $value ); ?>"><?php echo esc_attr( $name ); ?></option>
-
-					<?php endforeach; ?>
+				<?php foreach ( $this->args['options'] as $value => $name ): ?>
+				   <option <?php selected( in_array( $value, $val ) ) ?> value="<?php echo esc_attr( $value ); ?>"><?php echo esc_attr( $name ); ?></option>
+				<?php endforeach; ?>
 
 				</select>
 			<?php endif; ?>
@@ -910,14 +910,12 @@ class CMB_Select extends CMB_Field {
 
 			jQuery( document ).ready( function() {
 
-				var options = { 
+				var options = {
 					placeholder: "Type to search" ,
 					allowClear: true
 				};
 
 				<?php if ( $this->args['ajax_url'] ) : ?>
-
-					var query = JSON.parse( '<?php echo json_encode( $this->args['ajax_args'] ? wp_parse_args( $this->args['ajax_args'] ) : (object) array() ); ?>' );
 
 					<?php if ( $this->args['multiple'] ) : ?>
 
@@ -949,6 +947,8 @@ class CMB_Select extends CMB_Field {
 
 					<?php endif; ?>
 
+					var query = JSON.parse( '<?php echo json_encode( $this->args['ajax_args'] ? wp_parse_args( $this->args['ajax_args'] ) : (object) array() ); ?>' );
+
 					options.ajax = {
 						url: '<?php echo esc_js( $this->args['ajax_url'] ); ?>',
 						dataType: 'json',
@@ -961,16 +961,12 @@ class CMB_Select extends CMB_Field {
 							return { results: data }
 						}
 					}
-					
-				<?php endif; ?>	
-				
-				setInterval( function() {
-					jQuery( '#<?php echo esc_js( $id ); ?>' ).each( function( index, el ) {
-						if ( jQuery( el ).is( ':visible' ) && ! jQuery( el ).hasClass( 'select2-added' ) )
-							jQuery(el).addClass( 'select2-added' ).select2( options );
-					} );
 
-				}, 300 );
+				<?php endif; ?>
+
+				if ( 'undefined' === typeof( window.cmb_select_fields ) )
+					window.cmb_select_fields = {};
+				window.cmb_select_fields.<?php echo $field_id; ?> = options;
 
 			} );
 
