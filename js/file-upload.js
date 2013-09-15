@@ -31,7 +31,7 @@ jQuery( document ).ready( function() {
 
 			frame.close();
 
-			var fileClass = ( model.attributes.type === 'image' ) ? 'type-image' : 'type-file';
+			var fileClass = ( model.attributes.type === 'image' ) ? 'type-img' : 'type-file';
 			fileHolder.addClass( fileClass );
 			fileHolder.html( '' );
 			fileHolder.parent().show();
