@@ -873,7 +873,7 @@ class CMB_Select extends CMB_Field {
 
 	public function html() {
 
-		$field_id = str_replace( array( '-', '[', ']', '--' ),'_', $this->id ); // JS friendly ID
+		$field_id = str_replace( array( '-', '[', ']', '--' ),'_', $this->get_the_id_attr() ); // JS friendly ID
 
 		if ( $this->has_data_delegate() )
 			$this->args['options'] = $this->get_delegate_data();
@@ -1059,7 +1059,7 @@ class CMB_wysiwyg extends CMB_Field {
 		$id   = $this->get_the_id_attr();
 		$name = $this->get_the_name_attr();		
 
-		$field_id = str_replace( array( '-', '[', ']', '--' ),'_', $this->id );
+		$field_id = str_replace( array( '-', '[', ']', '--' ),'_', $this->get_the_id_attr() );
 
 		printf( '<div class="cmb-wysiwyg" data-id="%s" data-name="%s" data-field-id="%s">', $id, $name, $field_id );
 	
