@@ -21,6 +21,7 @@ var CMB = {
 
 			jQuery( '.field.repeatable' ).each( function() {
 				_this.isMinFields( jQuery(this) );
+				_this.isMaxFields( jQuery(this) );
 			} );
 
 			jQuery( document ).on( 'click', '.delete-field', function(e) {
