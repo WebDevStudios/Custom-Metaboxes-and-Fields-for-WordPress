@@ -369,7 +369,7 @@ button.repeat-field { display: block !important; clear: both; }
 .CMB_File_Field .cmb-remove-file,
 .CMB_Image_Field .cmb-remove-file { position: absolute; top: 5px; right: 5px; z-index: 1; }
 .CMB_File_Field.repeatable .cmb-remove-file,
-.CMB_Image_Field.repeatable .cmb-remove-file { display: none;  }
+.CMB_Image_Field.repeatable .cmb-remove-file { display: none !important; }
 
 
 .CMB_Color_Picker .field-item { float: left; clear: both; }

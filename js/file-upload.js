@@ -116,7 +116,7 @@ jQuery( document ).ready( function() {
 
 
 		} );
-	}
+			}
 
 	recalculateFileFieldSize();
 	jQuery(window).resize( recalculateFileFieldSize );

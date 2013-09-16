@@ -98,9 +98,9 @@ abstract class CMB_Field {
 	public function id_attr( $append = null ) {
 
 		printf( 'id="%s"', esc_attr( $this->get_the_id_attr( $append ) ) );
-
+		
 	}
-
+	
 	public function get_the_id_attr( $append = null ) {
 
 		$id = $this->id;
@@ -116,7 +116,7 @@ abstract class CMB_Field {
 		$id = str_replace( array( '[', ']', '--' ), '-', $id );
 
 		return $id;
-
+		
 	}
 
 	public function for_attr( $append = null ) {
@@ -138,9 +138,9 @@ abstract class CMB_Field {
 	}
 
 	public function name_attr( $append = null ) {
-
+	
 		printf( 'name="%s"', esc_attr( $this->get_the_name_attr( $append ) ) );
-
+	
 	}
 
 	public function get_the_name_attr( $append = null ) {
@@ -324,7 +324,7 @@ abstract class CMB_Field {
 
 			</div>
 
-		<?php
+		<?php 
 
 			$i++;
 
@@ -376,9 +376,9 @@ class CMB_Text_Field extends CMB_Field {
 
 class CMB_Text_Small_Field extends CMB_Text_Field {
 
-	public function html() {
+	public function html() { 
 
-		$this->args['class'] .= ' cmb_text_small';
+		$this->args['class'] .= ' cmb_text_small';	
 
 		parent::html();
 
@@ -398,7 +398,7 @@ class CMB_File_Field extends CMB_Field {
 		wp_enqueue_media();
 	}
 
-	public function html() {
+	public function html() { 
 
 		$args = wp_parse_args( $this->args, array(
 			'library-type' => array( 'video', 'audio', 'text', 'application' )
@@ -456,8 +456,8 @@ class CMB_Image_Field extends CMB_File_Field {
 		) );
 
 		// If image size keyword used, convert to array of dimensions.
-		if ( is_string( $this->args['size'] ) )
-			$args['size'] = $this->get_image_size( $this->args['size'] );
+		if ( is_string( $args['size'] ) )
+			$args['size'] = $this->get_image_size( $args['size'] );
 
 		if ( $this->get_value() )
 			$image = wp_get_attachment_image_src( $this->get_value(), $args['size'], true );
@@ -622,12 +622,12 @@ class CMB_Date_Timestamp_Field extends CMB_Field {
 	<?php }
 
 	public function parse_save_values() {
-
+		
 		foreach( $this->values as &$value )
 			$value = strtotime( $value );
 
 		sort( $this->values );
-
+	
 	}
 
 }
@@ -637,7 +637,7 @@ class CMB_Date_Timestamp_Field extends CMB_Field {
  *
  */
 class CMB_Datetime_Timestamp_Field extends CMB_Field {
-
+	
 	public function enqueue_scripts() {
 
 		parent::enqueue_scripts();
@@ -645,7 +645,7 @@ class CMB_Datetime_Timestamp_Field extends CMB_Field {
 		wp_enqueue_script( 'cmb_datetime', trailingslashit( CMB_URL ) . 'js/field.datetime.js', array( 'jquery' ) );
 	}
 
-	public function html() { ?>
+	public function html() { ?>		
 
 		<input <?php $this->id_attr('date'); ?> <?php $this->boolean_attr(); ?> <?php $this->class_attr( 'cmb_text_small cmb_datepicker' ); ?> type="text" <?php $this->name_attr( '[date]' ); ?>  value="<?php echo $this->value ? esc_attr( date( 'm\/d\/Y', $this->value ) ) : '' ?>" />
 		<input <?php $this->id_attr('time'); ?> <?php $this->boolean_attr(); ?> <?php $this->class_attr( 'cmb_text_small cmb_timepicker' ); ?> type="text" <?php $this->name_attr( '[time]' ); ?> value="<?php echo $this->value ? esc_attr( date( 'H:i A', $this->value ) ) : '' ?>" />
@@ -655,7 +655,7 @@ class CMB_Datetime_Timestamp_Field extends CMB_Field {
 	public function parse_save_values() {
 
 		// Convert all [date] and [time] values to a unix timestamp.
-		// If date is empty, assume delete. If time is empty, assume 00:00.
+		// If date is empty, assume delete. If time is empty, assume 00:00. 
 		foreach( $this->values as $key => &$value ) {
 			if ( empty( $value['date'] ) )
 				unset( $this->values[$key] );
@@ -757,7 +757,7 @@ class CMB_Textarea_Field_Code extends CMB_Textarea_Field {
 
 	public function html() {
 
-		$this->args['class'] .= ' code';
+		$this->args['class'] .= ' code';	
 
 		parent::html();
 
@@ -776,7 +776,7 @@ class CMB_Color_Picker extends CMB_Field {
 		parent::enqueue_scripts();
 
 		wp_enqueue_script( 'cmb_colorpicker', trailingslashit( CMB_URL ) . 'js/field.colorpicker.js', array( 'jquery' ) );
-
+	
 	}
 
 	public function html() { ?>
@@ -799,7 +799,7 @@ class CMB_Color_Picker extends CMB_Field {
 class CMB_Select extends CMB_Field {
 
 	public function __construct() {
-
+		
 		$args = func_get_args();
 
 		call_user_func_array( array( 'parent', '__construct' ), $args );
@@ -828,6 +828,8 @@ class CMB_Select extends CMB_Field {
 		parent::enqueue_scripts();
 
 		wp_enqueue_script( 'select2', trailingslashit( CMB_URL ) . 'js/select2/select2.js', array( 'jquery' ) );
+		wp_enqueue_script( 'field-select', trailingslashit( CMB_URL ) . 'js/field.select.js', array( 'jquery' ) );
+
 	}
 
 	public function enqueue_styles() {
@@ -839,11 +841,13 @@ class CMB_Select extends CMB_Field {
 
 	public function html() {
 
+		$field_id = str_replace( array( '-', '[', ']', '--' ),'_', $this->get_the_id_attr() ); // JS friendly ID
+
 		if ( $this->has_data_delegate() )
 			$this->args['options'] = $this->get_delegate_data();
 
 		$id = $this->get_the_id_attr();
-
+		
 		$name = $this->get_the_name_attr();
 		$name .= ! empty( $this->args['multiple'] ) ? '[]' : null;
 
@@ -853,22 +857,18 @@ class CMB_Select extends CMB_Field {
 
 			<?php if ( $this->args['ajax_url'] ) : ?>
 
-				<input <?php $this->id_attr(); ?> value="<?php echo esc_attr( implode( ',' , (array) $this->value ) ); ?>" <?php $this->boolean_attr(); ?> <?php printf( 'name="%s"', esc_attr( $name ) ); ?> <?php echo ! empty( $this->args['multiple'] ) ? 'multiple' : '' ?> class="<?php echo esc_attr( $id ); ?>" style="width: 100%" />
+			<input <?php $this->id_attr(); ?> value="<?php echo esc_attr( implode( ',' , (array) $this->value ) ); ?>" <?php $this->boolean_attr(); ?> <?php printf( 'name="%s"', esc_attr( $name ) ); ?> <?php echo ! empty( $this->args['multiple'] ) ? 'multiple' : '' ?> class="cmb_select" data-field-id="<?php echo esc_attr( $field_id ); ?>" style="width: 100%" />
 
 			<?php else : ?>
-
-				<select <?php $this->id_attr(); ?> <?php $this->boolean_attr(); ?> <?php printf( 'name="%s"', esc_attr( $name ) ); ?> <?php echo ! empty( $this->args['multiple'] ) ? 'multiple' : '' ?> class="<?php echo esc_attr( $id ); ?>" style="width: 100%" >
+			
+			<select <?php $this->id_attr(); ?> <?php $this->boolean_attr(); ?> <?php printf( 'name="%s"', esc_attr( $name ) ); ?> <?php echo ! empty( $this->args['multiple'] ) ? 'multiple' : '' ?> class="cmb_select" data-field-id="<?php echo esc_attr( $field_id ); ?>" style="width: 100%" >
 
 					<?php if ( ! empty( $this->args['allow_none'] ) ) : ?>
-
 						<option value="">None</option>
-
 					<?php endif; ?>
 
 					<?php foreach ( $this->args['options'] as $value => $name ): ?>
-
 					   <option <?php selected( in_array( $value, $val ) ) ?> value="<?php echo esc_attr( $value ); ?>"><?php echo esc_attr( $name ); ?></option>
-
 					<?php endforeach; ?>
 
 				</select>
@@ -878,14 +878,12 @@ class CMB_Select extends CMB_Field {
 
 			jQuery( document ).ready( function() {
 
-				var options = {
+				var options = { 
 					placeholder: "Type to search" ,
 					allowClear: true
 				};
 
 				<?php if ( $this->args['ajax_url'] ) : ?>
-
-					var query = JSON.parse( '<?php echo json_encode( $this->args['ajax_args'] ? wp_parse_args( $this->args['ajax_args'] ) : (object) array() ); ?>' );
 
 					<?php if ( $this->args['multiple'] ) : ?>
 
@@ -896,26 +894,28 @@ class CMB_Select extends CMB_Field {
 					<?php if ( ! empty( $this->value ) ) : ?>
 
 						options.initSelection = function( element, callback ) {
-
+								
 							<?php if ( $this->args['multiple'] ) : ?>
-
+								
 								var data = [];
-
+								
 								<?php foreach ( (array) $this->value as $post_id ) : ?>
 									data.push = <?php echo sprintf( '{ id: %d, text: "%s" }', $this->value, get_the_title( $this->value ) ); ?>;
 								<?php endforeach; ?>
-
+							
 							<?php else : ?>
-
+							
 								var data = <?php echo sprintf( '{ id: %d, text: "%s" }', $this->value, get_the_title( $this->value ) ); ?>;
-
+							
 							<?php endif; ?>
 
 							callback( data );
-
+							
 						};
 
 					<?php endif; ?>
+
+					var query = JSON.parse( '<?php echo json_encode( $this->args['ajax_args'] ? wp_parse_args( $this->args['ajax_args'] ) : (object) array() ); ?>' );
 
 					options.ajax = {
 						url: '<?php echo esc_js( $this->args['ajax_url'] ); ?>',
@@ -929,16 +929,12 @@ class CMB_Select extends CMB_Field {
 							return { results: data }
 						}
 					}
-
-				<?php endif; ?>
-
-				setInterval( function() {
-					jQuery( '#<?php echo esc_js( $id ); ?>' ).each( function( index, el ) {
-						if ( jQuery( el ).is( ':visible' ) && ! jQuery( el ).hasClass( 'select2-added' ) )
-							jQuery(el).addClass( 'select2-added' ).select2( options );
-					} );
-
-				}, 300 );
+					
+				<?php endif; ?>	
+				
+				if ( 'undefined' === typeof( window.cmb_select_fields ) )
+					window.cmb_select_fields = {};
+				window.cmb_select_fields.<?php echo $field_id; ?> = options;
 
 			} );
 
@@ -1026,15 +1022,15 @@ class CMB_wysiwyg extends CMB_Field {
 		wp_enqueue_script( 'cmb-wysiwyg', CMB_URL . '/js/field-wysiwyg.js', array( 'jquery' ) );
 	}
 
-	public function html() {
+	public function html() { 
 
 		$id   = $this->get_the_id_attr();
-		$name = $this->get_the_name_attr();
+		$name = $this->get_the_name_attr();		
 
-		$field_id = str_replace( array( '-', '[', ']', '--' ),'_', $this->id );
+		$field_id = str_replace( array( '-', '[', ']', '--' ),'_', $this->get_the_id_attr() );
 
 		printf( '<div class="cmb-wysiwyg" data-id="%s" data-name="%s" data-field-id="%s">', $id, $name, $field_id );
-
+	
 		if ( $this->is_placeholder() ) 	{
 
 			// For placeholder, output the markup for the editor in a JS var.
@@ -1046,20 +1042,20 @@ class CMB_wysiwyg extends CMB_Field {
 			$editor = str_replace( array( "'" ), '"', $editor );
 
 			?>
-
+			
 			<script>
-				if ( 'undefined' === typeof( cmb_wysiwyg_editors ) )
+				if ( 'undefined' === typeof( cmb_wysiwyg_editors ) ) 
 					var cmb_wysiwyg_editors = {};
 				cmb_wysiwyg_editors.<?php echo $field_id; ?> = '<?php echo $editor; ?>';
 			</script>
 
 			<?php
-
+		
 		} else {
 
 			$this->args['options']['textarea_name'] = $name;
 			echo wp_editor( $this->get_value(), $id, $this->args['options'] );
-
+		
 		}
 
 		echo '</div>';
@@ -1069,7 +1065,7 @@ class CMB_wysiwyg extends CMB_Field {
 	/**
 	 * Check if this is a placeholder field.
 	 * Either the field itself, or because it is part of a repeatable group.
-	 *
+	 * 
 	 * @return bool
 	 */
 	public function is_placeholder() {
@@ -1138,11 +1134,11 @@ class CMB_Post_Select extends CMB_Select {
 		$this->args['query'] = isset( $this->args['query'] ) ? $this->args['query'] : array();
 
 		if ( ! $this->args['use_ajax'] ) {
-
+			
 			$this->args['data_delegate'] = array( $this, 'get_delegate_data' );
 
 		} else {
-
+			
 			$this->args['ajax_url'] = add_query_arg( 'action', 'cmb_post_select', admin_url( 'admin-ajax.php' ) );
 			$this->args['ajax_args'] = $this->args['query'];
 
@@ -1180,7 +1176,7 @@ class CMB_Post_Select extends CMB_Select {
 function cmb_ajax_post_select() {
 
 	$query = new WP_Query( $_GET );
-
+	
 	$posts = $query->posts;
 
 	$json = array();
@@ -1271,7 +1267,7 @@ class CMB_Group_Field extends CMB_Field {
 		foreach ( $meta as $value ) {
 
 			$this->field_index = $i;
-			$this->value = $value;
+			$this->value = $value; 	
 
 			?>
 
@@ -1282,8 +1278,8 @@ class CMB_Group_Field extends CMB_Field {
 			<?php
 
 			$i++;
-
-		}
+		
+		}	
 
 		if ( $this->args['repeatable'] ) {
 
@@ -1355,7 +1351,7 @@ class CMB_Group_Field extends CMB_Field {
 
 		$values = $this->values;
 
-		$this->values = array();
+		$this->values = array();		
 
 		$first = reset( $values );
 
@@ -1366,7 +1362,7 @@ class CMB_Group_Field extends CMB_Field {
 			foreach ( $this->fields as $field ) {
 
 				$field->values = isset( $values[$field->original_id][$key] ) ? $values[$field->original_id][$key] : array();
-
+				
 				$field->parse_save_values();
 
 				// if the field is a repeatable field, store the whole array of them, if it's not repeatble,
@@ -1396,7 +1392,7 @@ class CMB_Group_Field extends CMB_Field {
 	}
 
 	public function set_values( array $values ) {
-
+		
 		$this->values = $values;
 
 		foreach ( $values as $value ) {
