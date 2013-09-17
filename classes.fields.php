@@ -955,10 +955,12 @@ class CMB_Select extends CMB_Field {
 						data: function( term, page ) {
 							query.s = term;
 							query.paged = page;
-							return query;
+							return { query: query };
 						},
 						results : function( data, page ) {
-							return { results: data }
+							var postsPerPage = query.posts_per_page = ( 'posts_per_page' in query ) ? query.posts_per_page : ( 'showposts' in query ) ? query.showposts : 10;
+							var isMore = ( page * postsPerPage ) < data.total; 
+                    		return { results: data.posts, more: isMore };
 						}
 					}
 
@@ -1209,12 +1211,17 @@ function cmb_ajax_post_select() {
 
 	$query = new WP_Query( $_GET );
 	
+	$json = array();
 	$posts = $query->posts;
 
-	$json = array();
+	$args['fields'] = 'ids'; // Only need to retrieve post IDs.
 
-	foreach ( $posts as $post )
-		$json[] = array( 'id' => $post->ID, 'text' => get_the_title( $post->ID ) );
+	$query = new WP_Query( $args );
+	
+	$json = array( 'total' => $query->found_posts, 'posts' => array() );
+
+	foreach ( $query->posts as $post_id )
+		array_push( $json['posts'], array( 'id' => $post_id, 'text' => get_the_title( $post_id ) ) );
 
 	echo json_encode( $json );
 
