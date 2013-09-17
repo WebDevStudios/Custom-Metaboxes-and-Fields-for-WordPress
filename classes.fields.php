@@ -1173,11 +1173,12 @@ class CMB_Post_Select extends CMB_Select {
 
 		} else {
 
-			$this->args['ajax_url'] = esc_url( admin_url( 'admin-ajax.php' ) );
-			$this->args['ajax_url'] = add_query_arg( 'action', 'cmb_post_select', $this->args['ajax_url'] );
-			$this->args['ajax_url'] = add_query_arg( 'post_id', get_the_id(), $this->args['ajax_url'] );
-			$this->args['ajax_url'] = add_query_arg( 'cmb_select_field_nonce', wp_create_nonce( 'cmb_select_field' ), $this->args['ajax_url'] );
-
+			$this->args['ajax_url'] = add_query_arg( array(
+				'action' => 'cmb_post_select', 
+				'post_id' => get_the_id(),
+				'cmb_select_field_nonce' => wp_create_nonce( 'cmb_select_field' )
+			), esc_url( admin_url( 'admin-ajax.php' ) ) );
+			
 			$this->args['ajax_args'] = $this->args['query'];
 
 		}
