@@ -1192,7 +1192,9 @@ class CMB_Post_Select extends CMB_Select {
 
 	private function get_posts() {
 
-		return get_posts( $this->args['query'] );
+		$query = new WP_Query( $this->args['query'] );
+
+		return isset( $query->posts ) ? $query->posts : array();
 
 	}
 
