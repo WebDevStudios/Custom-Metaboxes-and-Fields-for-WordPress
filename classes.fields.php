@@ -1174,6 +1174,9 @@ class CMB_Post_Select extends CMB_Select {
 		} else {
 			
 			$this->args['ajax_url'] = add_query_arg( 'action', 'cmb_post_select', admin_url( 'admin-ajax.php' ) );
+			$this->args['ajax_url'] = add_query_arg( 'post_id', get_the_id(), $this->args['ajax_url'] );
+			$this->args['ajax_url'] = add_query_arg( 'cmb_select_field_nonce', wp_create_nonce( 'cmb_select_field' ), $this->args['ajax_url'] );
+
 			$this->args['ajax_args'] = $this->args['query'];
 
 		}
@@ -1208,11 +1211,13 @@ class CMB_Post_Select extends CMB_Select {
 
 // TODO this should be in inside the class
 function cmb_ajax_post_select() {
-
-	$query = new WP_Query( $_GET );
+		
+	$post_id = ! empty( $_GET['post_id'] ) ? intval( $_GET['post_id'] ) : false;
+	$nonce   = ! empty( $_GET['cmb_select_field_nonce'] ) ? $_GET['cmb_select_field_nonce'] : false;
+	$args    = ! empty( $_GET['query'] ) ? $_GET['query'] : array();
 	
-	$json = array();
-	$posts = $query->posts;
+	if ( ! $nonce || ! wp_verify_nonce( $nonce, 'cmb_select_field' ) || ! current_user_can( 'edit_post', $post_id ) )
+		return;
 
 	$args['fields'] = 'ids'; // Only need to retrieve post IDs.
 
