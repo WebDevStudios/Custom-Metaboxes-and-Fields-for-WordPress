@@ -950,7 +950,7 @@ class CMB_Select extends CMB_Field {
 					var query = JSON.parse( '<?php echo json_encode( $this->args['ajax_args'] ? wp_parse_args( $this->args['ajax_args'] ) : (object) array() ); ?>' );
 
 					options.ajax = {
-						url: '<?php echo esc_js( $this->args['ajax_url'] ); ?>',
+						url: '<?php echo $this->args['ajax_url']; ?>',
 						dataType: 'json',
 						data: function( term, page ) {
 							query.s = term;
@@ -1172,8 +1172,9 @@ class CMB_Post_Select extends CMB_Select {
 			$this->args['data_delegate'] = array( $this, 'get_delegate_data' );
 
 		} else {
-			
-			$this->args['ajax_url'] = add_query_arg( 'action', 'cmb_post_select', admin_url( 'admin-ajax.php' ) );
+
+			$this->args['ajax_url'] = esc_url( admin_url( 'admin-ajax.php' ) );
+			$this->args['ajax_url'] = add_query_arg( 'action', 'cmb_post_select', $this->args['ajax_url'] );
 			$this->args['ajax_url'] = add_query_arg( 'post_id', get_the_id(), $this->args['ajax_url'] );
 			$this->args['ajax_url'] = add_query_arg( 'cmb_select_field_nonce', wp_create_nonce( 'cmb_select_field' ), $this->args['ajax_url'] );
 
