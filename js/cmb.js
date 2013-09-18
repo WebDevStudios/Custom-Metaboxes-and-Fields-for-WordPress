@@ -259,4 +259,8 @@ var CMB = {
 
 }
 
-CMB.init();
+jQuery(document).ready( function() {
+
+	CMB.init();
+
+});
