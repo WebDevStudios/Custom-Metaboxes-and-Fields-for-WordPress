@@ -947,20 +947,29 @@ class CMB_Select extends CMB_Field {
 
 					<?php endif; ?>
 
-					var query = JSON.parse( '<?php echo json_encode( $this->args['ajax_args'] ? wp_parse_args( $this->args['ajax_args'] ) : (object) array() ); ?>' );
+					var ajaxData = {};
+					
+					ajaxData.action = 'cmb_post_select';
+					
+					// Used for nonce & user capabilty checks.
+					ajaxData.post_id = <?php echo intval( get_the_id() ); ?>;
+					ajaxData.cmb_select_field_nonce = '<?php echo esc_js( wp_create_nonce( 'cmb_select_field' ) ); ?>';
+
+					ajaxData.query = JSON.parse( '<?php echo json_encode( $this->args['ajax_args'] ? wp_parse_args( $this->args['ajax_args'] ) : (object) array() ); ?>' );
 
 					options.ajax = {
-						url: '<?php echo $this->args['ajax_url']; ?>',
+						url: '<?php echo esc_js( esc_url( $this->args['ajax_url'] ) ); ?>',
+						type: 'POST',
 						dataType: 'json',
 						data: function( term, page ) {
-							query.s = term;
-							query.paged = page;
-							return { query: query };
+							ajaxData.query.s = term;
+							ajaxData.query.paged = page;
+							return ajaxData;
 						},
-						results : function( data, page ) {
-							var postsPerPage = query.posts_per_page = ( 'posts_per_page' in query ) ? query.posts_per_page : ( 'showposts' in query ) ? query.showposts : 10;
-							var isMore = ( page * postsPerPage ) < data.total; 
-                    		return { results: data.posts, more: isMore };
+						results : function( results, page ) {
+							var postsPerPage = ajaxData.query.posts_per_page = ( 'posts_per_page' in ajaxData.query ) ? ajaxData.query.posts_per_page : ( 'showposts' in ajaxData.query ) ? ajaxData.query.showposts : 10;
+							var isMore = ( page * postsPerPage ) < results.total; 
+                    		return { results: results.posts, more: isMore };
 						}
 					}
 
@@ -968,6 +977,7 @@ class CMB_Select extends CMB_Field {
 
 				if ( 'undefined' === typeof( window.cmb_select_fields ) )
 					window.cmb_select_fields = {};
+				
 				window.cmb_select_fields.<?php echo $field_id; ?> = options;
 
 			} );
@@ -1173,11 +1183,13 @@ class CMB_Post_Select extends CMB_Select {
 
 		} else {
 
-			$this->args['ajax_url'] = add_query_arg( array(
-				'action' => 'cmb_post_select', 
-				'post_id' => get_the_id(),
-				'cmb_select_field_nonce' => wp_create_nonce( 'cmb_select_field' )
-			), esc_url( admin_url( 'admin-ajax.php' ) ) );
+			// $this->args['ajax_url'] = add_query_arg( array(
+			// 	'action' => 'cmb_post_select', 
+			// 	'post_id' => get_the_id(),
+			// 	'cmb_select_field_nonce' => wp_create_nonce( 'cmb_select_field' )
+			// ), admin_url( 'admin-ajax.php' ) );
+			
+			$this->args['ajax_url'] = admin_url( 'admin-ajax.php' );
 			
 			$this->args['ajax_args'] = $this->args['query'];
 
@@ -1215,13 +1227,15 @@ class CMB_Post_Select extends CMB_Select {
 
 // TODO this should be in inside the class
 function cmb_ajax_post_select() {
-		
-	$post_id = ! empty( $_GET['post_id'] ) ? intval( $_GET['post_id'] ) : false;
-	$nonce   = ! empty( $_GET['cmb_select_field_nonce'] ) ? $_GET['cmb_select_field_nonce'] : false;
-	$args    = ! empty( $_GET['query'] ) ? $_GET['query'] : array();
 	
-	if ( ! $nonce || ! wp_verify_nonce( $nonce, 'cmb_select_field' ) || ! current_user_can( 'edit_post', $post_id ) )
-		return;
+	$post_id = ! empty( $_POST['post_id'] ) ? intval( $_POST['post_id'] ) : false;
+	$nonce   = ! empty( $_POST['cmb_select_field_nonce'] ) ? $_POST['cmb_select_field_nonce'] : false;
+	$args    = ! empty( $_POST['query'] ) ? $_POST['query'] : array();
+
+	if ( ! $nonce || ! wp_verify_nonce( $nonce, 'cmb_select_field' ) || ! current_user_can( 'edit_post', $post_id ) ) {
+		echo '{}';
+		exit;
+	}
 
 	$args['fields'] = 'ids'; // Only need to retrieve post IDs.
 
