@@ -1183,12 +1183,6 @@ class CMB_Post_Select extends CMB_Select {
 
 		} else {
 
-			// $this->args['ajax_url'] = add_query_arg( array(
-			// 	'action' => 'cmb_post_select', 
-			// 	'post_id' => get_the_id(),
-			// 	'cmb_select_field_nonce' => wp_create_nonce( 'cmb_select_field' )
-			// ), admin_url( 'admin-ajax.php' ) );
-			
 			$this->args['ajax_url'] = admin_url( 'admin-ajax.php' );
 			
 			$this->args['ajax_args'] = $this->args['query'];
