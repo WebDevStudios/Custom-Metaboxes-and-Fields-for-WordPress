@@ -20,7 +20,6 @@ var CMB = {
 		jQuery(document).ready( function () {
 
 			jQuery( '.field.repeatable' ).each( function() {
-				_this.isMinFields( jQuery(this) );
 				_this.isMaxFields( jQuery(this) );
 			} );
 
@@ -86,8 +85,7 @@ var CMB = {
 
 		var field = fieldItem.closest( '.field' );
 
-	    if ( this.isMinFields( field, -1 ) )
-	    	return;
+		this.isMaxFields( field, -1 );
 
 		this.deletedField( fieldItem );
 		fieldItem.remove();
@@ -123,50 +121,11 @@ var CMB = {
 		// Disable the add new field button?
 		if ( count >= parseInt( max, 10 ) )
 			addBtn.attr( 'disabled', 'disabled' );
+		else 
+			addBtn.removeAttr( 'disabled' );
 
 	    if ( count > parseInt( max, 10 ) )
 	    	return true;
-
-	},
-
-	/**
-	 * Prevent having less than minimum number of repeatable fields.
-	 * When called, if there is the minimum, hide all 'remove' buttons.
-	 * Note: Information Passed using data-min attribute on the .field element.
-	 *
-	 * @param  jQuery .field
-	 * @param int modifier - adjust count by this ammount. 1 If adding a field, 0 if checking, -1 if removing a field... etc
-	 * @return null
-	 */
-	isMinFields: function( field, modifier ) {
-
-		var count, addBtn, min, max, count;
-
-		modifier = (modifier) ? parseInt( modifier, 10 ) : 0;
-
-		addBtn = field.children( '.repeat-field' );
-		count  = field.children('.field-item').not('.hidden').length + modifier; // Count after anticipated action (modifier)
-	    min    = field.attr( 'data-rep-min' );
-
-	    addBtn.removeAttr( 'disabled' );
-
-		if ( typeof( min ) === 'undefined' )
-			return;
-
-	    // Make sure at least the minimum number of fields exists.
-	    while ( count < parseInt( min, 10 ) ) {
-	    	this.repeatField( field );
-	    	count = field.children('.field-item').not('.hidden').length;
-	    }
-
-	    // Hide the remove field buttons?
-		if ( count <= parseInt( min, 10 ) ) {
-			field.find( '> .field-item > .cmb_element > .ui-state-default > .delete-field' ).hide();
-			field.find( '> .field-item > .group > .cmb_element > .ui-state-default > .delete-field' ).hide();
-		}
-
-		if ( count < parseInt( min, 10 ) )
-			return true;
 
 	},
 
