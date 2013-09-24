@@ -830,127 +830,6 @@ class CMB_Color_Picker extends CMB_Field {
 }
 
 /**
- * Standard select field.
- *
- * @supports "data_delegate"
- * @args
- *     'options'     => array Array of options to show in the select, optionally use data_delegate instead
- *     'allow_none'   => bool Allow no option to be selected (will palce a "None" at the top of the select)
- *     'multiple'     => bool whether multiple can be selected
- */
-class CMB_Select extends CMB_Field {
-
-	public function __construct() {
-		
-		$args = func_get_args();
-
-		call_user_func_array( array( 'parent', '__construct' ), $args );
-
-		$this->args = wp_parse_args( $this->args, array( 'multiple' => false ) );
-
-	}
-
-	public function parse_save_values(){
-
-		if ( isset( $this->group_index ) && isset( $this->args['multiple'] ) && $this->args['multiple'] )
-			$this->values = array( $this->values );
-
-	}
-
-	public function get_options() {
-
-		if ( $this->has_data_delegate() )
-			$this->args['options'] = $this->get_delegate_data();
-
-		return $this->args['options'];
-	}
-
-	public function enqueue_scripts() {
-
-		parent::enqueue_scripts();
-
-		wp_enqueue_script( 'select2', trailingslashit( CMB_URL ) . 'js/select2/select2.js', array( 'jquery' ) );
-		wp_enqueue_script( 'field-select', trailingslashit( CMB_URL ) . 'js/field.select.js', array( 'jquery' ) );
-
-	}
-
-	public function enqueue_styles() {
-
-		parent::enqueue_styles();
-
-		wp_enqueue_style( 'select2', trailingslashit( CMB_URL ) . 'js/select2/select2.css' );
-	}
-
-	public function html() {
-
-		if ( $this->has_data_delegate() )
-			$this->args['options'] = $this->get_delegate_data();
-
-		$this->output_field();
-		
-		$this->output_script();
-
-	}
-
-	public function output_field() {
-
-		$val = (array) $this->get_value();
-
-		$name = $this->get_the_name_attr();
-		$name .= ! empty( $this->args['multiple'] ) ? '[]' : null;
-		
-		?>
-
-		<select 
-			<?php $this->id_attr(); ?> 
-			<?php $this->boolean_attr(); ?> 
-			<?php printf( 'name="%s"', esc_attr( $name ) ); ?> 
-			<?php printf( 'data-field-id="%s" ', esc_attr( $this->get_js_id() ) ); ?> 
-			<?php echo ! empty( $this->args['multiple'] ) ? 'multiple' : '' ?> 
-			class="cmb_select" 
-			style="width: 100%" 
-		>
-
-			<?php if ( ! empty( $this->args['allow_none'] ) ) : ?>
-				<option value="">None</option>
-			<?php endif; ?>
-
-			<?php foreach ( $this->args['options'] as $value => $name ): ?>
-			   <option <?php selected( in_array( $value, $val ) ) ?> value="<?php echo esc_attr( $value ); ?>"><?php echo esc_html( $name ); ?></option>
-			<?php endforeach; ?>
-
-		</select>
-
-		<?php 
-	}
-
-	public function output_script() {
-		?>
-
-		<script type="text/javascript">
-
-			(function($) {
-				
-				var options = {};
-				
-				options.placeholder = "Type to search";
-				options.allowClear  = true;
-
-				if ( 'undefined' === typeof( window.cmb_select_fields ) )
-					window.cmb_select_fields = {};
-				
-				window.cmb_select_fields.<?php echo esc_js( $this->get_js_id() ); ?> = options;
-
-			})( jQuery );
-
-		</script>
-
-		<?php 
-	}	
-
-}
-
-/**
  * Standard radio field.
  *
  * Args:
@@ -1085,6 +964,127 @@ class CMB_wysiwyg extends CMB_Field {
 
 }
 
+/**
+ * Standard select field.
+ *
+ * @supports "data_delegate"
+ * @args
+ *     'options'     => array Array of options to show in the select, optionally use data_delegate instead
+ *     'allow_none'   => bool Allow no option to be selected (will palce a "None" at the top of the select)
+ *     'multiple'     => bool whether multiple can be selected
+ */
+class CMB_Select extends CMB_Field {
+
+	public function __construct() {
+		
+		$args = func_get_args();
+
+		call_user_func_array( array( 'parent', '__construct' ), $args );
+
+		$this->args = wp_parse_args( $this->args, array( 'multiple' => false ) );
+
+	}
+
+	public function parse_save_values(){
+
+		if ( isset( $this->group_index ) && isset( $this->args['multiple'] ) && $this->args['multiple'] )
+			$this->values = array( $this->values );
+
+	}
+
+	public function get_options() {
+
+		if ( $this->has_data_delegate() )
+			$this->args['options'] = $this->get_delegate_data();
+
+		return $this->args['options'];
+	}
+
+	public function enqueue_scripts() {
+
+		parent::enqueue_scripts();
+
+		wp_enqueue_script( 'select2', trailingslashit( CMB_URL ) . 'js/select2/select2.js', array( 'jquery' ) );
+		wp_enqueue_script( 'field-select', trailingslashit( CMB_URL ) . 'js/field.select.js', array( 'jquery' ) );
+
+	}
+
+	public function enqueue_styles() {
+
+		parent::enqueue_styles();
+
+		wp_enqueue_style( 'select2', trailingslashit( CMB_URL ) . 'js/select2/select2.css' );
+	}
+
+	public function html() {
+
+		if ( $this->has_data_delegate() )
+			$this->args['options'] = $this->get_delegate_data();
+
+		$this->output_field();
+		
+		$this->output_script();
+
+	}
+
+	public function output_field() {
+
+		$val = (array) $this->get_value();
+
+		$name = $this->get_the_name_attr();
+		$name .= ! empty( $this->args['multiple'] ) ? '[]' : null;
+		
+		?>
+
+		<select 
+			<?php $this->id_attr(); ?> 
+			<?php $this->boolean_attr(); ?> 
+			<?php printf( 'name="%s"', esc_attr( $name ) ); ?> 
+			<?php printf( 'data-field-id="%s" ', esc_attr( $this->get_js_id() ) ); ?> 
+			<?php echo ! empty( $this->args['multiple'] ) ? 'multiple' : '' ?> 
+			class="cmb_select" 
+			style="width: 100%" 
+		>
+
+			<?php if ( ! empty( $this->args['allow_none'] ) ) : ?>
+				<option value="">None</option>
+			<?php endif; ?>
+
+			<?php foreach ( $this->args['options'] as $value => $name ): ?>
+			   <option <?php selected( in_array( $value, $val ) ) ?> value="<?php echo esc_attr( $value ); ?>"><?php echo esc_html( $name ); ?></option>
+			<?php endforeach; ?>
+
+		</select>
+
+		<?php 
+	}
+
+	public function output_script() {
+		?>
+
+		<script type="text/javascript">
+
+			(function($) {
+				
+				var options = {};
+				
+				options.placeholder = "Type to search";
+				options.allowClear  = true;
+
+				if ( 'undefined' === typeof( window.cmb_select_fields ) )
+					window.cmb_select_fields = {};
+				
+				window.cmb_select_fields.<?php echo esc_js( $this->get_js_id() ); ?> = options;
+
+			})( jQuery );
+
+		</script>
+
+		<?php 
+	}	
+
+}
+
 class CMB_Taxonomy extends CMB_Select {
 
 	public function __construct() {
@@ -1181,7 +1181,7 @@ class CMB_Post_Select extends CMB_Select {
 
 	public function output_field() {
 			
-		// If AJAX, must use input type=text not select. 
+		// If AJAX, must use input type=text not standard select. 
 		if ( $this->args['ajax_url'] ) :
 
 			$name = $this->get_the_name_attr();
@@ -1223,7 +1223,7 @@ class CMB_Post_Select extends CMB_Select {
 				if ( 'undefined' === typeof( window.cmb_select_fields ) )
 					return false; 
 				
-				// Get options for this field.
+				// Get options for this field so we can modify it.
 				var options = window.cmb_select_fields.<?php echo esc_js( $this->get_js_id() ); ?>;
 
 				<?php // The multiple setting is required when using ajax (because an input field is used instead of select) ?>
