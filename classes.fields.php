@@ -11,7 +11,6 @@ abstract class CMB_Field {
 	public $value;
 	public $field_index = 0;
 
-
 	/**
 	 * used for repeatable
 	 *
@@ -175,7 +174,7 @@ abstract class CMB_Field {
 	 * For use as a unique field identifier in javascript.
 	 */
 	public function get_js_id() {
-		
+
 		return str_replace( array( '-', '[', ']', '--' ),'_', $this->get_the_id_attr() ); // JS friendly ID
 	
 	}
@@ -838,7 +837,6 @@ class CMB_Color_Picker extends CMB_Field {
  *     'options'     => array Array of options to show in the select, optionally use data_delegate instead
  *     'allow_none'   => bool Allow no option to be selected (will palce a "None" at the top of the select)
  *     'multiple'     => bool whether multiple can be selected
- *     'ajax_url'     => string ajax url. Note: ajax_url is intended to be used with subclasses of CMB_Select that provides select2 AJAX options
  */
 class CMB_Select extends CMB_Field {
 
@@ -848,7 +846,7 @@ class CMB_Select extends CMB_Field {
 
 		call_user_func_array( array( 'parent', '__construct' ), $args );
 
-		$this->args = wp_parse_args( $this->args, array( 'multiple' => false, 'ajax_url' => '' ) );
+		$this->args = wp_parse_args( $this->args, array( 'multiple' => false ) );
 
 	}
 
@@ -885,65 +883,70 @@ class CMB_Select extends CMB_Field {
 
 	public function html() {
 
-		$field_id = $this->get_js_id();
-
 		if ( $this->has_data_delegate() )
 			$this->args['options'] = $this->get_delegate_data();
 
-		$id = $this->get_the_id_attr();
+		$this->output_field();
 		
-		$name = $this->get_the_name_attr();
-		$name .= ! empty( $this->args['multiple'] ) ? '[]' : null;
+		$this->output_script();
+
+	}
+
+	public function output_field() {
 
 		$val = (array) $this->get_value();
 
+		$name = $this->get_the_name_attr();
+		$name .= ! empty( $this->args['multiple'] ) ? '[]' : null;
+		
 		?>
+
+		<select 
+			<?php $this->id_attr(); ?> 
+			<?php $this->boolean_attr(); ?> 
+			<?php printf( 'name="%s"', esc_attr( $name ) ); ?> 
+			<?php printf( 'data-field-id="%s" ', esc_attr( $this->get_js_id() ) ); ?> 
+			<?php echo ! empty( $this->args['multiple'] ) ? 'multiple' : '' ?> 
+			class="cmb_select" 
+			style="width: 100%" 
+		>
+
+			<?php if ( ! empty( $this->args['allow_none'] ) ) : ?>
+				<option value="">None</option>
+			<?php endif; ?>
+
+			<?php foreach ( $this->args['options'] as $value => $name ): ?>
+			   <option <?php selected( in_array( $value, $val ) ) ?> value="<?php echo esc_attr( $value ); ?>"><?php echo esc_html( $name ); ?></option>
+			<?php endforeach; ?>
+
+		</select>
 
 		<?php 
-		// If AJAX, must use input type=text not select. 
-		// Note the ajax options are not used by the CMB_Select field
-		// however this is here to allow sub-classes to provide their own AJAX settings.
+	}
+
+	public function output_script() {
 		?>
-		<?php if ( $this->args['ajax_url'] ) : ?>
-
-			<input <?php $this->id_attr(); ?> value="<?php echo esc_attr( implode( ',' , (array) $this->value ) ); ?>" <?php $this->boolean_attr(); ?> <?php printf( 'name="%s"', esc_attr( $name ) ); ?> <?php echo ! empty( $this->args['multiple'] ) ? 'multiple' : '' ?> class="cmb_select" data-field-id="<?php echo esc_attr( $field_id ); ?>" style="width: 100%" />
-
-		<?php else : ?>
-
-			<select <?php $this->id_attr(); ?> <?php $this->boolean_attr(); ?> <?php printf( 'name="%s"', esc_attr( $name ) ); ?> <?php echo ! empty( $this->args['multiple'] ) ? 'multiple' : '' ?> class="cmb_select" data-field-id="<?php echo esc_attr( $field_id ); ?>" style="width: 100%" >
-
-				<?php if ( ! empty( $this->args['allow_none'] ) ) : ?>
-					<option value="">None</option>
-				<?php endif; ?>
-
-				<?php foreach ( $this->args['options'] as $value => $name ): ?>
-				   <option <?php selected( in_array( $value, $val ) ) ?> value="<?php echo esc_attr( $value ); ?>"><?php echo esc_attr( $name ); ?></option>
-				<?php endforeach; ?>
-
-			</select>
-
-		<?php endif; ?>
 
 		<script type="text/javascript">
 
-			var options = {
-				placeholder: "Type to search" ,
-				allowClear: true
-			};
+			(function($) {
+				
+				var options = {};
+				
+				options.placeholder = "Type to search";
+				options.allowClear  = true;
 
-			<?php // The multiple setting is required when using ajax (because an input field is used instead of select) ?>
-			<?php if ( $this->args['ajax_url'] && $this->args['multiple'] ) : ?>
-				options.multiple = true;
-			<?php endif; ?>
+				if ( 'undefined' === typeof( window.cmb_select_fields ) )
+					window.cmb_select_fields = {};
+				
+				window.cmb_select_fields.<?php echo esc_js( $this->get_js_id() ); ?> = options;
 
-			if ( 'undefined' === typeof( window.cmb_select_fields ) )
-				window.cmb_select_fields = {};
-			
-			window.cmb_select_fields.<?php echo $field_id; ?> = options;
+			})( jQuery );
 
 		</script>
 
-	<?php }
+		<?php 
+	}	
 
 }
 
@@ -1132,7 +1135,7 @@ class CMB_Post_Select extends CMB_Select {
 
 		call_user_func_array( array( 'parent', '__construct' ), $args );
 
-		$this->args = wp_parse_args( $this->args, array( 'use_ajax' => false ) );
+		$this->args = wp_parse_args( $this->args, array( 'use_ajax' => false, 'ajax_url' => '' ) );
 
 		$this->args['query'] = isset( $this->args['query'] ) ? $this->args['query'] : array();
 
@@ -1150,19 +1153,19 @@ class CMB_Post_Select extends CMB_Select {
 	}
 
 	public function get_delegate_data() {
+		
+		$data = array();
 
-		$posts = $this->get_posts( $this->args['query'] );
-		$post_options = array();
+		foreach ( $this->get_posts() as $post_id )
+			$data[$post_id] = get_the_title( $post_id );
 
-		foreach ( $posts as $post )
-			$post_options[$post->ID] = get_the_title( $post->ID );
-
-		return $post_options;
+		return $data;
 
 	}
 
 	private function get_posts() {
 
+		$this->args['query']['fields'] = 'ids';
 		$query = new WP_Query( $this->args['query'] );
 
 		return isset( $query->posts ) ? $query->posts : array();
@@ -1176,11 +1179,40 @@ class CMB_Post_Select extends CMB_Select {
 
 	}
 
-	public function html() {
+	public function output_field() {
+			
+		// If AJAX, must use input type=text not select. 
+		if ( $this->args['ajax_url'] ) :
 
-		parent::html();
+			$name = $this->get_the_name_attr();
+			$name .= ! empty( $this->args['multiple'] ) ? '[]' : null;
+			
+			?>
 
-		$field_id = $this->get_js_id();
+			<input 
+				<?php $this->id_attr(); ?> 
+				<?php printf( 'value="%s" ', esc_attr( implode( ',' , (array) $this->value ) ) ); ?>
+				<?php printf( 'name="%s"', esc_attr( $name ) ); ?> 
+				<?php printf( 'data-field-id="%s" ', esc_attr( $this->get_js_id() ) ); ?> 
+				<?php // echo ! empty( $this->args['multiple'] ) ? 'multiple' : '' ?> 
+				<?php $this->boolean_attr(); ?> 
+				class="cmb_select" 
+				style="width: 100%" 
+			/>
+
+			<?php 
+
+		else :
+
+			parent::output_field();
+
+		endif;
+
+	}
+
+	public function output_script() {
+		
+		parent::output_script();
 
 		?>
 
@@ -1192,7 +1224,12 @@ class CMB_Post_Select extends CMB_Select {
 					return false; 
 				
 				// Get options for this field.
-				var options = window.cmb_select_fields.<?php echo $field_id; ?>;
+				var options = window.cmb_select_fields.<?php echo esc_js( $this->get_js_id() ); ?>;
+
+				<?php // The multiple setting is required when using ajax (because an input field is used instead of select) ?>
+				<?php if ( $this->args['ajax_url'] && $this->args['multiple'] ) : ?>
+					options.multiple = true;
+				<?php endif; ?>
 
 				<?php if ( $this->args['ajax_url'] && ! empty( $this->value ) ) : ?>
 				
@@ -1247,10 +1284,9 @@ class CMB_Post_Select extends CMB_Select {
 
 			})( jQuery );
 
-			</script>
+		</script>
 
-			<?php 
-			
+		<?php
 	}
 
 }
