@@ -242,9 +242,6 @@ class CMB_Meta_Box {
 
 				$attrs = array();
 
-				if ( isset( $field->args['repeatable_min']  ) )
-					$attrs[] = 'data-rep-min="' . intval( $field->args['repeatable_min'] ) . '"';
-
 				if ( isset( $field->args['repeatable_max']  ) )
 					$attrs[] = 'data-rep-max="' . intval( $field->args['repeatable_max'] ) . '"';
 
