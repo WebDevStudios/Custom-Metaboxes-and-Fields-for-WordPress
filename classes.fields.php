@@ -950,15 +950,17 @@ class CMB_Select extends CMB_Field {
 					var query = JSON.parse( '<?php echo json_encode( $this->args['ajax_args'] ? wp_parse_args( $this->args['ajax_args'] ) : (object) array() ); ?>' );
 
 					options.ajax = {
-						url: '<?php echo esc_js( $this->args['ajax_url'] ); ?>',
+						url: '<?php echo $this->args['ajax_url']; ?>',
 						dataType: 'json',
 						data: function( term, page ) {
 							query.s = term;
 							query.paged = page;
-							return query;
+							return { query: query };
 						},
 						results : function( data, page ) {
-							return { results: data }
+							var postsPerPage = query.posts_per_page = ( 'posts_per_page' in query ) ? query.posts_per_page : ( 'showposts' in query ) ? query.showposts : 10;
+							var isMore = ( page * postsPerPage ) < data.total; 
+                    		return { results: data.posts, more: isMore };
 						}
 					}
 
@@ -1170,8 +1172,13 @@ class CMB_Post_Select extends CMB_Select {
 			$this->args['data_delegate'] = array( $this, 'get_delegate_data' );
 
 		} else {
+
+			$this->args['ajax_url'] = add_query_arg( array(
+				'action' => 'cmb_post_select', 
+				'post_id' => get_the_id(),
+				'cmb_select_field_nonce' => wp_create_nonce( 'cmb_select_field' )
+			), esc_url( admin_url( 'admin-ajax.php' ) ) );
 			
-			$this->args['ajax_url'] = add_query_arg( 'action', 'cmb_post_select', admin_url( 'admin-ajax.php' ) );
 			$this->args['ajax_args'] = $this->args['query'];
 
 		}
@@ -1208,15 +1215,22 @@ class CMB_Post_Select extends CMB_Select {
 
 // TODO this should be in inside the class
 function cmb_ajax_post_select() {
-
-	$query = new WP_Query( $_GET );
+		
+	$post_id = ! empty( $_GET['post_id'] ) ? intval( $_GET['post_id'] ) : false;
+	$nonce   = ! empty( $_GET['cmb_select_field_nonce'] ) ? $_GET['cmb_select_field_nonce'] : false;
+	$args    = ! empty( $_GET['query'] ) ? $_GET['query'] : array();
 	
-	$posts = $query->posts;
+	if ( ! $nonce || ! wp_verify_nonce( $nonce, 'cmb_select_field' ) || ! current_user_can( 'edit_post', $post_id ) )
+		return;
 
-	$json = array();
+	$args['fields'] = 'ids'; // Only need to retrieve post IDs.
 
-	foreach ( $posts as $post )
-		$json[] = array( 'id' => $post->ID, 'text' => get_the_title( $post->ID ) );
+	$query = new WP_Query( $args );
+	
+	$json = array( 'total' => $query->found_posts, 'posts' => array() );
+
+	foreach ( $query->posts as $post_id )
+		array_push( $json['posts'], array( 'id' => $post_id, 'text' => get_the_title( $post_id ) ) );
 
 	echo json_encode( $json );
 

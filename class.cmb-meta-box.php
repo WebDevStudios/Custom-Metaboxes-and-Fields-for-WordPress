@@ -13,7 +13,7 @@ class CMB_Meta_Box {
 		$this->_meta_box = $meta_box;
 
 		if ( empty( $this->_meta_box['id'] ) )
-			$this->_meta_box['id'] = $this->_meta_box['title'];
+			$this->_meta_box['id'] = sanitize_title( $this->_meta_box['title'] );
 
 		$upload = false;
 
