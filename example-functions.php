@@ -13,7 +13,7 @@ function cmb_sample_metaboxes( array $meta_boxes ) {
 		
 		array( 'id' => 'field-1',  'name' => 'Text input field', 'type' => 'text' ),
 		array( 'id' => 'field-2', 'name' => 'Read-only text input field', 'type' => 'text', 'readonly' => true, 'default' => 'READ ONLY' ),
- 		array( 'id' => 'field-3', 'name' => 'Repeatable text input field', 'type' => 'text', 'repeatable' => true, 'repeatable_min' => 5, 'repeatable_max' => 5 ),
+ 		array( 'id' => 'field-3', 'name' => 'Repeatable text input field', 'type' => 'text', 'desc' => 'Add up to 5 fields.', 'repeatable' => true, 'repeatable_max' => 5 ),
 
 		array( 'id' => 'field-4',  'name' => 'Small text input field', 'type' => 'text_small' ),
 		array( 'id' => 'field-5',  'name' => 'URL field', 'type' => 'url' ),
@@ -32,8 +32,10 @@ function cmb_sample_metaboxes( array $meta_boxes ) {
 		array( 'id' => 'field-13', 'name' => 'Select field', 'type' => 'select', 'options' => array( 'option-1' => 'Option 1', 'option-2' => 'Option 2', 'option-3' => 'Option 3' ), 'allow_none' => true ),
 		array( 'id' => 'field-14', 'name' => 'Select field', 'type' => 'select', 'options' => array( 'option-1' => 'Option 1', 'option-2' => 'Option 2', 'option-3' => 'Option 3' ), 'multiple' => true ),
 		array( 'id' => 'field-15', 'name' => 'Select taxonomy field', 'type' => 'taxonomy_select',  'taxonomy' => 'category' ),
-		array( 'id' => 'field-16', 'name' => 'Post select field', 'type' => 'post_select', 'use_ajax' => false, 'query' => array( 'showposts' => -1 ) ),
-		array( 'id' => 'field-17', 'name' => 'Post select field (AJAX)', 'type' => 'post_select', 'use_ajax' => true, 'query' => array( 'showposts' => -1 ) ),
+		array( 'id' => 'field-16', 'name' => 'Post select field', 'type' => 'post_select', 'use_ajax' => false, 'query' => array( 'post__in' => array( 1 ) ),
+		
+		array( 'id' => 'field-17', 'name' => 'Post select field (AJAX)', 'type' => 'post_select', 'use_ajax' => true, 'query' => array( 'cat' => 1 ) ),
+		array( 'id' => 'field-17b', 'name' => 'Post select field (AJAX)', 'type' => 'post_select', 'use_ajax' => true, 'query' => array(), 'multiple' => true  ),
 		
 		array( 'id' => 'field-18', 'name' => 'Date input field', 'type' => 'date' ),
 		array( 'id' => 'field-19', 'name' => 'Time input field', 'type' => 'time' ),
