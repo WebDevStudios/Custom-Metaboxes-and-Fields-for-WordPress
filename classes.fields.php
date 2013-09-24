@@ -169,6 +169,17 @@ abstract class CMB_Field {
 
 	}
 
+	/**
+	 * Get JS Safe ID.
+	 *
+	 * For use as a unique field identifier in javascript.
+	 */
+	public function get_js_id() {
+		
+		return str_replace( array( '-', '[', ']', '--' ),'_', $this->get_the_id_attr() ); // JS friendly ID
+	
+	}
+
 	public function boolean_attr( $attrs = array() ) {
 
 		if ( $this->args['readonly'] )
@@ -827,6 +838,7 @@ class CMB_Color_Picker extends CMB_Field {
  *     'options'     => array Array of options to show in the select, optionally use data_delegate instead
  *     'allow_none'   => bool Allow no option to be selected (will palce a "None" at the top of the select)
  *     'multiple'     => bool whether multiple can be selected
+ *     'ajax_url'     => string ajax url. Note: ajax_url is intended to be used with subclasses of CMB_Select that provides select2 AJAX options
  */
 class CMB_Select extends CMB_Field {
 
@@ -873,7 +885,7 @@ class CMB_Select extends CMB_Field {
 
 	public function html() {
 
-		$field_id = str_replace( array( '-', '[', ']', '--' ),'_', $this->get_the_id_attr() ); // JS friendly ID
+		$field_id = $this->get_js_id();
 
 		if ( $this->has_data_delegate() )
 			$this->args['options'] = $this->get_delegate_data();
@@ -887,6 +899,11 @@ class CMB_Select extends CMB_Field {
 
 		?>
 
+		<?php 
+		// If AJAX, must use input type=text not select. 
+		// Note the ajax options are not used by the CMB_Select field
+		// however this is here to allow sub-classes to provide their own AJAX settings.
+		?>
 		<?php if ( $this->args['ajax_url'] ) : ?>
 
 			<input <?php $this->id_attr(); ?> value="<?php echo esc_attr( implode( ',' , (array) $this->value ) ); ?>" <?php $this->boolean_attr(); ?> <?php printf( 'name="%s"', esc_attr( $name ) ); ?> <?php echo ! empty( $this->args['multiple'] ) ? 'multiple' : '' ?> class="cmb_select" data-field-id="<?php echo esc_attr( $field_id ); ?>" style="width: 100%" />
@@ -903,84 +920,26 @@ class CMB_Select extends CMB_Field {
 				   <option <?php selected( in_array( $value, $val ) ) ?> value="<?php echo esc_attr( $value ); ?>"><?php echo esc_attr( $name ); ?></option>
 				<?php endforeach; ?>
 
-				</select>
+			</select>
+
+		<?php endif; ?>
+
+		<script type="text/javascript">
+
+			var options = {
+				placeholder: "Type to search" ,
+				allowClear: true
+			};
+
+			<?php // The multiple setting is required when using ajax (because an input field is used instead of select) ?>
+			<?php if ( $this->args['ajax_url'] && $this->args['multiple'] ) : ?>
+				options.multiple = true;
 			<?php endif; ?>
 
-		<script>
-
-			jQuery( document ).ready( function() {
-
-				var options = {
-					placeholder: "Type to search" ,
-					allowClear: true
-				};
-
-				<?php if ( $this->args['ajax_url'] ) : ?>
-
-					<?php if ( $this->args['multiple'] ) : ?>
-
-						options.multiple = true;
-
-					<?php endif; ?>
-
-					<?php if ( ! empty( $this->value ) ) : ?>
-
-						options.initSelection = function( element, callback ) {
-								
-							<?php if ( $this->args['multiple'] ) : ?>
-								
-								var data = [];
-								
-								<?php foreach ( (array) $this->value as $post_id ) : ?>
-									data.push = <?php echo sprintf( '{ id: %d, text: "%s" }', $this->value, get_the_title( $this->value ) ); ?>;
-								<?php endforeach; ?>
-							
-							<?php else : ?>
-							
-								var data = <?php echo sprintf( '{ id: %d, text: "%s" }', $this->value, get_the_title( $this->value ) ); ?>;
-							
-							<?php endif; ?>
-
-							callback( data );
-							
-						};
-
-					<?php endif; ?>
-
-					var ajaxData = {};
-					
-					ajaxData.action = 'cmb_post_select';
-					
-					// Used for nonce & user capabilty checks.
-					ajaxData.post_id = <?php echo intval( get_the_id() ); ?>;
-					ajaxData.cmb_select_field_nonce = '<?php echo esc_js( wp_create_nonce( 'cmb_select_field' ) ); ?>';
-
-					ajaxData.query = JSON.parse( '<?php echo json_encode( $this->args['ajax_args'] ? wp_parse_args( $this->args['ajax_args'] ) : (object) array() ); ?>' );
-
-					options.ajax = {
-						url: '<?php echo esc_js( esc_url( $this->args['ajax_url'] ) ); ?>',
-						type: 'POST',
-						dataType: 'json',
-						data: function( term, page ) {
-							ajaxData.query.s = term;
-							ajaxData.query.paged = page;
-							return ajaxData;
-						},
-						results : function( results, page ) {
-							var postsPerPage = ajaxData.query.posts_per_page = ( 'posts_per_page' in ajaxData.query ) ? ajaxData.query.posts_per_page : ( 'showposts' in ajaxData.query ) ? ajaxData.query.showposts : 10;
-							var isMore = ( page * postsPerPage ) < results.total; 
-                    		return { results: results.posts, more: isMore };
-						}
-					}
-
-				<?php endif; ?>
-
-				if ( 'undefined' === typeof( window.cmb_select_fields ) )
-					window.cmb_select_fields = {};
-				
-				window.cmb_select_fields.<?php echo $field_id; ?> = options;
-
-			} );
+			if ( 'undefined' === typeof( window.cmb_select_fields ) )
+				window.cmb_select_fields = {};
+			
+			window.cmb_select_fields.<?php echo $field_id; ?> = options;
 
 		</script>
 
@@ -1071,7 +1030,7 @@ class CMB_wysiwyg extends CMB_Field {
 		$id   = $this->get_the_id_attr();
 		$name = $this->get_the_name_attr();		
 
-		$field_id = str_replace( array( '-', '[', ']', '--' ),'_', $this->get_the_id_attr() );
+		$field_id = $this->get_js_id();
 
 		printf( '<div class="cmb-wysiwyg" data-id="%s" data-name="%s" data-field-id="%s">', $id, $name, $field_id );
 	
@@ -1157,7 +1116,7 @@ class CMB_Taxonomy extends CMB_Select {
 }
 
 /**
- * Standard select field.
+ * Post Select field.
  *
  * @supports "data_delegate"
  * @args
@@ -1184,8 +1143,7 @@ class CMB_Post_Select extends CMB_Select {
 		} else {
 
 			$this->args['ajax_url'] = admin_url( 'admin-ajax.php' );
-			
-			$this->args['ajax_args'] = $this->args['query'];
+			$this->args['ajax_args'] = wp_parse_args( $this->args['query'] );
 
 		}
 
@@ -1193,7 +1151,7 @@ class CMB_Post_Select extends CMB_Select {
 
 	public function get_delegate_data() {
 
-		$posts = $this->get_posts();
+		$posts = $this->get_posts( $this->args['query'] );
 		$post_options = array();
 
 		foreach ( $posts as $post )
@@ -1217,17 +1175,95 @@ class CMB_Post_Select extends CMB_Select {
 			$this->value = explode( ',', $this->value );
 
 	}
+
+	public function html() {
+
+		parent::html();
+
+		$field_id = $this->get_js_id();
+
+		?>
+
+		<script type="text/javascript">
+
+			(function($) {
+
+				if ( 'undefined' === typeof( window.cmb_select_fields ) )
+					return false; 
+				
+				// Get options for this field.
+				var options = window.cmb_select_fields.<?php echo $field_id; ?>;
+
+				<?php if ( $this->args['ajax_url'] && ! empty( $this->value ) ) : ?>
+				
+					options.initSelection = function( element, callback ) {
+						
+						var data = [];
+
+						<?php if ( $this->args['multiple'] ) : ?>
+						
+							<?php foreach ( (array) $this->value as $post_id ) : ?>
+								data.push = <?php echo sprintf( '{ id: %d, text: "%s" }', $this->value, get_the_title( $this->value ) ); ?>;
+							<?php endforeach; ?>
+						
+						<?php else : ?>
+						
+							data = <?php echo sprintf( '{ id: %d, text: "%s" }', $this->value, get_the_title( $this->value ) ); ?>;
+						
+						<?php endif; ?>
+
+						callback( data );
+						
+					};
+
+				<?php endif; ?>
+
+				<?php if ( $this->args['ajax_url'] ) : ?>
+					
+					var ajaxData = {
+						action  : 'cmb_post_select',
+						post_id : '<?php echo intval( get_the_id() ); ?>', // Used for user capabilty check.
+						nonce   : '<?php echo esc_js( wp_create_nonce( 'cmb_select_field' ) ); ?>',
+						query   : JSON.parse( '<?php echo json_encode( $this->args['ajax_args'] ); ?>' )
+					};
+					
+					options.ajax = {
+						url: '<?php echo esc_js( esc_url( $this->args['ajax_url'] ) ); ?>',
+						type: 'POST',
+						dataType: 'json',
+						data: function( term, page ) {
+							ajaxData.query.s = term;
+							ajaxData.query.paged = page;
+							return ajaxData;
+						},
+						results : function( results, page ) {
+							var postsPerPage = ajaxData.query.posts_per_page = ( 'posts_per_page' in ajaxData.query ) ? ajaxData.query.posts_per_page : ( 'showposts' in ajaxData.query ) ? ajaxData.query.showposts : 10;
+							var isMore = ( page * postsPerPage ) < results.total; 
+		            		return { results: results.posts, more: isMore };
+						}
+					}
+
+				<?php endif; ?>			
+
+			})( jQuery );
+
+			</script>
+
+			<?php 
+			
+	}
+
 }
 
 // TODO this should be in inside the class
 function cmb_ajax_post_select() {
 	
 	$post_id = ! empty( $_POST['post_id'] ) ? intval( $_POST['post_id'] ) : false;
-	$nonce   = ! empty( $_POST['cmb_select_field_nonce'] ) ? $_POST['cmb_select_field_nonce'] : false;
+	$nonce   = ! empty( $_POST['nonce'] ) ? $_POST['nonce'] : false;
 	$args    = ! empty( $_POST['query'] ) ? $_POST['query'] : array();
 
 	if ( ! $nonce || ! wp_verify_nonce( $nonce, 'cmb_select_field' ) || ! current_user_can( 'edit_post', $post_id ) ) {
-		echo '{}';
+		echo json_encode( array( 'total' => 0, 'posts' => array() ) );
 		exit;
 	}
 
