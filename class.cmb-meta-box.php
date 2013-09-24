@@ -238,10 +238,19 @@ class CMB_Meta_Box {
 
 				$classes[] = get_class($field);
 
+				$classes = 'class="' . esc_attr( implode(' ', array_map( 'sanitize_html_class', $classes ) ) ) . '"';
+
+				$attrs = array();
+
+				if ( isset( $field->args['repeatable_max']  ) )
+					$attrs[] = 'data-rep-max="' . intval( $field->args['repeatable_max'] ) . '"';
+
+				$attrs = implode( ' ', $attrs );
+
 				?>
 
 				<td style="width: <?php esc_attr_e( $field->args['cols'] / 12 * 100 ); ?>%" colspan="<?php esc_attr_e( $field->args['cols'] ); ?>">
-					<div class="<?php esc_attr_e( implode(' ', array_map( 'sanitize_html_class', $classes ) ) ); ?>">
+					<div <?php echo $classes; ?> <?php echo $attrs; ?>>
 						<?php $field->display(); ?>
 					</div>
 				</td>

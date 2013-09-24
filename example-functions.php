@@ -13,7 +13,7 @@ function cmb_sample_metaboxes( array $meta_boxes ) {
 		
 		array( 'id' => 'field-1',  'name' => 'Text input field', 'type' => 'text' ),
 		array( 'id' => 'field-2', 'name' => 'Read-only text input field', 'type' => 'text', 'readonly' => true, 'default' => 'READ ONLY' ),
- 		array( 'id' => 'field-3', 'name' => 'Repeatable text input field', 'type' => 'text', 'repeatable' => true, 'repeatable_min' => 5, 'repeatable_max' => 5 ),
+ 		array( 'id' => 'field-3', 'name' => 'Repeatable text input field', 'type' => 'text', 'desc' => 'Add up to 5 fields.', 'repeatable' => true, 'repeatable_max' => 5 ),
 
 		array( 'id' => 'field-4',  'name' => 'Small text input field', 'type' => 'text_small' ),
 		array( 'id' => 'field-5',  'name' => 'URL field', 'type' => 'url' ),
