@@ -1194,7 +1194,6 @@ class CMB_Post_Select extends CMB_Select {
 				<?php printf( 'value="%s" ', esc_attr( implode( ',' , (array) $this->value ) ) ); ?>
 				<?php printf( 'name="%s"', esc_attr( $name ) ); ?> 
 				<?php printf( 'data-field-id="%s" ', esc_attr( $this->get_js_id() ) ); ?> 
-				<?php // echo ! empty( $this->args['multiple'] ) ? 'multiple' : '' ?> 
 				<?php $this->boolean_attr(); ?> 
 				class="cmb_select" 
 				style="width: 100%" 
