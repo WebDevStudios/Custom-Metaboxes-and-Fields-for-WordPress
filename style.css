@@ -373,3 +373,8 @@ button.repeat-field { display: block !important; clear: both; }
 
 
 .CMB_Color_Picker .field-item { float: left; clear: both; }
+
+.loading::before { content: ' '; display: block; background: url( 'images/wpspin.gif' ) no-repeat; width: 16px; height: 16px; position: absolute; top: 50%; left: 50%; margin-top: -8px; margin-bottom: -8px; }
+@media only screen and (-webkit-min-device-pixel-ratio : 1.5), only screen and (min-device-pixel-ratio : 1.5) {
+	.loading::before { background-image: url( 'images/wpspin-2x.gif'); background-size: 16px 16px; }
+}

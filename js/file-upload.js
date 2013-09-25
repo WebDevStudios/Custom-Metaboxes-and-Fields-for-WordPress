@@ -46,12 +46,16 @@ jQuery( document ).ready( function() {
 					crop: fileHolder.attr('data-crop')
 				}
 
+				fileHolder.addClass( 'loading' );
+
 				jQuery.post( ajaxurl, data, function( src ) {
 					// Insert image
 					jQuery( '<img />', { src: src } ).prependTo( fileHolder );
+					fileHolder.removeClass( 'loading' );
 				}).fail( function() {
 					// Fallback - insert full size image.
 					jQuery( '<img />', { src: model.attributes.url } ).prependTo( fileHolder );
+					fileHolder.removeClass( 'loading' );
 				});
 
 			} else {

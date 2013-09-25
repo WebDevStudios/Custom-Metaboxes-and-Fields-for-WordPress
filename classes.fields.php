@@ -498,7 +498,7 @@ class CMB_Image_Field extends CMB_File_Field {
 
 			<button class="button cmb-file-upload <?php echo esc_attr( $this->get_value() ) ? 'hidden' : '' ?>" href="#">Add Image</button>
 
-			<div class="cmb-file-holder type-img  <?php echo $this->get_value() ? '' : 'hidden'; ?>" data-crop="<?php echo (string) $crop; ?>">
+			<div class="cmb-file-holder type-img <?php echo $this->get_value() ? '' : 'hidden'; ?>" data-crop="<?php echo (string) $crop; ?>">
 
 				<?php if ( ! empty( $image ) ) : ?>
 					<img src="<?php echo esc_url( $image[0] ); ?>" width="<?php echo intval( $image[1] ); ?>" height="<?php echo intval( $image[2] ); ?>" />
