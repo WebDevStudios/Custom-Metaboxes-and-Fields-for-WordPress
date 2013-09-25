@@ -1174,8 +1174,11 @@ class CMB_Post_Select extends CMB_Select {
 
 	public function parse_save_value() {
 
-		if ( $this->args['ajax_url'] && $this->args['multiple'] )
-			$this->value = explode( ',', $this->value );
+		// AJAX multi select2 data is submitted as a string of comma separated post IDs.
+		// If empty, set to false instead of empty array to ensure the meta entry is deleted.
+		if ( $this->args['ajax_url'] && $this->args['multiple'] ) {
+			$this->value = ( ! empty( $this->value ) ) ? explode( ',', $this->value ) : false;
+		}
 
 	}
 
