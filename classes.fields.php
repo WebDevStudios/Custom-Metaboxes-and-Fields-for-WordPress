@@ -1225,8 +1225,8 @@ class CMB_Post_Select extends CMB_Select {
 				// Get options for this field so we can modify it.
 				var options = window.cmb_select_fields.<?php echo esc_js( $this->get_js_id() ); ?>;
 
-				<?php // The multiple setting is required when using ajax (because an input field is used instead of select) ?>
 				<?php if ( $this->args['ajax_url'] && $this->args['multiple'] ) : ?>
+					// The multiple setting is required when using ajax (because an input field is used instead of select)
 					options.multiple = true;
 				<?php endif; ?>
 
