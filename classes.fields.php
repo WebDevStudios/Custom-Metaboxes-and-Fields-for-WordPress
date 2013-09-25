@@ -1239,7 +1239,7 @@ class CMB_Post_Select extends CMB_Select {
 						<?php if ( $this->args['multiple'] ) : ?>
 						
 							<?php foreach ( (array) $this->value as $post_id ) : ?>
-								data.push = <?php echo sprintf( '{ id: %d, text: "%s" }', $this->value, get_the_title( $this->value ) ); ?>;
+								data.push( <?php echo sprintf( '{ id: %d, text: "%s" }', $post_id, get_the_title( $post_id ) ); ?> );
 							<?php endforeach; ?>
 						
 						<?php else : ?>
