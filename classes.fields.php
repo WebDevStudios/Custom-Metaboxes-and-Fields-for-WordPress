@@ -11,7 +11,6 @@ abstract class CMB_Field {
 	public $value;
 	public $field_index = 0;
 
-
 	/**
 	 * used for repeatable
 	 *
@@ -167,6 +166,17 @@ abstract class CMB_Field {
 
 		<?php }
 
+	}
+
+	/**
+	 * Get JS Safe ID.
+	 *
+	 * For use as a unique field identifier in javascript.
+	 */
+	public function get_js_id() {
+
+		return str_replace( array( '-', '[', ']', '--' ),'_', $this->get_the_id_attr() ); // JS friendly ID
+	
 	}
 
 	public function boolean_attr( $attrs = array() ) {
@@ -820,165 +830,6 @@ class CMB_Color_Picker extends CMB_Field {
 }
 
 /**
- * Standard select field.
- *
- * @supports "data_delegate"
- * @args
- *     'options'     => array Array of options to show in the select, optionally use data_delegate instead
- *     'allow_none'   => bool Allow no option to be selected (will palce a "None" at the top of the select)
- *     'multiple'     => bool whether multiple can be selected
- */
-class CMB_Select extends CMB_Field {
-
-	public function __construct() {
-		
-		$args = func_get_args();
-
-		call_user_func_array( array( 'parent', '__construct' ), $args );
-
-		$this->args = wp_parse_args( $this->args, array( 'multiple' => false, 'ajax_url' => '' ) );
-
-	}
-
-	public function parse_save_values(){
-
-		if ( isset( $this->group_index ) && isset( $this->args['multiple'] ) && $this->args['multiple'] )
-			$this->values = array( $this->values );
-
-	}
-
-	public function get_options() {
-
-		if ( $this->has_data_delegate() )
-			$this->args['options'] = $this->get_delegate_data();
-
-		return $this->args['options'];
-	}
-
-	public function enqueue_scripts() {
-
-		parent::enqueue_scripts();
-
-		wp_enqueue_script( 'select2', trailingslashit( CMB_URL ) . 'js/select2/select2.js', array( 'jquery' ) );
-		wp_enqueue_script( 'field-select', trailingslashit( CMB_URL ) . 'js/field.select.js', array( 'jquery' ) );
-
-	}
-
-	public function enqueue_styles() {
-
-		parent::enqueue_styles();
-
-		wp_enqueue_style( 'select2', trailingslashit( CMB_URL ) . 'js/select2/select2.css' );
-	}
-
-	public function html() {
-
-		$field_id = str_replace( array( '-', '[', ']', '--' ),'_', $this->get_the_id_attr() ); // JS friendly ID
-
-		if ( $this->has_data_delegate() )
-			$this->args['options'] = $this->get_delegate_data();
-
-		$id = $this->get_the_id_attr();
-		
-		$name = $this->get_the_name_attr();
-		$name .= ! empty( $this->args['multiple'] ) ? '[]' : null;
-
-		$val = (array) $this->get_value();
-
-		?>
-
-		<?php if ( $this->args['ajax_url'] ) : ?>
-
-			<input <?php $this->id_attr(); ?> value="<?php echo esc_attr( implode( ',' , (array) $this->value ) ); ?>" <?php $this->boolean_attr(); ?> <?php printf( 'name="%s"', esc_attr( $name ) ); ?> <?php echo ! empty( $this->args['multiple'] ) ? 'multiple' : '' ?> class="cmb_select" data-field-id="<?php echo esc_attr( $field_id ); ?>" style="width: 100%" />
-
-		<?php else : ?>
-
-			<select <?php $this->id_attr(); ?> <?php $this->boolean_attr(); ?> <?php printf( 'name="%s"', esc_attr( $name ) ); ?> <?php echo ! empty( $this->args['multiple'] ) ? 'multiple' : '' ?> class="cmb_select" data-field-id="<?php echo esc_attr( $field_id ); ?>" style="width: 100%" >
-
-				<?php if ( ! empty( $this->args['allow_none'] ) ) : ?>
-					<option value="">None</option>
-				<?php endif; ?>
-
-				<?php foreach ( $this->args['options'] as $value => $name ): ?>
-				   <option <?php selected( in_array( $value, $val ) ) ?> value="<?php echo esc_attr( $value ); ?>"><?php echo esc_attr( $name ); ?></option>
-				<?php endforeach; ?>
-
-				</select>
-			<?php endif; ?>
-
-		<script>
-
-			jQuery( document ).ready( function() {
-
-				var options = {
-					placeholder: "Type to search" ,
-					allowClear: true
-				};
-
-				<?php if ( $this->args['ajax_url'] ) : ?>
-
-					<?php if ( $this->args['multiple'] ) : ?>
-
-						options.multiple = true;
-
-					<?php endif; ?>
-
-					<?php if ( ! empty( $this->value ) ) : ?>
-
-						options.initSelection = function( element, callback ) {
-								
-							<?php if ( $this->args['multiple'] ) : ?>
-								
-								var data = [];
-								
-								<?php foreach ( (array) $this->value as $post_id ) : ?>
-									data.push = <?php echo sprintf( '{ id: %d, text: "%s" }', $this->value, get_the_title( $this->value ) ); ?>;
-								<?php endforeach; ?>
-							
-							<?php else : ?>
-							
-								var data = <?php echo sprintf( '{ id: %d, text: "%s" }', $this->value, get_the_title( $this->value ) ); ?>;
-							
-							<?php endif; ?>
-
-							callback( data );
-							
-						};
-
-					<?php endif; ?>
-
-					var query = JSON.parse( '<?php echo json_encode( $this->args['ajax_args'] ? wp_parse_args( $this->args['ajax_args'] ) : (object) array() ); ?>' );
-
-					options.ajax = {
-						url: '<?php echo $this->args['ajax_url']; ?>',
-						dataType: 'json',
-						data: function( term, page ) {
-							query.s = term;
-							query.paged = page;
-							return { query: query };
-						},
-						results : function( data, page ) {
-							var postsPerPage = query.posts_per_page = ( 'posts_per_page' in query ) ? query.posts_per_page : ( 'showposts' in query ) ? query.showposts : 10;
-							var isMore = ( page * postsPerPage ) < data.total; 
-                    		return { results: data.posts, more: isMore };
-						}
-					}
-
-				<?php endif; ?>
-
-				if ( 'undefined' === typeof( window.cmb_select_fields ) )
-					window.cmb_select_fields = {};
-				window.cmb_select_fields.<?php echo $field_id; ?> = options;
-
-			} );
-
-		</script>
-
-	<?php }
-
-}
-
-/**
  * Standard radio field.
  *
  * Args:
@@ -1061,7 +912,7 @@ class CMB_wysiwyg extends CMB_Field {
 		$id   = $this->get_the_id_attr();
 		$name = $this->get_the_name_attr();		
 
-		$field_id = str_replace( array( '-', '[', ']', '--' ),'_', $this->get_the_id_attr() );
+		$field_id = $this->get_js_id();
 
 		printf( '<div class="cmb-wysiwyg" data-id="%s" data-name="%s" data-field-id="%s">', $id, $name, $field_id );
 	
@@ -1113,6 +964,127 @@ class CMB_wysiwyg extends CMB_Field {
 
 }
 
+/**
+ * Standard select field.
+ *
+ * @supports "data_delegate"
+ * @args
+ *     'options'     => array Array of options to show in the select, optionally use data_delegate instead
+ *     'allow_none'   => bool Allow no option to be selected (will palce a "None" at the top of the select)
+ *     'multiple'     => bool whether multiple can be selected
+ */
+class CMB_Select extends CMB_Field {
+
+	public function __construct() {
+		
+		$args = func_get_args();
+
+		call_user_func_array( array( 'parent', '__construct' ), $args );
+
+		$this->args = wp_parse_args( $this->args, array( 'multiple' => false ) );
+
+	}
+
+	public function parse_save_values(){
+
+		if ( isset( $this->group_index ) && isset( $this->args['multiple'] ) && $this->args['multiple'] )
+			$this->values = array( $this->values );
+
+	}
+
+	public function get_options() {
+
+		if ( $this->has_data_delegate() )
+			$this->args['options'] = $this->get_delegate_data();
+
+		return $this->args['options'];
+	}
+
+	public function enqueue_scripts() {
+
+		parent::enqueue_scripts();
+
+		wp_enqueue_script( 'select2', trailingslashit( CMB_URL ) . 'js/select2/select2.js', array( 'jquery' ) );
+		wp_enqueue_script( 'field-select', trailingslashit( CMB_URL ) . 'js/field.select.js', array( 'jquery' ) );
+
+	}
+
+	public function enqueue_styles() {
+
+		parent::enqueue_styles();
+
+		wp_enqueue_style( 'select2', trailingslashit( CMB_URL ) . 'js/select2/select2.css' );
+	}
+
+	public function html() {
+
+		if ( $this->has_data_delegate() )
+			$this->args['options'] = $this->get_delegate_data();
+
+		$this->output_field();
+		
+		$this->output_script();
+
+	}
+
+	public function output_field() {
+
+		$val = (array) $this->get_value();
+
+		$name = $this->get_the_name_attr();
+		$name .= ! empty( $this->args['multiple'] ) ? '[]' : null;
+		
+		?>
+
+		<select 
+			<?php $this->id_attr(); ?> 
+			<?php $this->boolean_attr(); ?> 
+			<?php printf( 'name="%s"', esc_attr( $name ) ); ?> 
+			<?php printf( 'data-field-id="%s" ', esc_attr( $this->get_js_id() ) ); ?> 
+			<?php echo ! empty( $this->args['multiple'] ) ? 'multiple' : '' ?> 
+			class="cmb_select" 
+			style="width: 100%" 
+		>
+
+			<?php if ( ! empty( $this->args['allow_none'] ) ) : ?>
+				<option value="">None</option>
+			<?php endif; ?>
+
+			<?php foreach ( $this->args['options'] as $value => $name ): ?>
+			   <option <?php selected( in_array( $value, $val ) ) ?> value="<?php echo esc_attr( $value ); ?>"><?php echo esc_html( $name ); ?></option>
+			<?php endforeach; ?>
+
+		</select>
+
+		<?php 
+	}
+
+	public function output_script() {
+		?>
+
+		<script type="text/javascript">
+
+			(function($) {
+				
+				var options = {};
+				
+				options.placeholder = "Type to search";
+				options.allowClear  = true;
+
+				if ( 'undefined' === typeof( window.cmb_select_fields ) )
+					window.cmb_select_fields = {};
+				
+				window.cmb_select_fields.<?php echo esc_js( $this->get_js_id() ); ?> = options;
+
+			})( jQuery );
+
+		</script>
+
+		<?php 
+	}	
+
+}
+
 class CMB_Taxonomy extends CMB_Select {
 
 	public function __construct() {
@@ -1147,7 +1119,7 @@ class CMB_Taxonomy extends CMB_Select {
 }
 
 /**
- * Standard select field.
+ * Post Select field.
  *
  * @supports "data_delegate"
  * @args
@@ -1163,7 +1135,7 @@ class CMB_Post_Select extends CMB_Select {
 
 		call_user_func_array( array( 'parent', '__construct' ), $args );
 
-		$this->args = wp_parse_args( $this->args, array( 'use_ajax' => false ) );
+		$this->args = wp_parse_args( $this->args, array( 'use_ajax' => false, 'ajax_url' => '' ) );
 
 		$this->args['query'] = isset( $this->args['query'] ) ? $this->args['query'] : array();
 
@@ -1173,32 +1145,27 @@ class CMB_Post_Select extends CMB_Select {
 
 		} else {
 
-			$this->args['ajax_url'] = add_query_arg( array(
-				'action' => 'cmb_post_select', 
-				'post_id' => get_the_id(),
-				'cmb_select_field_nonce' => wp_create_nonce( 'cmb_select_field' )
-			), esc_url( admin_url( 'admin-ajax.php' ) ) );
-			
-			$this->args['ajax_args'] = $this->args['query'];
+			$this->args['ajax_url'] = admin_url( 'admin-ajax.php' );
+			$this->args['ajax_args'] = wp_parse_args( $this->args['query'] );
 
 		}
 
 	}
 
 	public function get_delegate_data() {
+		
+		$data = array();
 
-		$posts = $this->get_posts();
-		$post_options = array();
+		foreach ( $this->get_posts() as $post_id )
+			$data[$post_id] = get_the_title( $post_id );
 
-		foreach ( $posts as $post )
-			$post_options[$post->ID] = get_the_title( $post->ID );
-
-		return $post_options;
+		return $data;
 
 	}
 
 	private function get_posts() {
 
+		$this->args['query']['fields'] = 'ids';
 		$query = new WP_Query( $this->args['query'] );
 
 		return isset( $query->posts ) ? $query->posts : array();
@@ -1211,17 +1178,129 @@ class CMB_Post_Select extends CMB_Select {
 			$this->value = explode( ',', $this->value );
 
 	}
+
+	public function output_field() {
+			
+		// If AJAX, must use input type=text not standard select. 
+		if ( $this->args['ajax_url'] ) :
+
+			$name = $this->get_the_name_attr();
+			$name .= ! empty( $this->args['multiple'] ) ? '[]' : null;
+			
+			?>
+
+			<input 
+				<?php $this->id_attr(); ?> 
+				<?php printf( 'value="%s" ', esc_attr( implode( ',' , (array) $this->value ) ) ); ?>
+				<?php printf( 'name="%s"', esc_attr( $name ) ); ?> 
+				<?php printf( 'data-field-id="%s" ', esc_attr( $this->get_js_id() ) ); ?> 
+				<?php $this->boolean_attr(); ?> 
+				class="cmb_select" 
+				style="width: 100%" 
+			/>
+
+			<?php 
+
+		else :
+
+			parent::output_field();
+
+		endif;
+
+	}
+
+	public function output_script() {
+		
+		parent::output_script();
+
+		?>
+
+		<script type="text/javascript">
+
+			(function($) {
+
+				if ( 'undefined' === typeof( window.cmb_select_fields ) )
+					return false; 
+				
+				// Get options for this field so we can modify it.
+				var options = window.cmb_select_fields.<?php echo esc_js( $this->get_js_id() ); ?>;
+
+				<?php // The multiple setting is required when using ajax (because an input field is used instead of select) ?>
+				<?php if ( $this->args['ajax_url'] && $this->args['multiple'] ) : ?>
+					options.multiple = true;
+				<?php endif; ?>
+
+				<?php if ( $this->args['ajax_url'] && ! empty( $this->value ) ) : ?>
+				
+					options.initSelection = function( element, callback ) {
+						
+						var data = [];
+
+						<?php if ( $this->args['multiple'] ) : ?>
+						
+							<?php foreach ( (array) $this->value as $post_id ) : ?>
+								data.push = <?php echo sprintf( '{ id: %d, text: "%s" }', $this->value, get_the_title( $this->value ) ); ?>;
+							<?php endforeach; ?>
+						
+						<?php else : ?>
+						
+							data = <?php echo sprintf( '{ id: %d, text: "%s" }', $this->value, get_the_title( $this->value ) ); ?>;
+						
+						<?php endif; ?>
+
+						callback( data );
+						
+					};
+
+				<?php endif; ?>
+
+				<?php if ( $this->args['ajax_url'] ) : ?>
+					
+					var ajaxData = {
+						action  : 'cmb_post_select',
+						post_id : '<?php echo intval( get_the_id() ); ?>', // Used for user capabilty check.
+						nonce   : '<?php echo esc_js( wp_create_nonce( 'cmb_select_field' ) ); ?>',
+						query   : JSON.parse( '<?php echo json_encode( $this->args['ajax_args'] ); ?>' )
+					};
+					
+					options.ajax = {
+						url: '<?php echo esc_js( esc_url( $this->args['ajax_url'] ) ); ?>',
+						type: 'POST',
+						dataType: 'json',
+						data: function( term, page ) {
+							ajaxData.query.s = term;
+							ajaxData.query.paged = page;
+							return ajaxData;
+						},
+						results : function( results, page ) {
+							var postsPerPage = ajaxData.query.posts_per_page = ( 'posts_per_page' in ajaxData.query ) ? ajaxData.query.posts_per_page : ( 'showposts' in ajaxData.query ) ? ajaxData.query.showposts : 10;
+							var isMore = ( page * postsPerPage ) < results.total; 
+		            		return { results: results.posts, more: isMore };
+						}
+					}
+
+				<?php endif; ?>			
+
+			})( jQuery );
+
+		</script>
+
+		<?php
+	}
+
 }
 
 // TODO this should be in inside the class
 function cmb_ajax_post_select() {
-		
-	$post_id = ! empty( $_GET['post_id'] ) ? intval( $_GET['post_id'] ) : false;
-	$nonce   = ! empty( $_GET['cmb_select_field_nonce'] ) ? $_GET['cmb_select_field_nonce'] : false;
-	$args    = ! empty( $_GET['query'] ) ? $_GET['query'] : array();
 	
-	if ( ! $nonce || ! wp_verify_nonce( $nonce, 'cmb_select_field' ) || ! current_user_can( 'edit_post', $post_id ) )
-		return;
+	$post_id = ! empty( $_POST['post_id'] ) ? intval( $_POST['post_id'] ) : false;
+	$nonce   = ! empty( $_POST['nonce'] ) ? $_POST['nonce'] : false;
+	$args    = ! empty( $_POST['query'] ) ? $_POST['query'] : array();
+
+	if ( ! $nonce || ! wp_verify_nonce( $nonce, 'cmb_select_field' ) || ! current_user_can( 'edit_post', $post_id ) ) {
+		echo json_encode( array( 'total' => 0, 'posts' => array() ) );
+		exit;
+	}
 
 	$args['fields'] = 'ids'; // Only need to retrieve post IDs.
 
