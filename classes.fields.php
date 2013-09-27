@@ -1147,25 +1147,25 @@ class CMB_Post_Select extends CMB_Select {
 
 	public function parse_save_value() {
 
-		if ( $this->args['ajax_url'] && $this->args['multiple'] )
-			$this->value = explode( ',', $this->value );
+		// AJAX multi select2 data is submitted as a string of comma separated post IDs.
+		// If empty, set to false instead of empty array to ensure the meta entry is deleted.
+		if ( $this->args['ajax_url'] && $this->args['multiple'] ) {
+			$this->value = ( ! empty( $this->value ) ) ? explode( ',', $this->value ) : false;
+		}
 
 	}
 
 	public function output_field() {
 			
-		// If AJAX, must use input type=text not standard select. 
+		// If AJAX, must use input type not standard select. 
 		if ( $this->args['ajax_url'] ) :
 
-			$name = $this->get_the_name_attr();
-			$name .= ! empty( $this->args['multiple'] ) ? '[]' : null;
-			
 			?>
 
 			<input 
 				<?php $this->id_attr(); ?> 
 				<?php printf( 'value="%s" ', esc_attr( implode( ',' , (array) $this->value ) ) ); ?>
-				<?php printf( 'name="%s"', esc_attr( $name ) ); ?> 
+				<?php printf( 'name="%s"', esc_attr( $this->get_the_name_attr() ) ); ?> 
 				<?php printf( 'data-field-id="%s" ', esc_attr( $this->get_js_id() ) ); ?> 
 				<?php $this->boolean_attr(); ?> 
 				class="cmb_select" 
@@ -1198,8 +1198,8 @@ class CMB_Post_Select extends CMB_Select {
 				// Get options for this field so we can modify it.
 				var options = window.cmb_select_fields.<?php echo esc_js( $this->get_js_id() ); ?>;
 
-				<?php // The multiple setting is required when using ajax (because an input field is used instead of select) ?>
 				<?php if ( $this->args['ajax_url'] && $this->args['multiple'] ) : ?>
+					// The multiple setting is required when using ajax (because an input field is used instead of select)
 					options.multiple = true;
 				<?php endif; ?>
 
@@ -1212,7 +1212,7 @@ class CMB_Post_Select extends CMB_Select {
 						<?php if ( $this->args['multiple'] ) : ?>
 						
 							<?php foreach ( (array) $this->value as $post_id ) : ?>
-								data.push = <?php echo sprintf( '{ id: %d, text: "%s" }', $this->value, get_the_title( $this->value ) ); ?>;
+								data.push( <?php echo sprintf( '{ id: %d, text: "%s" }', $post_id, get_the_title( $post_id ) ); ?> );
 							<?php endforeach; ?>
 						
 						<?php else : ?>
@@ -1233,7 +1233,7 @@ class CMB_Post_Select extends CMB_Select {
 						action  : 'cmb_post_select',
 						post_id : '<?php echo intval( get_the_id() ); ?>', // Used for user capabilty check.
 						nonce   : '<?php echo esc_js( wp_create_nonce( 'cmb_select_field' ) ); ?>',
-						query   : JSON.parse( '<?php echo json_encode( $this->args['ajax_args'] ); ?>' )
+						query   : <?php echo json_encode( $this->args['ajax_args'] ); ?>
 					};
 					
 					options.ajax = {
