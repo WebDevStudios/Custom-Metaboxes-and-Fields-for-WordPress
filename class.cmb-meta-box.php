@@ -108,12 +108,16 @@ class CMB_Meta_Box {
 
 	function enqueue_scripts() {
 
+		wp_enqueue_script( 'cmb-scripts', trailingslashit( CMB_URL ) . 'js/cmb.js', array( 'jquery' ) );
+
 		foreach ( $this->fields as $field )
 			$field->enqueue_scripts();
 
 	}
 
 	function enqueue_styles() {
+
+		wp_enqueue_style( 'cmb-styles', trailingslashit( CMB_URL ) . 'style.css' );
 
 		foreach ( $this->fields as $field )
 			$field->enqueue_styles();

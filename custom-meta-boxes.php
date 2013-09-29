@@ -62,25 +62,6 @@ function cmb_init() {
 add_action( 'init', 'cmb_init' );
 
 /**
- * Enqueue scripts & styles.
- * 
- * @param  string $hook current admin screen.
- * @return null
- */
-function cmb_scripts( $hook ) {
-
-	// only enqueue our scripts/styles on the proper pages
-	if ( $hook == 'post.php' || $hook == 'post-new.php' || $hook == 'page-new.php' || $hook == 'page.php' || did_action( 'cmb_init_fields' ) ) {
-		
-		wp_enqueue_script( 'cmb-scripts', trailingslashit( CMB_URL ) . 'js/cmb.js', array( 'jquery' ) );
-		wp_enqueue_style( 'cmb-styles', trailingslashit( CMB_URL ) . 'style.css' );
-
-	}
-
-}
-add_action( 'admin_enqueue_scripts', 'cmb_scripts' );
-
-/**
  * Return an array of built in available fields
  *
  * Key is field name, Value is class used by field.
