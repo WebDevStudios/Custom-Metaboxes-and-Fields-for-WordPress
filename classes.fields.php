@@ -59,9 +59,6 @@ abstract class CMB_Field {
 				$re_format[$option['value']] = $option['name'];
 			}
 
-			// TODO this is incorrect
-			_deprecated_argument( 'CMB_Field', "'std' is deprecated, use 'default instead'", '0.9' );
-
 			$this->args['options'] = $re_format;
 		}
 
