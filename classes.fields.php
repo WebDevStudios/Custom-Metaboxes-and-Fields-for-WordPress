@@ -406,7 +406,7 @@ class CMB_File_Field extends CMB_Field {
 
 		parent::enqueue_scripts();
 		
-		wp_enqueue_script( 'cmb-file-upload', CMB_URL . '/js/file-upload.js', array( 'jquery', 'cmb-scripts' ) );
+		wp_enqueue_script( 'cmb-file-upload', trailingslashit( CMB_URL ) . 'js/file-upload.js', array( 'jquery', 'cmb-scripts' ) );
 		wp_enqueue_media();
 	
 	}
@@ -479,7 +479,7 @@ class CMB_Image_Field extends CMB_Field {
 
 	function enqueue_styles() {
 		parent::enqueue_styles();
-		wp_enqueue_style( 'tf-well-plupload-image', CMB_URL . '/css/plupload-image.css', array() );
+		wp_enqueue_style( 'tf-well-plupload-image', trailingslashit( CMB_URL ) . 'css/plupload-image.css', array() );
 	}
 
 	function html() {
@@ -636,7 +636,7 @@ class CMB_Time_Field extends CMB_Field {
 
 		parent::enqueue_scripts();
 		
-		wp_enqueue_script( 'cmb-timepicker', trailingslashit( CMB_URL ) . '/js/jquery.timePicker.min.js', array( 'jquery', 'cmb-scripts' ) );
+		wp_enqueue_script( 'cmb-timepicker', trailingslashit( CMB_URL ) . 'js/jquery.timePicker.min.js', array( 'jquery', 'cmb-scripts' ) );
 		wp_enqueue_script( 'cmb-datetime', trailingslashit( CMB_URL ) . 'js/field.datetime.js', array( 'jquery', 'jquery-ui-core', 'jquery-ui-datepicker', 'cmb-scripts' ) );
 	}
 
@@ -689,7 +689,7 @@ class CMB_Datetime_Timestamp_Field extends CMB_Field {
 
 		parent::enqueue_scripts();
 
-		wp_enqueue_script( 'cmb-timepicker', trailingslashit( CMB_URL ) . '/js/jquery.timePicker.min.js', array( 'jquery', 'cmb-scripts' ) );
+		wp_enqueue_script( 'cmb-timepicker', trailingslashit( CMB_URL ) . 'js/jquery.timePicker.min.js', array( 'jquery', 'cmb-scripts' ) );
 		wp_enqueue_script( 'cmb-datetime', trailingslashit( CMB_URL ) . 'js/field.datetime.js', array( 'jquery', 'jquery-ui-core', 'jquery-ui-datepicker', 'cmb-scripts' ) );
 	}
 
@@ -912,7 +912,7 @@ class CMB_wysiwyg extends CMB_Field {
 
 		parent::enqueue_scripts();
 
-		wp_enqueue_script( 'cmb-wysiwyg', CMB_URL . '/js/field-wysiwyg.js', array( 'jquery' ) );
+		wp_enqueue_script( 'cmb-wysiwyg', trailingslashit( CMB_URL ) . 'js/field-wysiwyg.js', array( 'jquery' ) );
 	}
 
 	public function html() { 
