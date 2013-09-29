@@ -55,9 +55,8 @@ abstract class CMB_Field {
 
 			$re_format = array();
 
-			foreach ( $this->args['options'] as $option ) {
+			foreach ( $this->args['options'] as $option )
 				$re_format[$option['value']] = $option['name'];
-			}
 
 			$this->args['options'] = $re_format;
 		}
@@ -65,7 +64,6 @@ abstract class CMB_Field {
 		// If the field has a custom value populator callback
 		if ( ! empty( $args['values_callback'] ) )
 			$this->values = call_user_func( $args['values_callback'], get_the_id() );
-
 		else
 			$this->values = $values;
 
