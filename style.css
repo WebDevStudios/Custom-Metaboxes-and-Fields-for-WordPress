@@ -333,9 +333,73 @@ div.time-picker li.selected { background: #0063CE; color: #fff; }
 .field-title { margin-bottom: 8px; margin-top: 0; font-weight: bold; }
 #poststuff .field-title h2 { margin: 0 !important; }
 
- .field.repeatable .field-item { padding-right: 25px; margin-bottom: 8px; }
-.ui-icon.delete-field { position: absolute; top: 6px; right: 0; cursor: pointer; opacity: 0.75; }
-.ui-icon.delete-field:hover { opacity: 1; }
+ .field.repeatable .field-item { 
+ 	padding-right: 25px; 
+ 	margin-bottom: 8px; 
+ }
+
+.cmb-delete-field { 
+	position: absolute;
+	top: 6px;
+	right: 0;
+	width: 16px;
+	height: 16px;
+	padding-left: 0;
+	padding-right: 0;
+	text-indent: 26px;
+	overflow: hidden;
+	white-space: nowrap;
+	padding: 0;
+	font-size: 20px;
+	line-height: 20px;
+	text-align: center;
+	text-decoration: none;
+	color: #464646;
+	cursor: pointer;
+	border-width: 0;
+	border-radius: 3px;
+	border: 1px solid #fff;
+	box-shadow: 0 0 0 1px rgba(0,0,0,0.3);	
+	background: #f3f3f3;
+	background-image: -webkit-gradient(linear,left top,left bottom,from(#fefefe),to(#f4f4f4));
+	background-image: -webkit-linear-gradient(top,#fefefe,#f4f4f4);
+	background-image: -moz-linear-gradient(top,#fefefe,#f4f4f4);
+	background-image: -o-linear-gradient(top,#fefefe,#f4f4f4);
+	background-image: linear-gradient(to bottom,#fefefe,#f4f4f4);
+}
+
+.cmb-delete-field:hover,
+.cmb-delete-field:focus,
+.cmb-delete-field:active {
+	box-shadow: 0 0 0 1px rgba(0,0,0,0.6);
+}
+
+.cmb-delete-field .cmb-delete-field-icon {
+	content: ' ';
+	display: block;
+	position: absolute;
+	height: 8px;
+	width: 8px;
+	top: 50%;
+	left: 50%;
+	margin-top: -4px;
+	margin-left: -4px;
+	background-image: url('images/cmb-icon-remove.png');
+	background-repeat: no-repeat;
+}
+
+@media only screen and (-webkit-min-device-pixel-ratio : 1.5), only screen and (min-device-pixel-ratio : 1.5) {
+
+	.cmb-delete-field .cmb-delete-field-icon {
+		background-image: url('images/cmb-icon-remove@2x.png');
+		background-size: 8px 8px;
+	}
+
+}
+
+/*.cmb-delete-field:hover { 
+	opacity: .75;
+ }*/
 button.repeat-field { display: block !important; clear: both; }
 
 .CMB_Text_Small_Field.repeatable .field-item,
@@ -349,16 +413,31 @@ button.repeat-field { display: block !important; clear: both; }
 .CMB_Datetime_Timestamp_Field input + input { margin-left: 4px; }
 
 #poststuff .CMB_Group_Field h2 { padding: 0; margin: 8px 5px; }
-.CMB_Group_Field.repeatable > .field-item { padding: 0 9px; margin-bottom: 16px ; border: 1px solid #DDD; background: #ECECEC; border-radius: 3px; }
-.CMB_Group_Field .cmb_element { display: block; height: 0;  }
-.CMB_Group_Field .cmb_element .ui-state-default { /*display: none;*/ margin-right: -3px; margin-top: -5px; }
 
-.field .hm-uploader .rwmb-drag-drop { -moz-box-sizing: border-box; box-sizing: border-box; }
-.field .hm-uploader .rwmb-drag-drop-inside p { font-size: 14px; }
-.field .hm-uploader .current-image { border: none; box-shadow: inset 0 0 15px rgba(0,0,0,0.1),inset 0 0 0 1px rgba(0,0,0,0.05); position: relative; }
-.field .hm-uploader .current-image::after { content: ''; display: block; position: absolute; top: 0; left: 0; right: 0; bottom: 0; box-shadow: inset 0 0 0 1px rgba(0,0,0,0.1); overflow: hidden; }
-.field .hm-uploader .current-image img { vertical-align: top !important; }
-.field .hm-uploader .current-image .image-options { z-index: 1; }
+.CMB_Group_Field.repeatable > .field-item { 
+	padding: 0 9px; 
+	margin-bottom: 16px; 
+	border: 1px solid #DDD; 
+	background: #ECECEC; 
+	border-radius: 3px; 
+}
+
+.CMB_Group_Field .group > .cmb-delete-field { 
+	top: 0;
+	right: -3px;
+	width: auto;
+	height: auto;
+	padding: 2px 5px 2px 20px;
+	text-indent: 0;
+	font-size: 12px;
+	line-height: 14px;	
+}
+
+.CMB_Group_Field .group > .cmb-delete-field .cmb-delete-field-icon { 
+	left: 10px;
+	text-indent: 100%;
+	overflow: hidden;
+}
 
 .CMB_File_Field .field-item { width: 150px; height: 150px; float: left; margin: 0 8px 8px 0 !important; position: relative; text-align: center; line-height: 150px; padding: 0 !important; z-index: 1; }
 .CMB_File_Field .field-item::before { content: ' '; position: absolute; top: 0; left: 0; display: block; height: 142px; width: 142px; border: 4px dashed #DDD; z-index: -1; }
@@ -368,9 +447,13 @@ button.repeat-field { display: block !important; clear: both; }
 .cmb-file-holder.type-img::after { content: ''; display: block; position: absolute; top: 0; left: 0; right: 0; bottom: 0; box-shadow: inset 0 0 0 1px rgba(0,0,0,0.1); overflow: hidden; z-index: 1; }
 .cmb-file-name { position: absolute; left: 0; right: 0; bottom: 0; line-height: 1.4; overflow: hidden; max-height: 100%; word-wrap: break-word; text-align: center; font-weight: bold; background: rgba(255,255,255,0.8); box-shadow: inset 0 0 0 1px rgba(0,0,0,0.15); }
 .cmb-file-name strong { padding: 5px 10px; display: block;}
-.CMB_File_Field .cmb_element .ui-icon.delete-field { z-index: 10; top: 10px; right: 10px; }
-.CMB_File_Field .cmb-remove-file { position: absolute; top: 5px; right: 5px; z-index: 1; }
-.CMB_File_Field.repeatable .cmb-remove-file { display: none;  }
+
+.CMB_File_Field .cmb-delete-field,
+.CMB_Image_Field .cmb-delete-field { z-index: 10;  top: 10px; right: 10px; }
+.CMB_File_Field .cmb-remove-file,
+.CMB_Image_Field .cmb-remove-file { position: absolute; z-index: 1; top: -5px; right: -5px; }
+.CMB_File_Field.repeatable .cmb-remove-file,
+.CMB_Image_Field.repeatable .cmb-remove-file { display: none !important; }
 
 
 .CMB_Color_Picker .field-item { float: left; clear: both; }
