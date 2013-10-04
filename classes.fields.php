@@ -405,10 +405,9 @@ class CMB_File_Field extends CMB_Field {
 	function enqueue_scripts() {
 
 		parent::enqueue_scripts();
-		
-		wp_enqueue_script( 'cmb-file-upload', trailingslashit( CMB_URL ) . 'js/file-upload.js', array( 'jquery', 'cmb-scripts' ) );
 		wp_enqueue_media();
-	
+		wp_enqueue_script( 'cmb-file-upload', trailingslashit( CMB_URL ) . 'js/file-upload.js', array( 'jquery', 'cmb-scripts' ) );
+		
 	}
 
 	public function html() { 
@@ -635,7 +634,7 @@ class CMB_Time_Field extends CMB_Field {
 	public function enqueue_scripts() {
 
 		parent::enqueue_scripts();
-		
+
 		wp_enqueue_script( 'cmb-timepicker', trailingslashit( CMB_URL ) . 'js/jquery.timePicker.min.js', array( 'jquery', 'cmb-scripts' ) );
 		wp_enqueue_script( 'cmb-datetime', trailingslashit( CMB_URL ) . 'js/field.datetime.js', array( 'jquery', 'jquery-ui-core', 'jquery-ui-datepicker', 'cmb-scripts' ) );
 	}
@@ -658,9 +657,8 @@ class CMB_Date_Timestamp_Field extends CMB_Field {
 
 		parent::enqueue_scripts();
 
-		wp_enqueue_script( 'cmb-datetime', trailingslashit( CMB_URL ) . 'js/field.datetime.js', array( 'jquery', 'jquery-ui-core', 'jquery-ui-datepicker', 'cmb-scripts' ) );
+		wp_enqueue_script( 'cmb_datetime', trailingslashit( CMB_URL ) . 'js/field.datetime.js', array( 'jquery' ) );
 	}
-
 
 	public function html() { ?>
 
@@ -689,8 +687,7 @@ class CMB_Datetime_Timestamp_Field extends CMB_Field {
 
 		parent::enqueue_scripts();
 
-		wp_enqueue_script( 'cmb-timepicker', trailingslashit( CMB_URL ) . 'js/jquery.timePicker.min.js', array( 'jquery', 'cmb-scripts' ) );
-		wp_enqueue_script( 'cmb-datetime', trailingslashit( CMB_URL ) . 'js/field.datetime.js', array( 'jquery', 'jquery-ui-core', 'jquery-ui-datepicker', 'cmb-scripts' ) );
+		wp_enqueue_script( 'cmb_datetime', trailingslashit( CMB_URL ) . 'js/field.datetime.js', array( 'jquery' ) );
 	}
 
 	public function html() { ?>		
