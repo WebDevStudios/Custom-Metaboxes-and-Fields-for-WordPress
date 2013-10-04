@@ -89,11 +89,12 @@ function cmb_sample_metaboxes( array $meta_boxes ) {
 		'fields' => array(
 			array( 
 				'id' => 'gp', 
-				'name' => 'Repeatable Group', 
+				'name' => 'My Repeatable Group', 
 				'type' => 'group', 
 				'repeatable' => true,
 				'sortable' => true,
-				'fields' => $group_fields
+				'fields' => $group_fields,
+				'desc' => 'This is the group description.'
 			)
 		)
 	);

@@ -1385,11 +1385,8 @@ class CMB_Group_Field extends CMB_Field {
 
 		$field = $this->args;
 
-		if ( ! empty( $this->args['name'] ) ) : ?>
-
-			<h2 class="group-name"><?php echo esc_attr( $this->args['name'] ); ?></h2>
-
-		<?php endif;
+		$this->title();
+		$this->description();
 
 		$i = 0;
 		foreach ( $meta as $value ) {
