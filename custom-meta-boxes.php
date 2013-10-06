@@ -234,3 +234,23 @@ function cmb_do_meta_boxes( $screen, $context, $object ) {
 	return $i;
 
 }
+
+
+/**
+ * For the order of repeatable fields to be guaranteed, orderby meta_id needs to be set.
+ * 
+ * @param  string $query
+ * @return string $query
+ */
+function cmb_fix_meta_query_order($query) {
+
+	$pattern = '/^SELECT post_id, meta_key, meta_value FROM [\w]+_postmeta WHERE post_id IN \([\d|,]*\)$/';
+	$meta_query_orderby = ' ORDER BY meta_id';
+
+	if ( preg_match( $pattern, $query ) && false === strpos( $query, $meta_query_orderby ) )
+		$query .= $meta_query_orderby;
+	
+	return $query;
+
+}
+add_filter( 'query', 'cmb_fix_meta_query_order', 1 ); 
