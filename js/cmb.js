@@ -48,7 +48,7 @@ var CMB = {
 		if ( _this.isMaxFields( field, 1 ) )
 			return;
 
-	    templateField = field.children('.field-item.hidden');
+	    templateField = field.children( '.field-item.hidden' );
 
 	    newT = templateField.clone();
 	    newT.removeClass( 'hidden' );
@@ -57,13 +57,14 @@ var CMB = {
 	    newT.find( 'input' ).not( excludeInputTypes ).val( '' );
 
 	    newT.find( '.cmb_upload_status' ).html('');
+
 	    newT.insertBefore( templateField );
 
 	    // Recalculate group ids & update the name fields..
 		index = 0;
 		attr  = ['id','name','for','data-id','data-name'];
 
-		field.children('.field-item').not( templateField ).each( function() {
+		field.children( '.field-item' ).not( templateField ).each( function() {
 
 			var search  = field.hasClass( 'CMB_Group_Field' ) ? /cmb-group-(\d|x)*/g : /cmb-field-(\d|x)*/g;
 			var replace = field.hasClass( 'CMB_Group_Field' ) ? 'cmb-group-' + index : 'cmb-field-' + index;
