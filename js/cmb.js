@@ -51,8 +51,11 @@ var CMB = {
 	    templateField = field.children('.field-item.hidden');
 
 	    newT = templateField.clone();
-	    newT.removeClass('hidden');
-	    newT.find('input[type!="button"]').not('[readonly]').val('');
+	    newT.removeClass( 'hidden' );
+	    
+	    var excludeInputTypes = '[type=submit],[type=button],[type=checkbox],[type=radio],[readonly]';
+	    newT.find( 'input' ).not( excludeInputTypes ).val( '' );
+
 	    newT.find( '.cmb_upload_status' ).html('');
 	    newT.insertBefore( templateField );
 
