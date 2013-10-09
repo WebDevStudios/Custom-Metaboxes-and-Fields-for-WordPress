@@ -52,6 +52,8 @@ function cmb_init() {
 	if ( ! is_admin() )
 		return;
 
+	load_plugin_textdomain( 'cmb', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
+
 	$meta_boxes = apply_filters( 'cmb_meta_boxes', array() );
 
 	if ( ! empty( $meta_boxes ) )
