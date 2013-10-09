@@ -37,6 +37,7 @@ Version: 	1.0 - Beta 1
  */
 define( 'CMB_PATH', str_replace( '\\', '/', dirname( __FILE__ ) ) );
 define( 'CMB_URL', str_replace( str_replace( '\\', '/', WP_CONTENT_DIR ), str_replace( '\\', '/', WP_CONTENT_URL ), CMB_PATH ) );
+define( 'CMB_TEXTDOMAIN', 'cmb' );
 
 include_once( CMB_PATH . '/classes.fields.php' );
 include_once( CMB_PATH . '/class.cmb-meta-box.php' );
@@ -52,7 +53,13 @@ function cmb_init() {
 	if ( ! is_admin() )
 		return;
 
-	load_plugin_textdomain( 'cmb', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
+	// Load translations
+	$textdomain = CMB_TEXTDOMAIN;
+	$locale = apply_filters( 'plugin_locale', get_locale(), $textdomain );
+
+	// By default, try to load language files from /wp-content/languages/custom-meta-boxes/
+	load_textdomain( $textdomain, WP_LANG_DIR . '/custom-meta-boxes/' . $textdomain . '-' . $locale . '.mo' );
+	load_textdomain( $textdomain, CMB_PATH . '/languages/' . $textdomain . '-' . $locale . '.mo' );
 
 	$meta_boxes = apply_filters( 'cmb_meta_boxes', array() );
 

@@ -362,7 +362,7 @@ abstract class CMB_Field {
 
 			</div>
 
-			<button class="button repeat-field">Add New</button>
+			<button class="button repeat-field"><?php _e( 'Add New', CMB_TEXTDOMAIN ); ?></button>
 
 		<?php }
 
@@ -491,7 +491,7 @@ class CMB_Image_Field extends CMB_Field {
 
 		$attachment_id = $this->get_value();
 		// Filter to change the drag & drop box background string
-		$drop_text = 'Drag & Drop files';
+		$drop_text = __( 'Drag & Drop files', CMB_TEXTDOMAIN );
 		$extensions = implode( ',', $args['allowed_extensions'] );
 		$img_prefix	= $this->id;
 		$style = sprintf( 'width: %dpx; height: %dpx;', $args['size']['width'], $args['size']['height'] );
@@ -514,15 +514,15 @@ class CMB_Image_Field extends CMB_Field {
 				<?php endif; ?>
 
 				<div class="image-options">
-					<a href="#" class="delete-image button-secondary">Remove</a>
+					<a href="#" class="delete-image button-secondary"><?php _e( 'Remove', CMB_TEXTDOMAIN ) ?></a>
 				</div>
 			</div>
 
 			<div style="<?php echo esc_attr( $style ); ?>" id="<?php echo esc_attr( $img_prefix ); ?>-dragdrop" data-extensions="<?php echo esc_attr( $extensions ); ?>" data-size="<?php echo esc_attr( $size_str ); ?>" class="rwmb-drag-drop upload-form">
 				<div class="rwmb-drag-drop-inside">
 					<p><?php echo esc_html( $drop_text ); ?></p>
-					<p>or</p>
-					<p><input id="<?php echo esc_html( $img_prefix ); ?>-browse-button" type="button" value="Select Files" class="button-secondary" /></p>
+					<p><?php _e( 'or', CMB_TEXTDOMAIN ); ?></p>
+					<p><input id="<?php echo esc_html( $img_prefix ); ?>-browse-button" type="button" value="<?php esc_attr_e( 'Select Files', CMB_TEXTDOMAIN ) ?>" class="button-secondary" /></p>
 				</div>
 			</div>
 
@@ -1048,7 +1048,7 @@ class CMB_Select extends CMB_Field {
 		>
 
 			<?php if ( ! empty( $this->args['allow_none'] ) ) : ?>
-				<option value="">None</option>
+				<option value=""><?php _ex( 'None', 'select field', CMB_TEXTDOMAIN ) ?></option>
 			<?php endif; ?>
 
 			<?php foreach ( $this->args['options'] as $value => $name ): ?>
@@ -1069,7 +1069,7 @@ class CMB_Select extends CMB_Field {
 				
 				var options = {};
 				
-				options.placeholder = "Type to search";
+				options.placeholder = <?php echo json_encode( __( 'Type to search', CMB_TEXTDOMAIN ) ) ?>;
 				options.allowClear  = true;
 
 				if ( 'undefined' === typeof( window.cmb_select_fields ) )
@@ -1420,7 +1420,7 @@ class CMB_Group_Field extends CMB_Field {
 
 				</div>
 
-				<button class="button repeat-field">Add New</button>
+				<button class="button repeat-field"><?php _e( 'Add New', CMB_TEXTDOMAIN ); ?></button>
 
 		<?php }
 
