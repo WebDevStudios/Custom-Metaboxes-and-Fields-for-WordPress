@@ -522,7 +522,7 @@ class CMB_Image_Field extends CMB_Field {
 				<div class="rwmb-drag-drop-inside">
 					<p><?php echo esc_html( $drop_text ); ?></p>
 					<p><?php _e( 'or', 'cmb' ); ?></p>
-					<p><input id="<?php echo esc_html( $img_prefix ); ?>-browse-button" type="button" value="<?php esc_attr_e( 'Select Files', 'cmb' ) ?>" class="button-secondary" /></p>
+					<p><input id="<?php echo esc_attr( $img_prefix ); ?>-browse-button" type="button" value="<?php esc_attr_e( 'Select Files', 'cmb' ) ?>" class="button-secondary" /></p>
 				</div>
 			</div>
 
