@@ -1075,7 +1075,8 @@ class CMB_Select extends CMB_Field {
 				if ( 'undefined' === typeof( window.cmb_select_fields ) )
 					window.cmb_select_fields = {};
 				
-				window.cmb_select_fields.<?php echo esc_js( $this->get_js_id() ); ?> = options;
+				var id = <?php echo json_encode( $this->get_js_id() ); ?>;
+				window.cmb_select_fields[id] = options;
 
 			})( jQuery );
 
@@ -1224,7 +1225,8 @@ class CMB_Post_Select extends CMB_Select {
 					return false; 
 				
 				// Get options for this field so we can modify it.
-				var options = window.cmb_select_fields.<?php echo esc_js( $this->get_js_id() ); ?>;
+				var id = <?php echo json_encode( $this->get_js_id() ); ?>;
+				var options = window.cmb_select_fields[id];
 
 				<?php if ( $this->args['ajax_url'] && $this->args['multiple'] ) : ?>
 					// The multiple setting is required when using ajax (because an input field is used instead of select)
@@ -1260,12 +1262,12 @@ class CMB_Post_Select extends CMB_Select {
 					var ajaxData = {
 						action  : 'cmb_post_select',
 						post_id : '<?php echo intval( get_the_id() ); ?>', // Used for user capabilty check.
-						nonce   : '<?php echo esc_js( wp_create_nonce( 'cmb_select_field' ) ); ?>',
+						nonce   : <?php echo json_encode( wp_create_nonce( 'cmb_select_field' ) ); ?>,
 						query   : <?php echo json_encode( $this->args['ajax_args'] ); ?>
 					};
 					
 					options.ajax = {
-						url: '<?php echo esc_js( esc_url( $this->args['ajax_url'] ) ); ?>',
+						url: <?php echo json_encode( esc_url( $this->args['ajax_url'] ) ); ?>,
 						type: 'POST',
 						dataType: 'json',
 						data: function( term, page ) {
