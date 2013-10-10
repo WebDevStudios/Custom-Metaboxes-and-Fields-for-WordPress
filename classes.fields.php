@@ -404,8 +404,8 @@ class CMB_File_Field extends CMB_Field {
 
 	function enqueue_scripts() {
 		parent::enqueue_scripts();
-		wp_enqueue_script( 'cmb-file-upload', CMB_URL . '/js/file-upload.js', array( 'jquery' ) );
 		wp_enqueue_media();
+		wp_enqueue_script( 'cmb-file-upload', CMB_URL . '/js/file-upload.js', array( 'jquery' ) );
 	}
 
 	public function html() { 
@@ -431,7 +431,9 @@ class CMB_File_Field extends CMB_Field {
 
 			<div class="cmb-file-wrap-placeholder" style="<?php echo esc_attr( $placeholder_styles ); ?>"></div>
 
-			<button class="button cmb-file-upload <?php echo esc_attr( $this->get_value() ) ? 'hidden' : '' ?>" href="#">Add File</button>
+			<button class="button cmb-file-upload <?php echo esc_attr( $this->get_value() ) ? 'hidden' : '' ?>">
+				<?php esc_html_e( 'Add File', 'cmb' ); ?>
+			</button>
 
 			<div class="cmb-file-holder type-file <?php echo $this->get_value() ? '' : 'hidden'; ?>">
 
@@ -440,13 +442,16 @@ class CMB_File_Field extends CMB_Field {
 					<?php if ( isset( $icon_img ) ) echo $icon_img; ?>
 
 					<div class="cmb-file-name">
-						<strong><?php echo esc_html( basename(  get_attached_file( $this->get_value() ) ) ); ?></strong>
+						<strong><?php echo esc_html( basename( get_attached_file( $this->get_value() ) ) ); ?></strong>
 					</div>
+
 				<?php endif; ?>
 
 			</div>
 
-			<button class="cmb-remove-file button <?php echo $this->get_value() ? '' : 'hidden'; ?>">Remove</button>
+			<button class="cmb-remove-file button <?php echo $this->get_value() ? '' : 'hidden'; ?>">
+				<?php esc_html_e( 'Remove', 'cmb' ); ?>
+			</button>
 
 			<input type="hidden" class="cmb-file-upload-input" <?php $this->name_attr(); ?> value="<?php echo esc_attr( $this->value ); ?>" />
 
@@ -489,14 +494,18 @@ class CMB_Image_Field extends CMB_File_Field {
 		<div class="cmb-file-wrap" style="<?php echo esc_attr( $styles ); ?>" data-type="<?php echo esc_attr( $data_type ); ?>">
 
 			<div class="cmb-file-wrap-placeholder" style="<?php echo esc_attr( $placeholder_styles ); ?>">
-				
+
 				<?php if ( $this->args['show_size'] ) : ?>
-					<span class="dimensions"><?php echo intval( $args['size'][0] ); ?>px &times; <?php echo intval( $args['size'][1] ); ?>px </span>
+					<span class="dimensions">
+						<?php printf( '%dpx &times; %dpx', intval( $args['size'][0] ), intval( $args['size'][1] ) ); ?>
+					</span>
 				<?php endif; ?>
-			
+
 			</div>
 
-			<button class="button cmb-file-upload <?php echo esc_attr( $this->get_value() ) ? 'hidden' : '' ?>" href="#">Add Image</button>
+			<button class="button cmb-file-upload <?php echo esc_attr( $this->get_value() ) ? 'hidden' : '' ?>" href="#">
+				<?php esc_html_e( 'Add Image', 'cmb' ); ?>
+			</button>
 
 			<div class="cmb-file-holder type-img <?php echo $this->get_value() ? '' : 'hidden'; ?>" data-crop="<?php echo (string) $crop; ?>">
 
@@ -506,7 +515,9 @@ class CMB_Image_Field extends CMB_File_Field {
 
 			</div>
 
-			<button class="cmb-remove-file button <?php echo $this->get_value() ? '' : 'hidden'; ?>">Remove</button>
+			<button class="cmb-remove-file button <?php echo $this->get_value() ? '' : 'hidden'; ?>">
+				<?php esc_html_e( 'Remove', 'cmb' ); ?>
+			</button>
 
 			<input type="hidden" class="cmb-file-upload-input" <?php $this->name_attr(); ?> value="<?php echo esc_attr( $this->value ); ?>" />
 
@@ -1020,7 +1031,7 @@ class CMB_Select extends CMB_Field {
 		>
 
 			<?php if ( ! empty( $this->args['allow_none'] ) ) : ?>
-				<option value="">None</option>
+				<option value=""><?php echo esc_html_x( 'None', 'select field', 'cmb' ) ?></option>
 			<?php endif; ?>
 
 			<?php foreach ( $this->args['options'] as $value => $name ): ?>
@@ -1041,13 +1052,14 @@ class CMB_Select extends CMB_Field {
 				
 				var options = {};
 				
-				options.placeholder = "Type to search";
+				options.placeholder = <?php echo json_encode( __( 'Type to search', 'cmb' ) ) ?>;
 				options.allowClear  = true;
 
 				if ( 'undefined' === typeof( window.cmb_select_fields ) )
 					window.cmb_select_fields = {};
 				
-				window.cmb_select_fields.<?php echo esc_js( $this->get_js_id() ); ?> = options;
+				var id = <?php echo json_encode( $this->get_js_id() ); ?>;
+				window.cmb_select_fields[id] = options;
 
 			})( jQuery );
 
@@ -1117,7 +1129,7 @@ class CMB_Post_Select extends CMB_Select {
 			$this->args['data_delegate'] = array( $this, 'get_delegate_data' );
 
 		} else {
-			
+
 			$this->args['ajax_url'] = admin_url( 'admin-ajax.php' );
 			$this->args['ajax_args'] = wp_parse_args( $this->args['query'] );
 
@@ -1126,7 +1138,7 @@ class CMB_Post_Select extends CMB_Select {
 	}
 
 	public function get_delegate_data() {
-
+		
 		$data = array();
 
 		foreach ( $this->get_posts() as $post_id )
@@ -1196,7 +1208,8 @@ class CMB_Post_Select extends CMB_Select {
 					return false; 
 				
 				// Get options for this field so we can modify it.
-				var options = window.cmb_select_fields.<?php echo esc_js( $this->get_js_id() ); ?>;
+				var id = <?php echo json_encode( $this->get_js_id() ); ?>;
+				var options = window.cmb_select_fields[id];
 
 				<?php if ( $this->args['ajax_url'] && $this->args['multiple'] ) : ?>
 					// The multiple setting is required when using ajax (because an input field is used instead of select)
@@ -1232,12 +1245,12 @@ class CMB_Post_Select extends CMB_Select {
 					var ajaxData = {
 						action  : 'cmb_post_select',
 						post_id : '<?php echo intval( get_the_id() ); ?>', // Used for user capabilty check.
-						nonce   : '<?php echo esc_js( wp_create_nonce( 'cmb_select_field' ) ); ?>',
+						nonce   : <?php echo json_encode( wp_create_nonce( 'cmb_select_field' ) ); ?>,
 						query   : <?php echo json_encode( $this->args['ajax_args'] ); ?>
 					};
 					
 					options.ajax = {
-						url: '<?php echo esc_js( esc_url( $this->args['ajax_url'] ) ); ?>',
+						url: <?php echo json_encode( esc_url( $this->args['ajax_url'] ) ); ?>,
 						type: 'POST',
 						dataType: 'json',
 						data: function( term, page ) {
@@ -1265,7 +1278,7 @@ class CMB_Post_Select extends CMB_Select {
 
 // TODO this should be in inside the class
 function cmb_ajax_post_select() {
-
+	
 	$post_id = ! empty( $_POST['post_id'] ) ? intval( $_POST['post_id'] ) : false;
 	$nonce   = ! empty( $_POST['nonce'] ) ? $_POST['nonce'] : false;
 	$args    = ! empty( $_POST['query'] ) ? $_POST['query'] : array();
@@ -1276,9 +1289,9 @@ function cmb_ajax_post_select() {
 	}
 
 	$args['fields'] = 'ids'; // Only need to retrieve post IDs.
-	
-	$query = new WP_Query( $args );
 
+	$query = new WP_Query( $args );
+	
 	$json = array( 'total' => $query->found_posts, 'posts' => array() );
 
 	foreach ( $query->posts as $post_id )
@@ -1392,7 +1405,7 @@ class CMB_Group_Field extends CMB_Field {
 
 				</div>
 
-				<button class="button repeat-field">Add New</button>
+				<button class="button repeat-field"><?php esc_html_e( 'Add New', 'cmb' ); ?></button>
 
 		<?php }
 

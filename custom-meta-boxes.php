@@ -52,6 +52,14 @@ function cmb_init() {
 	if ( ! is_admin() )
 		return;
 
+	// Load translations
+	$textdomain = 'cmb';
+	$locale = apply_filters( 'plugin_locale', get_locale(), $textdomain );
+
+	// By default, try to load language files from /wp-content/languages/custom-meta-boxes/
+	load_textdomain( $textdomain, WP_LANG_DIR . '/custom-meta-boxes/' . $textdomain . '-' . $locale . '.mo' );
+	load_textdomain( $textdomain, CMB_PATH . '/languages/' . $textdomain . '-' . $locale . '.mo' );
+
 	$meta_boxes = apply_filters( 'cmb_meta_boxes', array() );
 
 	if ( ! empty( $meta_boxes ) )
