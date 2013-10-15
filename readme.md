@@ -39,5 +39,5 @@ It began as a fork of [Custom Meta Boxes](https://github.com/jaredatch/Custom-Me
 
 ## Contribution guidelines ##
 
-see https://github.com/humanmade/Custom-Meta-Boxes/blob/master/CONTRIBUTING.md
+See [CONTRIBUTING.md](https://github.com/humanmade/Custom-Meta-Boxes/blob/master/CONTRIBUTING.md)
 
