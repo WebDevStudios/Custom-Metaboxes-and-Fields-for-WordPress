@@ -715,65 +715,6 @@ class CMB_Datetime_Timestamp_Field extends CMB_Field {
 
 }
 
-
-/**
- * Standard text meta box for a URL.
- *
- */
-class CMB_Oembed_Field extends CMB_Field {
-
-	public function html() { ?>
-
-		<style>
-
-			.cmb_oembed img, .cmb_oembed object, .cmb_oembed video, .cmb_oembed embed, .cmb_oembed iframe { max-width: 100%; height: auto; }
-
-		</style>
-
-			<?php if ( ! $this->value ) : ?>
-
-				<input class="cmb_oembed code" type="text" <?php $this->name_attr(); ?> id="<?php echo esc_attr( $this->name ); ?>" value="" />
-
-			<?php else : ?>
-
-				<div class="hidden"><input disabled class="cmb_oembed code" type="text" <?php $this->name_attr(); ?> id="<?php echo esc_attr( $this->name ); ?>" value="" /></div>
-
-				<div style="position: relative">
-
-				<?php if ( is_array( $this->value ) ) : ?>
-
-					<span class="cmb_oembed"><?php echo $this->value['object']; ?></span>
-					<input type="hidden" <?php $this->name_attr(); ?> value="<?php echo esc_attr( serialize( $this->value ) ); ?>" />
-
-				<?php else : ?>
-
-					<span class="cmb_oembed"><?php echo $this->value; ?></span>
-					<input type="hidden" <?php $this->name_attr(); ?> value="<?php echo esc_attr( $this->value ); ?>" />
-
-				<?php endif; ?>
-
-					<a href="#" class="cmb_remove_file_button" onclick="jQuery( this ).closest('div').prev().removeClass('hidden').find('input').first().removeAttr('disabled')">Remove</a>
-
-				</div>
-
-			<?php endif; ?>
-
-	<?php }
-
-	public function parse_save_value() {
-
-		$args['cmb_oembed'] = true;
-
-		if ( ! empty( $this->args['height'] ) )
-			$args['height'] = $this->args['height'];
-
-		if ( strpos( $this->value, 'http' ) === 0 )
-			$this->value = wp_oembed_get( $this->value, $args );
-
-	}
-
-}
-
 /**
  * Standard text field.
  *

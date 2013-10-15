@@ -126,7 +126,6 @@ function _cmb_available_fields() {
 		'checkbox'			=> 'CMB_Checkbox',
 		'file'				=> 'CMB_File_Field',
 		'image' 			=> 'CMB_Image_Field',
-		'oembed'			=> 'CMB_Oembed_Field',
 		'wysiwyg'			=> 'CMB_wysiwyg',
 		'textarea'			=> 'CMB_Textarea_Field',
 		'textarea_code'		=> 'CMB_Textarea_Field_Code',
