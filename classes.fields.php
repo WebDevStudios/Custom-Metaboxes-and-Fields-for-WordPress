@@ -417,16 +417,13 @@ class CMB_File_Field extends CMB_Field {
 			$icon_img = '<img src="' . $src . '" ' . $size[3] . ' />';
 		}
 
-		$styles  = 'width: 150px; height: 150px; line-height: 150px;';
-		$placeholder_styles  = 'width: 142px; height: 142px;';
-
 		$data_type = ( ! empty( $args['library-type'] ) ? implode( ',', $args['library-type'] ) : null );
 
 		?>
 
-		<div class="cmb-file-wrap" style="<?php echo esc_attr( $styles ); ?>" <?php echo 'data-type="' . esc_attr( $data_type ) . '"'; ?>>
+		<div class="cmb-file-wrap" <?php echo 'data-type="' . esc_attr( $data_type ) . '"'; ?>>
 
-			<div class="cmb-file-wrap-placeholder" style="<?php echo esc_attr( $placeholder_styles ); ?>"></div>
+			<div class="cmb-file-wrap-placeholder"></div>
 
 			<button class="button cmb-file-upload <?php echo esc_attr( $this->get_value() ) ? 'hidden' : '' ?>">
 				<?php esc_html_e( 'Add File', 'cmb' ); ?>

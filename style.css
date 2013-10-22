@@ -369,7 +369,7 @@ button.repeat-field { display: block !important; clear: both; }
 
 .CMB_File_Field .field-item,
 .CMB_Image_Field .field-item { float: left; margin: 0 8px 8px 0 !important; text-align: center; padding: 0 !important; z-index: 1; }
-.cmb-file-wrap { position: relative; overflow: hidden; }
+.cmb-file-wrap { position: relative; overflow: hidden; width: 150px; height: 150px; line-height: 150px; }
 .cmb-file-wrap-placeholder { content: ' '; position: absolute; top: 0; left: 0; display: block; height: 142px; width: 142px; border: 4px dashed #DDD; z-index: -1; }
 .cmb-file-wrap-placeholder .dimensions { line-height: normal; position: absolute; bottom: 10px; right: 10px; font-size: 18px; font-weight: bold; opacity: 0.2;}
 .cmb-file-holder { position: relative; overflow: hidden; box-shadow: inset 0 0 15px rgba(0,0,0,0.1),inset 0 0 0 1px rgba(0,0,0,0.05); background: #eee; width: 100%; height: 100%; }
