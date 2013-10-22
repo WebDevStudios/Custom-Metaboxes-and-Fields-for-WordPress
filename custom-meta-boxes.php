@@ -239,11 +239,11 @@ function cmb_do_meta_boxes( $screen, $context, $object ) {
 /**
  * For the order of repeatable fields to be guaranteed, orderby meta_id needs to be set. 
  * Note usermeta has a different meta_id column name.
- * TODO - this is far from ideal as we are doing this on EVERY SINGLE QUERY.
  * 
  * TODO
  * This is far from ideal as we are doing this on EVERY SINGLE QUERY.
  * But... no other way to modify this query, or re-order in PHP.
+ * There is a trac ticket + patch that will fix this. http://core.trac.wordpress.org/ticket/25511
  * 
  * @param  string $query
  * @return string $query
