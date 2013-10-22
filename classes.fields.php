@@ -408,188 +408,172 @@ class CMB_File_Field extends CMB_Field {
 	public function html() { 
 
 		$args = wp_parse_args( $this->args, array(
-			'size' => array( 150, 150, 'crop' => true )
+			'library-type' => array( 'video', 'audio', 'text', 'application' )
 		) );
+
+		if ( $this->get_value() ) {
+			$src = wp_mime_type_icon( $this->get_value() );
+			$size = getimagesize($src);
+			$icon_img = '<img src="' . $src . '" ' . $size[3] . ' />';
+		}
+
+		$data_type = ( ! empty( $args['library-type'] ) ? implode( ',', $args['library-type'] ) : null );
 
 		?>
 
-		<a class="button cmb-file-upload <?php echo esc_attr( $this->get_value() ) ? 'hidden' : '' ?>" href="#">Add Media</a>
+		<div class="cmb-file-wrap" <?php echo 'data-type="' . esc_attr( $data_type ) . '"'; ?>>
 
-		<div class="cmb-file <?php echo $this->get_value() ? '' : 'hidden'; ?>" style="text-align: center;">
+			<div class="cmb-file-wrap-placeholder"></div>
 
-			<div class="cmb-file-holder <?php if ( $this->value ) { echo wp_attachment_is_image( $this->value ) ? ' type-img' : ' type-file'; } ?>" style="text-align: center; vertical-align: middle;">
+			<button class="button cmb-file-upload <?php echo esc_attr( $this->get_value() ) ? 'hidden' : '' ?>">
+				<?php esc_html_e( 'Add File', 'cmb' ); ?>
+			</button>
 
-				<?php if ( $this->get_value() )
-					echo wp_get_attachment_image( $this->get_value(), $args['size'], true ) ?>
+			<div class="cmb-file-holder type-file <?php echo $this->get_value() ? '' : 'hidden'; ?>">
 
-				<?php if ( $this->get_value() && ! wp_attachment_is_image( $this->value ) ) : ?>
+				<?php if ( $this->get_value() ) : ?>
+
+					<?php if ( isset( $icon_img ) ) echo $icon_img; ?>
+
 					<div class="cmb-file-name">
-						<strong>
-							<?php echo esc_html( end( explode( DIRECTORY_SEPARATOR, get_attached_file( $this->get_value() ) ) ) ); ?>
-						</strong>
+						<strong><?php echo esc_html( basename( get_attached_file( $this->get_value() ) ) ); ?></strong>
 					</div>
+
 				<?php endif; ?>
 
 			</div>
 
-			<a href="#" class="cmb-remove-file button">Remove</a>
+			<button class="cmb-remove-file button <?php echo $this->get_value() ? '' : 'hidden'; ?>">
+				<?php esc_html_e( 'Remove', 'cmb' ); ?>
+			</button>
+
+			<input type="hidden" class="cmb-file-upload-input" <?php $this->name_attr(); ?> value="<?php echo esc_attr( $this->value ); ?>" />
 
 		</div>
 
-		<input type="hidden" class="cmb-file-upload-input" <?php $this->name_attr(); ?> value="<?php echo esc_attr( $this->value ); ?>" />
-
 	<?php }
+
 }
 
-class CMB_Image_Field extends CMB_Field {
+class CMB_Image_Field extends CMB_File_Field {
 
-	function enqueue_scripts() {
-
-		parent::enqueue_scripts();
-
-		wp_enqueue_script( 'plupload-all' );
-		wp_enqueue_script( 'tf-well-plupload-image', CMB_URL . '/js/plupload-image.js', array( 'jquery-ui-sortable', 'wp-ajax-response', 'plupload-all' ), 1 );
-
-		wp_localize_script( 'tf-well-plupload-image', 'tf_well_plupload_defaults', array(
-			'runtimes'				=> 'html5,silverlight,flash,html4',
-			'file_data_name'		=> 'async-upload',
-			'multiple_queues'		=> true,
-			'max_file_size'			=> wp_max_upload_size().'b',
-			'url'					=> admin_url('admin-ajax.php'),
-			'flash_swf_url'			=> includes_url( 'js/plupload/plupload.flash.swf' ),
-			'silverlight_xap_url'	=> includes_url( 'js/plupload/plupload.silverlight.xap' ),
-			'filters'				=> array( array( 'title' => esc_attr__( 'Allowed Image Files' ), 'extensions' => '*' ) ),
-			'multipart'				=> true,
-			'urlstream_upload'		=> true,
-			// additional post data to send to our ajax hook
-			'multipart_params'		=> array(
-				'_ajax_nonce'	=> wp_create_nonce( 'plupload_image' ),
-				'action'    	=> 'plupload_image_upload'
-			)
-
-		) );
-
-	}
-
-	function enqueue_styles() {
-		parent::enqueue_styles();
-		wp_enqueue_style( 'tf-well-plupload-image', trailingslashit( CMB_URL ) . 'css/plupload-image.css', array() );
-	}
-
-	function html() {
+	public function html() {
 
 		$args = wp_parse_args( $this->args, array(
-			'allowed_extensions' => array( 'jpg', 'gif', 'png', 'jpeg', 'bmp' ),
-			'size' => array( 'width' => 150, 'height' => 150, 'crop' => true )
+			'size' => 'thumbnail',
+			'library-type' => array( 'image' ),
+			'show_size' => false
 		) );
 
-		$args['size'] = wp_parse_args( $args['size'], array( 'width' => 150, 'height' => 150, 'crop' => true ) );
+		// If image size keyword used, convert to array of dimensions.
+		if ( is_string( $args['size'] ) )
+			$args['size'] = $this->get_image_size( $args['size'] );
 
-		$attachment_id = $this->get_value();
-		// Filter to change the drag & drop box background string
-		$drop_text = esc_attr__( 'Drag & Drop files', 'cmb' );
-		$extensions = implode( ',', $args['allowed_extensions'] );
-		$img_prefix	= $this->id;
-		$style = sprintf( 'width: %dpx; height: %dpx;', $args['size']['width'], $args['size']['height'] );
+		if ( $this->get_value() )
+			$image = wp_get_attachment_image_src( $this->get_value(), $args['size'], true );
 
-		$size_str = sprintf( 'width=%d&height=%d&crop=%s', $args['size']['width'], $args['size']['height'], $args['size']['crop'] ); ?>
+		$crop = ( isset( $args['size']['crop'] ) && $args['size']['crop'] ) ? 1 : 0;
 
-		<div style="<?php echo esc_attr( $style ); ?>" class="hm-uploader <?php echo  $attachment_id ? 'with-image' : ''; ?>" id="<?php echo esc_attr( $img_prefix ); ?>-container">
+		$styles  = 'width: ' . intval( $args['size'][0] ) . 'px; ';
+		$styles .= 'height: ' . intval( $args['size'][1] ) . 'px; ';
+		$styles .= 'line-height: ' . intval( $args['size'][1] ) . 'px';
 
-			<input type="hidden" class="field-id rwmb-image-prefix" value="<?php echo esc_attr( $img_prefix ); ?>" />
+		$placeholder_styles  = 'width: ' . ( intval( $args['size'][0] ) - 8 ) . 'px; ';
+		$placeholder_styles .= 'height: ' . ( intval( $args['size'][1] ) - 8 ) . 'px; ';
 
-			<input type="hidden" class="field-val" <?php $this->name_attr(); ?> value="<?php echo esc_attr( $attachment_id ); ?>" />
+		$data_type = ( ! empty( $args['library-type'] ) ? implode( ',', $args['library-type'] ) : null );
 
-			<div style="<?php echo esc_attr( $style ); ?><?php echo ( $attachment_id ) ? '' : 'display: none;' ?> line-height: <?php echo esc_attr( $args['size']['height'] ); ?>px;" class="current-image">
+		?>
 
-				<?php if ( $attachment_id && wp_get_attachment_image( $attachment_id, $args['size'], false, 'id=' . $this->id ) ) : ?>
-					<?php echo wp_get_attachment_image( $attachment_id, $args['size'], false, 'id=' . $this->id ) ?>
+		<div class="cmb-file-wrap" style="<?php echo esc_attr( $styles ); ?>" data-type="<?php echo esc_attr( $data_type ); ?>">
 
-				<?php else : ?>
-					<img src="" />
+			<div class="cmb-file-wrap-placeholder" style="<?php echo esc_attr( $placeholder_styles ); ?>">
+
+				<?php if ( $this->args['show_size'] ) : ?>
+					<span class="dimensions">
+						<?php printf( '%dpx &times; %dpx', intval( $args['size'][0] ), intval( $args['size'][1] ) ); ?>
+					</span>
 				<?php endif; ?>
 
-				<div class="image-options">
-					<a href="#" class="delete-image button-secondary"><?php esc_html_e( 'Remove', 'cmb' ) ?></a>
-				</div>
 			</div>
 
-			<div style="<?php echo esc_attr( $style ); ?>" id="<?php echo esc_attr( $img_prefix ); ?>-dragdrop" data-extensions="<?php echo esc_attr( $extensions ); ?>" data-size="<?php echo esc_attr( $size_str ); ?>" class="rwmb-drag-drop upload-form">
-				<div class="rwmb-drag-drop-inside">
-					<p><?php echo esc_html( $drop_text ); ?></p>
-					<p><?php esc_html_e( 'or', 'cmb' ); ?></p>
-					<p><input id="<?php echo esc_attr( $img_prefix ); ?>-browse-button" type="button" value="<?php esc_attr_e( 'Select Files', 'cmb' ) ?>" class="button-secondary" /></p>
-				</div>
+			<button class="button cmb-file-upload <?php echo esc_attr( $this->get_value() ) ? 'hidden' : '' ?>" data-nonce="<?php echo wp_create_nonce( 'cmb-file-upload-nonce' ); ?>">
+				<?php esc_html_e( 'Add Image', 'cmb' ); ?>
+			</button>
+
+			<div class="cmb-file-holder type-img <?php echo $this->get_value() ? '' : 'hidden'; ?>" data-crop="<?php echo (string) $crop; ?>">
+
+				<?php if ( ! empty( $image ) ) : ?>
+					<img src="<?php echo esc_url( $image[0] ); ?>" width="<?php echo intval( $image[1] ); ?>" height="<?php echo intval( $image[2] ); ?>" />
+				<?php endif; ?>
+
 			</div>
 
-			<div style="<?php echo esc_attr( $style ) ?> border-radius: 0 !important; background: #DEDEDE; box-shadow: 0 0 10px rgba(0,0,0,0.5) inset;" class="loading-block hidden">
-				<div style="height:100%; width: 100%; background: url('<?php echo esc_attr( esc_url( get_site_url() . '/wp-admin/images/wpspin_light-2x.gif' ) ); ?>') center center no-repeat; background-size: 16px 16px;"></div>
-			</div>
+			<button class="cmb-remove-file button <?php echo $this->get_value() ? '' : 'hidden'; ?>">
+				<?php esc_html_e( 'Remove', 'cmb' ); ?>
+			</button>
+
+			<input type="hidden" class="cmb-file-upload-input" <?php $this->name_attr(); ?> value="<?php echo esc_attr( $this->value ); ?>" />
 
 		</div>
 
 	<?php }
 
-
 	/**
-	 * Upload
-	 * Ajax callback function
+	 * Gets the dimensions from a registered image size.
 	 *
-	 * @return error or (XML-)response
+	 * @param  string $size
+	 * @return array dimensions.
 	 */
-	static function handle_upload () {
-		header( 'Content-Type: text/html; charset=UTF-8' );
+	private function get_image_size( $size ) {
 
-		if ( ! defined('DOING_AJAX' ) )
-			define( 'DOING_AJAX', true );
-
-		check_ajax_referer('plupload_image');
-
-		$post_id = 0;
-		if ( isset( $_REQUEST['post_id'] ) && is_numeric( $_REQUEST['post_id'] ) )
-			$post_id = (int) $_REQUEST['post_id'];
-
-		// you can use WP's wp_handle_upload() function:
-		$file = $_FILES['async-upload'];
-		$file_attr = wp_handle_upload( $file, array('test_form'=>true, 'action' => 'plupload_image_upload') );
-		$attachment = array(
-			'post_mime_type'	=> $file_attr['type'],
-			'post_title'		=> preg_replace( '/\.[^.]+$/', '', basename( $file['name'] ) ),
-			'post_content'		=> '',
-			'post_status'		=> 'inherit',
-
-		);
-
-		// Adds file as attachment to WordPress
-		$id = wp_insert_attachment( $attachment, $file_attr['file'], $post_id );
-		if ( ! is_wp_error( $id ) )
-		{
-			$response = new WP_Ajax_Response();
-			wp_update_attachment_metadata( $id, wp_generate_attachment_metadata( $id, $file_attr['file'] ) );
-			if ( isset( $_REQUEST['field_id'] ) )
-			{
-				// Save file ID in meta field
-				add_post_meta( $post_id, $_REQUEST['field_id'], $id, false );
-			}
-
-			$src = wp_get_attachment_image_src( $id, $_REQUEST['size'] );
-
-			$response->add( array(
-				'what'			=>'tf_well_image_response',
-				'data'			=> $id,
-				'supplemental'	=> array(
-					'thumbnail'	=>  $src[0],
-					'edit_link'	=> get_edit_post_link($id)
-				)
-			) );
-			$response->send();
+		if ( in_array( $size, array( 'thumbnail', 'medium', 'large' ) ) ) {
+			return array(
+				get_option( $size . '_size_w' ),
+				get_option( $size . '_size_h' ),
+				'crop' => get_option( $size . '_crop' )
+			);
 		}
 
-		exit;
+		global $_wp_additional_image_sizes;
+		if ( isset( $_wp_additional_image_sizes[$size] ) ) {
+			return array(
+				$_wp_additional_image_sizes[$size]['width'],
+				$_wp_additional_image_sizes[$size]['height'],
+				'crop' => $_wp_additional_image_sizes[$size]['crop']
+			);
+		}
+
+		return false;
+
+	}
+
+	/**
+	 * Ajax callback for outputing an image src based on post data.
+	 *
+	 * @return null
+	 */
+	static function request_image_ajax_callback() {
+		
+		if ( ! ( isset( $_POST['nonce'] ) && wp_verify_nonce( $_POST['nonce'], 'cmb-file-upload-nonce' ) ) )
+			return;
+
+		$id = intval( $_POST['id'] );
+
+		$size = array(
+			intval( $_POST['width'] ),
+			intval( $_POST['height'] ),
+			'crop' => (bool) $_POST['crop']
+		);
+
+		$image = wp_get_attachment_image_src( $id, $size );
+		echo reset( $image );
+
+		die(); // this is required to return a proper result
 	}
 
 }
-add_action( 'wp_ajax_plupload_image_upload', array( 'CMB_Image_Field', 'handle_upload' ) );
+add_action( 'wp_ajax_cmb_request_image', array( 'CMB_Image_Field', 'request_image_ajax_callback' ) );
 
 /**
  * Standard text meta box for a URL.
