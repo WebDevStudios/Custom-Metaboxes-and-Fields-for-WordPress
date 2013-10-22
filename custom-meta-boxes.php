@@ -36,13 +36,17 @@ Version: 	1.0 - Beta 1
  * If resources do not load, please check the wiki for details.
  */
 if ( ! defined( 'CMB_PATH') )
-	define( 'CMB_PATH', str_replace( '\\', '/', dirname( __FILE__ ) ) );
+define( 'CMB_PATH', str_replace( '\\', '/', dirname( __FILE__ ) ) );
 if ( ! defined( 'CMB_URL' ) )
-	define( 'CMB_URL', str_replace( str_replace( '\\', '/', WP_CONTENT_DIR ), str_replace( '\\', '/', WP_CONTENT_URL ), CMB_PATH ) );
+define( 'CMB_URL', str_replace( str_replace( '\\', '/', WP_CONTENT_DIR ), str_replace( '\\', '/', WP_CONTENT_URL ), CMB_PATH ) );
 
 
 include_once( CMB_PATH . '/classes.fields.php' );
 include_once( CMB_PATH . '/class.cmb-meta-box.php' );
+
+// Make it possible to add fields in locations other than post edit screen.
+include_once( CMB_PATH . '/fields-anywhere.php' );
+
 // include_once( CMB_PATH . '/example-functions.php' );
 
 /**
@@ -124,127 +128,3 @@ function _cmb_field_class_for_type( $type ) {
 	return false;
 
 }
-
-/**
- * Draw the meta boxes in places other than the post edit screen
- * 
- * @return null
- */
-function cmb_draw_meta_boxes( $pages, $context = 'normal', $object = null ) {
-
-	cmb_do_meta_boxes( $pages, $context, $object );
-
-	wp_enqueue_script('post');
-
-}
-
-/**
- * Meta-Box template function
- *
- * @since 2.5.0
- *
- * @param string|object $screen Screen identifier
- * @param string $context box context
- * @param mixed $object gets passed to the box callback function as first parameter
- * @return int number of meta_boxes
- */
-function cmb_do_meta_boxes( $screen, $context, $object ) {
-
-	global $wp_meta_boxes;
-
-	static $already_sorted = false;
-
-	if ( empty( $screen ) )
-		$screen = get_current_screen();
-
-	elseif ( is_string( $screen ) )
-		$screen = convert_to_screen( $screen );
-
-	$page = $screen->id;
-
-	$hidden = get_hidden_meta_boxes( $screen );
-
-	$i = 0;
-
-	do {
-		// Grab the ones the user has manually sorted. Pull them out of their previous context/priority and into the one the user chose
-
-		if ( ! $already_sorted && $sorted = get_user_option( "meta-box-order_$page" ) )
-			foreach ( $sorted as $box_context => $ids )
-				foreach ( explode(',', $ids ) as $id )
-					if ( $id && 'dashboard_browser_nag' !== $id )
-						add_meta_box( $id, null, null, $screen, $box_context, 'sorted' );
-
-		$already_sorted = true;
-
-		if ( ! isset( $wp_meta_boxes ) || ! isset( $wp_meta_boxes[$page] ) || ! isset( $wp_meta_boxes[$page][$context] ) )
-			break;
-
-		foreach ( array( 'high', 'sorted', 'core', 'default', 'low' ) as $priority ) {
-
-			if ( isset( $wp_meta_boxes[$page][$context][$priority] ) ) {
-
-				foreach ( (array) $wp_meta_boxes[$page][$context][$priority] as $box ) {
-
-					if ( false == $box || ! $box['title'] )
-						continue;
-
-					$i++;
-
-					$hidden_class = in_array($box['id'], $hidden) ? ' hide-if-js' : ''; ?>
-
-					<div id="<?php esc_attr_e( $box['id'] ); ?>" class="<?php esc_attr_e( postbox_classes( $box['id'], $page ) . $hidden_class ); ?>">
-
-						<?php call_user_func( $box['callback'], $object, $box ); ?>
-
-					</div>
-
-				<?php }
-
-			}
-
-		}
-	} while( 0 );
-
-	return $i;
-
-}
-
-
-/**
- * For the order of repeatable fields to be guaranteed, orderby meta_id needs to be set. 
- * Note usermeta has a different meta_id column name.
- * 
- * TODO
- * This is far from ideal as we are doing this on EVERY SINGLE QUERY.
- * But... no other way to modify this query, or re-order in PHP.
- * There is a trac ticket + patch that will fix this. http://core.trac.wordpress.org/ticket/25511
- * 
- * @param  string $query
- * @return string $query
- */
-function cmb_fix_meta_query_order($query) {
-
-	$pattern = '/^SELECT (post_id|user_id), meta_key, meta_value FROM \w* WHERE post_id IN \([\d|,]*\)$/';
-	
-	if ( 
-		0 === strpos( $query, "SELECT post_id, meta_key, meta_value" ) &&  
-		preg_match( $pattern, $query, $matches ) 
-	) {	
-		
-		if ( isset( $matches[1] ) && 'user_id' == $matches[1] )
-			$meta_id_column = 'umeta_id';
-		else
-			$meta_id_column = 'meta_id';
-
-		$meta_query_orderby = ' ORDER BY ' . $meta_id_column;
-
-		if ( false === strpos( $query, $meta_query_orderby ) )
-			$query .= $meta_query_orderby;
-	
-	}
-	
-	return $query;
-
-}
-add_filter( 'query', 'cmb_fix_meta_query_order', 1 ); 
