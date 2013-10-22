@@ -73,41 +73,6 @@ function cmb_init() {
 add_action( 'init', 'cmb_init' );
 
 /**
- * Enqueue scripts & styles.
- * 
- * @param  string $hook current admin screen.
- * @return null
- */
-function cmb_scripts( $hook ) {
-		
-	// only enqueue our scripts/styles on the proper pages
-	if ( $hook == 'post.php' || $hook == 'post-new.php' || $hook == 'page-new.php' || $hook == 'page.php' || did_action( 'cmb_init_fields' ) ) {
-		
-		wp_register_script( 'cmb-timepicker', CMB_URL . '/js/jquery.timePicker.min.js' );
-
-		$cmb_scripts = array( 
-			'jquery', 
-			'jquery-ui-core', 
-			'jquery-ui-datepicker', 
-			'media-upload', 
-			'thickbox', 
-			'wp-color-picker',
-			'cmb-timepicker' 
-		);
-		
-		$cmb_styles = array( 
-			'thickbox', 
-			'wp-color-picker' 
-		);
-
-		wp_enqueue_script( 'cmb-scripts', CMB_URL . '/js/cmb.js', $cmb_scripts );
-		wp_enqueue_style( 'cmb-styles', CMB_URL . '/style.css', $cmb_styles );
-		
-	}
-}
-add_action( 'admin_enqueue_scripts', 'cmb_scripts', 10 );
-
-/**
  * Return an array of built in available fields
  *
  * Key is field name, Value is class used by field.
