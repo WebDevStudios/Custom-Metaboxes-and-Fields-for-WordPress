@@ -35,8 +35,11 @@ Version: 	1.0 - Beta 1
  * This may need to be filtered for local Window installations.
  * If resources do not load, please check the wiki for details.
  */
+if ( ! defined( 'CMB_PATH') )
 define( 'CMB_PATH', str_replace( '\\', '/', dirname( __FILE__ ) ) );
+if ( ! defined( 'CMB_URL' ) )
 define( 'CMB_URL', str_replace( str_replace( '\\', '/', WP_CONTENT_DIR ), str_replace( '\\', '/', WP_CONTENT_URL ), CMB_PATH ) );
+
 
 include_once( CMB_PATH . '/classes.fields.php' );
 include_once( CMB_PATH . '/class.cmb-meta-box.php' );
@@ -56,6 +59,14 @@ function cmb_init() {
 	if ( ! is_admin() )
 		return;
 
+	// Load translations
+	$textdomain = 'cmb';
+	$locale = apply_filters( 'plugin_locale', get_locale(), $textdomain );
+
+	// By default, try to load language files from /wp-content/languages/custom-meta-boxes/
+	load_textdomain( $textdomain, WP_LANG_DIR . '/custom-meta-boxes/' . $textdomain . '-' . $locale . '.mo' );
+	load_textdomain( $textdomain, CMB_PATH . '/languages/' . $textdomain . '-' . $locale . '.mo' );
+
 	$meta_boxes = apply_filters( 'cmb_meta_boxes', array() );
 
 	if ( ! empty( $meta_boxes ) )
@@ -64,41 +75,6 @@ function cmb_init() {
 
 }
 add_action( 'init', 'cmb_init' );
-
-/**
- * Enqueue scripts & styles.
- * 
- * @param  string $hook current admin screen.
- * @return null
- */
-function cmb_scripts( $hook ) {
-		
-	// only enqueue our scripts/styles on the proper pages
-	if ( $hook == 'post.php' || $hook == 'post-new.php' || $hook == 'page-new.php' || $hook == 'page.php' || did_action( 'cmb_init_fields' ) ) {
-		
-		wp_register_script( 'cmb-timepicker', CMB_URL . '/js/jquery.timePicker.min.js' );
-
-		$cmb_scripts = array( 
-			'jquery', 
-			'jquery-ui-core', 
-			'jquery-ui-datepicker', 
-			'media-upload', 
-			'thickbox', 
-			'wp-color-picker',
-			'cmb-timepicker' 
-		);
-		
-		$cmb_styles = array( 
-			'thickbox', 
-			'wp-color-picker' 
-		);
-
-		wp_enqueue_script( 'cmb-scripts', CMB_URL . '/js/cmb.js', $cmb_scripts );
-		wp_enqueue_style( 'cmb-styles', CMB_URL . '/style.css', $cmb_styles );
-		
-	}
-}
-add_action( 'admin_enqueue_scripts', 'cmb_scripts', 10 );
 
 /**
  * Return an array of built in available fields
@@ -119,7 +95,6 @@ function _cmb_available_fields() {
 		'checkbox'			=> 'CMB_Checkbox',
 		'file'				=> 'CMB_File_Field',
 		'image' 			=> 'CMB_Image_Field',
-		'oembed'			=> 'CMB_Oembed_Field',
 		'wysiwyg'			=> 'CMB_wysiwyg',
 		'textarea'			=> 'CMB_Textarea_Field',
 		'textarea_code'		=> 'CMB_Textarea_Field_Code',

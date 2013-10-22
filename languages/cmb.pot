@@ -1,0 +1,46 @@
+# Copyright (C) 2013 
+# This file is distributed under the same license as the  package.
+msgid ""
+msgstr ""
+"Project-Id-Version:  1.0 - Beta 1\n"
+"Report-Msgid-Bugs-To: http://wordpress.org/tag/Custom-Meta-Boxes\n"
+"POT-Creation-Date: 2013-10-09 18:24:44+00:00\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"PO-Revision-Date: 2013-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+
+#: classes.fields.php:365 classes.fields.php:1423
+msgid "Add New"
+msgstr ""
+
+#: classes.fields.php:466
+msgid "Allowed Image Files"
+msgstr ""
+
+#: classes.fields.php:494
+msgid "Drag & Drop files"
+msgstr ""
+
+#: classes.fields.php:517
+msgid "Remove"
+msgstr ""
+
+#: classes.fields.php:524
+msgid "or"
+msgstr ""
+
+#: classes.fields.php:525
+msgid "Select Files"
+msgstr ""
+
+#: classes.fields.php:1051
+msgctxt "select field"
+msgid "None"
+msgstr ""
+
+#: classes.fields.php:1072
+msgid "Type to search"
+msgstr ""
