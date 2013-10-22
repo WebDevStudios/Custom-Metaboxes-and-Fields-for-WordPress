@@ -55,12 +55,8 @@ abstract class CMB_Field {
 
 			$re_format = array();
 
-			foreach ( $this->args['options'] as $option ) {
+			foreach ( $this->args['options'] as $option )
 				$re_format[$option['value']] = $option['name'];
-			}
-
-			// TODO this is incorrect
-			_deprecated_argument( 'CMB_Field', "'std' is deprecated, use 'default instead'", '0.9' );
 
 			$this->args['options'] = $re_format;
 		}
@@ -68,7 +64,6 @@ abstract class CMB_Field {
 		// If the field has a custom value populator callback
 		if ( ! empty( $args['values_callback'] ) )
 			$this->values = call_user_func( $args['values_callback'], get_the_id() );
-
 		else
 			$this->values = $values;
 
@@ -79,20 +74,20 @@ abstract class CMB_Field {
 	}
 
 	/**
-	 * Method responsible for enqueueing any extra scripts the field needs
+	 * Enqueue all scripts required by the field.
 	 *
 	 * @uses wp_enqueue_script()
 	 */
 	public function enqueue_scripts() {
-		wp_enqueue_script( 'cmb-scripts', CMB_URL . '/js/cmb.js', array( 'jquery', 'jquery-ui-core', 'jquery-ui-datepicker', 'media-upload', 'thickbox', 'farbtastic' ) );
 	}
 
 	/**
-	 * Method responsible for enqueueing any extra styles the field needs
+	 * Enqueue all styles required by the field.
 	 *
 	 * @uses wp_enqueue_style()
 	 */
-	public function enqueue_styles() {}
+	public function enqueue_styles() {
+	}
 
 	public function id_attr( $append = null ) {
 
@@ -350,7 +345,7 @@ abstract class CMB_Field {
 
 			</div>
 
-			<button class="button repeat-field">Add New</button>
+			<button class="button repeat-field"><?php esc_html_e( 'Add New', 'cmb' ); ?></button>
 
 		<?php }
 
@@ -394,8 +389,8 @@ class CMB_File_Field extends CMB_Field {
 
 		parent::enqueue_scripts();
 		wp_enqueue_media();
-		wp_enqueue_script( 'cmb-file-upload', CMB_URL . '/js/file-upload.js', array( 'jquery' ) );
-		wp_enqueue_media();
+		wp_enqueue_script( 'cmb-file-upload', trailingslashit( CMB_URL ) . 'js/file-upload.js', array( 'jquery', 'cmb-scripts' ) );
+		
 	}
 
 	public function html() { 
@@ -451,7 +446,7 @@ class CMB_Image_Field extends CMB_Field {
 			'url'					=> admin_url('admin-ajax.php'),
 			'flash_swf_url'			=> includes_url( 'js/plupload/plupload.flash.swf' ),
 			'silverlight_xap_url'	=> includes_url( 'js/plupload/plupload.silverlight.xap' ),
-			'filters'				=> array( array( 'title' => __( 'Allowed Image Files' ), 'extensions' => '*' ) ),
+			'filters'				=> array( array( 'title' => esc_attr__( 'Allowed Image Files' ), 'extensions' => '*' ) ),
 			'multipart'				=> true,
 			'urlstream_upload'		=> true,
 			// additional post data to send to our ajax hook
@@ -465,7 +460,8 @@ class CMB_Image_Field extends CMB_Field {
 	}
 
 	function enqueue_styles() {
-		wp_enqueue_style( 'tf-well-plupload-image', CMB_URL . '/css/plupload-image.css', array() );
+		parent::enqueue_styles();
+		wp_enqueue_style( 'tf-well-plupload-image', trailingslashit( CMB_URL ) . 'css/plupload-image.css', array() );
 	}
 
 	function html() {
@@ -479,7 +475,7 @@ class CMB_Image_Field extends CMB_Field {
 
 		$attachment_id = $this->get_value();
 		// Filter to change the drag & drop box background string
-		$drop_text = 'Drag & Drop files';
+		$drop_text = esc_attr__( 'Drag & Drop files', 'cmb' );
 		$extensions = implode( ',', $args['allowed_extensions'] );
 		$img_prefix	= $this->id;
 		$style = sprintf( 'width: %dpx; height: %dpx;', $args['size']['width'], $args['size']['height'] );
@@ -502,15 +498,15 @@ class CMB_Image_Field extends CMB_Field {
 				<?php endif; ?>
 
 				<div class="image-options">
-					<a href="#" class="delete-image button-secondary">Remove</a>
+					<a href="#" class="delete-image button-secondary"><?php esc_html_e( 'Remove', 'cmb' ) ?></a>
 				</div>
 			</div>
 
 			<div style="<?php echo esc_attr( $style ); ?>" id="<?php echo esc_attr( $img_prefix ); ?>-dragdrop" data-extensions="<?php echo esc_attr( $extensions ); ?>" data-size="<?php echo esc_attr( $size_str ); ?>" class="rwmb-drag-drop upload-form">
 				<div class="rwmb-drag-drop-inside">
 					<p><?php echo esc_html( $drop_text ); ?></p>
-					<p>or</p>
-					<p><input id="<?php echo esc_html( $img_prefix ); ?>-browse-button" type="button" value="Select Files" class="button-secondary" /></p>
+					<p><?php esc_html_e( 'or', 'cmb' ); ?></p>
+					<p><input id="<?php echo esc_attr( $img_prefix ); ?>-browse-button" type="button" value="<?php esc_attr_e( 'Select Files', 'cmb' ) ?>" class="button-secondary" /></p>
 				</div>
 			</div>
 
@@ -606,7 +602,7 @@ class CMB_Date_Field extends CMB_Field {
 
 		parent::enqueue_scripts();
 
-		wp_enqueue_script( 'cmb_datetime', trailingslashit( CMB_URL ) . 'js/field.datetime.js', array( 'jquery' ) );
+		wp_enqueue_script( 'cmb-datetime', trailingslashit( CMB_URL ) . 'js/field.datetime.js', array( 'jquery', 'jquery-ui-core', 'jquery-ui-datepicker', 'cmb-scripts' ) );
 	}
 
 	public function html() { ?>
@@ -622,7 +618,8 @@ class CMB_Time_Field extends CMB_Field {
 
 		parent::enqueue_scripts();
 
-		wp_enqueue_script( 'cmb_datetime', trailingslashit( CMB_URL ) . 'js/field.datetime.js', array( 'jquery' ) );
+		wp_enqueue_script( 'cmb-timepicker', trailingslashit( CMB_URL ) . 'js/jquery.timePicker.min.js', array( 'jquery', 'cmb-scripts' ) );
+		wp_enqueue_script( 'cmb-datetime', trailingslashit( CMB_URL ) . 'js/field.datetime.js', array( 'jquery', 'jquery-ui-core', 'jquery-ui-datepicker', 'cmb-scripts' ) );
 	}
 
 	public function html() { ?>
@@ -703,65 +700,6 @@ class CMB_Datetime_Timestamp_Field extends CMB_Field {
 
 }
 
-
-/**
- * Standard text meta box for a URL.
- *
- */
-class CMB_Oembed_Field extends CMB_Field {
-
-	public function html() { ?>
-
-		<style>
-
-			.cmb_oembed img, .cmb_oembed object, .cmb_oembed video, .cmb_oembed embed, .cmb_oembed iframe { max-width: 100%; height: auto; }
-
-		</style>
-
-			<?php if ( ! $this->value ) : ?>
-
-				<input class="cmb_oembed code" type="text" <?php $this->name_attr(); ?> id="<?php echo esc_attr( $this->name ); ?>" value="" />
-
-			<?php else : ?>
-
-				<div class="hidden"><input disabled class="cmb_oembed code" type="text" <?php $this->name_attr(); ?> id="<?php echo esc_attr( $this->name ); ?>" value="" /></div>
-
-				<div style="position: relative">
-
-				<?php if ( is_array( $this->value ) ) : ?>
-
-					<span class="cmb_oembed"><?php echo $this->value['object']; ?></span>
-					<input type="hidden" <?php $this->name_attr(); ?> value="<?php echo esc_attr( serialize( $this->value ) ); ?>" />
-
-				<?php else : ?>
-
-					<span class="cmb_oembed"><?php echo $this->value; ?></span>
-					<input type="hidden" <?php $this->name_attr(); ?> value="<?php echo esc_attr( $this->value ); ?>" />
-
-				<?php endif; ?>
-
-					<a href="#" class="cmb_remove_file_button" onclick="jQuery( this ).closest('div').prev().removeClass('hidden').find('input').first().removeAttr('disabled')">Remove</a>
-
-				</div>
-
-			<?php endif; ?>
-
-	<?php }
-
-	public function parse_save_value() {
-
-		$args['cmb_oembed'] = true;
-
-		if ( ! empty( $this->args['height'] ) )
-			$args['height'] = $this->args['height'];
-
-		if ( strpos( $this->value, 'http' ) === 0 )
-			$this->value = wp_oembed_get( $this->value, $args );
-
-	}
-
-}
-
 /**
  * Standard text field.
  *
@@ -806,8 +744,8 @@ class CMB_Color_Picker extends CMB_Field {
 
 		parent::enqueue_scripts();
 
-		wp_enqueue_script( 'cmb_colorpicker', trailingslashit( CMB_URL ) . 'js/field.colorpicker.js', array( 'jquery' ) );
-	
+		wp_enqueue_script( 'cmb-colorpicker', trailingslashit( CMB_URL ) . 'js/field.colorpicker.js', array( 'jquery', 'wp-color-picker', 'cmb-scripts' ) );
+		wp_enqueue_style( 'wp-color-picker' );
 	}
 
 	public function html() { ?>
@@ -892,8 +830,10 @@ class CMB_Title extends CMB_Field {
 class CMB_wysiwyg extends CMB_Field {
 
 	function enqueue_scripts() {
+
 		parent::enqueue_scripts();
-		wp_enqueue_script( 'cmb-wysiwyg', CMB_URL . '/js/field-wysiwyg.js', array( 'jquery' ) );
+
+		wp_enqueue_script( 'cmb-wysiwyg', trailingslashit( CMB_URL ) . 'js/field-wysiwyg.js', array( 'jquery', 'cmb-scripts' ) );
 	}
 
 	public function html() { 
@@ -994,8 +934,7 @@ class CMB_Select extends CMB_Field {
 		parent::enqueue_scripts();
 
 		wp_enqueue_script( 'select2', trailingslashit( CMB_URL ) . 'js/select2/select2.js', array( 'jquery' ) );
-		wp_enqueue_script( 'field-select', trailingslashit( CMB_URL ) . 'js/field.select.js', array( 'jquery' ) );
-
+		wp_enqueue_script( 'field-select', trailingslashit( CMB_URL ) . 'js/field.select.js', array( 'jquery', 'select2', 'cmb-scripts' ) );
 	}
 
 	public function enqueue_styles() {
@@ -1036,7 +975,7 @@ class CMB_Select extends CMB_Field {
 		>
 
 			<?php if ( ! empty( $this->args['allow_none'] ) ) : ?>
-				<option value="">None</option>
+				<option value=""><?php echo esc_html_x( 'None', 'select field', 'cmb' ) ?></option>
 			<?php endif; ?>
 
 			<?php foreach ( $this->args['options'] as $value => $name ): ?>
@@ -1057,13 +996,14 @@ class CMB_Select extends CMB_Field {
 				
 				var options = {};
 				
-				options.placeholder = "Type to search";
+				options.placeholder = <?php echo json_encode( __( 'Type to search', 'cmb' ) ) ?>;
 				options.allowClear  = true;
 
 				if ( 'undefined' === typeof( window.cmb_select_fields ) )
 					window.cmb_select_fields = {};
 				
-				window.cmb_select_fields.<?php echo esc_js( $this->get_js_id() ); ?> = options;
+				var id = <?php echo json_encode( $this->get_js_id() ); ?>;
+				window.cmb_select_fields[id] = options;
 
 			})( jQuery );
 
@@ -1212,7 +1152,8 @@ class CMB_Post_Select extends CMB_Select {
 					return false; 
 				
 				// Get options for this field so we can modify it.
-				var options = window.cmb_select_fields.<?php echo esc_js( $this->get_js_id() ); ?>;
+				var id = <?php echo json_encode( $this->get_js_id() ); ?>;
+				var options = window.cmb_select_fields[id];
 
 				<?php if ( $this->args['ajax_url'] && $this->args['multiple'] ) : ?>
 					// The multiple setting is required when using ajax (because an input field is used instead of select)
@@ -1248,12 +1189,12 @@ class CMB_Post_Select extends CMB_Select {
 					var ajaxData = {
 						action  : 'cmb_post_select',
 						post_id : '<?php echo intval( get_the_id() ); ?>', // Used for user capabilty check.
-						nonce   : '<?php echo esc_js( wp_create_nonce( 'cmb_select_field' ) ); ?>',
+						nonce   : <?php echo json_encode( wp_create_nonce( 'cmb_select_field' ) ); ?>,
 						query   : <?php echo json_encode( $this->args['ajax_args'] ); ?>
 					};
 					
 					options.ajax = {
-						url: '<?php echo esc_js( esc_url( $this->args['ajax_url'] ) ); ?>',
+						url: <?php echo json_encode( esc_url( $this->args['ajax_url'] ) ); ?>,
 						type: 'POST',
 						dataType: 'json',
 						data: function( term, page ) {
@@ -1354,6 +1295,9 @@ class CMB_Group_Field extends CMB_Field {
 	}
 
 	public function enqueue_styles() {
+
+		parent::enqueue_styles();
+
 		foreach ( $this->args['fields'] as $f ) {
 
 			$class = _cmb_field_class_for_type( $f['type'] );
@@ -1373,11 +1317,8 @@ class CMB_Group_Field extends CMB_Field {
 
 		$field = $this->args;
 
-		if ( ! empty( $this->args['name'] ) ) : ?>
-
-			<h2 class="group-name"><?php echo esc_attr( $this->args['name'] ); ?></h2>
-
-		<?php endif;
+		$this->title();
+		$this->description();
 
 		$i = 0;
 		foreach ( $meta as $value ) {
@@ -1408,7 +1349,7 @@ class CMB_Group_Field extends CMB_Field {
 
 				</div>
 
-				<button class="button repeat-field">Add New</button>
+				<button class="button repeat-field"><?php esc_html_e( 'Add New', 'cmb' ); ?></button>
 
 		<?php }
 
