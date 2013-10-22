@@ -11,7 +11,6 @@ abstract class CMB_Field {
 	public $value;
 	public $field_index = 0;
 
-
 	/**
 	 * used for repeatable
 	 *
@@ -56,12 +55,8 @@ abstract class CMB_Field {
 
 			$re_format = array();
 
-			foreach ( $this->args['options'] as $option ) {
+			foreach ( $this->args['options'] as $option )
 				$re_format[$option['value']] = $option['name'];
-			}
-
-			// TODO this is incorrect
-			_deprecated_argument( 'CMB_Field', "'std' is deprecated, use 'default instead'", '0.9' );
 
 			$this->args['options'] = $re_format;
 		}
@@ -69,7 +64,6 @@ abstract class CMB_Field {
 		// If the field has a custom value populator callback
 		if ( ! empty( $args['values_callback'] ) )
 			$this->values = call_user_func( $args['values_callback'], get_the_id() );
-
 		else
 			$this->values = $values;
 
@@ -80,20 +74,24 @@ abstract class CMB_Field {
 	}
 
 	/**
-	 * Method responsible for enqueueing any extra scripts the field needs
+	 * Enqueue all scripts required by the field.
 	 *
 	 * @uses wp_enqueue_script()
 	 */
 	public function enqueue_scripts() {
-		wp_enqueue_script( 'cmb-scripts', CMB_URL . '/js/cmb.js', array( 'jquery', 'jquery-ui-core', 'jquery-ui-datepicker', 'media-upload', 'thickbox', 'farbtastic' ) );
+
+		if ( isset( $this->args['sortable'] ) && $this->args['sortable'] )
+			wp_enqueue_script( 'jquery-ui-sortable' );
+
 	}
 
 	/**
-	 * Method responsible for enqueueing any extra styles the field needs
+	 * Enqueue all styles required by the field.
 	 *
 	 * @uses wp_enqueue_style()
 	 */
-	public function enqueue_styles() {}
+	public function enqueue_styles() {
+	}
 
 	public function id_attr( $append = null ) {
 
@@ -167,6 +165,17 @@ abstract class CMB_Field {
 
 		<?php }
 
+	}
+
+	/**
+	 * Get JS Safe ID.
+	 *
+	 * For use as a unique field identifier in javascript.
+	 */
+	public function get_js_id() {
+
+		return str_replace( array( '-', '[', ']', '--' ),'_', $this->get_the_id_attr() ); // JS friendly ID
+	
 	}
 
 	public function boolean_attr( $attrs = array() ) {
@@ -352,7 +361,7 @@ abstract class CMB_Field {
 
 			</div>
 
-			<button class="button repeat-field">Add New</button>
+			<button class="button repeat-field"><?php esc_html_e( 'Add New', 'cmb' ); ?></button>
 
 		<?php }
 
@@ -395,194 +404,180 @@ class CMB_File_Field extends CMB_Field {
 	function enqueue_scripts() {
 
 		parent::enqueue_scripts();
-		wp_enqueue_script( 'cmb-file-upload', CMB_URL . '/js/file-upload.js', array( 'jquery' ) );
 		wp_enqueue_media();
+		wp_enqueue_script( 'cmb-file-upload', trailingslashit( CMB_URL ) . 'js/file-upload.js', array( 'jquery', 'cmb-scripts' ) );
+		
 	}
 
 	public function html() { 
 
 		$args = wp_parse_args( $this->args, array(
-			'size' => array( 150, 150, 'crop' => true )
+			'library-type' => array( 'video', 'audio', 'text', 'application' )
 		) );
+
+		if ( $this->get_value() ) {
+			$src = wp_mime_type_icon( $this->get_value() );
+			$size = getimagesize($src);
+			$icon_img = '<img src="' . $src . '" ' . $size[3] . ' />';
+		}
+
+		$data_type = ( ! empty( $args['library-type'] ) ? implode( ',', $args['library-type'] ) : null );
 
 		?>
 
-		<a class="button cmb-file-upload <?php echo esc_attr( $this->get_value() ) ? 'hidden' : '' ?>" href="#">Add Media</a>
+		<div class="cmb-file-wrap" <?php echo 'data-type="' . esc_attr( $data_type ) . '"'; ?>>
 
-		<div class="cmb-file <?php echo $this->get_value() ? '' : 'hidden'; ?>" style="text-align: center;">
+			<div class="cmb-file-wrap-placeholder"></div>
 
-			<div class="cmb-file-holder <?php if ( $this->value ) { echo wp_attachment_is_image( $this->value ) ? ' type-img' : ' type-file'; } ?>" style="text-align: center; vertical-align: middle;">
+			<button class="button cmb-file-upload <?php echo esc_attr( $this->get_value() ) ? 'hidden' : '' ?>">
+				<?php esc_html_e( 'Add File', 'cmb' ); ?>
+			</button>
 
-				<?php if ( $this->get_value() )
-					echo wp_get_attachment_image( $this->get_value(), $args['size'], true ) ?>
+			<div class="cmb-file-holder type-file <?php echo $this->get_value() ? '' : 'hidden'; ?>">
 
-				<?php if ( $this->get_value() && ! wp_attachment_is_image( $this->value ) ) : ?>
+				<?php if ( $this->get_value() ) : ?>
+
+					<?php if ( isset( $icon_img ) ) echo $icon_img; ?>
+
 					<div class="cmb-file-name">
-						<strong>
-							<?php echo esc_html( end( explode( DIRECTORY_SEPARATOR, get_attached_file( $this->get_value() ) ) ) ); ?>
-						</strong>
+						<strong><?php echo esc_html( basename( get_attached_file( $this->get_value() ) ) ); ?></strong>
 					</div>
+
 				<?php endif; ?>
 
 			</div>
 
-			<a href="#" class="cmb-remove-file button">Remove</a>
+			<button class="cmb-remove-file button <?php echo $this->get_value() ? '' : 'hidden'; ?>">
+				<?php esc_html_e( 'Remove', 'cmb' ); ?>
+			</button>
+
+			<input type="hidden" class="cmb-file-upload-input" <?php $this->name_attr(); ?> value="<?php echo esc_attr( $this->value ); ?>" />
 
 		</div>
 
-		<input type="hidden" class="cmb-file-upload-input" <?php $this->name_attr(); ?> value="<?php echo esc_attr( $this->value ); ?>" />
-
 	<?php }
+
 }
 
-class CMB_Image_Field extends CMB_Field {
+class CMB_Image_Field extends CMB_File_Field {
 
-	function enqueue_scripts() {
-
-		parent::enqueue_scripts();
-
-		wp_enqueue_script( 'plupload-all' );
-		wp_enqueue_script( 'tf-well-plupload-image', CMB_URL . '/js/plupload-image.js', array( 'jquery-ui-sortable', 'wp-ajax-response', 'plupload-all' ), 1 );
-
-		wp_localize_script( 'tf-well-plupload-image', 'tf_well_plupload_defaults', array(
-			'runtimes'				=> 'html5,silverlight,flash,html4',
-			'file_data_name'		=> 'async-upload',
-			'multiple_queues'		=> true,
-			'max_file_size'			=> wp_max_upload_size().'b',
-			'url'					=> admin_url('admin-ajax.php'),
-			'flash_swf_url'			=> includes_url( 'js/plupload/plupload.flash.swf' ),
-			'silverlight_xap_url'	=> includes_url( 'js/plupload/plupload.silverlight.xap' ),
-			'filters'				=> array( array( 'title' => __( 'Allowed Image Files' ), 'extensions' => '*' ) ),
-			'multipart'				=> true,
-			'urlstream_upload'		=> true,
-			// additional post data to send to our ajax hook
-			'multipart_params'		=> array(
-				'_ajax_nonce'	=> wp_create_nonce( 'plupload_image' ),
-				'action'    	=> 'plupload_image_upload'
-			)
-
-		) );
-
-	}
-
-	function enqueue_styles() {
-		wp_enqueue_style( 'tf-well-plupload-image', CMB_URL . '/css/plupload-image.css', array() );
-	}
-
-	function html() {
+	public function html() {
 
 		$args = wp_parse_args( $this->args, array(
-			'allowed_extensions' => array( 'jpg', 'gif', 'png', 'jpeg', 'bmp' ),
-			'size' => array( 'width' => 150, 'height' => 150, 'crop' => true )
+			'size' => 'thumbnail',
+			'library-type' => array( 'image' ),
+			'show_size' => false
 		) );
 
-		$args['size'] = wp_parse_args( $args['size'], array( 'width' => 150, 'height' => 150, 'crop' => true ) );
+		// If image size keyword used, convert to array of dimensions.
+		if ( is_string( $args['size'] ) )
+			$args['size'] = $this->get_image_size( $args['size'] );
 
-		$attachment_id = $this->get_value();
-		// Filter to change the drag & drop box background string
-		$drop_text = 'Drag & Drop files';
-		$extensions = implode( ',', $args['allowed_extensions'] );
-		$img_prefix	= $this->id;
-		$style = sprintf( 'width: %dpx; height: %dpx;', $args['size']['width'], $args['size']['height'] );
+		if ( $this->get_value() )
+			$image = wp_get_attachment_image_src( $this->get_value(), $args['size'], true );
 
-		$size_str = sprintf( 'width=%d&height=%d&crop=%s', $args['size']['width'], $args['size']['height'], $args['size']['crop'] ); ?>
+		$crop = ( isset( $args['size']['crop'] ) && $args['size']['crop'] ) ? 1 : 0;
 
-		<div style="<?php echo esc_attr( $style ); ?>" class="hm-uploader <?php echo  $attachment_id ? 'with-image' : ''; ?>" id="<?php echo esc_attr( $img_prefix ); ?>-container">
+		$styles  = 'width: ' . intval( $args['size'][0] ) . 'px; ';
+		$styles .= 'height: ' . intval( $args['size'][1] ) . 'px; ';
+		$styles .= 'line-height: ' . intval( $args['size'][1] ) . 'px';
 
-			<input type="hidden" class="field-id rwmb-image-prefix" value="<?php echo esc_attr( $img_prefix ); ?>" />
+		$placeholder_styles  = 'width: ' . ( intval( $args['size'][0] ) - 8 ) . 'px; ';
+		$placeholder_styles .= 'height: ' . ( intval( $args['size'][1] ) - 8 ) . 'px; ';
 
-			<input type="hidden" class="field-val" <?php $this->name_attr(); ?> value="<?php echo esc_attr( $attachment_id ); ?>" />
+		$data_type = ( ! empty( $args['library-type'] ) ? implode( ',', $args['library-type'] ) : null );
 
-			<div style="<?php echo esc_attr( $style ); ?><?php echo ( $attachment_id ) ? '' : 'display: none;' ?> line-height: <?php echo esc_attr( $args['size']['height'] ); ?>px;" class="current-image">
+		?>
 
-				<?php if ( $attachment_id && wp_get_attachment_image( $attachment_id, $args['size'], false, 'id=' . $this->id ) ) : ?>
-					<?php echo wp_get_attachment_image( $attachment_id, $args['size'], false, 'id=' . $this->id ) ?>
+		<div class="cmb-file-wrap" style="<?php echo esc_attr( $styles ); ?>" data-type="<?php echo esc_attr( $data_type ); ?>">
 
-				<?php else : ?>
-					<img src="" />
+			<div class="cmb-file-wrap-placeholder" style="<?php echo esc_attr( $placeholder_styles ); ?>">
+
+				<?php if ( $this->args['show_size'] ) : ?>
+					<span class="dimensions">
+						<?php printf( '%dpx &times; %dpx', intval( $args['size'][0] ), intval( $args['size'][1] ) ); ?>
+					</span>
 				<?php endif; ?>
 
-				<div class="image-options">
-					<a href="#" class="delete-image button-secondary">Remove</a>
-				</div>
 			</div>
 
-			<div style="<?php echo esc_attr( $style ); ?>" id="<?php echo esc_attr( $img_prefix ); ?>-dragdrop" data-extensions="<?php echo esc_attr( $extensions ); ?>" data-size="<?php echo esc_attr( $size_str ); ?>" class="rwmb-drag-drop upload-form">
-				<div class="rwmb-drag-drop-inside">
-					<p><?php echo esc_html( $drop_text ); ?></p>
-					<p>or</p>
-					<p><input id="<?php echo esc_html( $img_prefix ); ?>-browse-button" type="button" value="Select Files" class="button-secondary" /></p>
-				</div>
+			<button class="button cmb-file-upload <?php echo esc_attr( $this->get_value() ) ? 'hidden' : '' ?>" data-nonce="<?php echo wp_create_nonce( 'cmb-file-upload-nonce' ); ?>">
+				<?php esc_html_e( 'Add Image', 'cmb' ); ?>
+			</button>
+
+			<div class="cmb-file-holder type-img <?php echo $this->get_value() ? '' : 'hidden'; ?>" data-crop="<?php echo (string) $crop; ?>">
+
+				<?php if ( ! empty( $image ) ) : ?>
+					<img src="<?php echo esc_url( $image[0] ); ?>" width="<?php echo intval( $image[1] ); ?>" height="<?php echo intval( $image[2] ); ?>" />
+				<?php endif; ?>
+
 			</div>
 
-			<div style="<?php echo esc_attr( $style ) ?> border-radius: 0 !important; background: #DEDEDE; box-shadow: 0 0 10px rgba(0,0,0,0.5) inset;" class="loading-block hidden">
-				<div style="height:100%; width: 100%; background: url('<?php echo esc_attr( esc_url( get_site_url() . '/wp-admin/images/wpspin_light-2x.gif' ) ); ?>') center center no-repeat; background-size: 16px 16px;"></div>
-			</div>
+			<button class="cmb-remove-file button <?php echo $this->get_value() ? '' : 'hidden'; ?>">
+				<?php esc_html_e( 'Remove', 'cmb' ); ?>
+			</button>
+
+			<input type="hidden" class="cmb-file-upload-input" <?php $this->name_attr(); ?> value="<?php echo esc_attr( $this->value ); ?>" />
 
 		</div>
 
 	<?php }
 
-
 	/**
-	 * Upload
-	 * Ajax callback function
+	 * Gets the dimensions from a registered image size.
 	 *
-	 * @return error or (XML-)response
+	 * @param  string $size
+	 * @return array dimensions.
 	 */
-	static function handle_upload () {
-		header( 'Content-Type: text/html; charset=UTF-8' );
+	private function get_image_size( $size ) {
 
-		if ( ! defined('DOING_AJAX' ) )
-			define( 'DOING_AJAX', true );
-
-		check_ajax_referer('plupload_image');
-
-		$post_id = 0;
-		if ( isset( $_REQUEST['post_id'] ) && is_numeric( $_REQUEST['post_id'] ) )
-			$post_id = (int) $_REQUEST['post_id'];
-
-		// you can use WP's wp_handle_upload() function:
-		$file = $_FILES['async-upload'];
-		$file_attr = wp_handle_upload( $file, array('test_form'=>true, 'action' => 'plupload_image_upload') );
-		$attachment = array(
-			'post_mime_type'	=> $file_attr['type'],
-			'post_title'		=> preg_replace( '/\.[^.]+$/', '', basename( $file['name'] ) ),
-			'post_content'		=> '',
-			'post_status'		=> 'inherit',
-
-		);
-
-		// Adds file as attachment to WordPress
-		$id = wp_insert_attachment( $attachment, $file_attr['file'], $post_id );
-		if ( ! is_wp_error( $id ) )
-		{
-			$response = new WP_Ajax_Response();
-			wp_update_attachment_metadata( $id, wp_generate_attachment_metadata( $id, $file_attr['file'] ) );
-			if ( isset( $_REQUEST['field_id'] ) )
-			{
-				// Save file ID in meta field
-				add_post_meta( $post_id, $_REQUEST['field_id'], $id, false );
-			}
-
-			$src = wp_get_attachment_image_src( $id, $_REQUEST['size'] );
-
-			$response->add( array(
-				'what'			=>'tf_well_image_response',
-				'data'			=> $id,
-				'supplemental'	=> array(
-					'thumbnail'	=>  $src[0],
-					'edit_link'	=> get_edit_post_link($id)
-				)
-			) );
-			$response->send();
+		if ( in_array( $size, array( 'thumbnail', 'medium', 'large' ) ) ) {
+			return array(
+				get_option( $size . '_size_w' ),
+				get_option( $size . '_size_h' ),
+				'crop' => get_option( $size . '_crop' )
+			);
 		}
 
-		exit;
+		global $_wp_additional_image_sizes;
+		if ( isset( $_wp_additional_image_sizes[$size] ) ) {
+			return array(
+				$_wp_additional_image_sizes[$size]['width'],
+				$_wp_additional_image_sizes[$size]['height'],
+				'crop' => $_wp_additional_image_sizes[$size]['crop']
+			);
+		}
+
+		return false;
+
+	}
+
+	/**
+	 * Ajax callback for outputing an image src based on post data.
+	 *
+	 * @return null
+	 */
+	static function request_image_ajax_callback() {
+		
+		if ( ! ( isset( $_POST['nonce'] ) && wp_verify_nonce( $_POST['nonce'], 'cmb-file-upload-nonce' ) ) )
+			return;
+
+		$id = intval( $_POST['id'] );
+
+		$size = array(
+			intval( $_POST['width'] ),
+			intval( $_POST['height'] ),
+			'crop' => (bool) $_POST['crop']
+		);
+
+		$image = wp_get_attachment_image_src( $id, $size );
+		echo reset( $image );
+
+		die(); // this is required to return a proper result
 	}
 
 }
-add_action( 'wp_ajax_plupload_image_upload', array( 'CMB_Image_Field', 'handle_upload' ) );
+add_action( 'wp_ajax_cmb_request_image', array( 'CMB_Image_Field', 'request_image_ajax_callback' ) );
 
 /**
  * Standard text meta box for a URL.
@@ -607,7 +602,7 @@ class CMB_Date_Field extends CMB_Field {
 
 		parent::enqueue_scripts();
 
-		wp_enqueue_script( 'cmb_datetime', trailingslashit( CMB_URL ) . 'js/field.datetime.js', array( 'jquery' ) );
+		wp_enqueue_script( 'cmb-datetime', trailingslashit( CMB_URL ) . 'js/field.datetime.js', array( 'jquery', 'jquery-ui-core', 'jquery-ui-datepicker', 'cmb-scripts' ) );
 	}
 
 	public function html() { ?>
@@ -623,7 +618,8 @@ class CMB_Time_Field extends CMB_Field {
 
 		parent::enqueue_scripts();
 
-		wp_enqueue_script( 'cmb_datetime', trailingslashit( CMB_URL ) . 'js/field.datetime.js', array( 'jquery' ) );
+		wp_enqueue_script( 'cmb-timepicker', trailingslashit( CMB_URL ) . 'js/jquery.timePicker.min.js', array( 'jquery', 'cmb-scripts' ) );
+		wp_enqueue_script( 'cmb-datetime', trailingslashit( CMB_URL ) . 'js/field.datetime.js', array( 'jquery', 'jquery-ui-core', 'jquery-ui-datepicker', 'cmb-scripts' ) );
 	}
 
 	public function html() { ?>
@@ -680,7 +676,7 @@ class CMB_Datetime_Timestamp_Field extends CMB_Field {
 	public function html() { ?>		
 
 		<input <?php $this->id_attr('date'); ?> <?php $this->boolean_attr(); ?> <?php $this->class_attr( 'cmb_text_small cmb_datepicker' ); ?> type="text" <?php $this->name_attr( '[date]' ); ?>  value="<?php echo $this->value ? esc_attr( date( 'm\/d\/Y', $this->value ) ) : '' ?>" />
-		<input <?php $this->id_attr('time'); ?> <?php $this->boolean_attr(); ?> <?php $this->class_attr( 'cmb_text_small cmb_timepicker' ); ?> type="text" <?php $this->name_attr( '[time]' ); ?> value="<?php echo $this->value ? esc_attr( date( 'H:i A', $this->value ) ) : '' ?>" />
+		<input <?php $this->id_attr('time'); ?> <?php $this->boolean_attr(); ?> <?php $this->class_attr( 'cmb_text_small cmb_timepicker' ); ?> type="text" <?php $this->name_attr( '[time]' ); ?> value="<?php echo $this->value ? esc_attr( date( 'h:i A', $this->value ) ) : '' ?>" />
 
 	<?php }
 
@@ -699,65 +695,6 @@ class CMB_Datetime_Timestamp_Field extends CMB_Field {
 		sort( $this->values );
 
 		parent::parse_save_values();
-
-	}
-
-}
-
-
-/**
- * Standard text meta box for a URL.
- *
- */
-class CMB_Oembed_Field extends CMB_Field {
-
-	public function html() { ?>
-
-		<style>
-
-			.cmb_oembed img, .cmb_oembed object, .cmb_oembed video, .cmb_oembed embed, .cmb_oembed iframe { max-width: 100%; height: auto; }
-
-		</style>
-
-			<?php if ( ! $this->value ) : ?>
-
-				<input class="cmb_oembed code" type="text" <?php $this->name_attr(); ?> id="<?php echo esc_attr( $this->name ); ?>" value="" />
-
-			<?php else : ?>
-
-				<div class="hidden"><input disabled class="cmb_oembed code" type="text" <?php $this->name_attr(); ?> id="<?php echo esc_attr( $this->name ); ?>" value="" /></div>
-
-				<div style="position: relative">
-
-				<?php if ( is_array( $this->value ) ) : ?>
-
-					<span class="cmb_oembed"><?php echo $this->value['object']; ?></span>
-					<input type="hidden" <?php $this->name_attr(); ?> value="<?php echo esc_attr( serialize( $this->value ) ); ?>" />
-
-				<?php else : ?>
-
-					<span class="cmb_oembed"><?php echo $this->value; ?></span>
-					<input type="hidden" <?php $this->name_attr(); ?> value="<?php echo esc_attr( $this->value ); ?>" />
-
-				<?php endif; ?>
-
-					<a href="#" class="cmb_remove_file_button" onclick="jQuery( this ).closest('div').prev().removeClass('hidden').find('input').first().removeAttr('disabled')">Remove</a>
-
-				</div>
-
-			<?php endif; ?>
-
-	<?php }
-
-	public function parse_save_value() {
-
-		$args['cmb_oembed'] = true;
-
-		if ( ! empty( $this->args['height'] ) )
-			$args['height'] = $this->args['height'];
-
-		if ( strpos( $this->value, 'http' ) === 0 )
-			$this->value = wp_oembed_get( $this->value, $args );
 
 	}
 
@@ -807,174 +744,13 @@ class CMB_Color_Picker extends CMB_Field {
 
 		parent::enqueue_scripts();
 
-		wp_enqueue_script( 'cmb_colorpicker', trailingslashit( CMB_URL ) . 'js/field.colorpicker.js', array( 'jquery' ) );
-	
+		wp_enqueue_script( 'cmb-colorpicker', trailingslashit( CMB_URL ) . 'js/field.colorpicker.js', array( 'jquery', 'wp-color-picker', 'cmb-scripts' ) );
+		wp_enqueue_style( 'wp-color-picker' );
 	}
 
 	public function html() { ?>
 
 		<input <?php $this->id_attr(); ?> <?php $this->boolean_attr(); ?> <?php $this->class_attr( 'cmb_colorpicker cmb_text_small' ); ?> type="text" <?php $this->name_attr(); ?> value="<?php echo esc_attr( $this->get_value() ); ?>" />
-
-	<?php }
-
-}
-
-/**
- * Standard select field.
- *
- * @supports "data_delegate"
- * @args
- *     'options'     => array Array of options to show in the select, optionally use data_delegate instead
- *     'allow_none'   => bool Allow no option to be selected (will palce a "None" at the top of the select)
- *     'multiple'     => bool whether multiple can be selected
- */
-class CMB_Select extends CMB_Field {
-
-	public function __construct() {
-		
-		$args = func_get_args();
-
-		call_user_func_array( array( 'parent', '__construct' ), $args );
-
-		$this->args = wp_parse_args( $this->args, array( 'multiple' => false, 'ajax_url' => '' ) );
-
-	}
-
-	public function parse_save_values(){
-
-		if ( isset( $this->group_index ) && isset( $this->args['multiple'] ) && $this->args['multiple'] )
-			$this->values = array( $this->values );
-
-	}
-
-	public function get_options() {
-
-		if ( $this->has_data_delegate() )
-			$this->args['options'] = $this->get_delegate_data();
-
-		return $this->args['options'];
-	}
-
-	public function enqueue_scripts() {
-
-		parent::enqueue_scripts();
-
-		wp_enqueue_script( 'select2', trailingslashit( CMB_URL ) . 'js/select2/select2.js', array( 'jquery' ) );
-	}
-
-	public function enqueue_styles() {
-
-		parent::enqueue_styles();
-
-		wp_enqueue_style( 'select2', trailingslashit( CMB_URL ) . 'js/select2/select2.css' );
-	}
-
-	public function html() {
-
-		if ( $this->has_data_delegate() )
-			$this->args['options'] = $this->get_delegate_data();
-
-		$id = $this->get_the_id_attr();
-		
-		$name = $this->get_the_name_attr();
-		$name .= ! empty( $this->args['multiple'] ) ? '[]' : null;
-
-		$val = (array) $this->get_value();
-
-		?>
-
-			<?php if ( $this->args['ajax_url'] ) : ?>
-
-				<input <?php $this->id_attr(); ?> value="<?php echo esc_attr( implode( ',' , (array) $this->value ) ); ?>" <?php $this->boolean_attr(); ?> <?php printf( 'name="%s"', esc_attr( $name ) ); ?> <?php echo ! empty( $this->args['multiple'] ) ? 'multiple' : '' ?> class="<?php echo esc_attr( $id ); ?>" style="width: 100%" />
-
-			<?php else : ?>
-			
-				<select <?php $this->id_attr(); ?> <?php $this->boolean_attr(); ?> <?php printf( 'name="%s"', esc_attr( $name ) ); ?> <?php echo ! empty( $this->args['multiple'] ) ? 'multiple' : '' ?> class="<?php echo esc_attr( $id ); ?>" style="width: 100%" >
-
-					<?php if ( ! empty( $this->args['allow_none'] ) ) : ?>
-
-						<option value="">None</option>
-
-					<?php endif; ?>
-
-					<?php foreach ( $this->args['options'] as $value => $name ): ?>
-
-					   <option <?php selected( in_array( $value, $val ) ) ?> value="<?php echo esc_attr( $value ); ?>"><?php echo esc_attr( $name ); ?></option>
-
-					<?php endforeach; ?>
-
-				</select>
-			<?php endif; ?>
-
-		<script>
-
-			jQuery( document ).ready( function() {
-
-				var options = { 
-					placeholder: "Type to search" ,
-					allowClear: true
-				};
-
-				<?php if ( $this->args['ajax_url'] ) : ?>
-
-					var query = JSON.parse( '<?php echo json_encode( $this->args['ajax_args'] ? wp_parse_args( $this->args['ajax_args'] ) : (object) array() ); ?>' );
-
-					<?php if ( $this->args['multiple'] ) : ?>
-
-						options.multiple = true;
-
-					<?php endif; ?>
-
-					<?php if ( ! empty( $this->value ) ) : ?>
-
-						options.initSelection = function( element, callback ) {
-								
-							<?php if ( $this->args['multiple'] ) : ?>
-								
-								var data = [];
-								
-								<?php foreach ( (array) $this->value as $post_id ) : ?>
-									data.push = <?php echo sprintf( '{ id: %d, text: "%s" }', $this->value, get_the_title( $this->value ) ); ?>;
-								<?php endforeach; ?>
-							
-							<?php else : ?>
-							
-								var data = <?php echo sprintf( '{ id: %d, text: "%s" }', $this->value, get_the_title( $this->value ) ); ?>;
-							
-							<?php endif; ?>
-
-							callback( data );
-							
-						};
-
-					<?php endif; ?>
-
-					options.ajax = {
-						url: '<?php echo esc_js( $this->args['ajax_url'] ); ?>',
-						dataType: 'json',
-						data: function( term, page ) {
-							query.s = term;
-							query.paged = page;
-							return query;
-						},
-						results : function( data, page ) {
-							return { results: data }
-						}
-					}
-					
-				<?php endif; ?>	
-				
-				setInterval( function() {
-					jQuery( '#<?php echo esc_js( $id ); ?>' ).each( function( index, el ) {
-						if ( jQuery( el ).is( ':visible' ) && ! jQuery( el ).hasClass( 'select2-added' ) )
-							jQuery(el).addClass( 'select2-added' ).select2( options );
-					} );
-
-				}, 300 );
-
-			} );
-
-		</script>
 
 	<?php }
 
@@ -1054,8 +830,10 @@ class CMB_Title extends CMB_Field {
 class CMB_wysiwyg extends CMB_Field {
 
 	function enqueue_scripts() {
+
 		parent::enqueue_scripts();
-		wp_enqueue_script( 'cmb-wysiwyg', CMB_URL . '/js/field-wysiwyg.js', array( 'jquery' ) );
+
+		wp_enqueue_script( 'cmb-wysiwyg', trailingslashit( CMB_URL ) . 'js/field-wysiwyg.js', array( 'jquery', 'cmb-scripts' ) );
 	}
 
 	public function html() { 
@@ -1063,7 +841,7 @@ class CMB_wysiwyg extends CMB_Field {
 		$id   = $this->get_the_id_attr();
 		$name = $this->get_the_name_attr();		
 
-		$field_id = str_replace( array( '-', '[', ']', '--' ),'_', $this->id );
+		$field_id = $this->get_js_id();
 
 		printf( '<div class="cmb-wysiwyg" data-id="%s" data-name="%s" data-field-id="%s">', $id, $name, $field_id );
 	
@@ -1115,6 +893,127 @@ class CMB_wysiwyg extends CMB_Field {
 
 }
 
+/**
+ * Standard select field.
+ *
+ * @supports "data_delegate"
+ * @args
+ *     'options'     => array Array of options to show in the select, optionally use data_delegate instead
+ *     'allow_none'   => bool Allow no option to be selected (will palce a "None" at the top of the select)
+ *     'multiple'     => bool whether multiple can be selected
+ */
+class CMB_Select extends CMB_Field {
+
+	public function __construct() {
+		
+		$args = func_get_args();
+
+		call_user_func_array( array( 'parent', '__construct' ), $args );
+
+		$this->args = wp_parse_args( $this->args, array( 'multiple' => false ) );
+
+	}
+
+	public function parse_save_values(){
+
+		if ( isset( $this->group_index ) && isset( $this->args['multiple'] ) && $this->args['multiple'] )
+			$this->values = array( $this->values );
+
+	}
+
+	public function get_options() {
+
+		if ( $this->has_data_delegate() )
+			$this->args['options'] = $this->get_delegate_data();
+
+		return $this->args['options'];
+	}
+
+	public function enqueue_scripts() {
+
+		parent::enqueue_scripts();
+
+		wp_enqueue_script( 'select2', trailingslashit( CMB_URL ) . 'js/select2/select2.js', array( 'jquery' ) );
+		wp_enqueue_script( 'field-select', trailingslashit( CMB_URL ) . 'js/field.select.js', array( 'jquery', 'select2', 'cmb-scripts' ) );
+	}
+
+	public function enqueue_styles() {
+
+		parent::enqueue_styles();
+
+		wp_enqueue_style( 'select2', trailingslashit( CMB_URL ) . 'js/select2/select2.css' );
+	}
+
+	public function html() {
+
+		if ( $this->has_data_delegate() )
+			$this->args['options'] = $this->get_delegate_data();
+
+		$this->output_field();
+		
+		$this->output_script();
+
+	}
+
+	public function output_field() {
+
+		$val = (array) $this->get_value();
+
+		$name = $this->get_the_name_attr();
+		$name .= ! empty( $this->args['multiple'] ) ? '[]' : null;
+		
+		?>
+
+		<select 
+			<?php $this->id_attr(); ?> 
+			<?php $this->boolean_attr(); ?> 
+			<?php printf( 'name="%s"', esc_attr( $name ) ); ?> 
+			<?php printf( 'data-field-id="%s" ', esc_attr( $this->get_js_id() ) ); ?> 
+			<?php echo ! empty( $this->args['multiple'] ) ? 'multiple' : '' ?> 
+			class="cmb_select" 
+			style="width: 100%" 
+		>
+
+			<?php if ( ! empty( $this->args['allow_none'] ) ) : ?>
+				<option value=""><?php echo esc_html_x( 'None', 'select field', 'cmb' ) ?></option>
+			<?php endif; ?>
+
+			<?php foreach ( $this->args['options'] as $value => $name ): ?>
+			   <option <?php selected( in_array( $value, $val ) ) ?> value="<?php echo esc_attr( $value ); ?>"><?php echo esc_html( $name ); ?></option>
+			<?php endforeach; ?>
+
+		</select>
+
+		<?php 
+	}
+
+	public function output_script() {
+		?>
+
+		<script type="text/javascript">
+
+			(function($) {
+				
+				var options = {};
+				
+				options.placeholder = <?php echo json_encode( __( 'Type to search', 'cmb' ) ) ?>;
+				options.allowClear  = true;
+
+				if ( 'undefined' === typeof( window.cmb_select_fields ) )
+					window.cmb_select_fields = {};
+				
+				var id = <?php echo json_encode( $this->get_js_id() ); ?>;
+				window.cmb_select_fields[id] = options;
+
+			})( jQuery );
+
+		</script>
+
+		<?php 
+	}	
+
+}
+
 class CMB_Taxonomy extends CMB_Select {
 
 	public function __construct() {
@@ -1149,7 +1048,7 @@ class CMB_Taxonomy extends CMB_Select {
 }
 
 /**
- * Standard select field.
+ * Post Select field.
  *
  * @supports "data_delegate"
  * @args
@@ -1165,7 +1064,7 @@ class CMB_Post_Select extends CMB_Select {
 
 		call_user_func_array( array( 'parent', '__construct' ), $args );
 
-		$this->args = wp_parse_args( $this->args, array( 'use_ajax' => false ) );
+		$this->args = wp_parse_args( $this->args, array( 'use_ajax' => false, 'ajax_url' => '' ) );
 
 		$this->args['query'] = isset( $this->args['query'] ) ? $this->args['query'] : array();
 
@@ -1174,51 +1073,173 @@ class CMB_Post_Select extends CMB_Select {
 			$this->args['data_delegate'] = array( $this, 'get_delegate_data' );
 
 		} else {
-			
-			$this->args['ajax_url'] = add_query_arg( 'action', 'cmb_post_select', admin_url( 'admin-ajax.php' ) );
-			$this->args['ajax_args'] = $this->args['query'];
+
+			$this->args['ajax_url'] = admin_url( 'admin-ajax.php' );
+			$this->args['ajax_args'] = wp_parse_args( $this->args['query'] );
 
 		}
 
 	}
 
 	public function get_delegate_data() {
+		
+		$data = array();
 
-		$posts = $this->get_posts();
-		$post_options = array();
+		foreach ( $this->get_posts() as $post_id )
+			$data[$post_id] = get_the_title( $post_id );
 
-		foreach ( $posts as $post )
-			$post_options[$post->ID] = get_the_title( $post->ID );
-
-		return $post_options;
+		return $data;
 
 	}
 
 	private function get_posts() {
 
-		return get_posts( $this->args['query'] );
+		$this->args['query']['fields'] = 'ids';
+		$query = new WP_Query( $this->args['query'] );
+
+		return isset( $query->posts ) ? $query->posts : array();
 
 	}
 
 	public function parse_save_value() {
 
-		if ( $this->args['ajax_url'] && $this->args['multiple'] )
-			$this->value = explode( ',', $this->value );
+		// AJAX multi select2 data is submitted as a string of comma separated post IDs.
+		// If empty, set to false instead of empty array to ensure the meta entry is deleted.
+		if ( $this->args['ajax_url'] && $this->args['multiple'] ) {
+			$this->value = ( ! empty( $this->value ) ) ? explode( ',', $this->value ) : false;
+		}
 
 	}
+
+	public function output_field() {
+			
+		// If AJAX, must use input type not standard select. 
+		if ( $this->args['ajax_url'] ) :
+
+			?>
+
+			<input 
+				<?php $this->id_attr(); ?> 
+				<?php printf( 'value="%s" ', esc_attr( implode( ',' , (array) $this->value ) ) ); ?>
+				<?php printf( 'name="%s"', esc_attr( $this->get_the_name_attr() ) ); ?> 
+				<?php printf( 'data-field-id="%s" ', esc_attr( $this->get_js_id() ) ); ?> 
+				<?php $this->boolean_attr(); ?> 
+				class="cmb_select" 
+				style="width: 100%" 
+			/>
+
+			<?php 
+
+		else :
+
+			parent::output_field();
+
+		endif;
+
+	}
+
+	public function output_script() {
+		
+		parent::output_script();
+
+		?>
+
+		<script type="text/javascript">
+
+			(function($) {
+
+				if ( 'undefined' === typeof( window.cmb_select_fields ) )
+					return false; 
+				
+				// Get options for this field so we can modify it.
+				var id = <?php echo json_encode( $this->get_js_id() ); ?>;
+				var options = window.cmb_select_fields[id];
+
+				<?php if ( $this->args['ajax_url'] && $this->args['multiple'] ) : ?>
+					// The multiple setting is required when using ajax (because an input field is used instead of select)
+					options.multiple = true;
+				<?php endif; ?>
+
+				<?php if ( $this->args['ajax_url'] && ! empty( $this->value ) ) : ?>
+				
+					options.initSelection = function( element, callback ) {
+						
+						var data = [];
+
+						<?php if ( $this->args['multiple'] ) : ?>
+						
+							<?php foreach ( (array) $this->value as $post_id ) : ?>
+								data.push( <?php echo sprintf( '{ id: %d, text: "%s" }', $post_id, get_the_title( $post_id ) ); ?> );
+							<?php endforeach; ?>
+						
+						<?php else : ?>
+						
+							data = <?php echo sprintf( '{ id: %d, text: "%s" }', $this->value, get_the_title( $this->value ) ); ?>;
+						
+						<?php endif; ?>
+
+						callback( data );
+						
+					};
+
+				<?php endif; ?>
+
+				<?php if ( $this->args['ajax_url'] ) : ?>
+					
+					var ajaxData = {
+						action  : 'cmb_post_select',
+						post_id : '<?php echo intval( get_the_id() ); ?>', // Used for user capabilty check.
+						nonce   : <?php echo json_encode( wp_create_nonce( 'cmb_select_field' ) ); ?>,
+						query   : <?php echo json_encode( $this->args['ajax_args'] ); ?>
+					};
+					
+					options.ajax = {
+						url: <?php echo json_encode( esc_url( $this->args['ajax_url'] ) ); ?>,
+						type: 'POST',
+						dataType: 'json',
+						data: function( term, page ) {
+							ajaxData.query.s = term;
+							ajaxData.query.paged = page;
+							return ajaxData;
+						},
+						results : function( results, page ) {
+							var postsPerPage = ajaxData.query.posts_per_page = ( 'posts_per_page' in ajaxData.query ) ? ajaxData.query.posts_per_page : ( 'showposts' in ajaxData.query ) ? ajaxData.query.showposts : 10;
+							var isMore = ( page * postsPerPage ) < results.total; 
+		            		return { results: results.posts, more: isMore };
+						}
+					}
+
+				<?php endif; ?>			
+
+			})( jQuery );
+
+		</script>
+
+		<?php
+	}
+
 }
 
 // TODO this should be in inside the class
 function cmb_ajax_post_select() {
-
-	$query = new WP_Query( $_GET );
 	
-	$posts = $query->posts;
+	$post_id = ! empty( $_POST['post_id'] ) ? intval( $_POST['post_id'] ) : false;
+	$nonce   = ! empty( $_POST['nonce'] ) ? $_POST['nonce'] : false;
+	$args    = ! empty( $_POST['query'] ) ? $_POST['query'] : array();
 
-	$json = array();
+	if ( ! $nonce || ! wp_verify_nonce( $nonce, 'cmb_select_field' ) || ! current_user_can( 'edit_post', $post_id ) ) {
+		echo json_encode( array( 'total' => 0, 'posts' => array() ) );
+		exit;
+	}
 
-	foreach ( $posts as $post )
-		$json[] = array( 'id' => $post->ID, 'text' => get_the_title( $post->ID ) );
+	$args['fields'] = 'ids'; // Only need to retrieve post IDs.
+
+	$query = new WP_Query( $args );
+	
+	$json = array( 'total' => $query->found_posts, 'posts' => array() );
+
+	foreach ( $query->posts as $post_id )
+		array_push( $json['posts'], array( 'id' => $post_id, 'text' => get_the_title( $post_id ) ) );
 
 	echo json_encode( $json );
 
@@ -1274,6 +1295,9 @@ class CMB_Group_Field extends CMB_Field {
 	}
 
 	public function enqueue_styles() {
+
+		parent::enqueue_styles();
+
 		foreach ( $this->args['fields'] as $f ) {
 
 			$class = _cmb_field_class_for_type( $f['type'] );
@@ -1293,11 +1317,8 @@ class CMB_Group_Field extends CMB_Field {
 
 		$field = $this->args;
 
-		if ( ! empty( $this->args['name'] ) ) : ?>
-
-			<h2 class="group-name"><?php echo esc_attr( $this->args['name'] ); ?></h2>
-
-		<?php endif;
+		$this->title();
+		$this->description();
 
 		$i = 0;
 		foreach ( $meta as $value ) {
@@ -1328,7 +1349,7 @@ class CMB_Group_Field extends CMB_Field {
 
 				</div>
 
-				<button class="button repeat-field">Add New</button>
+				<button class="button repeat-field"><?php esc_html_e( 'Add New', 'cmb' ); ?></button>
 
 		<?php }
 

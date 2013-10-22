@@ -4,102 +4,126 @@ jQuery( document ).ready( function() {
 
 		e.preventDefault();
 
-		var container = jQuery( this ).parent();
 		var link = jQuery( this );
+		var container = jQuery( this ).parent();
 
-		var frame = wp.media( {
-			state: 'cmb-file',
-			states: [ new CMBSelectFileController() ]
-		})
+		var frameArgs = {
+			multiple: false,
+			title: 'Select File',
+		}
 
-		frame.on( 'toolbar:create:cmb-file', function( toolbar ) {
-			this.createSelectToolbar( toolbar, {
-				text: 'Select file'
-			});
-		}, frame );
+		library = container.attr( 'data-type' ).split(',');
+		if ( library.length > 0 )
+			frameArgs.library = { type: library }
 
-		frame.open();
+		var CMB_Frame = wp.media( frameArgs );
 
-		frame.state('cmb-file').on( 'select', function() {
+		CMB_Frame.on( 'select', function() {
 
-			var selection = frame.state().get('selection'),
+			var selection = CMB_Frame.state().get('selection'),
 				model = selection.first(),
 				fileHolder = container.find( '.cmb-file-holder' );
 
 			jQuery( container ).find( '.cmb-file-upload-input' ).val( model.id );
-			link.hide();
 
-			frame.close();
+			link.hide(); // Hide 'add media' button
 
-			var fileClass = ( model.attributes.type === 'image' ) ? 'type-image' : 'type-file';
-			fileHolder.addClass( fileClass );
+			CMB_Frame.close();
+
 			fileHolder.html( '' );
-			fileHolder.parent().show();
+			fileHolder.show();
+			fileHolder.siblings( '.cmb-remove-file' ).show();
 
-			jQuery( '<img />', {
-				src: model.attributes.type === 'image' ? model.attributes.sizes.thumbnail.url : model.attributes.icon
-			}).prependTo( container.find( '.cmb-file-holder' ) );
+			var fieldType = container.closest( '.field-item' ).attr( 'data-class' );
 
-			if ( model.attributes.type !== 'image' )
+			if ( 'CMB_Image_Field' === fieldType ) {
+
+				var data = {
+					action: 'cmb_request_image',
+					id:     model.attributes.id,
+					width:  container.width(),
+					height: container.height(),
+					crop:   fileHolder.attr('data-crop'),
+					nonce:  link.attr( 'data-nonce' )
+				}
+
+				fileHolder.addClass( 'loading' );
+
+				jQuery.post( ajaxurl, data, function( src ) {
+					// Insert image
+					jQuery( '<img />', { src: src } ).prependTo( fileHolder );
+					fileHolder.removeClass( 'loading' );
+				}).fail( function() {
+					// Fallback - insert full size image.
+					jQuery( '<img />', { src: model.attributes.url } ).prependTo( fileHolder );
+					fileHolder.removeClass( 'loading' );
+				});
+
+			} else {
+
+				jQuery( '<img />', { src: model.attributes.icon } ).prependTo( fileHolder );
 				fileHolder.append( jQuery('<div class="cmb-file-name" />').html( '<strong>' + model.attributes.filename + '</strong>' ) );
 
+			}
+
 		});
+
+		CMB_Frame.open();
 
 	} );
 
 	jQuery( document ).on( 'click', '.cmb-remove-file', function(e) {
+
 		e.preventDefault();
+
 		var container = jQuery( this ).parent().parent();
-		container.find( '.cmb-file-holder' ).html( '' ).parent().hide();
+
+		container.find( '.cmb-file-holder' ).html( '' ).hide();
 		container.find( '.cmb-file-upload-input' ).val( '' );
-		container.find( '.cmb-file-upload' ).show();
+		container.find( '.cmb-file-upload' ).show().css( 'display', 'inline-block' );
+		container.find( '.cmb-remove-file' ).hide();
+
 	} );
 
-	// wp.media.controller.FeaturedImage
-	// ---------------------------------
-	var CMBSelectFileController = wp.media.controller.Library.extend({
-		defaults: _.defaults({
-			id:         'cmb-file',
-			filterable: 'uploaded',
-			multiple:   false,
-			toolbar:    'cmb-file',
-			title:      'Select File',
-			priority:   60,
-			syncSelection: false
-		}, wp.media.controller.Library.prototype.defaults ),
+	/**
+	 * Recalculate the dimensions of the file upload field.
+	 * It should never be larger than the available width.
+	 * It should maintain the aspect ratio of the original field.
+	 * It should recalculate when resized.
+	 * @return {[type]} [description]
+	 */
+	var recalculateFileFieldSize = function() {
 
-		initialize: function() {
-			var library, comparator;
+		jQuery( '.cmb-file-wrap' ).each( function() {
 
-			wp.media.controller.Library.prototype.initialize.apply( this, arguments );
+			var el        = jQuery(this),
+				container = el.closest( '.postbox' ),
+				width     = container.width() - 12 - 10 - 10,
+				ratio     =  el.height() / el.width();
 
-			library    = this.get('library');
-			comparator = library.comparator;
-		},
+			if ( el.attr( 'data-original-width' ) )
+				el.width( el.attr( 'data-original-width' ) );
+			else
+				el.attr( 'data-original-width', el.width() );
 
-		activate: function() {
-			this.updateSelection();
-			this.frame.on( 'open', this.updateSelection, this );
-			wp.media.controller.Library.prototype.activate.apply( this, arguments );
-		},
+			if ( el.attr( 'data-original-height' ) )
+				el.height( el.attr( 'data-original-height' ) );
+			else
+				el.attr( 'data-original-height', el.height() );
 
-		deactivate: function() {
-			this.frame.off( 'open', this.updateSelection, this );
-			wp.media.controller.Library.prototype.deactivate.apply( this, arguments );
-		},
-
-		updateSelection: function() {
-			var selection = this.get('selection'),
-				id = wp.media.view.settings.post.featuredImageId,
-				attachment;
-
-			if ( '' !== id && -1 !== id ) {
-				attachment = wp.media.model.Attachment.get( id );
-				attachment.fetch();
+			if ( el.width() > width ) {
+				el.width( width );
+				el.find( '.cmb-file-wrap-placeholder' ).width( width - 8 );
+				el.height( width * ratio );
+				el.css( 'line-height', ( width * ratio ) + 'px' );
+				el.find( '.cmb-file-wrap-placeholder' ).height( ( width * ratio ) - 8 );
 			}
 
-			selection.reset( attachment ? [ attachment ] : [] );
-		}
-	});
+
+		} );
+			}
+
+	recalculateFileFieldSize();
+	jQuery(window).resize( recalculateFileFieldSize );
 
 } );

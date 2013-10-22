@@ -13,8 +13,8 @@ CMB.addCallbackForClonedField( ['CMB_Date_Field', 'CMB_Time_Field', 'CMB_Date_Ti
 	// Reinitialize all the timepickers.
 	newT.find('.cmb_timepicker' ).each(function () {
 		jQuery(this).timePicker({
-			startTime: "07:00",
-			endTime: "22:00",
+			startTime: "00:00",
+			endTime: "23:30",
 			show24Hours: false,
 			separator: ':',
 			step: 30
@@ -36,8 +36,8 @@ CMB.addCallbackForInit( function() {
 	// Timepicker
 	jQuery('.cmb_timepicker').each(function () {
 		jQuery(this).timePicker({
-			startTime: "07:00",
-			endTime: "22:00",
+			startTime: "00:00",
+			endTime: "23:30",
 			show24Hours: false,
 			separator: ':',
 			step: 30

@@ -15,46 +15,63 @@ var CMB = {
 	
 	_sortStartCallbacks: [],
 	_sortEndCallbacks: [],
-
+	
 	init : function() {
 			
 		var _this = this;
 
 		jQuery(document).ready( function () {
 				
-			jQuery( document ).on( 'click', '.delete-field', function(e) { _this.deleteField.call( _this, e, this ); } );
+			jQuery( '.field.repeatable' ).each( function() {
+				_this.isMaxFields( jQuery(this) );
+			} );
+
+			jQuery( document ).on( 'click', '.delete-field', function(e) {
+				e.preventDefault();
+				_this.deleteField( jQuery( this ).closest('.field-item' ) );
+			} );
 			
-			jQuery( document ).on( 'click', '.repeat-field', function(e) { _this.repeatField.call( _this, e, this ); } );
+			jQuery( document ).on( 'click', '.repeat-field', function(e) {
+				e.preventDefault();
+				_this.repeatField( jQuery( this ).closest('.field' ) );
+			} );
 
 			_this.doneInit();
-
-			jQuery('.field.sortable' ).each( function() { _this.sortableInit.call( _this, this ); } );
 			
+			jQuery('.field.sortable' ).each( function() { 
+				_this.sortableInit( jQuery(this) );
+			} );
 			
 		} );
 
 	},
 
-	repeatField : function( e, btn ) {
+	repeatField : function( field ) {
 			
-		e.preventDefault();
-		
-	    var _this, btn, newT, field, index, attr;
+	    var _this, templateField, newT, field, index, attr;
 
 	    _this = this;
+		
+		if ( _this.isMaxFields( field, 1 ) )
+			return;
+
+	    templateField = field.children( '.field-item.hidden' );
 	    
-	    newT = jQuery(btn).prev().clone();
+	    newT = templateField.clone();
 	    newT.removeClass('hidden');
-	    newT.find('input[type!="button"]').not('[readonly]').val('');
+	    
+	    var excludeInputTypes = '[type=submit],[type=button],[type=checkbox],[type=radio],[readonly]';
+	    newT.find( 'input' ).not( excludeInputTypes ).val( '' );
+
 	    newT.find( '.cmb_upload_status' ).html('');
-	    newT.insertBefore( jQuery(btn).prev() );
+
+	    newT.insertBefore( templateField );
 
 	    // Recalculate group ids & update the name fields..
 		index = 0;
-		field = jQuery(btn).closest('.field' );
 		attr  = ['id','name','for','data-id','data-name'];	
 		
-		field.children('.field-item').not('.hidden').each( function() {
+		field.children( '.field-item' ).not( templateField ).each( function() {
 
 			var search  = field.hasClass( 'CMB_Group_Field' ) ? /cmb-group-(\d|x)*/g : /cmb-field-(\d|x)*/g;
 			var replace = field.hasClass( 'CMB_Group_Field' ) ? 'cmb-group-' + index : 'cmb-field-' + index;
@@ -71,21 +88,57 @@ var CMB = {
 
 		} );
 
-	    _this.clonedField( newT )
-	    
+	    _this.clonedField( newT );
+
 	    _this.sortableInit( field );
 
 	},
 
-	deleteField : function( e, btn ) {
+	deleteField : function( fieldItem  ) {
 		
-		e.preventDefault();
+		var field = fieldItem.closest( '.field' );
 	
-		var fieldItem = jQuery(btn).closest( '.field-item' );
+		this.isMaxFields( field, -1 );
 
 		this.deletedField( fieldItem );	
-
 		fieldItem.remove();
+
+	},
+
+	/**
+	 * Prevent having more than the maximum number of repeatable fields.
+	 * When called, if there is the maximum, disable .repeat-field button.
+	 * Note: Information Passed using data-max attribute on the .field element.
+	 *
+	 * @param jQuery .field
+	 * @param int modifier - adjust count by this ammount. 1 If adding a field, 0 if checking, -1 if removing a field... etc
+	 * @return null
+	 */
+	isMaxFields: function( field, modifier ) {
+
+		var count, addBtn, min, max, count;
+
+		modifier = (modifier) ? parseInt( modifier, 10 ) : 0;
+
+		addBtn = field.children( '.repeat-field' );
+		count  = field.children('.field-item').not('.hidden').length + modifier; // Count after anticipated action (modifier)
+		max    = field.attr( 'data-rep-max' );
+
+		// Show all the remove field buttons.
+		field.find( '> .field-item > .cmb_element > .ui-state-default > .delete-field' ).show();
+		field.find( '> .field-item > .group > .cmb_element > .ui-state-default > .delete-field' ).show();
+
+		if ( typeof( max ) === 'undefined' )
+			return false;
+
+		// Disable the add new field button?
+		if ( count >= parseInt( max, 10 ) )
+			addBtn.attr( 'disabled', 'disabled' );
+		else 
+			addBtn.removeAttr( 'disabled' );
+
+	    if ( count > parseInt( max, 10 ) )
+	    	return true;
 
 	},	
 
@@ -180,11 +233,10 @@ var CMB = {
 
 		var _this = this;
 
-		field = jQuery(field);
-
 		var items = field.find(' > .field-item').not('.hidden');
-
+		
 		field.find( '> .field-item > .handle' ).remove();
+
 		items.each( function() {
 			jQuery(this).append( '<div class="handle"></div>' );
 		} );
@@ -260,4 +312,8 @@ var CMB = {
 
 }
 
+
+jQuery(document).ready( function() {
+
 CMB.init();
+});
