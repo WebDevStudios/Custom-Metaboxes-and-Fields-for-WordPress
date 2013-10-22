@@ -43,7 +43,6 @@ function cmb_sample_metaboxes( array $meta_boxes ) {
 		array( 'id' => 'field-21', 'name' => 'Date & Time (unix) input field', 'type' => 'datetime_unix' ),
 		
 		array( 'id' => 'field-22', 'name' => 'Color', 'type' => 'colorpicker' ),
-		array( 'id' => 'field-23', 'name' => 'Oembed field', 'type' => 'oembed' ),
 
 		array( 'id' => 'field-24', 'name' => 'Title Field', 'type' => 'title' ),
 	
@@ -89,11 +88,12 @@ function cmb_sample_metaboxes( array $meta_boxes ) {
 		'fields' => array(
 			array( 
 				'id' => 'gp', 
-				'name' => 'Repeatable Group', 
+				'name' => 'My Repeatable Group', 
 				'type' => 'group', 
 				'repeatable' => true,
 				'sortable' => true,
-				'fields' => $group_fields
+				'fields' => $group_fields,
+				'desc' => 'This is the group description.'
 			)
 		)
 	);

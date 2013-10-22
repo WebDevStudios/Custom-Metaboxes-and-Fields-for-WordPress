@@ -35,8 +35,11 @@ Version: 	1.0 - Beta 1
  * This may need to be filtered for local Window installations.
  * If resources do not load, please check the wiki for details.
  */
-define( 'CMB_PATH', str_replace( '\\', '/', dirname( __FILE__ ) ) );
-define( 'CMB_URL', str_replace( str_replace( '\\', '/', WP_CONTENT_DIR ), str_replace( '\\', '/', WP_CONTENT_URL ), CMB_PATH ) );
+if ( ! defined( 'CMB_PATH') )
+	define( 'CMB_PATH', str_replace( '\\', '/', dirname( __FILE__ ) ) );
+if ( ! defined( 'CMB_URL' ) )
+	define( 'CMB_URL', str_replace( str_replace( '\\', '/', WP_CONTENT_DIR ), str_replace( '\\', '/', WP_CONTENT_URL ), CMB_PATH ) );
+
 
 include_once( CMB_PATH . '/classes.fields.php' );
 include_once( CMB_PATH . '/class.cmb-meta-box.php' );
@@ -70,41 +73,6 @@ function cmb_init() {
 add_action( 'init', 'cmb_init' );
 
 /**
- * Enqueue scripts & styles.
- * 
- * @param  string $hook current admin screen.
- * @return null
- */
-function cmb_scripts( $hook ) {
-		
-	// only enqueue our scripts/styles on the proper pages
-	if ( $hook == 'post.php' || $hook == 'post-new.php' || $hook == 'page-new.php' || $hook == 'page.php' || did_action( 'cmb_init_fields' ) ) {
-		
-		wp_register_script( 'cmb-timepicker', CMB_URL . '/js/jquery.timePicker.min.js' );
-
-		$cmb_scripts = array( 
-			'jquery', 
-			'jquery-ui-core', 
-			'jquery-ui-datepicker', 
-			'media-upload', 
-			'thickbox', 
-			'wp-color-picker',
-			'cmb-timepicker' 
-		);
-		
-		$cmb_styles = array( 
-			'thickbox', 
-			'wp-color-picker' 
-		);
-
-		wp_enqueue_script( 'cmb-scripts', CMB_URL . '/js/cmb.js', $cmb_scripts );
-		wp_enqueue_style( 'cmb-styles', CMB_URL . '/style.css', $cmb_styles );
-		
-	}
-}
-add_action( 'admin_enqueue_scripts', 'cmb_scripts', 10 );
-
-/**
  * Return an array of built in available fields
  *
  * Key is field name, Value is class used by field.
@@ -123,7 +91,6 @@ function _cmb_available_fields() {
 		'checkbox'			=> 'CMB_Checkbox',
 		'file'				=> 'CMB_File_Field',
 		'image' 			=> 'CMB_Image_Field',
-		'oembed'			=> 'CMB_Oembed_Field',
 		'wysiwyg'			=> 'CMB_wysiwyg',
 		'textarea'			=> 'CMB_Textarea_Field',
 		'textarea_code'		=> 'CMB_Textarea_Field_Code',
@@ -242,3 +209,42 @@ function cmb_do_meta_boxes( $screen, $context, $object ) {
 	return $i;
 
 }
+
+
+/**
+ * For the order of repeatable fields to be guaranteed, orderby meta_id needs to be set. 
+ * Note usermeta has a different meta_id column name.
+ * 
+ * TODO
+ * This is far from ideal as we are doing this on EVERY SINGLE QUERY.
+ * But... no other way to modify this query, or re-order in PHP.
+ * There is a trac ticket + patch that will fix this. http://core.trac.wordpress.org/ticket/25511
+ * 
+ * @param  string $query
+ * @return string $query
+ */
+function cmb_fix_meta_query_order($query) {
+
+	$pattern = '/^SELECT (post_id|user_id), meta_key, meta_value FROM \w* WHERE post_id IN \([\d|,]*\)$/';
+	
+	if ( 
+		0 === strpos( $query, "SELECT post_id, meta_key, meta_value" ) &&  
+		preg_match( $pattern, $query, $matches ) 
+	) {	
+		
+		if ( isset( $matches[1] ) && 'user_id' == $matches[1] )
+			$meta_id_column = 'umeta_id';
+		else
+			$meta_id_column = 'meta_id';
+
+		$meta_query_orderby = ' ORDER BY ' . $meta_id_column;
+
+		if ( false === strpos( $query, $meta_query_orderby ) )
+			$query .= $meta_query_orderby;
+	
+	}
+	
+	return $query;
+
+}
+add_filter( 'query', 'cmb_fix_meta_query_order', 1 ); 

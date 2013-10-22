@@ -55,12 +55,8 @@ abstract class CMB_Field {
 
 			$re_format = array();
 
-			foreach ( $this->args['options'] as $option ) {
+			foreach ( $this->args['options'] as $option )
 				$re_format[$option['value']] = $option['name'];
-			}
-
-			// TODO this is incorrect
-			_deprecated_argument( 'CMB_Field', "'std' is deprecated, use 'default instead'", '0.9' );
 
 			$this->args['options'] = $re_format;
 		}
@@ -68,7 +64,6 @@ abstract class CMB_Field {
 		// If the field has a custom value populator callback
 		if ( ! empty( $args['values_callback'] ) )
 			$this->values = call_user_func( $args['values_callback'], get_the_id() );
-
 		else
 			$this->values = $values;
 
@@ -79,20 +74,20 @@ abstract class CMB_Field {
 	}
 
 	/**
-	 * Method responsible for enqueueing any extra scripts the field needs
+	 * Enqueue all scripts required by the field.
 	 *
 	 * @uses wp_enqueue_script()
 	 */
 	public function enqueue_scripts() {
-		wp_enqueue_script( 'cmb-scripts', CMB_URL . '/js/cmb.js', array( 'jquery', 'jquery-ui-core', 'jquery-ui-datepicker', 'media-upload', 'thickbox', 'farbtastic' ) );
 	}
 
 	/**
-	 * Method responsible for enqueueing any extra styles the field needs
+	 * Enqueue all styles required by the field.
 	 *
 	 * @uses wp_enqueue_style()
 	 */
-	public function enqueue_styles() {}
+	public function enqueue_styles() {
+	}
 
 	public function id_attr( $append = null ) {
 
@@ -362,7 +357,7 @@ abstract class CMB_Field {
 
 			</div>
 
-			<button class="button repeat-field">Add New</button>
+			<button class="button repeat-field"><?php esc_html_e( 'Add New', 'cmb' ); ?></button>
 
 		<?php }
 
@@ -403,9 +398,11 @@ class CMB_Text_Small_Field extends CMB_Text_Field {
 class CMB_File_Field extends CMB_Field {
 
 	function enqueue_scripts() {
+
 		parent::enqueue_scripts();
 		wp_enqueue_media();
-		wp_enqueue_script( 'cmb-file-upload', CMB_URL . '/js/file-upload.js', array( 'jquery' ) );
+		wp_enqueue_script( 'cmb-file-upload', trailingslashit( CMB_URL ) . 'js/file-upload.js', array( 'jquery', 'cmb-scripts' ) );
+		
 	}
 
 	public function html() { 
@@ -601,7 +598,7 @@ class CMB_Date_Field extends CMB_Field {
 
 		parent::enqueue_scripts();
 
-		wp_enqueue_script( 'cmb_datetime', trailingslashit( CMB_URL ) . 'js/field.datetime.js', array( 'jquery' ) );
+		wp_enqueue_script( 'cmb-datetime', trailingslashit( CMB_URL ) . 'js/field.datetime.js', array( 'jquery', 'jquery-ui-core', 'jquery-ui-datepicker', 'cmb-scripts' ) );
 	}
 
 	public function html() { ?>
@@ -617,7 +614,8 @@ class CMB_Time_Field extends CMB_Field {
 
 		parent::enqueue_scripts();
 
-		wp_enqueue_script( 'cmb_datetime', trailingslashit( CMB_URL ) . 'js/field.datetime.js', array( 'jquery' ) );
+		wp_enqueue_script( 'cmb-timepicker', trailingslashit( CMB_URL ) . 'js/jquery.timePicker.min.js', array( 'jquery', 'cmb-scripts' ) );
+		wp_enqueue_script( 'cmb-datetime', trailingslashit( CMB_URL ) . 'js/field.datetime.js', array( 'jquery', 'jquery-ui-core', 'jquery-ui-datepicker', 'cmb-scripts' ) );
 	}
 
 	public function html() { ?>
@@ -698,65 +696,6 @@ class CMB_Datetime_Timestamp_Field extends CMB_Field {
 
 }
 
-
-/**
- * Standard text meta box for a URL.
- *
- */
-class CMB_Oembed_Field extends CMB_Field {
-
-	public function html() { ?>
-
-		<style>
-
-			.cmb_oembed img, .cmb_oembed object, .cmb_oembed video, .cmb_oembed embed, .cmb_oembed iframe { max-width: 100%; height: auto; }
-
-		</style>
-
-			<?php if ( ! $this->value ) : ?>
-
-				<input class="cmb_oembed code" type="text" <?php $this->name_attr(); ?> id="<?php echo esc_attr( $this->name ); ?>" value="" />
-
-			<?php else : ?>
-
-				<div class="hidden"><input disabled class="cmb_oembed code" type="text" <?php $this->name_attr(); ?> id="<?php echo esc_attr( $this->name ); ?>" value="" /></div>
-
-				<div style="position: relative">
-
-				<?php if ( is_array( $this->value ) ) : ?>
-
-					<span class="cmb_oembed"><?php echo $this->value['object']; ?></span>
-					<input type="hidden" <?php $this->name_attr(); ?> value="<?php echo esc_attr( serialize( $this->value ) ); ?>" />
-
-				<?php else : ?>
-
-					<span class="cmb_oembed"><?php echo $this->value; ?></span>
-					<input type="hidden" <?php $this->name_attr(); ?> value="<?php echo esc_attr( $this->value ); ?>" />
-
-				<?php endif; ?>
-
-					<a href="#" class="cmb_remove_file_button" onclick="jQuery( this ).closest('div').prev().removeClass('hidden').find('input').first().removeAttr('disabled')">Remove</a>
-
-				</div>
-
-			<?php endif; ?>
-
-	<?php }
-
-	public function parse_save_value() {
-
-		$args['cmb_oembed'] = true;
-
-		if ( ! empty( $this->args['height'] ) )
-			$args['height'] = $this->args['height'];
-
-		if ( strpos( $this->value, 'http' ) === 0 )
-			$this->value = wp_oembed_get( $this->value, $args );
-
-	}
-
-}
-
 /**
  * Standard text field.
  *
@@ -801,8 +740,8 @@ class CMB_Color_Picker extends CMB_Field {
 
 		parent::enqueue_scripts();
 
-		wp_enqueue_script( 'cmb_colorpicker', trailingslashit( CMB_URL ) . 'js/field.colorpicker.js', array( 'jquery' ) );
-	
+		wp_enqueue_script( 'cmb-colorpicker', trailingslashit( CMB_URL ) . 'js/field.colorpicker.js', array( 'jquery', 'wp-color-picker', 'cmb-scripts' ) );
+		wp_enqueue_style( 'wp-color-picker' );
 	}
 
 	public function html() { ?>
@@ -887,8 +826,10 @@ class CMB_Title extends CMB_Field {
 class CMB_wysiwyg extends CMB_Field {
 
 	function enqueue_scripts() {
+
 		parent::enqueue_scripts();
-		wp_enqueue_script( 'cmb-wysiwyg', CMB_URL . '/js/field-wysiwyg.js', array( 'jquery' ) );
+
+		wp_enqueue_script( 'cmb-wysiwyg', trailingslashit( CMB_URL ) . 'js/field-wysiwyg.js', array( 'jquery', 'cmb-scripts' ) );
 	}
 
 	public function html() { 
@@ -989,8 +930,7 @@ class CMB_Select extends CMB_Field {
 		parent::enqueue_scripts();
 
 		wp_enqueue_script( 'select2', trailingslashit( CMB_URL ) . 'js/select2/select2.js', array( 'jquery' ) );
-		wp_enqueue_script( 'field-select', trailingslashit( CMB_URL ) . 'js/field.select.js', array( 'jquery' ) );
-
+		wp_enqueue_script( 'field-select', trailingslashit( CMB_URL ) . 'js/field.select.js', array( 'jquery', 'select2', 'cmb-scripts' ) );
 	}
 
 	public function enqueue_styles() {
@@ -1351,6 +1291,9 @@ class CMB_Group_Field extends CMB_Field {
 	}
 
 	public function enqueue_styles() {
+
+		parent::enqueue_styles();
+
 		foreach ( $this->args['fields'] as $f ) {
 
 			$class = _cmb_field_class_for_type( $f['type'] );
@@ -1370,11 +1313,8 @@ class CMB_Group_Field extends CMB_Field {
 
 		$field = $this->args;
 
-		if ( ! empty( $this->args['name'] ) ) : ?>
-
-			<h2 class="group-name"><?php echo esc_attr( $this->args['name'] ); ?></h2>
-
-		<?php endif;
+		$this->title();
+		$this->description();
 
 		$i = 0;
 		foreach ( $meta as $value ) {
