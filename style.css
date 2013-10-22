@@ -330,7 +330,9 @@ div.time-picker li.selected { background: #0063CE; color: #fff; }
  }
 
 .field {  margin-bottom: 8px; }
+
 .field-title { margin-bottom: 8px; margin-top: 0; font-weight: bold; }
+
 #poststuff .field-title h2 { margin: 0 !important; }
 
  .field.repeatable .field-item { padding-right: 25px; margin-bottom: 8px; }
@@ -353,6 +355,18 @@ button.repeat-field { display: block !important; clear: both; }
 .CMB_Group_Field .cmb_element { display: block; height: 0;  }
 .CMB_Group_Field .cmb_element .ui-state-default { /*display: none;*/ margin-right: -3px; margin-top: -5px; }
 
+.CMB_Group_Field > .field-title { 
+	margin-top: 20px;
+	font-size: 1.5em;
+	margin-top: 10px;
+	margin-bottom: 10px;
+	padding: 0 0 3px;
+	clear: left;
+	color: #464646;
+	font-family: "HelveticaNeue-Light","Helvetica Neue Light","Helvetica Neue",sans-serif;
+	font-weight: lighter;
+}
+
 .field .hm-uploader .rwmb-drag-drop { -moz-box-sizing: border-box; box-sizing: border-box; }
 .field .hm-uploader .rwmb-drag-drop-inside p { font-size: 14px; }
 .field .hm-uploader .current-image { border: none; box-shadow: inset 0 0 15px rgba(0,0,0,0.1),inset 0 0 0 1px rgba(0,0,0,0.05); position: relative; }
@@ -374,3 +388,4 @@ button.repeat-field { display: block !important; clear: both; }
 
 
 .CMB_Color_Picker .field-item { float: left; clear: both; }
+
