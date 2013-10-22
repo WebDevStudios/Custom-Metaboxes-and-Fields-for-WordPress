@@ -40,10 +40,11 @@ jQuery( document ).ready( function() {
 
 				var data = {
 					action: 'cmb_request_image',
-					id: model.attributes.id,
-					width: container.width(),
+					id:     model.attributes.id,
+					width:  container.width(),
 					height: container.height(),
-					crop: fileHolder.attr('data-crop')
+					crop:   fileHolder.attr('data-crop'),
+					nonce:  link.attr( 'data-nonce' )
 				}
 
 				fileHolder.addClass( 'loading' );

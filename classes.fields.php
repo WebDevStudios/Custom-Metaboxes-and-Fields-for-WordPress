@@ -497,7 +497,7 @@ class CMB_Image_Field extends CMB_File_Field {
 
 			</div>
 
-			<button class="button cmb-file-upload <?php echo esc_attr( $this->get_value() ) ? 'hidden' : '' ?>" href="#">
+			<button class="button cmb-file-upload <?php echo esc_attr( $this->get_value() ) ? 'hidden' : '' ?>" data-nonce="<?php echo wp_create_nonce( 'cmb-file-upload-nonce' ); ?>">
 				<?php esc_html_e( 'Add Image', 'cmb' ); ?>
 			</button>
 
@@ -554,6 +554,9 @@ class CMB_Image_Field extends CMB_File_Field {
 	 * @return null
 	 */
 	static function request_image_ajax_callback() {
+		
+		if ( ! ( isset( $_POST['nonce'] ) && wp_verify_nonce( $_POST['nonce'], 'cmb-file-upload-nonce' ) ) )
+			return;
 
 		$id = intval( $_POST['id'] );
 
