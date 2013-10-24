@@ -89,8 +89,9 @@ var CMB = {
 		} );
 
 	    _this.clonedField( newT );
-
-	    _this.sortableInit( field );
+	
+		if ( field.hasClass( 'cmb-sortable' ) )
+	    	_this.sortableInit( field );
 
 	},
 
