@@ -38,7 +38,7 @@ var CMB = {
 
 			_this.doneInit();
 			
-			jQuery('.field.sortable' ).each( function() { 
+			jQuery('.field.cmb-sortable' ).each( function() { 
 				_this.sortableInit( jQuery(this) );
 			} );
 			
@@ -235,14 +235,14 @@ var CMB = {
 
 		var items = field.find(' > .field-item').not('.hidden');
 		
-		field.find( '> .field-item > .handle' ).remove();
+		field.find( '> .field-item > .cmb-handle' ).remove();
 
 		items.each( function() {
-			jQuery(this).append( '<div class="handle"></div>' );
+			jQuery(this).append( '<div class="cmb-handle"></div>' );
 		} );
 		
 		field.sortable( { 
-			handle: "> .handle" ,
+			handle: "> .cmb-handle" ,
 			cursor: "move",
 			items: " > .field-item",
 			beforeStop: function( event, ui ) { _this.sortStart( jQuery( ui.item[0] ) ); },

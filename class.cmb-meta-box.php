@@ -241,7 +241,7 @@ class CMB_Meta_Box {
 					$classes[] = 'repeatable';
 
 				if ( ! empty( $field->args['sortable'] ) )
-					$classes[] = 'sortable';
+					$classes[] = 'cmb-sortable';
 
 				$classes[] = get_class($field);
 
