@@ -316,13 +316,7 @@ abstract class CMB_Field {
 			<div class="field-item" data-class="<?php echo esc_attr( get_class($this) ) ?>" style="position: relative; <?php echo esc_attr( $this->args['style'] ); ?>">
 
 			<?php if ( $this->args['repeatable'] ) : ?>
-
-				<span class="cmb_element">
-					<span class="ui-state-default">
-						<a class="delete-field ui-icon-circle-close ui-icon">&times;</a>
-					</span>
-				</span>
-
+				<button class="cmb-delete-field" title="Remove field"><span class="cmb-delete-field-icon">&times;</span> Remove Group</button>
 			<?php endif; ?>
 
 			<?php $this->html(); ?>
@@ -344,13 +338,7 @@ abstract class CMB_Field {
 			<div class="field-item hidden" data-class="<?php echo esc_attr( get_class($this) ) ?>" style="position: relative">
 
 			<?php if ( $this->args['repeatable'] ) : ?>
-
-				<span class="cmb_element">
-					<span class="ui-state-default">
-						<a class="delete-field ui-icon-circle-close ui-icon">&times;</a>
-					</span>
-				</span>
-
+				<button class="cmb-delete-field" title="Remove field"><span class="cmb-delete-field-icon">&times;</span> Remove Group</button>
 			<?php endif; ?>
 
 			<?php $this->html(); ?>
@@ -1391,11 +1379,7 @@ class CMB_Group_Field extends CMB_Field {
 		<div class="group <?php echo ! empty( $field['repeatable'] ) ? 'cloneable' : '' ?>" style="position: relative">
 
 			<?php if ( $this->args['repeatable'] ) : ?>
-				<span class="cmb_element">
-					<span class="ui-state-default">
-						<a class="delete-field ui-icon-circle-close ui-icon">&times;</a>
-					</span>
-				</span>
+				<button class="cmb-delete-field" title="Remove field"><span class="cmb-delete-field-icon">&times;</span> Remove Group</button>
 			<?php endif; ?>
 
 			<?php CMB_Meta_Box::layout_fields( $this->fields ); ?>

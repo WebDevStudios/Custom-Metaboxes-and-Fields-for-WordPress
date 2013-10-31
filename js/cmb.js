@@ -23,7 +23,7 @@ var CMB = {
 				_this.isMaxFields( jQuery(this) );
 			} );
 
-			jQuery( document ).on( 'click', '.delete-field', function(e) {
+			jQuery( document ).on( 'click', '.cmb-delete-field', function(e) {
 				e.preventDefault();
 				_this.deleteField( jQuery( this ).closest('.field-item' ) );
 			} );
@@ -116,8 +116,7 @@ var CMB = {
 		max    = field.attr( 'data-rep-max' );
 
 		// Show all the remove field buttons.
-		field.find( '> .field-item > .cmb_element > .ui-state-default > .delete-field' ).show();
-		field.find( '> .field-item > .group > .cmb_element > .ui-state-default > .delete-field' ).show();
+		field.find( '> .field-item > .cmb-delete-field, > .field-item > .group > .cmb-delete-field' ).show();
 
 		if ( typeof( max ) === 'undefined' )
 			return false;
