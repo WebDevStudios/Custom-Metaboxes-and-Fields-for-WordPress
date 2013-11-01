@@ -46,7 +46,6 @@ div.time-picker ul { list-style-type: none; margin: 0; padding: 0; }
 div.time-picker li { cursor: pointer; height: 10px; font: 12px/1 Helvetica, Arial, sans-serif; padding: 4px 3px; }
 div.time-picker li.selected { background: #0063CE; color: #fff; }
 
-
 /**
  * jQuery UI CSS Framework 1.8.16
  *
@@ -331,8 +330,70 @@ div.time-picker li.selected { background: #0063CE; color: #fff; }
  }
 
 .field {  margin-bottom: 8px; }
-
 .field-title { margin-bottom: 8px; margin-top: 0; font-weight: bold; }
+#poststuff .field-title h2 { margin: 0 !important; }
+
+ .field.repeatable .field-item { 
+ 	padding-right: 25px; 
+ 	margin-bottom: 8px; 
+ }
+
+.cmb-delete-field { 
+	position: absolute;
+	top: 6px;
+	right: 0;
+	width: 16px;
+	height: 16px;
+	padding-left: 0;
+	padding-right: 0;
+	text-indent: 26px;
+	overflow: hidden;
+	white-space: nowrap;
+	padding: 0;
+	font-size: 20px;
+	line-height: 20px;
+	text-align: center;
+	text-decoration: none;
+	color: #464646;
+	cursor: pointer;
+	border-width: 0;
+	border-radius: 3px;
+	border: 1px solid #fff;
+	box-shadow: 0 0 0 1px rgba(0,0,0,0.3);	
+	background: #f3f3f3;
+	background-image: -webkit-gradient(linear,left top,left bottom,from(#fefefe),to(#f4f4f4));
+	background-image: -webkit-linear-gradient(top,#fefefe,#f4f4f4);
+	background-image: -moz-linear-gradient(top,#fefefe,#f4f4f4);
+	background-image: -o-linear-gradient(top,#fefefe,#f4f4f4);
+	background-image: linear-gradient(to bottom,#fefefe,#f4f4f4);
+}
+
+.cmb-delete-field:hover,
+.cmb-delete-field:focus,
+.cmb-delete-field:active {
+	box-shadow: 0 0 0 1px rgba(0,0,0,0.6);
+}
+
+.cmb-delete-field .cmb-delete-field-icon {
+	content: ' ';
+	display: block;
+	position: absolute;
+	height: 8px;
+	width: 8px;
+	top: 50%;
+	left: 50%;
+	margin-top: -4px;
+	margin-left: -4px;
+	background-image: url('images/cmb-icon-remove.png');
+	background-repeat: no-repeat;
+}
+
+@media only screen and (-webkit-min-device-pixel-ratio : 1.5), only screen and (min-device-pixel-ratio : 1.5) {
+
+	.cmb-delete-field .cmb-delete-field-icon {
+		background-image: url('images/cmb-icon-remove@2x.png');
+		background-size: 8px 8px;
+	}
 
 #poststuff .field-title h2 { margin: 0 !important; }
 
@@ -367,6 +428,33 @@ button.repeat-field { display: block !important; clear: both; }
 	font-family: "HelveticaNeue-Light","Helvetica Neue Light","Helvetica Neue",sans-serif;
 	font-weight: lighter;
 }
+
+
+.CMB_Group_Field.repeatable > .field-item { 
+	padding: 0 9px; 
+	margin-bottom: 16px; 
+	border: 1px solid #DDD; 
+	background: #ECECEC; 
+	border-radius: 3px; 
+}
+
+.CMB_Group_Field .group > .cmb-delete-field { 
+	top: 0;
+	right: -3px;
+	width: auto;
+	height: auto;
+	padding: 2px 5px 2px 20px;
+	text-indent: 0;
+	font-size: 12px;
+	line-height: 14px;	
+}
+
+.CMB_Group_Field .group > .cmb-delete-field .cmb-delete-field-icon { 
+	left: 10px;
+	text-indent: 100%;
+	overflow: hidden;
+}
+
 
 .CMB_File_Field .field-item,
 .CMB_Image_Field .field-item { float: left; margin: 0 8px 8px 0 !important; text-align: center; padding: 0 !important; z-index: 1; }

@@ -320,13 +320,7 @@ abstract class CMB_Field {
 			<div class="field-item" data-class="<?php echo esc_attr( get_class($this) ) ?>" style="position: relative; <?php echo esc_attr( $this->args['style'] ); ?>">
 
 			<?php if ( $this->args['repeatable'] ) : ?>
-
-				<span class="cmb_element">
-					<span class="ui-state-default">
-						<a class="delete-field ui-icon-circle-close ui-icon">&times;</a>
-					</span>
-				</span>
-
+				<button class="cmb-delete-field" title="Remove field"><span class="cmb-delete-field-icon">&times;</span> Remove Group</button>
 			<?php endif; ?>
 
 			<?php $this->html(); ?>
@@ -348,13 +342,7 @@ abstract class CMB_Field {
 			<div class="field-item hidden" data-class="<?php echo esc_attr( get_class($this) ) ?>" style="position: relative">
 
 			<?php if ( $this->args['repeatable'] ) : ?>
-
-				<span class="cmb_element">
-					<span class="ui-state-default">
-						<a class="delete-field ui-icon-circle-close ui-icon">&times;</a>
-					</span>
-				</span>
-
+				<button class="cmb-delete-field" title="Remove field"><span class="cmb-delete-field-icon">&times;</span> Remove Group</button>
 			<?php endif; ?>
 
 			<?php $this->html(); ?>
@@ -469,22 +457,16 @@ class CMB_Image_Field extends CMB_File_Field {
 			'show_size' => false
 		) );
 
-		// If image size keyword used, convert to array of dimensions.
-		if ( is_string( $args['size'] ) )
-			$args['size'] = $this->get_image_size( $args['size'] );
-
 		if ( $this->get_value() )
 			$image = wp_get_attachment_image_src( $this->get_value(), $args['size'], true );
 
-		$crop = ( isset( $args['size']['crop'] ) && $args['size']['crop'] ) ? 1 : 0;
+		// Convert size arg to array of width, height, crop. 
+		$size = $this->parse_image_size( $args['size'] );
 
-		$styles  = 'width: ' . intval( $args['size'][0] ) . 'px; ';
-		$styles .= 'height: ' . intval( $args['size'][1] ) . 'px; ';
-		$styles .= 'line-height: ' . intval( $args['size'][1] ) . 'px';
-
-		$placeholder_styles  = 'width: ' . ( intval( $args['size'][0] ) - 8 ) . 'px; ';
-		$placeholder_styles .= 'height: ' . ( intval( $args['size'][1] ) - 8 ) . 'px; ';
-
+		// Inline styles.
+		$styles              = sprintf( 'width: %1$dpx; height: %2$dpx; line-height: %2$dpx', intval( $size['width'] ), intval( $size['height'] ) );
+		$placeholder_styles  = sprintf( 'width: %dpx; height: %dpx;', intval( $size['width'] ) - 8, intval( $size['height'] ) - 8 );
+		
 		$data_type = ( ! empty( $args['library-type'] ) ? implode( ',', $args['library-type'] ) : null );
 
 		?>
@@ -495,7 +477,7 @@ class CMB_Image_Field extends CMB_File_Field {
 
 				<?php if ( $this->args['show_size'] ) : ?>
 					<span class="dimensions">
-						<?php printf( '%dpx &times; %dpx', intval( $args['size'][0] ), intval( $args['size'][1] ) ); ?>
+						<?php printf( '%dpx &times; %dpx', intval( $size['width'] ), intval( $size['height'] ) ); ?>
 					</span>
 				<?php endif; ?>
 
@@ -505,7 +487,7 @@ class CMB_Image_Field extends CMB_File_Field {
 				<?php esc_html_e( 'Add Image', 'cmb' ); ?>
 			</button>
 
-			<div class="cmb-file-holder type-img <?php echo $this->get_value() ? '' : 'hidden'; ?>" data-crop="<?php echo (string) $crop; ?>">
+			<div class="cmb-file-holder type-img <?php echo $this->get_value() ? '' : 'hidden'; ?>" data-crop="<?php echo (bool) $size['crop']; ?>">
 
 				<?php if ( ! empty( $image ) ) : ?>
 					<img src="<?php echo esc_url( $image[0] ); ?>" width="<?php echo intval( $image[1] ); ?>" height="<?php echo intval( $image[2] ); ?>" />
@@ -524,31 +506,41 @@ class CMB_Image_Field extends CMB_File_Field {
 	<?php }
 
 	/**
-	 * Gets the dimensions from a registered image size.
-	 *
+	 * Parse the size argument to get pixel width, pixel height and crop information.
+	 * 
 	 * @param  string $size
-	 * @return array dimensions.
+	 * @return array width, height, crop
 	 */
-	private function get_image_size( $size ) {
-
-		if ( in_array( $size, array( 'thumbnail', 'medium', 'large' ) ) ) {
+	private function parse_image_size( $size ) {
+		
+		// Handle string for built-in image sizes
+		if ( is_string( $size ) && in_array( $size, array( 'thumbnail', 'medium', 'large' ) ) ) {
 			return array(
-				get_option( $size . '_size_w' ),
-				get_option( $size . '_size_h' ),
-				'crop' => get_option( $size . '_crop' )
+				'width'  => get_option( $size . '_size_w' ),
+				'height' => get_option( $size . '_size_h' ),
+				'crop'   => get_option( $size . '_crop' )
 			);
 		}
 
+		// Handle string for additional image sizes
 		global $_wp_additional_image_sizes;
-		if ( isset( $_wp_additional_image_sizes[$size] ) ) {
+		if ( is_string( $size ) && isset( $_wp_additional_image_sizes[$size] ) ) {
 			return array(
-				$_wp_additional_image_sizes[$size]['width'],
-				$_wp_additional_image_sizes[$size]['height'],
-				'crop' => $_wp_additional_image_sizes[$size]['crop']
+				'width'  => $_wp_additional_image_sizes[$size]['width'],
+				'height' => $_wp_additional_image_sizes[$size]['height'],
+				'crop'   => $_wp_additional_image_sizes[$size]['crop']
 			);
 		}
 
-		return false;
+		// Handle default WP size format. 
+		if ( is_array( $size ) && isset( $size[0] ) && isset( $size[1] ) )
+			$size = array( 'width' => $size[0], 'height' => $size[0] );
+
+		return wp_parse_args( $size, array(
+			'width'  => get_option( 'thumbnail_size_w' ),
+			'height' => get_option( 'thumbnail_size_h' ),
+			'crop'   => get_option( 'thumbnail_crop' )
+		) );
 
 	}
 
@@ -1391,11 +1383,7 @@ class CMB_Group_Field extends CMB_Field {
 		<div class="group <?php echo ! empty( $field['repeatable'] ) ? 'cloneable' : '' ?>" style="position: relative">
 
 			<?php if ( $this->args['repeatable'] ) : ?>
-				<span class="cmb_element">
-					<span class="ui-state-default">
-						<a class="delete-field ui-icon-circle-close ui-icon">&times;</a>
-					</span>
-				</span>
+				<button class="cmb-delete-field" title="Remove field"><span class="cmb-delete-field-icon">&times;</span> Remove Group</button>
 			<?php endif; ?>
 
 			<?php CMB_Meta_Box::layout_fields( $this->fields ); ?>
