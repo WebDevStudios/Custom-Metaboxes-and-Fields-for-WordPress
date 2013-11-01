@@ -467,10 +467,10 @@ button.repeat-field { display: block !important; clear: both; }
 .cmb-file-holder.type-img::after { content: ''; display: block; position: absolute; top: 0; left: 0; right: 0; bottom: 0; box-shadow: inset 0 0 0 1px rgba(0,0,0,0.1); overflow: hidden; z-index: 1; }
 .cmb-file-name { position: absolute; left: 0; right: 0; bottom: 0; line-height: 1.4; overflow: hidden; max-height: 100%; word-wrap: break-word; text-align: center; font-weight: bold; background: rgba(255,255,255,0.8); box-shadow: inset 0 0 0 1px rgba(0,0,0,0.15); }
 .cmb-file-name strong { padding: 5px 10px; display: block;}
-.CMB_File_Field .cmb_element .ui-icon.delete-field,
-.CMB_Image_Field .cmb_element .ui-icon.delete-field { z-index: 10; top: 10px; right: 10px; }
+.CMB_File_Field .cmb-delete-field,
+.CMB_Image_Field .cmb-delete-field { z-index: 10; top: 10px; right: 10px; }
 .CMB_File_Field .cmb-remove-file,
-.CMB_Image_Field .cmb-remove-file { position: absolute; top: 5px; right: 5px; z-index: 1; }
+.CMB_Image_Field .cmb-remove-file { position: absolute; top: -5px; right: -5px; z-index: 10; }
 .CMB_File_Field.repeatable .cmb-remove-file,
 .CMB_Image_Field.repeatable .cmb-remove-file { display: none !important; }
 
