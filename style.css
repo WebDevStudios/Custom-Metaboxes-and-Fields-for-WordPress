@@ -395,6 +395,8 @@ div.time-picker li.selected { background: #0063CE; color: #fff; }
 		background-size: 8px 8px;
 	}
 
+}
+
 #poststuff .field-title h2 { margin: 0 !important; }
 
  .field.repeatable .field-item { padding-right: 25px; margin-bottom: 8px; }
