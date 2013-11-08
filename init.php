@@ -345,11 +345,11 @@ class cmb_Meta_Box {
 					$names = wp_get_object_terms( $post->ID, $field['taxonomy'] );
 					$terms = get_terms( $field['taxonomy'], 'hide_empty=0' );
 					foreach ($terms as $term) {
-						echo '<li><input type="checkbox" name="', $field['id'], '[]" id="', $field['id'], '" value="', $term->name , '"';
+						echo '<li><label><input type="checkbox" name="', $field['id'], '[]" id="', $field['id'], '" value="', $term->name , '"';
 						foreach ($names as $name) {
 							if ( $term->slug == $name->slug ){ echo ' checked="checked" ';};
 						}
-						echo' /><label>', $term->name , '</label></li>';
+						echo' />', $term->name , '</label></li>';
 					}
 					echo '</ul>';
 					echo '<span class="cmb_metabox_description">', $field['desc'], '</span>';
