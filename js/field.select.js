@@ -26,4 +26,4 @@ var cmbSelectInit = function() {
 CMB.addCallbackForInit( cmbSelectInit );
 CMB.addCallbackForClonedField( 'CMB_Select', cmbSelectInit );
 CMB.addCallbackForClonedField( 'CMB_Post_Select', cmbSelectInit );
-CMB.addCallbackForClonedField( 'CMB_Taxonomy_Select', cmbSelectInit );
+CMB.addCallbackForClonedField( 'CMB_Taxonomy', cmbSelectInit );
