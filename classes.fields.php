@@ -451,7 +451,7 @@ class CMB_Image_Field extends CMB_File_Field {
 
 	public function html() {
 
-		$args = wp_parse_args( $this->args, array(
+		$args = $this->args = wp_parse_args( $this->args, array(
 			'size' => 'thumbnail',
 			'library-type' => array( 'image' ),
 			'show_size' => false
@@ -475,7 +475,7 @@ class CMB_Image_Field extends CMB_File_Field {
 
 			<div class="cmb-file-wrap-placeholder" style="<?php echo esc_attr( $placeholder_styles ); ?>">
 
-				<?php if ( $this->args['show_size'] ) : ?>
+				<?php if ( $args['show_size'] ) : ?>
 					<span class="dimensions">
 						<?php printf( '%dpx &times; %dpx', intval( $size['width'] ), intval( $size['height'] ) ); ?>
 					</span>

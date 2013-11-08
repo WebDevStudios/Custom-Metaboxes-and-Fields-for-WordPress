@@ -395,6 +395,8 @@ div.time-picker li.selected { background: #0063CE; color: #fff; }
 		background-size: 8px 8px;
 	}
 
+}
+
 #poststuff .field-title h2 { margin: 0 !important; }
 
  .field.repeatable .field-item { padding-right: 25px; margin-bottom: 8px; }
@@ -466,7 +468,7 @@ button.repeat-field { display: block !important; clear: both; }
 .cmb-file-name { position: absolute; left: 0; right: 0; bottom: 0; line-height: 1.4; overflow: hidden; max-height: 100%; word-wrap: break-word; text-align: center; font-weight: bold; background: rgba(255,255,255,0.8); box-shadow: inset 0 0 0 1px rgba(0,0,0,0.15); }
 .cmb-file-name strong { padding: 5px 10px; display: block;}
 .CMB_File_Field .cmb-delete-field,
-.CMB_Image_Field .cmb-delete-field { z-index: 10; top: 10px; right: 10px; }
+.CMB_Image_Field .cmb-delete-field { z-index: 10;  top: 10px; right: 10px; }
 .CMB_File_Field .cmb-remove-file,
 .CMB_Image_Field .cmb-remove-file { position: absolute; top: -5px; right: -5px; z-index: 10; }
 .CMB_File_Field.repeatable .cmb-remove-file,
@@ -477,7 +479,6 @@ button.repeat-field { display: block !important; clear: both; }
 @media only screen and (-webkit-min-device-pixel-ratio : 1.5), only screen and (min-device-pixel-ratio : 1.5) {
 	.loading::before { background-image: url( 'images/wpspin-2x.gif'); background-size: 16px 16px; }
 }
-
 
 .cmb-sortable > .field-item { 
 	padding-left: 16px; 
