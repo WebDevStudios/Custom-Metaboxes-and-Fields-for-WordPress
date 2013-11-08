@@ -33,6 +33,24 @@ Version: 		0.9.4
 		You should not edit the code below or things might explode!
 *************************************************************************/
 
+if (!function_exists('sort_terms_natural')) {
+	// Usage
+	// $terms = get_terms('tags');
+	// $terms = sort_terms($terms); // that was easy
+	function sort_terms_natural( $terms ) {
+		$sort_terms = array();
+ 
+		foreach($terms as $term) {
+			$sort_terms[$term->name] = $term;
+		}
+ 
+		uksort( $sort_terms, 'strnatcmp');
+	
+		return $sort_terms;
+	}
+}
+
+
 $meta_boxes = array();
 $meta_boxes = apply_filters ( 'cmb_meta_boxes' , $meta_boxes );
 foreach ( $meta_boxes as $meta_box ) {
@@ -316,6 +334,9 @@ class cmb_Meta_Box {
 					echo '<select name="', $field['id'], '" id="', $field['id'], '">';
 					$names= wp_get_object_terms( $post->ID, $field['taxonomy'] );
 					$terms = get_terms( $field['taxonomy'], 'hide_empty=0' );
+					if (isset($field['natural_sort']) && $field['natural_sort'] == true) {
+						$terms = sort_terms_natural($terms);
+					}
 					foreach ( $terms as $term ) {
 						if (!is_wp_error( $names ) && !empty( $names ) && !strcmp( $term->slug, $names[0]->slug ) ) {
 							echo '<option value="' . $term->slug . '" selected>' . $term->name . '</option>';
@@ -329,6 +350,9 @@ class cmb_Meta_Box {
 				case 'taxonomy_radio':
 					$names= wp_get_object_terms( $post->ID, $field['taxonomy'] );
 					$terms = get_terms( $field['taxonomy'], 'hide_empty=0' );
+					if (isset($field['natural_sort']) && $field['natural_sort'] == true) {
+						$terms = sort_terms_natural($terms);
+					}
 					echo '<ul>';
 					foreach ( $terms as $term ) {
 						if ( !is_wp_error( $names ) && !empty( $names ) && !strcmp( $term->slug, $names[0]->slug ) ) {
@@ -344,12 +368,15 @@ class cmb_Meta_Box {
 					echo '<ul>';
 					$names = wp_get_object_terms( $post->ID, $field['taxonomy'] );
 					$terms = get_terms( $field['taxonomy'], 'hide_empty=0' );
+					if (isset($field['natural_sort']) && $field['natural_sort'] == true) {
+						$terms = sort_terms_natural($terms);
+					}
 					foreach ($terms as $term) {
-						echo '<li><input type="checkbox" name="', $field['id'], '[]" id="', $field['id'], '" value="', $term->name , '"';
+						echo '<li><label><input type="checkbox" name="', $field['id'], '[]" id="', $field['id'], '" value="', $term->name , '"';
 						foreach ($names as $name) {
 							if ( $term->slug == $name->slug ){ echo ' checked="checked" ';};
 						}
-						echo' /><label>', $term->name , '</label></li>';
+						echo' />', $term->name , '</label></li>';
 					}
 					echo '</ul>';
 					echo '<span class="cmb_metabox_description">', $field['desc'], '</span>';

@@ -161,6 +161,7 @@ function cmb_sample_metaboxes( array $meta_boxes ) {
 				'id'		=> $prefix . 'test_multitaxonomy',
 				'type'		=> 'taxonomy_multicheck',
 				'taxonomy'	=> '', // Taxonomy Slug
+				'natural_sort' => true,
 			),
 			array(
 				'name' => 'Test Checkbox',
