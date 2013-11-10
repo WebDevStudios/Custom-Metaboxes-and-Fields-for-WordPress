@@ -32,7 +32,7 @@ span.cmb_metabox_description { color: #AAA; font-style: italic;}
 .cmb_metabox .cmb_upload_status {  margin: 10px 0 0 0;}
 .cmb_metabox .cmb_upload_status .img_status {  position: relative; }
 .cmb_metabox .cmb_upload_status .img_status img { border:1px solid #DFDFDF; background: #FAFAFA; max-width:350px; padding: 5px; -moz-border-radius: 2px; border-radius: 2px;}
-.cmb_remove_file_button { text-indent: -9999px; background: url(images/ico-delete.png); width: 16px; height: 16px; position: absolute; top: -5px; left: -5px;}
+.cmb_remove_file_button { text-indent: -9999px; background: url(../images/ico-delete.png); width: 16px; height: 16px; position: absolute; top: -5px; left: -5px;}
 /* Sidebar placement adjustments */
 .inner-sidebar table.cmb_metabox input[type=text], table.cmb_metabox textarea { width: 100%; }
 .inner-sidebar table.cmb_metabox .cmb_upload_status .img_status img { width: 90%; }
@@ -69,32 +69,32 @@ div.time-picker li.selected { background: #0063CE; color: #fff; }
  .cmb_element .ui-widget { font-family: Verdana,Arial,sans-serif; font-size: 1.1em; }
  .cmb_element .ui-widget .ui-widget { font-size: 1em; }
  .cmb_element .ui-widget input, .cmb_element .ui-widget select, .cmb_element .ui-widget textarea, .cmb_element .ui-widget button { font-family: Verdana,Arial,sans-serif; font-size: 1em; }
- .cmb_element .ui-widget-content { border: 1px solid #aaaaaa; background: #ffffff url(images/ui-bg_flat_75_ffffff_40x100.png) 50% 50% repeat-x; color: #222222; }
+ .cmb_element .ui-widget-content { border: 1px solid #aaaaaa; background: #ffffff url(../images/ui-bg_flat_75_ffffff_40x100.png) 50% 50% repeat-x; color: #222222; }
  .cmb_element .ui-widget-content a { color: #222222; }
- .cmb_element .ui-widget-header { border: 1px solid #aaaaaa; background: #cccccc url(images/ui-bg_highlight-soft_75_cccccc_1x100.png) 50% 50% repeat-x; color: #222222; font-weight: bold; }
+ .cmb_element .ui-widget-header { border: 1px solid #aaaaaa; background: #cccccc url(../images/ui-bg_highlight-soft_75_cccccc_1x100.png) 50% 50% repeat-x; color: #222222; font-weight: bold; }
  .cmb_element .ui-widget-header a { color: #222222; }
  .cmb_element .ui-state-default a, .cmb_element .ui-state-default a:link, .cmb_element .ui-state-default a:visited { color: #555555; text-decoration: none; }
- .cmb_element .ui-state-hover, .cmb_element .ui-widget-content .ui-state-hover, .cmb_element .ui-widget-header .ui-state-hover, .cmb_element .ui-state-focus, .cmb_element .ui-widget-content .ui-state-focus, .cmb_element .ui-widget-header .ui-state-focus { border: 1px solid #999999; background: #dadada url(images/ui-bg_glass_75_dadada_1x400.png) 50% 50% repeat-x; font-weight: normal; color: #212121; }
+ .cmb_element .ui-state-hover, .cmb_element .ui-widget-content .ui-state-hover, .cmb_element .ui-widget-header .ui-state-hover, .cmb_element .ui-state-focus, .cmb_element .ui-widget-content .ui-state-focus, .cmb_element .ui-widget-header .ui-state-focus { border: 1px solid #999999; background: #dadada url(../images/ui-bg_glass_75_dadada_1x400.png) 50% 50% repeat-x; font-weight: normal; color: #212121; }
  .cmb_element .ui-state-hover a, .cmb_element .ui-state-hover a:hover { color: #212121; text-decoration: none; }
- .cmb_element .ui-state-active, .cmb_element .ui-widget-content .ui-state-active, .cmb_element .ui-widget-header .ui-state-active { border: 1px solid #aaaaaa; background: #ffffff url(images/ui-bg_glass_65_ffffff_1x400.png) 50% 50% repeat-x; font-weight: normal; color: #212121; }
+ .cmb_element .ui-state-active, .cmb_element .ui-widget-content .ui-state-active, .cmb_element .ui-widget-header .ui-state-active { border: 1px solid #aaaaaa; background: #ffffff url(../images/ui-bg_glass_65_ffffff_1x400.png) 50% 50% repeat-x; font-weight: normal; color: #212121; }
  .cmb_element .ui-state-active a, .cmb_element .ui-state-active a:link, .cmb_element .ui-state-active a:visited { color: #212121; text-decoration: none; }
  .cmb_element .ui-widget :active { outline: none; }
- .cmb_element .ui-state-highlight, .cmb_element .ui-widget-content .ui-state-highlight, .cmb_element .ui-widget-header .ui-state-highlight  {border: 1px solid #fcefa1; background: #fbf9ee url(images/ui-bg_glass_55_fbf9ee_1x400.png) 50% 50% repeat-x; color: #363636; }
+ .cmb_element .ui-state-highlight, .cmb_element .ui-widget-content .ui-state-highlight, .cmb_element .ui-widget-header .ui-state-highlight  {border: 1px solid #fcefa1; background: #fbf9ee url(../images/ui-bg_glass_55_fbf9ee_1x400.png) 50% 50% repeat-x; color: #363636; }
  .cmb_element .ui-state-highlight a, .cmb_element .ui-widget-content .ui-state-highlight a,.ui-widget-header .ui-state-highlight a { color: #363636; }
- .cmb_element .ui-state-error, .cmb_element .ui-widget-content .ui-state-error, .cmb_element .ui-widget-header .ui-state-error {border: 1px solid #cd0a0a; background: #fef1ec url(images/ui-bg_glass_95_fef1ec_1x400.png) 50% 50% repeat-x; color: #cd0a0a; }
+ .cmb_element .ui-state-error, .cmb_element .ui-widget-content .ui-state-error, .cmb_element .ui-widget-header .ui-state-error {border: 1px solid #cd0a0a; background: #fef1ec url(../images/ui-bg_glass_95_fef1ec_1x400.png) 50% 50% repeat-x; color: #cd0a0a; }
  .cmb_element .ui-state-error a, .cmb_element .ui-widget-content .ui-state-error a, .cmb_element .ui-widget-header .ui-state-error a { color: #cd0a0a; }
  .cmb_element .ui-state-error-text, .cmb_element .ui-widget-content .ui-state-error-text, .cmb_element .ui-widget-header .ui-state-error-text { color: #cd0a0a; }
  .cmb_element .ui-priority-primary, .cmb_element .ui-widget-content .ui-priority-primary, .cmb_element .ui-widget-header .ui-priority-primary { font-weight: bold; }
  .cmb_element .ui-priority-secondary, .cmb_element .ui-widget-content .ui-priority-secondary,  .ui-widget-header .ui-priority-secondary { opacity: .7; filter:Alpha(Opacity=70); font-weight: normal; }
  .cmb_element .ui-state-disabled, .cmb_element .ui-widget-content .ui-state-disabled, .cmb_element .ui-widget-header .ui-state-disabled { opacity: .35; filter:Alpha(Opacity=35); background-image: none; }
- .cmb_element .ui-icon { width: 16px; height: 16px; background-image: url(images/ui-icons_222222_256x240.png); }
- .cmb_element .ui-widget-content .ui-icon {background-image: url(images/ui-icons_222222_256x240.png); }
- .cmb_element .ui-widget-header .ui-icon {background-image: url(images/ui-icons_222222_256x240.png); }
- .cmb_element .ui-state-default .ui-icon { background-image: url(images/ui-icons_888888_256x240.png); }
- .cmb_element .ui-state-hover .ui-icon, .cmb_element .ui-state-focus .ui-icon {background-image: url(images/ui-icons_454545_256x240.png); }
- .cmb_element .ui-state-active .ui-icon {background-image: url(images/ui-icons_454545_256x240.png); }
- .cmb_element .ui-state-highlight .ui-icon {background-image: url(images/ui-icons_2e83ff_256x240.png); }
- .cmb_element .ui-state-error .ui-icon, .cmb_element .ui-state-error-text .ui-icon {background-image: url(images/ui-icons_cd0a0a_256x240.png); }
+ .cmb_element .ui-icon { width: 16px; height: 16px; background-image: url(../images/ui-icons_222222_256x240.png); }
+ .cmb_element .ui-widget-content .ui-icon {background-image: url(../images/ui-icons_222222_256x240.png); }
+ .cmb_element .ui-widget-header .ui-icon {background-image: url(../images/ui-icons_222222_256x240.png); }
+ .cmb_element .ui-state-default .ui-icon { background-image: url(../images/ui-icons_888888_256x240.png); }
+ .cmb_element .ui-state-hover .ui-icon, .cmb_element .ui-state-focus .ui-icon {background-image: url(../images/ui-icons_454545_256x240.png); }
+ .cmb_element .ui-state-active .ui-icon {background-image: url(../images/ui-icons_454545_256x240.png); }
+ .cmb_element .ui-state-highlight .ui-icon {background-image: url(../images/ui-icons_2e83ff_256x240.png); }
+ .cmb_element .ui-state-error .ui-icon, .cmb_element .ui-state-error-text .ui-icon {background-image: url(../images/ui-icons_cd0a0a_256x240.png); }
  .cmb_element .ui-icon-carat-1-n { background-position: 0 0; }
  .cmb_element .ui-icon-carat-1-ne { background-position: -16px 0; }
  .cmb_element .ui-icon-carat-1-e { background-position: -32px 0; }
@@ -273,8 +273,8 @@ div.time-picker li.selected { background: #0063CE; color: #fff; }
  .cmb_element .ui-corner-all, .cmb_element .ui-corner-top, .cmb_element .ui-corner-right, .cmb_element .ui-corner-tr { -moz-border-radius-topright: 4px; -webkit-border-top-right-radius: 4px; -khtml-border-top-right-radius: 4px; border-top-right-radius: 4px; }
  .cmb_element .ui-corner-all, .cmb_element .ui-corner-bottom, .cmb_element .ui-corner-left, .cmb_element .ui-corner-bl { -moz-border-radius-bottomleft: 4px; -webkit-border-bottom-left-radius: 4px; -khtml-border-bottom-left-radius: 4px; border-bottom-left-radius: 4px; }
  .cmb_element .ui-corner-all, .cmb_element .ui-corner-bottom, .cmb_element .ui-corner-right, .cmb_element .ui-corner-br { -moz-border-radius-bottomright: 4px; -webkit-border-bottom-right-radius: 4px; -khtml-border-bottom-right-radius: 4px; border-bottom-right-radius: 4px; }
- .cmb_element .ui-widget-overlay { background: #aaaaaa url(images/ui-bg_flat_0_aaaaaa_40x100.png) 50% 50% repeat-x; opacity: .30;filter:Alpha(Opacity=30); }
- .cmb_element .ui-widget-shadow { margin: -8px 0 0 -8px; padding: 8px; background: #aaaaaa url(images/ui-bg_flat_0_aaaaaa_40x100.png) 50% 50% repeat-x; opacity: .30;filter:Alpha(Opacity=30); -moz-border-radius: 8px; -khtml-border-radius: 8px; -webkit-border-radius: 8px; border-radius: 8px; }
+ .cmb_element .ui-widget-overlay { background: #aaaaaa url(../images/ui-bg_flat_0_aaaaaa_40x100.png) 50% 50% repeat-x; opacity: .30;filter:Alpha(Opacity=30); }
+ .cmb_element .ui-widget-shadow { margin: -8px 0 0 -8px; padding: 8px; background: #aaaaaa url(../images/ui-bg_flat_0_aaaaaa_40x100.png) 50% 50% repeat-x; opacity: .30;filter:Alpha(Opacity=30); -moz-border-radius: 8px; -khtml-border-radius: 8px; -webkit-border-radius: 8px; border-radius: 8px; }
  .cmb_element .ui-datepicker { width: 17em; padding: .2em .2em 0; display: none; }
  .cmb_element .ui-datepicker .ui-datepicker-header { position:relative; padding:.2em 0; }
  .cmb_element .ui-datepicker .ui-datepicker-prev, .cmb_element .ui-datepicker .ui-datepicker-next { position:absolute; top: 2px; width: 1.8em; height: 1.8em; }
@@ -384,14 +384,14 @@ div.time-picker li.selected { background: #0063CE; color: #fff; }
 	left: 50%;
 	margin-top: -4px;
 	margin-left: -4px;
-	background-image: url('images/cmb-icon-remove.png');
+	background-image: url( '../images/cmb-icon-remove.png');
 	background-repeat: no-repeat;
 }
 
 @media only screen and (-webkit-min-device-pixel-ratio : 1.5), only screen and (min-device-pixel-ratio : 1.5) {
 
 	.cmb-delete-field .cmb-delete-field-icon {
-		background-image: url('images/cmb-icon-remove@2x.png');
+		background-image: url( '../images/cmb-icon-remove@2x.png');
 		background-size: 8px 8px;
 	}
 
@@ -478,7 +478,7 @@ button.repeat-field { display: block !important; clear: both; }
 
 
 .CMB_Color_Picker .field-item { float: left; clear: both; }
-.loading::before { content: ' '; display: block; background: url( 'images/wpspin.gif' ) no-repeat; width: 16px; height: 16px; position: absolute; top: 50%; left: 50%; margin-top: -8px; margin-left: -8px; }
+.loading::before { content: ' '; display: block; background: url( '../images/wpspin.gif' ) no-repeat; width: 16px; height: 16px; position: absolute; top: 50%; left: 50%; margin-top: -8px; margin-left: -8px; }
 @media only screen and (-webkit-min-device-pixel-ratio : 1.5), only screen and (min-device-pixel-ratio : 1.5) {
-	.loading::before { background-image: url( 'images/wpspin-2x.gif'); background-size: 16px 16px; }
+	.loading::before { background-image: url( '../images/wpspin-2x.gif'); background-size: 16px 16px; }
 }
