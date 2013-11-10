@@ -1,0 +1,49 @@
+.cmb_metabox {
+	margin: 0 10px; 
+}
+
+.cmb_metabox .field { 
+	padding: 16px 0;
+}
+
+.cmb_metabox_description { 
+	color: #AAA; 
+	font-style: italic; 
+	margin: 0 0 20px !important;
+}
+
+.cmb_metabox input[type=text], 
+.cmb_metabox textarea, 
+.cmb_metabox select { 
+	width: 100%;
+}
+
+.cmb_metabox input.cmb_text_small { 
+	width: 100px; 
+}
+
+.cmb_metabox input.cmb_text_medium {
+	width: 230px; 
+	margin-right: 15px;
+}
+
+.cmb_metabox input[type="radio"] { 
+	margin: 0 5px 0 0; 
+	padding: 0;
+}
+
+.cmb_metabox input[type="checkbox"] { 
+	margin: 0 5px 0 0; 
+	padding: 0;
+}
+
+.cmb_metabox .field-title { 
+	margin-top: -4px; 
+	margin-bottom: 16px; 
+	margin-top: 0; 
+	font-weight: bold; 
+}
+
+.CMB_wysiwyg .wp-editor-container { 
+	border-bottom: 1px solid #dedede; 
+}

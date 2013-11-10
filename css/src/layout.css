@@ -1,0 +1,16 @@
+/** CMB Layout **/
+
+.cmb_metabox .form-table {
+	margin-top: 0;
+}
+
+.cmb_metabox .form-table > tbody > tr > td, 
+.cmb_metabox .form-table > tbody > tr > th { 
+	vertical-align: top; 
+	padding: 0;
+}
+
+.cmb_metabox .form-table tr:last-child > td, 
+.cmb_metabox .form-table tr:last-child > th {
+	border-bottom: 0;
+}

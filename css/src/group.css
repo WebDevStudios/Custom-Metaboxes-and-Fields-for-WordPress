@@ -1,0 +1,49 @@
+/** Group **/
+
+.cmb_metabox .CMB_Group_Field > .field-title { 
+	font-size: 1.5em;
+	clear: left;
+	color: #464646;
+	font-family: "HelveticaNeue-Light","Helvetica Neue Light","Helvetica Neue",sans-serif;
+	font-weight: lighter;
+}
+
+.cmb_metabox .CMB_Group_Field > .field-title h2 { 
+	margin: 8px 5px !important; 
+}
+
+.cmb_metabox .CMB_Group_Field.repeatable > .field-item { 
+	padding: 30px 10px 0; 
+	margin-bottom: 16px; 
+	border: 1px solid #DDD; 
+	background: #FAFAFA; 
+	position: relative;
+}
+
+.cmb_metabox .CMB_Group_Field.repeatable > .field-item:before {
+	content: ' ';
+	display: block;
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	height: 32px;
+	border-bottom: 1px solid #DDDDDD;
+}
+
+.cmb_metabox .CMB_Group_Field.repeatable .group > .cmb-delete-field { 
+	top: 3px;
+	right: 3px;
+	width: auto;
+	height: auto;
+	padding: 2px 5px 2px 20px;
+	text-indent: 0;
+	font-size: 12px;
+	line-height: 14px;	
+}
+
+.cmb_metabox .CMB_Group_Field.repeatable .group > .cmb-delete-field .cmb-delete-field-icon { 
+	left: 10px;
+	text-indent: 100%;
+	overflow: hidden;
+}
