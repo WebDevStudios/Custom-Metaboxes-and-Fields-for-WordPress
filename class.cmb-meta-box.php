@@ -121,7 +121,7 @@ class CMB_Meta_Box {
 		if ( version_compare( preg_replace( '/-.+/', '', get_bloginfo( 'version' ) ), '3.8', 'lt' ) )
 			wp_enqueue_style( 'cmb-styles', trailingslashit( CMB_URL ) . 'css/legacy.css' );
 		else
-			wp_enqueue_style( 'cmb-styles', trailingslashit( CMB_URL ) . 'css/style.css' );
+			wp_enqueue_style( 'cmb-styles', trailingslashit( CMB_URL ) . 'css/cmb.css' );
 
 		foreach ( $this->fields as $field )
 			$field->enqueue_styles();
@@ -225,57 +225,63 @@ class CMB_Meta_Box {
 	 */
 	static function layout_fields( array $fields ) { ?>
 
-		<table class="form-table cmb_metabox">
+		<div class="cmb_metabox">
+		
+			<table class="form-table">
 
-			<?php $current_colspan = 0;
+				<?php $current_colspan = 0;
 
-			foreach ( $fields as $field ) :
+				foreach ( $fields as $field ) :
 
-				if ( $current_colspan == 0 ) : ?>
+					if ( $current_colspan == 0 ) : ?>
 
-					<tr>
+						<tr>
 
-				<?php endif;
+					<?php endif;
 
-				$current_colspan += $field->args['cols'];
+					$current_colspan += $field->args['cols'];
 
-				$classes = array('field');
+					$classes = array('field');
 
-				if ( ! empty( $field->args['repeatable'] ) )
-					$classes[] = 'repeatable';
+					if ( ! empty( $field->args['repeatable'] ) )
+						$classes[] = 'repeatable';
 
-				$classes[] = get_class($field);
+					$classes[] = get_class($field);
 
-				$classes = 'class="' . esc_attr( implode(' ', array_map( 'sanitize_html_class', $classes ) ) ) . '"';
+					$classes = 'class="' . esc_attr( implode(' ', array_map( 'sanitize_html_class', $classes ) ) ) . '"';
 
-				$attrs = array();
+					$attrs = array();
 
-				if ( isset( $field->args['repeatable_max']  ) )
-					$attrs[] = 'data-rep-max="' . intval( $field->args['repeatable_max'] ) . '"';
+					if ( isset( $field->args['repeatable_max']  ) )
+						$attrs[] = 'data-rep-max="' . intval( $field->args['repeatable_max'] ) . '"';
 
-				$attrs = implode( ' ', $attrs );
+					$attrs = implode( ' ', $attrs );
 
-				?>
+					?>
 
-				<td style="width: <?php esc_attr_e( $field->args['cols'] / 12 * 100 ); ?>%" colspan="<?php esc_attr_e( $field->args['cols'] ); ?>">
-					<div <?php echo $classes; ?> <?php echo $attrs; ?>>
-						<?php $field->display(); ?>
-					</div>
-				</td>
+					<td style="width: <?php esc_attr_e( $field->args['cols'] / 12 * 100 ); ?>%" colspan="<?php esc_attr_e( $field->args['cols'] ); ?>">
+						
+						<div <?php echo $classes; ?> <?php echo $attrs; ?>>
+							<?php $field->display(); ?>
+						</div>
+
 						<input type="hidden" name="_cmb_present_<?php esc_attr_e( $field->id ); ?>" value="1" />
 
-				<?php if ( $current_colspan == 12 ) :
+					</td>
 
-					$current_colspan = 0; ?>
+					<?php if ( $current_colspan == 12 ) :
 
-					</tr>
+						$current_colspan = 0; ?>
 
-				<?php endif; ?>
+						</tr>
 
+					<?php endif; ?>
 
-			<?php endforeach; ?>
+				<?php endforeach; ?>
 
-		</table>
+			</table>
+			
+		</div>
 
 	<?php }
 
