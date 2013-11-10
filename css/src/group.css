@@ -1,4 +1,4 @@
-/** Group **/
+* Group **/
 
 .cmb_metabox .CMB_Group_Field > .field-title { 
 	font-size: 1.5em;
@@ -27,23 +27,22 @@
 	top: 0;
 	left: 0;
 	right: 0;
-	height: 32px;
-	border-bottom: 1px solid #DDDDDD;
+	height: 33px;
+	border-bottom: 1px solid #DDDDDD;	
 }
 
 .cmb_metabox .CMB_Group_Field.repeatable .group > .cmb-delete-field { 
-	top: 3px;
-	right: 3px;
+	top: 5px;
+	right: 5px;
 	width: auto;
-	height: auto;
-	padding: 2px 5px 2px 20px;
 	text-indent: 0;
-	font-size: 12px;
-	line-height: 14px;	
+	padding-left: 28px;
+	height: 22px;
+	line-height: 20px;
+	font-size: 11px;
+	padding-right: 10px;
 }
 
 .cmb_metabox .CMB_Group_Field.repeatable .group > .cmb-delete-field .cmb-delete-field-icon { 
-	left: 10px;
-	text-indent: 100%;
-	overflow: hidden;
+	left: 15px;
 }

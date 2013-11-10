@@ -1,8 +1,9 @@
-
-/** Repeatable **/
+/** 
+ * Repeatable
+ */
 
 .cmb_metabox .field.repeatable > .field-item { 
- 	padding-right: 25px; 
+ 	padding-right: 30px; 
  	margin-bottom: 10px; 
  }
 
@@ -21,39 +22,44 @@
 }
 
 .cmb-delete-field { 
+	display: inline-block;
+	text-decoration: none;
+	font-size: 11px;
+	line-height: 20px;
+	height: 22px;
+	width: 22px;
+	margin: 0;
+	padding: 0;
+	cursor: pointer;
+	border-width: 1px;
+	border-style: solid;
+	-webkit-border-radius: 3px;
+	-webkit-appearance: none;
+	border-radius: 3px;
+	white-space: nowrap;
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+	color: #555;
+	border-color: #ccc;
+	background: #f7f7f7;
+	-webkit-box-shadow: inset 0 1px 0 #fff,0 1px 0 rgba(0,0,0,.08);
+	box-shadow: inset 0 1px 0 #fff,0 1px 0 rgba(0,0,0,.08);
+	vertical-align: top;
 	position: absolute;
-	top: 6px;
+	top: 3px;
 	right: 0;
-	width: 16px;
-	height: 16px;
-	padding-left: 0;
-	padding-right: 0;
-	text-indent: 26px;
+	text-indent: 100%;
 	overflow: hidden;
 	white-space: nowrap;
-	padding: 0;
-	font-size: 20px;
-	line-height: 20px;
-	text-align: center;
-	text-decoration: none;
-	color: #464646;
-	cursor: pointer;
-	border-width: 0;
-	border-radius: 3px;
-	border: 1px solid #fff;
-	box-shadow: 0 0 0 1px rgba(0,0,0,0.3);	
-	background: #f3f3f3;
-	background-image: -webkit-gradient(linear,left top,left bottom,from(#fefefe),to(#f4f4f4));
-	background-image: -webkit-linear-gradient(top,#fefefe,#f4f4f4);
-	background-image: -moz-linear-gradient(top,#fefefe,#f4f4f4);
-	background-image: -o-linear-gradient(top,#fefefe,#f4f4f4);
-	background-image: linear-gradient(to bottom,#fefefe,#f4f4f4);
 }
 
 .cmb-delete-field:hover,
 .cmb-delete-field:focus,
 .cmb-delete-field:active {
-	box-shadow: 0 0 0 1px rgba(0,0,0,0.6);
+	background: #fafafa;
+	border-color: #999;
+	color: #222;
 }
 
 .cmb-delete-field .cmb-delete-field-icon {
@@ -68,6 +74,8 @@
 	margin-left: -4px;
 	background-image: url( '../../images/cmb-icon-remove.png');
 	background-repeat: no-repeat;
+	text-indent: 8px;
+	overflow: hidden;
 }
 
 @media only screen and (-webkit-min-device-pixel-ratio : 1.5), only screen and (min-device-pixel-ratio : 1.5) {

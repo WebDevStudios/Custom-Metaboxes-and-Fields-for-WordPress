@@ -316,7 +316,7 @@ abstract class CMB_Field {
 			<div class="field-item" data-class="<?php echo esc_attr( get_class($this) ) ?>" style="position: relative; <?php echo esc_attr( $this->args['style'] ); ?>">
 
 			<?php if ( $this->args['repeatable'] ) : ?>
-				<button class="cmb-delete-field" title="Remove field"><span class="cmb-delete-field-icon">&times;</span> Remove Group</button>
+				<button class="cmb-delete-field" title="Remove field"><span class="cmb-delete-field-icon">&times;</span></button>
 			<?php endif; ?>
 
 			<?php $this->html(); ?>
@@ -338,7 +338,7 @@ abstract class CMB_Field {
 			<div class="field-item hidden" data-class="<?php echo esc_attr( get_class($this) ) ?>" style="position: relative">
 
 			<?php if ( $this->args['repeatable'] ) : ?>
-				<button class="cmb-delete-field" title="Remove field"><span class="cmb-delete-field-icon">&times;</span> Remove Group</button>
+				<button class="cmb-delete-field" title="Remove field"><span class="cmb-delete-field-icon">&times;</span></button>
 			<?php endif; ?>
 
 			<?php $this->html(); ?>
