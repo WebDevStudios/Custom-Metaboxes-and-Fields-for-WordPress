@@ -31,6 +31,7 @@ var CMB = {
 			jQuery( document ).on( 'click', '.repeat-field', function(e) {
 				e.preventDefault();
 				_this.repeatField( jQuery( this ).closest('.field' ) );
+				jQuery(this).blur();
 			} );
 
 			_this.doneInit();
