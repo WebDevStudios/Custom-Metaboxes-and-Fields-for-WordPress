@@ -36,13 +36,13 @@
 	right: 5px;
 	width: auto;
 	text-indent: 0;
-	padding-left: 28px;
+	padding-left: 24px;
+	padding-right: 8px;
 	height: 22px;
 	line-height: 20px;
 	font-size: 11px;
-	padding-right: 10px;
 }
 
 .cmb_metabox .CMB_Group_Field.repeatable .group > .cmb-delete-field .cmb-delete-field-icon { 
-	left: 15px;
+	left: 12px;
 }
