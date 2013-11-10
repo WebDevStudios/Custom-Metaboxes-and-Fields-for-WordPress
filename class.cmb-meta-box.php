@@ -262,6 +262,7 @@ class CMB_Meta_Box {
 						<?php $field->display(); ?>
 					</div>
 				</td>
+						<input type="hidden" name="_cmb_present_<?php esc_attr_e( $field->id ); ?>" value="1" />
 
 				<?php if ( $current_colspan == 12 ) :
 
@@ -271,7 +272,6 @@ class CMB_Meta_Box {
 
 				<?php endif; ?>
 
-				<input type="hidden" name="_cmb_present_<?php esc_attr_e( $field->id ); ?>" value="1" />
 
 			<?php endforeach; ?>
 
