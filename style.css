@@ -579,7 +579,7 @@ button.repeat-field { display: block !important; clear: both; }
 	background-image: linear-gradient(to top,#ececec,#f9f9f9);
 }
 
-.cmb-sortable .cmb-handle:after {
+.CMB_Group_Field.cmb-sortable .cmb-handle:after {
 	display: none;
 }
 
