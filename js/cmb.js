@@ -36,6 +36,9 @@ var CMB = {
 			_this.repeatField( jQuery( this ).closest('.field' ) );
 		} );
 
+		// When toggling the display of the meta box container - reinitialize
+		jQuery(document).on( 'click.CMB', '.handlediv', CMB.init )
+
 		_this.doneInit();
 
 	},
