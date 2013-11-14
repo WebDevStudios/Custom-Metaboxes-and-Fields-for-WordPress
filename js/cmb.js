@@ -26,11 +26,13 @@ var CMB = {
 
 		jQuery( document ).on( 'click.CMB', '.cmb-delete-field', function(e) {
 			e.preventDefault();
+			jQuery(this).blur();
 			_this.deleteField( jQuery( this ).closest('.field-item' ) );
 		} );
 
 		jQuery( document ).on( 'click.CMB', '.repeat-field', function(e) {
 			e.preventDefault();
+			jQuery(this).blur();
 			_this.repeatField( jQuery( this ).closest('.field' ) );
 		} );
 
