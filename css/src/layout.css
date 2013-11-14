@@ -1,24 +1,56 @@
 /** CMB Layout **/
 
-.cmb_metabox .form-table {
-	margin-top: 0;
-}
-
-.cmb_metabox .form-table > tbody > tr > td, 
-.cmb_metabox .form-table > tbody > tr > th { 
-	vertical-align: top; 
-	padding: 0;
-}
-
-.cmb_metabox .form-table tr:last-child > td, 
-.cmb_metabox .form-table tr:last-child > th {
-	border-bottom: 0;
-}
-
 .cmb_metabox .field { 
 	padding: 16px 0;
+	border-bottom: 1px solid #DFDFDF;
 }
 
+.cmb-row:last-child > [class*="cmb-cell-"]  > .field { 
+	border-bottom: 0; 
+}
+
+/* Neaten up the margins when metaboxes are within the standard postbox. */
 .postbox > .inside > .cmb_metabox {
 	margin: -10px 0; 
+}
+
+.cmb-grid .cmb-row { 
+	overflow: hidden; 
+	margin: 0 -5px; 
+	zoom: 1;
+}
+
+.cmb-grid .cmb-row:before,
+.cmb-grid .cmb-row:after {
+    content: "";
+    display: table;
+} 
+.cmb-grid .cmb-row:after {
+    clear: both;
+}
+
+.cmb-grid [class*="cmb-cell-"] { 
+	float: left; 
+	padding: 0 5px;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+}
+
+.cmb-grid .cmb-cell-1  { width: 8.333333333%; }
+.cmb-grid .cmb-cell-2  { width: 16.666666667%; }
+.cmb-grid .cmb-cell-3  { width: 25%; }
+.cmb-grid .cmb-cell-4  { width: 33.333333333%; }
+.cmb-grid .cmb-cell-5  { width: 41.666666667%; }
+.cmb-grid .cmb-cell-6  { width: 50%; }
+.cmb-grid .cmb-cell-7  { width: 58.333333333%; }
+.cmb-grid .cmb-cell-8  { width: 66.666666667%; }
+.cmb-grid .cmb-cell-9  { width: 75%; }
+.cmb-grid .cmb-cell-10 { width: 83.333333333%; }
+.cmb-grid .cmb-cell-11 { width: 91.666666667%; }
+.cmb-grid .cmb-cell-12 { width: 100%; }
+
+@media all and ( max-width: 850px ) {
+
+	.cmb-grid [class*="cmb-cell-"] { width: 100%; }
+
 }
