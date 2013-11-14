@@ -14,3 +14,11 @@
 .cmb_metabox .form-table tr:last-child > th {
 	border-bottom: 0;
 }
+
+.cmb_metabox .field { 
+	padding: 16px 0;
+}
+
+.postbox > .inside > .cmb_metabox {
+	margin: -10px 0; 
+}
