@@ -51,3 +51,15 @@ div.time-picker li.selected { background: #0063CE; color: #fff; }
 .CMB_Datetime_Timestamp_Field input + input { 
 	margin-left: 4px; 
 }
+
+/**
+ * Select Fields
+ */
+
+.cmb_select { 
+	width: 100%; 
+}
+
+.select2-offscreen { 
+	display: none; 
+} 
