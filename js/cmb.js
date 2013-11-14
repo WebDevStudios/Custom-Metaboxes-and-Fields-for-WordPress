@@ -17,25 +17,21 @@ var CMB = {
 
 		var _this = this;
 
-		jQuery(document).ready( function () {
-
-			jQuery( '.field.repeatable' ).each( function() {
-				_this.isMaxFields( jQuery(this) );
-			} );
-
-			jQuery( document ).on( 'click', '.cmb-delete-field', function(e) {
-				e.preventDefault();
-				_this.deleteField( jQuery( this ).closest('.field-item' ) );
-			} );
-
-			jQuery( document ).on( 'click', '.repeat-field', function(e) {
-				e.preventDefault();
-				_this.repeatField( jQuery( this ).closest('.field' ) );
-			} );
-
-			_this.doneInit();
-
+		jQuery( '.field.repeatable' ).each( function() {
+			_this.isMaxFields( jQuery(this) );
 		} );
+
+		jQuery( document ).on( 'click', '.cmb-delete-field', function(e) {
+			e.preventDefault();
+			_this.deleteField( jQuery( this ).closest('.field-item' ) );
+		} );
+
+		jQuery( document ).on( 'click', '.repeat-field', function(e) {
+			e.preventDefault();
+			_this.repeatField( jQuery( this ).closest('.field' ) );
+		} );
+
+		_this.doneInit();
 
 	},
 
