@@ -21,12 +21,15 @@ var CMB = {
 			_this.isMaxFields( jQuery(this) );
 		} );
 
-		jQuery( document ).on( 'click', '.cmb-delete-field', function(e) {
+		// Unbind & Re-bind all CMB events to prevent duplicates.
+		jQuery(document).unbind( 'click.CMB' );
+
+		jQuery( document ).on( 'click.CMB', '.cmb-delete-field', function(e) {
 			e.preventDefault();
 			_this.deleteField( jQuery( this ).closest('.field-item' ) );
 		} );
 
-		jQuery( document ).on( 'click', '.repeat-field', function(e) {
+		jQuery( document ).on( 'click.CMB', '.repeat-field', function(e) {
 			e.preventDefault();
 			_this.repeatField( jQuery( this ).closest('.field' ) );
 		} );
