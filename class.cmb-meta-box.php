@@ -227,7 +227,7 @@ class CMB_Meta_Box {
 
 		<div class="cmb_metabox">
 		
-			<table class="form-table">
+			<div class="cmb-grid">
 
 				<?php $current_colspan = 0;
 
@@ -235,7 +235,7 @@ class CMB_Meta_Box {
 
 					if ( $current_colspan == 0 ) : ?>
 
-						<tr>
+						<div class="cmb-row">
 
 					<?php endif;
 
@@ -259,27 +259,27 @@ class CMB_Meta_Box {
 
 					?>
 
-					<td style="width: <?php esc_attr_e( $field->args['cols'] / 12 * 100 ); ?>%" colspan="<?php esc_attr_e( $field->args['cols'] ); ?>">
+					<div class="cmb-cell-<?php echo intval( $field->args['cols'] ); ?>">
 						
-						<div <?php echo $classes; ?> <?php echo $attrs; ?>>
-							<?php $field->display(); ?>
-						</div>
+							<div <?php echo $classes; ?> <?php echo $attrs; ?>>
+								<?php $field->display(); ?>
+							</div>
 
-						<input type="hidden" name="_cmb_present_<?php esc_attr_e( $field->id ); ?>" value="1" />
+							<input type="hidden" name="_cmb_present_<?php esc_attr_e( $field->id ); ?>" value="1" />
 
-					</td>
+					</div>
 
-					<?php if ( $current_colspan == 12 ) :
+					<?php if ( $current_colspan == 12 || $field === end( $fields ) ) :
 
 						$current_colspan = 0; ?>
 
-						</tr>
+						</div><!-- .cmb-row -->
 
 					<?php endif; ?>
 
 				<?php endforeach; ?>
 
-			</table>
+			</div>
 			
 		</div>
 
