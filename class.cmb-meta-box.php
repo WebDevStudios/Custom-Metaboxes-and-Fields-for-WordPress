@@ -226,60 +226,56 @@ class CMB_Meta_Box {
 	static function layout_fields( array $fields ) { ?>
 
 		<div class="cmb_metabox">
-		
-			<div class="cmb-grid">
 
-				<?php $current_colspan = 0;
+			<?php $current_colspan = 0;
 
-				foreach ( $fields as $field ) :
+			foreach ( $fields as $field ) :
 
-					if ( $current_colspan == 0 ) : ?>
+				if ( $current_colspan == 0 ) : ?>
 
-						<div class="cmb-row">
+					<div class="cmb-row">
 
-					<?php endif;
+				<?php endif;
 
-					$current_colspan += $field->args['cols'];
+				$current_colspan += $field->args['cols'];
 
-					$classes = array('field');
+				$classes = array('field');
 
-					if ( ! empty( $field->args['repeatable'] ) )
-						$classes[] = 'repeatable';
+				if ( ! empty( $field->args['repeatable'] ) )
+					$classes[] = 'repeatable';
 
-					$classes[] = get_class($field);
+				$classes[] = get_class($field);
 
-					$classes = 'class="' . esc_attr( implode(' ', array_map( 'sanitize_html_class', $classes ) ) ) . '"';
+				$classes = 'class="' . esc_attr( implode(' ', array_map( 'sanitize_html_class', $classes ) ) ) . '"';
 
-					$attrs = array();
+				$attrs = array();
 
-					if ( isset( $field->args['repeatable_max']  ) )
-						$attrs[] = 'data-rep-max="' . intval( $field->args['repeatable_max'] ) . '"';
+				if ( isset( $field->args['repeatable_max']  ) )
+					$attrs[] = 'data-rep-max="' . intval( $field->args['repeatable_max'] ) . '"';
 
-					$attrs = implode( ' ', $attrs );
+				$attrs = implode( ' ', $attrs );
 
-					?>
+				?>
 
-					<div class="cmb-cell-<?php echo intval( $field->args['cols'] ); ?>">
-						
-							<div <?php echo $classes; ?> <?php echo $attrs; ?>>
-								<?php $field->display(); ?>
-							</div>
+				<div class="cmb-cell-<?php echo intval( $field->args['cols'] ); ?>">
+					
+						<div <?php echo $classes; ?> <?php echo $attrs; ?>>
+							<?php $field->display(); ?>
+						</div>
 
-							<input type="hidden" name="_cmb_present_<?php esc_attr_e( $field->id ); ?>" value="1" />
+						<input type="hidden" name="_cmb_present_<?php esc_attr_e( $field->id ); ?>" value="1" />
 
-					</div>
+				</div>
 
-					<?php if ( $current_colspan == 12 || $field === end( $fields ) ) :
+				<?php if ( $current_colspan == 12 || $field === end( $fields ) ) :
 
-						$current_colspan = 0; ?>
+					$current_colspan = 0; ?>
 
-						</div><!-- .cmb-row -->
+					</div><!-- .cmb-row -->
 
-					<?php endif; ?>
+				<?php endif; ?>
 
-				<?php endforeach; ?>
-
-			</div>
+			<?php endforeach; ?>
 			
 		</div>
 
