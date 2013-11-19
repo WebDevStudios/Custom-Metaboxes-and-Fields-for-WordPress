@@ -196,6 +196,10 @@ button.repeat-field { display: block !important; clear: both; }
 
 
 .CMB_Color_Picker .field-item { float: left; clear: both; }
+.CMB_Color_Picker .iris-picker .iris-slider-offset { width: auto; height: auto; border: none; background: transparent; margin: 0; /*top: 4px !important; bottom: 5px !important;*/ border-radius: 0; }
+.CMB_Color_Picker .iris-picker .iris-strip .ui-slider-handle { margin-bottom: 0; }
+.CMB_Color_Picker .iris-picker .iris-strip .ui-slider-handle:focus { outline: none; }
+
 .cmb-loading::before { content: ' '; display: block; background: url( '../images/wpspin.gif' ) no-repeat; width: 16px; height: 16px; position: absolute; top: 50%; left: 50%; margin-top: -8px; margin-left: -8px; }
 @media only screen and (-webkit-min-device-pixel-ratio : 1.5), only screen and (min-device-pixel-ratio : 1.5) {
 	.cmb-loading::before { background-image: url( '../images/wpspin-2x.gif'); background-size: 16px 16px; }
