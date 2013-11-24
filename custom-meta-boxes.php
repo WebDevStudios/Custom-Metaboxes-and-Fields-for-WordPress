@@ -143,26 +143,26 @@ function _cmb_field_class_for_type( $type ) {
  */
 function cmb_fix_meta_query_order($query) {
 
-        $pattern = '/^SELECT (post_id|user_id), meta_key, meta_value FROM \w* WHERE post_id IN \([\d|,]*\)$/';
-        
-        if ( 
-                0 === strpos( $query, "SELECT post_id, meta_key, meta_value" ) &&  
-                preg_match( $pattern, $query, $matches ) 
-        ) {        
-                
-                if ( isset( $matches[1] ) && 'user_id' == $matches[1] )
-                        $meta_id_column = 'umeta_id';
-                else
-                        $meta_id_column = 'meta_id';
+	$pattern = '/^SELECT (post_id|user_id), meta_key, meta_value FROM \w* WHERE post_id IN \([\d|,]*\)$/';
+	
+	if ( 
+		0 === strpos( $query, "SELECT post_id, meta_key, meta_value" ) &&  
+		preg_match( $pattern, $query, $matches ) 
+	) {
+			
+		if ( isset( $matches[1] ) && 'user_id' == $matches[1] )
+			$meta_id_column = 'umeta_id';
+		else
+			$meta_id_column = 'meta_id';
 
-                $meta_query_orderby = ' ORDER BY ' . $meta_id_column;
+		$meta_query_orderby = ' ORDER BY ' . $meta_id_column;
 
-                if ( false === strpos( $query, $meta_query_orderby ) )
-                        $query .= $meta_query_orderby;
-        
-        }
-        
-        return $query;
+		if ( false === strpos( $query, $meta_query_orderby ) )
+			$query .= $meta_query_orderby;
+	
+	}
+	
+	return $query;
 
 }
 
