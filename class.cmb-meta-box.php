@@ -117,11 +117,10 @@ class CMB_Meta_Box {
 
 	function enqueue_styles() {
 
-		// Strip beta. Can remove once 3.8 is released.
-		if ( version_compare( preg_replace( '/-.+/', '', get_bloginfo( 'version' ) ), '3.8', 'lt' ) )
-			wp_enqueue_style( 'cmb-styles', trailingslashit( CMB_URL ) . 'css/legacy.css' );
-		else
+		if ( version_compare( get_bloginfo( 'version' ), '3.7', '>' ) )
 			wp_enqueue_style( 'cmb-styles', trailingslashit( CMB_URL ) . 'css/cmb.css' );
+		else
+			wp_enqueue_style( 'cmb-styles', trailingslashit( CMB_URL ) . 'css/legacy.css' );
 
 		foreach ( $this->fields as $field )
 			$field->enqueue_styles();
