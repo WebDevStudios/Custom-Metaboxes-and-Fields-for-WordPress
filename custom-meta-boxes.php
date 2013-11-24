@@ -165,4 +165,6 @@ function cmb_fix_meta_query_order($query) {
         return $query;
 
 }
-add_filter( 'query', 'cmb_fix_meta_query_order', 1 ); 
+
+if ( version_compare( get_bloginfo( 'version' ), '3.8-beta', '<' ) )
+	add_filter( 'query', 'cmb_fix_meta_query_order', 1 );     
