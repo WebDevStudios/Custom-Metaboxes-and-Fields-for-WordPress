@@ -37,5 +37,9 @@
 }
 
 .CMB_wysiwyg .wp-editor-container { 
-	border-bottom: 1px solid #dedede; 
+	clear: both;
+}
+
+.CMB_wysiwyg .wp-editor-tabs { 
+	margin-bottom: -1px;
 }
