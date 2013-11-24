@@ -47,7 +47,7 @@ include_once( CMB_PATH . '/class.cmb-meta-box.php' );
 // Make it possible to add fields in locations other than post edit screen.
 include_once( CMB_PATH . '/fields-anywhere.php' );
 
-// include_once( CMB_PATH . '/example-functions.php' );
+include_once( CMB_PATH . '/example-functions.php' );
 
 /**
  * Get all the meta boxes on init
@@ -166,5 +166,5 @@ function cmb_fix_meta_query_order($query) {
 
 }
 
-if ( version_compare( get_bloginfo( 'version' ), '3.8-beta', '<' ) )
+if ( version_compare( get_bloginfo( 'version' ), '3.7', '<=' ) )
 	add_filter( 'query', 'cmb_fix_meta_query_order', 1 );     
