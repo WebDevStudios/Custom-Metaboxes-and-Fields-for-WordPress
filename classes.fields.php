@@ -1257,7 +1257,7 @@ add_action( 'wp_ajax_cmb_post_select', 'cmb_ajax_post_select' );
 class CMB_Group_Field extends CMB_Field {
 
 	static $added_js;
-	private $fields = array();
+	public $fields = array();
 
 	function __construct() {
 
