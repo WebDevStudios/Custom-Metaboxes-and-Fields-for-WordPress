@@ -35,11 +35,3 @@
 	margin-top: 0; 
 	font-weight: bold; 
 }
-
-.CMB_wysiwyg .wp-editor-container { 
-	clear: both;
-}
-
-.CMB_wysiwyg .wp-editor-tabs { 
-	margin-bottom: -1px;
-}
