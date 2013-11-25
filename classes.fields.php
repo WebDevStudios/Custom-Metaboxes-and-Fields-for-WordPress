@@ -11,24 +11,12 @@ abstract class CMB_Field {
 	public $value;
 	public $field_index = 0;
 
-	/**
-	 * used for repeatable
-	 *
-	 */
-	static $did_saves;
-
-
-	/**
-	 * used for repeatable
-	 *
-	 */
-	static $next_values;
-
 	public function __construct( $name, $title, array $values, $args = array() ) {
 
 		$this->id 		= $name;
 		$this->name		= $name . '[]';
 		$this->title 	= $title;
+		
 		$this->args		= wp_parse_args( $args, array(
 				'repeatable' 			=> false,
 				'std'        			=> '',
@@ -89,18 +77,40 @@ abstract class CMB_Field {
 	public function enqueue_styles() {
 	}
 
+	/**
+	 * Output the field input ID attribute.
+	 * 
+	 * If multiple inputs are required for a single field, 
+	 * use the append parameter to add unique identifier.
+	 * 
+	 * @param  string $append
+	 * @return null
+	 */
 	public function id_attr( $append = null ) {
 
 		printf( 'id="%s"', esc_attr( $this->get_the_id_attr( $append ) ) );
 		
 	}
 	
+	/**
+	 * Output the for attribute for the field.
+	 *
+	 * 
+	 * 
+	 * If multiple inputs are required for a single field, 
+	 * use the append parameter to add unique identifier.
+	 * 
+	 * @param  string $append
+	 * @return null
+	 */
 	public function get_the_id_attr( $append = null ) {
 
 		$id = $this->id;
 
-		if ( isset( $this->group_index ) )
-			$id .= '-cmb-group-' . $this->group_index;
+		if ( isset( $this->parent ) ) {
+			$parent_id = preg_replace( '/cmb\-field\-(\d|x)+/', 'cmb-group-$1', $this->parent->get_the_id_attr() );
+			$id = $parent_id . '[' . $id . ']';
+		}
 
 		$id .= '-cmb-field-' . $this->field_index;
 
@@ -113,21 +123,18 @@ abstract class CMB_Field {
 		
 	}
 
+	/**
+	 * Return the field input ID attribute value.
+	 *
+	 * If multiple inputs are required for a single field, 
+	 * use the append parameter to add unique identifier.
+	 * 
+	 * @param  string $append 
+	 * @return string id attribute value.
+	 */
 	public function for_attr( $append = null ) {
 
-		$for = $this->id;
-
-		if ( isset( $this->group_index ) )
-			$for .= '-cmb-group-' . $this->group_index;
-
-		$for .= '-cmb-field-' . $this->field_index;
-
-		if ( ! is_null( $append ) )
-			$for .= '-' . $append;
-
-		$for = str_replace( array( '[', ']', '--' ), '-', $for );
-
-		printf( 'for="%s"', esc_attr( $for ) );
+		printf( 'for="%s"', esc_attr( $this->get_the_id_attr( $append ) ) );
 
 	}
 
@@ -141,8 +148,10 @@ abstract class CMB_Field {
 
 		$name = str_replace( '[]', '', $this->name );
 
-		if ( isset( $this->group_index ) )
-			$name .= '[cmb-group-' . $this->group_index . ']';
+		if ( isset( $this->parent ) ) {
+			$parent_name = preg_replace( '/cmb\-field\-(\d|x)+/', 'cmb-group-$1', $this->parent->get_the_name_attr() );
+			$name = $parent_name . '[' . $name . ']';
+		}
 
 		$name .= "[cmb-field-$this->field_index]";
 
@@ -216,7 +225,7 @@ abstract class CMB_Field {
 	   return ( $this->value || $this->value === '0' ) ? $this->value : $this->args['default'];
 	}
 
-	public function get_values() {
+	public function &get_values() {
 		return $this->values;
 	}
 
@@ -360,7 +369,9 @@ abstract class CMB_Field {
  */
 class CMB_Text_Field extends CMB_Field {
 
-	public function html() { ?>
+	public function html() { 
+
+		?>
 
 		<input type="text" <?php $this->id_attr(); ?> <?php $this->boolean_attr(); ?> <?php $this->class_attr(); ?> <?php $this->name_attr(); ?> value="<?php echo esc_attr( $this->get_value() ); ?>" />
 
@@ -587,7 +598,7 @@ class CMB_URL_Field extends CMB_Field {
 class CMB_Date_Field extends CMB_Field {
 
 	public function enqueue_scripts() {
-
+		
 		parent::enqueue_scripts();
 
 		wp_enqueue_style( 'cmb-jquery-ui', trailingslashit( CMB_URL ) . 'css/jquery-ui.css', '1.10.3' );
@@ -1309,10 +1320,10 @@ class CMB_Group_Field extends CMB_Field {
 
 		global $post;
 
-		$meta = $this->values;
+		$values = $this->get_values();
 
-		if ( ! $meta && ! $this->args['repeatable'] )
-			$meta = array( '' );
+		// if ( ! $meta && ! $this->args['repeatable'] )
+			// $meta = array( '' );
 
 		$field = $this->args;
 
@@ -1320,7 +1331,7 @@ class CMB_Group_Field extends CMB_Field {
 		$this->description();
 
 		$i = 0;
-		foreach ( $meta as $value ) {
+		foreach ( $values as $value ) {
 
 			$this->field_index = $i;
 			$this->value = $value; 	
@@ -1355,45 +1366,48 @@ class CMB_Group_Field extends CMB_Field {
 	}
 
 	public function add_field( CMB_Field $field ) {
+			
+		$field->parent = &$this;
+		$this->fields[$field->id] = $field;
 
-		$key                = $field->id;
-		$field->original_id = $key;
-		$field->id          = $this->id . '[' . $field->id . ']';
-		$field->name        = $field->id . '[]';
-		$field->group_index = $this->field_index;
-		$this->fields[$key] = $field;
+	}
 
+	public function &get_fields() {
+		return $this->fields;
 	}
 
 	public function html() {
 
+		$fields = &$this->get_fields();
+
 		// Set the group index for each field.
-		foreach ( $this->fields as $field => $field_value )
-			$this->fields[$field]->group_index = $this->field_index;
+		foreach ( $fields as &$field )
+			$field->group_index = $this->field_index;
 
 		$value = $this->value;
 
 		if ( ! empty( $value ) ) {
-			foreach ( $value as $field => $field_value )
-				if ( ! empty( $field ) && ! empty( $this->fields[$field] ) )
-					$this->fields[$field]->set_values( (array) $field_value );
-				else if ( ! empty( $this->fields[$field] ) )
-					$this->fields[$field]->set_values( array() );
+			foreach ( $value as $field_id => $field_value ) {
+				if ( ! empty( $field_value ) && ! empty( $fields[$field_id] ) )
+					$fields[$field_id]->set_values( (array) $field_value );
+				else if ( ! empty( $fields[$field_id] ) )
+					$fields[$field_id]->set_values( array() );
+			}
 		} else {
-			foreach ( $this->fields as $field ) {
+			foreach ( $fields as &$field ) {
 				$field->set_values( array() );
 			}
 		}
 
-		$field = $this->args; ?>
+		?>
 
-		<div class="group <?php echo ! empty( $field['repeatable'] ) ? 'cloneable' : '' ?>" style="position: relative">
+		<div class="group <?php echo ! empty( $this->args['repeatable'] ) ? 'cloneable' : '' ?>" style="position: relative">
 
 			<?php if ( $this->args['repeatable'] ) : ?>
 				<button class="cmb-delete-field" title="Remove field"><span class="cmb-delete-field-icon">&times;</span> Remove Group</button>
 			<?php endif; ?>
 
-			<?php CMB_Meta_Box::layout_fields( $this->fields ); ?>
+			<?php CMB_Meta_Box::layout_fields( $fields ); ?>
 
 		</div>
 
@@ -1401,58 +1415,37 @@ class CMB_Group_Field extends CMB_Field {
 
 	public function parse_save_values() {
 
-		$values = $this->values;
+		$fields = &$this->get_fields();
+		$values = &$this->get_values();
+		
+		foreach ( $values as &$group_value ) {
+			foreach ( $group_value as $field_id => &$field_value ) {
 
-		$this->values = array();		
+				if ( ! isset( $fields[$field_id] ) ) {
+					$field_value = array();
+					continue;
+				}
 
-		$first = reset( $values );
-
-		foreach ( $first as $key => $field_val ) {
-
-			$meta = array();
-
-			foreach ( $this->fields as $field ) {
-
-				$field->values = isset( $values[$field->original_id][$key] ) ? $values[$field->original_id][$key] : array();
-				
+				$field = $fields[$field_id];
+				$field->values = $field_value;
 				$field->parse_save_values();
-
-				// if the field is a repeatable field, store the whole array of them, if it's not repeatble,
-				// just store the first (and only) one directly
-				if ( $field->args['repeatable'] )
-					$meta[$field->original_id] = $field->values;
-
-				else
-					$meta[$field->original_id] = reset( $field->values );
+				
+				$field_value = $field->get_values();
 
 			}
-
-			if ( $this->isNotEmptyArray( $meta ) )
-				$this->values[] = $meta;
-
 		}
-	}
-
-	private function isNotEmptyArray( $array ) {
-
-		foreach ( $array as &$value )
-			if ( is_array( $value ) )
-				$value = $this->isNotEmptyArray( $value );
-
-		return array_filter( $array );
-
+		
 	}
 
 	public function set_values( array $values ) {
 		
 		$this->values = $values;
+		$fields = &$this->get_fields();
 
 		foreach ( $values as $value ) {
-
-			foreach ( $value as $field => $field_value ) {
-				$this->fields[$field]->set_values( (array) $field_value );
+			foreach ( $value as $field_id => $field_value ) {
+				$fields[$field_id]->set_values( (array) $field_value );
 			}
-
 		}
 
 	}
