@@ -894,7 +894,7 @@ class CMB_wysiwyg extends CMB_Field {
 	 */
 	public function is_placeholder() {
 
-		if ( isset( $this->group_index ) && ! is_int( $this->group_index ) )
+		if ( isset( $this->parent ) && ! is_int( $this->parent->field_index ) )
 			return true;
 
 		else return ! is_int( $this->field_index );
@@ -926,7 +926,7 @@ class CMB_Select extends CMB_Field {
 
 	public function parse_save_values(){
 
-		if ( isset( $this->group_index ) && isset( $this->args['multiple'] ) && $this->args['multiple'] )
+		if ( isset( $this->parent ) && isset( $this->args['multiple'] ) && $this->args['multiple'] )
 			$this->values = array( $this->values );
 
 	}
@@ -1320,18 +1320,13 @@ class CMB_Group_Field extends CMB_Field {
 
 		global $post;
 
-		$values = $this->get_values();
-
-		// if ( ! $meta && ! $this->args['repeatable'] )
-			// $meta = array( '' );
-
 		$field = $this->args;
 
 		$this->title();
 		$this->description();
 
 		$i = 0;
-		foreach ( $values as $value ) {
+		foreach ( $this->get_values() as $value ) {
 
 			$this->field_index = $i;
 			$this->value = $value; 	
@@ -1379,12 +1374,7 @@ class CMB_Group_Field extends CMB_Field {
 	public function html() {
 
 		$fields = &$this->get_fields();
-
-		// Set the group index for each field.
-		foreach ( $fields as &$field )
-			$field->group_index = $this->field_index;
-
-		$value = $this->value;
+		$value  = $this->value;
 
 		if ( ! empty( $value ) ) {
 			foreach ( $value as $field_id => $field_value ) {
