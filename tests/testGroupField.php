@@ -11,8 +11,8 @@ class GroupFieldTestCase extends WP_UnitTestCase {
 		$group->add_field( $field1 );
 		$group->add_field( $field2 );
 	
-		$this->assertArrayHasKey( 'foo', $group->fields );
-		$this->assertArrayHasKey( 'bar', $group->fields );
+		$this->assertArrayHasKey( 'foo', $group->get_fields() );
+		$this->assertArrayHasKey( 'bar', $group->get_fields() );
 	
 	}
 
