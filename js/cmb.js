@@ -15,37 +15,32 @@ var CMB = {
 
 	init : function() {
 
-		var _this = this;
-
-		jQuery(document).ready( function () {
-
-			jQuery( '.field.repeatable' ).each( function() {
-				_this.isMaxFields( jQuery(this) );
-			} );
-
-			jQuery( document ).on( 'click', '.cmb-delete-field', function(e) {
-				e.preventDefault();
-				_this.deleteField( jQuery( this ).closest('.field-item' ) );
-			} );
-
-			jQuery( document ).on( 'click', '.repeat-field', function(e) {
-				e.preventDefault();
-				_this.repeatField( jQuery( this ).closest('.field' ) );
-			} );
-
-			_this.doneInit();
-
+		jQuery( '.field.repeatable' ).each( function() {
+			CMB.isMaxFields( jQuery(this) );
 		} );
+
+		// Unbind & Re-bind all CMB events to prevent duplicates.
+		jQuery(document).unbind( 'click.CMB' );
+		jQuery(document).on( 'click.CMB', '.cmb-delete-field', CMB.deleteField );
+		jQuery(document).on( 'click.CMB', '.repeat-field', CMB.repeatField );
+
+		// When toggling the display of the meta box container - reinitialize
+		jQuery(document).on( 'click.CMB', '.handlediv', CMB.init )
+
+		CMB.doneInit();
 
 	},
 
-	repeatField : function( field ) {
+	repeatField : function( e ) {
 
-	    var _this, templateField, newT, field, index, attr;
+	    var templateField, newT, field, index, attr;
 
-	    _this = this;
+	    field = jQuery( this ).closest('.field' );					
 
-		if ( _this.isMaxFields( field, 1 ) )
+		e.preventDefault();
+		jQuery(this).blur();	
+
+		if ( CMB.isMaxFields( field, 1 ) )
 			return;
 
 	    templateField = field.children( '.field-item.hidden' );
@@ -81,17 +76,23 @@ var CMB = {
 
 		} );
 
-	    _this.clonedField( newT );
+	    CMB.clonedField( newT );
 
 	},
 
-	deleteField : function( fieldItem  ) {
+	deleteField : function( e ) {
 
-		var field = fieldItem.closest( '.field' );
+		var fieldItem, field;
 
-		this.isMaxFields( field, -1 );
+		e.preventDefault();
+		jQuery(this).blur();
+		
+		fieldItem = jQuery( this ).closest('.field-item' );
+		field     = fieldItem.closest( '.field' );
 
-		this.deletedField( fieldItem );
+		CMB.isMaxFields( field, -1 );
+		CMB.deletedField( fieldItem );
+
 		fieldItem.remove();
 
 	},
@@ -145,7 +146,7 @@ var CMB = {
 	doneInit: function() {
 
 		var _this = this,
-			callbacks = _this._initCallbacks;
+			callbacks = CMB._initCallbacks;
 
 		if ( callbacks ) {
 			for ( var a = 0; a < callbacks.length; a++) {
@@ -172,13 +173,11 @@ var CMB = {
 	 */
 	clonedField: function( el ) {
 
-		var _this = this
-
 		// also check child elements
 		el.add( el.find( 'div[data-class]' ) ).each( function( i, el ) {
 
 			el = jQuery( el )
-			var callbacks = _this._clonedFieldCallbacks[el.attr( 'data-class') ]
+			var callbacks = CMB._clonedFieldCallbacks[el.attr( 'data-class') ]
 
 			if ( callbacks )
 				for ( var a = 0; a < callbacks.length; a++ )
@@ -204,13 +203,11 @@ var CMB = {
 	 */
 	deletedField: function( el ) {
 
-		var _this = this;
-
 		// also check child elements
 		el.add( el.find( 'div[data-class]' ) ).each( function(i, el) {
 
 			el = jQuery( el )
-			var callbacks = _this._deletedFieldCallbacks[el.attr( 'data-class') ]
+			var callbacks = CMB._deletedFieldCallbacks[el.attr( 'data-class') ]
 
 			if ( callbacks )
 				for ( var a = 0; a < callbacks.length; a++ )
