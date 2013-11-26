@@ -117,8 +117,10 @@ class CMB_Meta_Box {
 
 	function enqueue_styles() {
 
+		$suffix = CMB_DEV ? '' : '.min';
+
 		if ( version_compare( get_bloginfo( 'version' ), '3.7', '>' ) )
-			wp_enqueue_style( 'cmb-styles', trailingslashit( CMB_URL ) . 'css/cmb.css' );
+			wp_enqueue_style( 'cmb-styles', trailingslashit( CMB_URL ) . "css/dist/cmb$suffix.css" );
 		else
 			wp_enqueue_style( 'cmb-styles', trailingslashit( CMB_URL ) . 'css/legacy.css' );
 
