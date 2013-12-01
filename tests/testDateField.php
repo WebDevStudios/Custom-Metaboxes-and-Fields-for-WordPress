@@ -37,7 +37,7 @@ class DateFieldsAssetsTestCase extends WP_UnitTestCase {
 		$this->assertContains( site_url() . '/wp-includes/js/jquery/ui/jquery.ui.datepicker.min.js', $scripts_output );
 		
 		// Styles
-		$this->assertContains( CMB_URL . '/css/jquery-ui.css', $styles_output );
+		$this->assertContains( CMB_URL . '/css/vendor/jquery-ui.css', $styles_output );
 		
 	}
 
