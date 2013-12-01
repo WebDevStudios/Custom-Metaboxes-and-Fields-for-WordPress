@@ -31,7 +31,7 @@
 	border-bottom: 1px solid #DDDDDD;	
 }
 
-.cmb_metabox .CMB_Group_Field.repeatable .group > .cmb-delete-field { 
+.cmb_metabox .CMB_Group_Field.repeatable > .field-item > .cmb-delete-field { 
 	top: 5px;
 	right: 5px;
 	width: auto;
@@ -43,6 +43,6 @@
 	font-size: 11px;
 }
 
-.cmb_metabox .CMB_Group_Field.repeatable .group > .cmb-delete-field .cmb-delete-field-icon { 
+.cmb_metabox .CMB_Group_Field.repeatable > .field-item > .cmb-delete-field .cmb-delete-field-icon { 
 	left: 12px;
 }
