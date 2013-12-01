@@ -5,7 +5,7 @@
 .cmb_metabox_description { 
 	color: #AAA; 
 	font-style: italic; 
-	margin: 0 0 20px !important;
+	margin: 0 0 16px !important;
 }
 
 .cmb_metabox input[type=text], 
@@ -38,4 +38,8 @@
 	margin-bottom: 16px; 
 	margin-top: 0; 
 	font-weight: bold; 
+}
+
+.cmb_metabox .field-title label {
+	vertical-align: baseline;
 }
