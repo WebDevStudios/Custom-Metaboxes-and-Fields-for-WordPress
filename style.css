@@ -4,7 +4,7 @@
 .cmb_metabox tr td, table.cmb_metabox tr th { vertical-align: top; padding: 5px; }
 .cmb_metabox th { text-align: right; font-weight:bold;}
 .cmb_metabox th label { margin-top:5px; display:block;}
-div.cmb_metabox_description { color: #AAA; font-style: italic; margin: 2px 0 16px !important;}
+div.cmb_metabox_description { color: #AAA; font-style: italic; margin: 0 0 8px !important;}
 span.cmb_metabox_description { color: #AAA; font-style: italic;}
 .cmb_metabox input, 
 .cmb_metabox textarea { font-size:12px; padding: 5px; margin: 0; }
@@ -48,6 +48,7 @@ div.time-picker li.selected { background: #0063CE; color: #fff; }
 
 .field {  margin-bottom: 8px; }
 .field-title { margin-bottom: 8px; margin-top: 0; font-weight: bold; }
+.field-title label { vertical-align: baseline; }
 #poststuff .field-title h2 { margin: 0 !important; }
 
  .field.repeatable .field-item { 
