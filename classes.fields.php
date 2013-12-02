@@ -1411,10 +1411,8 @@ class CMB_Group_Field extends CMB_Field {
 	}
 
 	public function add_field( CMB_Field $field ) {
-
-		$field->parent = &$this;
+		$field->parent = $this;
 		$this->fields[$field->id] = $field;
-
 	}
 
 	public function &get_fields() {
