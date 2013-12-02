@@ -35,11 +35,15 @@ Version: 	1.0 - Beta 1
  * This may need to be filtered for local Window installations.
  * If resources do not load, please check the wiki for details.
  */
-if ( ! defined( 'CMB_PATH') )
-define( 'CMB_PATH', str_replace( '\\', '/', dirname( __FILE__ ) ) );
-if ( ! defined( 'CMB_URL' ) )
-define( 'CMB_URL', str_replace( str_replace( '\\', '/', WP_CONTENT_DIR ), str_replace( '\\', '/', WP_CONTENT_URL ), CMB_PATH ) );
 
+if ( ! defined( 'CMB_DEV') )
+	define( 'CMB_DEV', false );
+
+if ( ! defined( 'CMB_PATH') )
+	define( 'CMB_PATH', str_replace( '\\', '/', dirname( __FILE__ ) ) );
+
+if ( ! defined( 'CMB_URL' ) )
+	define( 'CMB_URL', str_replace( str_replace( '\\', '/', WP_CONTENT_DIR ), str_replace( '\\', '/', WP_CONTENT_URL ), CMB_PATH ) );
 
 include_once( CMB_PATH . '/classes.fields.php' );
 include_once( CMB_PATH . '/class.cmb-meta-box.php' );
@@ -47,7 +51,7 @@ include_once( CMB_PATH . '/class.cmb-meta-box.php' );
 // Make it possible to add fields in locations other than post edit screen.
 include_once( CMB_PATH . '/fields-anywhere.php' );
 
-include_once( CMB_PATH . '/example-functions.php' );
+// include_once( CMB_PATH . '/example-functions.php' );
 
 /**
  * Get all the meta boxes on init
@@ -133,10 +137,8 @@ function _cmb_field_class_for_type( $type ) {
  * For the order of repeatable fields to be guaranteed, orderby meta_id needs to be set. 
  * Note usermeta has a different meta_id column name.
  * 
- * TODO
- * This is far from ideal as we are doing this on EVERY SINGLE QUERY.
- * But... no other way to modify this query, or re-order in PHP.
- * There is a trac ticket + patch that will fix this. http://core.trac.wordpress.org/ticket/25511
+ * Only do this for older versions as meta is now ordered by ID (since 3.8)
+ * See http://core.trac.wordpress.org/ticket/25511
  * 
  * @param  string $query
  * @return string $query
@@ -165,4 +167,6 @@ function cmb_fix_meta_query_order($query) {
         return $query;
 
 }
-add_filter( 'query', 'cmb_fix_meta_query_order', 1 ); 
+
+if ( version_compare( get_bloginfo( 'version' ), '3.7', '<=' ) )
+	add_filter( 'query', 'cmb_fix_meta_query_order', 1 ); 

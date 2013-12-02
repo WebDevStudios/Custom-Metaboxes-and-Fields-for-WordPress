@@ -47,16 +47,16 @@ jQuery( document ).ready( function() {
 					nonce:  link.attr( 'data-nonce' )
 				}
 
-				fileHolder.addClass( 'loading' );
+				fileHolder.addClass( 'cmb-loading' );
 
 				jQuery.post( ajaxurl, data, function( src ) {
 					// Insert image
 					jQuery( '<img />', { src: src } ).prependTo( fileHolder );
-					fileHolder.removeClass( 'loading' );
+					fileHolder.removeClass( 'cmb-loading' );
 				}).fail( function() {
 					// Fallback - insert full size image.
 					jQuery( '<img />', { src: model.attributes.url } ).prependTo( fileHolder );
-					fileHolder.removeClass( 'loading' );
+					fileHolder.removeClass( 'cmb-loading' );
 				});
 
 			} else {
