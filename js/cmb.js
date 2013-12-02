@@ -15,9 +15,9 @@ var CMB = {
 
 	init : function() {
 
-		jQuery( '.field.repeatable' ).each( function() {
+			jQuery( '.field.repeatable' ).each( function() {
 			CMB.isMaxFields( jQuery(this) );
-		} );
+			} );
 
 		// Unbind & Re-bind all CMB events to prevent duplicates.
 		jQuery(document).unbind( 'click.CMB' );
@@ -38,7 +38,7 @@ var CMB = {
 	    field = jQuery( this ).closest('.field' );					
 
 		e.preventDefault();
-		jQuery(this).blur();	
+		jQuery(this).blur();
 
 		if ( CMB.isMaxFields( field, 1 ) )
 			return;

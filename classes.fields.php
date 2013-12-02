@@ -325,7 +325,7 @@ abstract class CMB_Field {
 			<div class="field-item" data-class="<?php echo esc_attr( get_class($this) ) ?>" style="position: relative; <?php echo esc_attr( $this->args['style'] ); ?>">
 
 			<?php if ( $this->args['repeatable'] ) : ?>
-				<button class="cmb-delete-field" title="Remove field"><span class="cmb-delete-field-icon">&times;</span> Remove Group</button>
+				<button class="cmb-delete-field" title="Remove field"><span class="cmb-delete-field-icon">&times;</span></button>
 			<?php endif; ?>
 
 			<?php $this->html(); ?>
@@ -344,7 +344,7 @@ abstract class CMB_Field {
 			$this->field_index = 'x'; // x used to distinguish hidden fields.
 			$this->value = ''; ?>
 
-			<div class="field-item hidden" data-class="<?php echo esc_attr( get_class($this) ) ?>" style="position: relative">
+			<div class="field-item hidden" data-class="<?php echo esc_attr( get_class($this) ) ?>" style="position: relative; <?php echo esc_attr( $this->args['style'] ); ?>">
 
 			<?php if ( $this->args['repeatable'] ) : ?>
 				<button class="cmb-delete-field" title="Remove field"><span class="cmb-delete-field-icon">&times;</span> Remove Group</button>
@@ -369,9 +369,7 @@ abstract class CMB_Field {
  */
 class CMB_Text_Field extends CMB_Field {
 
-	public function html() { 
-
-		?>
+	public function html() { ?>
 
 		<input type="text" <?php $this->id_attr(); ?> <?php $this->boolean_attr(); ?> <?php $this->class_attr(); ?> <?php $this->name_attr(); ?> value="<?php echo esc_attr( $this->get_value() ); ?>" />
 
@@ -598,10 +596,10 @@ class CMB_URL_Field extends CMB_Field {
 class CMB_Date_Field extends CMB_Field {
 
 	public function enqueue_scripts() {
-		
+
 		parent::enqueue_scripts();
 
-		wp_enqueue_style( 'cmb-jquery-ui', trailingslashit( CMB_URL ) . 'css/jquery-ui.css', '1.10.3' );
+		wp_enqueue_style( 'cmb-jquery-ui', trailingslashit( CMB_URL ) . 'css/vendor/jquery-ui/jquery-ui.css', '1.10.3' );
 
 		wp_enqueue_script( 'cmb-datetime', trailingslashit( CMB_URL ) . 'js/field.datetime.js', array( 'jquery', 'jquery-ui-core', 'jquery-ui-datepicker', 'cmb-scripts' ) );
 	}
@@ -619,7 +617,7 @@ class CMB_Time_Field extends CMB_Field {
 
 		parent::enqueue_scripts();
 
-		wp_enqueue_style( 'cmb-jquery-ui', trailingslashit( CMB_URL ) . 'css/jquery-ui.css', '1.10.3' );
+		wp_enqueue_style( 'cmb-jquery-ui', trailingslashit( CMB_URL ) . 'css/vendor/jquery-ui/jquery-ui.css', '1.10.3' );
 
 		wp_enqueue_script( 'cmb-timepicker', trailingslashit( CMB_URL ) . 'js/jquery.timePicker.min.js', array( 'jquery', 'cmb-scripts' ) );
 		wp_enqueue_script( 'cmb-datetime', trailingslashit( CMB_URL ) . 'js/field.datetime.js', array( 'jquery', 'jquery-ui-core', 'jquery-ui-datepicker', 'cmb-scripts' ) );
@@ -1268,7 +1266,7 @@ add_action( 'wp_ajax_cmb_post_select', 'cmb_ajax_post_select' );
 class CMB_Group_Field extends CMB_Field {
 
 	static $added_js;
-	public $fields = array();
+	private $fields = array();
 
 	function __construct() {
 
@@ -1309,11 +1307,11 @@ class CMB_Group_Field extends CMB_Field {
 		parent::enqueue_styles();
 
 		foreach ( $this->args['fields'] as $f ) {
-
 			$class = _cmb_field_class_for_type( $f['type'] );
 			$field = new $class( '', '', array(), $f );
 			$field->enqueue_styles();
 		}
+
 	}
 
 	public function display() {
@@ -1360,21 +1358,10 @@ class CMB_Group_Field extends CMB_Field {
 
 	}
 
-	public function add_field( CMB_Field $field ) {
-			
-		$field->parent = &$this;
-		$this->fields[$field->id] = $field;
-
-	}
-
-	public function &get_fields() {
-		return $this->fields;
-	}
-
 	public function html() {
 
 		$fields = &$this->get_fields();
-		$value  = $this->value;
+		$value = $this->value;
 
 		if ( ! empty( $value ) ) {
 			foreach ( $value as $field_id => $field_value ) {
@@ -1391,15 +1378,11 @@ class CMB_Group_Field extends CMB_Field {
 
 		?>
 
-		<div class="group <?php echo ! empty( $this->args['repeatable'] ) ? 'cloneable' : '' ?>" style="position: relative">
+		<?php if ( $this->args['repeatable'] ) : ?>
+			<button class="cmb-delete-field" title="Remove field"><span class="cmb-delete-field-icon">&times;</span> Remove Group</button>
+		<?php endif; ?>
 
-			<?php if ( $this->args['repeatable'] ) : ?>
-				<button class="cmb-delete-field" title="Remove field"><span class="cmb-delete-field-icon">&times;</span> Remove Group</button>
-			<?php endif; ?>
-
-			<?php CMB_Meta_Box::layout_fields( $fields ); ?>
-
-		</div>
+		<?php CMB_Meta_Box::layout_fields( $fields ); ?>
 
 	<?php }
 
@@ -1407,7 +1390,7 @@ class CMB_Group_Field extends CMB_Field {
 
 		$fields = &$this->get_fields();
 		$values = &$this->get_values();
-		
+
 		foreach ( $values as &$group_value ) {
 			foreach ( $group_value as $field_id => &$field_value ) {
 
@@ -1415,16 +1398,25 @@ class CMB_Group_Field extends CMB_Field {
 					$field_value = array();
 					continue;
 				}
-
+				
 				$field = $fields[$field_id];
 				$field->values = $field_value;
 				$field->parse_save_values();
-				
+
 				$field_value = $field->get_values();
 
 			}
 		}
-		
+
+	}
+
+	public function add_field( CMB_Field $field ) {
+		$field->parent = $this;
+		$this->fields[$field->id] = $field;
+	}
+
+	public function &get_fields() {
+		return $this->fields;
 	}
 
 	public function set_values( array $values ) {

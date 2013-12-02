@@ -32,7 +32,7 @@ span.cmb_metabox_description { color: #AAA; font-style: italic;}
 .cmb_metabox .cmb_upload_status {  margin: 10px 0 0 0;}
 .cmb_metabox .cmb_upload_status .img_status {  position: relative; }
 .cmb_metabox .cmb_upload_status .img_status img { border:1px solid #DFDFDF; background: #FAFAFA; max-width:350px; padding: 5px; -moz-border-radius: 2px; border-radius: 2px;}
-.cmb_remove_file_button { text-indent: -9999px; background: url(images/ico-delete.png); width: 16px; height: 16px; position: absolute; top: -5px; left: -5px;}
+.cmb_remove_file_button { text-indent: -9999px; background: url(../images/ico-delete.png); width: 16px; height: 16px; position: absolute; top: -5px; left: -5px;}
 /* Sidebar placement adjustments */
 .inner-sidebar table.cmb_metabox input[type=text], table.cmb_metabox textarea { width: 100%; }
 .inner-sidebar table.cmb_metabox .cmb_upload_status .img_status img { width: 90%; }
@@ -101,14 +101,14 @@ div.time-picker li.selected { background: #0063CE; color: #fff; }
 	left: 50%;
 	margin-top: -4px;
 	margin-left: -4px;
-	background-image: url('images/cmb-icon-remove.png');
+	background-image: url( '../images/cmb-icon-remove.png');
 	background-repeat: no-repeat;
 }
 
 @media only screen and (-webkit-min-device-pixel-ratio : 1.5), only screen and (min-device-pixel-ratio : 1.5) {
 
 	.cmb-delete-field .cmb-delete-field-icon {
-		background-image: url('images/cmb-icon-remove@2x.png');
+		background-image: url( '../images/cmb-icon-remove@2x.png');
 		background-size: 8px 8px;
 	}
 
@@ -155,6 +155,7 @@ button.repeat-field { display: block !important; clear: both; }
 	border: 1px solid #DDD; 
 	background: #ECECEC; 
 	border-radius: 3px; 
+	position: relative;
 }
 
 .CMB_Group_Field .group > .cmb-delete-field { 
@@ -199,7 +200,7 @@ button.repeat-field { display: block !important; clear: both; }
 .CMB_Color_Picker .iris-picker .iris-strip .ui-slider-handle { margin-bottom: 0; }
 .CMB_Color_Picker .iris-picker .iris-strip .ui-slider-handle:focus { outline: none; }
 
-.loading::before { content: ' '; display: block; background: url( 'images/wpspin.gif' ) no-repeat; width: 16px; height: 16px; position: absolute; top: 50%; left: 50%; margin-top: -8px; margin-left: -8px; }
+.cmb-loading::before { content: ' '; display: block; background: url( '../images/wpspin.gif' ) no-repeat; width: 16px; height: 16px; position: absolute; top: 50%; left: 50%; margin-top: -8px; margin-left: -8px; }
 @media only screen and (-webkit-min-device-pixel-ratio : 1.5), only screen and (min-device-pixel-ratio : 1.5) {
-	.loading::before { background-image: url( 'images/wpspin-2x.gif'); background-size: 16px 16px; }
+	.cmb-loading::before { background-image: url( '../images/wpspin-2x.gif'); background-size: 16px 16px; }
 }

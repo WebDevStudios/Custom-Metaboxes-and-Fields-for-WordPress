@@ -35,11 +35,15 @@ Version: 	1.0 - Beta 1
  * This may need to be filtered for local Window installations.
  * If resources do not load, please check the wiki for details.
  */
-if ( ! defined( 'CMB_PATH') )
-define( 'CMB_PATH', str_replace( '\\', '/', dirname( __FILE__ ) ) );
-if ( ! defined( 'CMB_URL' ) )
-define( 'CMB_URL', str_replace( str_replace( '\\', '/', WP_CONTENT_DIR ), str_replace( '\\', '/', WP_CONTENT_URL ), CMB_PATH ) );
 
+if ( ! defined( 'CMB_DEV') )
+	define( 'CMB_DEV', false );
+
+if ( ! defined( 'CMB_PATH') )
+	define( 'CMB_PATH', str_replace( '\\', '/', dirname( __FILE__ ) ) );
+
+if ( ! defined( 'CMB_URL' ) )
+	define( 'CMB_URL', str_replace( str_replace( '\\', '/', WP_CONTENT_DIR ), str_replace( '\\', '/', WP_CONTENT_URL ), CMB_PATH ) );
 
 include_once( CMB_PATH . '/classes.fields.php' );
 include_once( CMB_PATH . '/class.cmb-meta-box.php' );
