@@ -10,6 +10,7 @@
 
 /** Features **/
 @import '../src/repeatable.css';
+@import '../src/sortable.css';
 
 /** Fields **/
 @import '../src/group.css';
