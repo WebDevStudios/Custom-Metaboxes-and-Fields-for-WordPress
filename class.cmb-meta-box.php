@@ -119,7 +119,7 @@ class CMB_Meta_Box {
 
 		$suffix = CMB_DEV ? '' : '.min';
 
-		if ( version_compare( get_bloginfo( 'version' ), '3.7', '>' ) )
+		if ( version_compare( get_bloginfo( 'version' ), '3.7.1', '>' ) )
 			wp_enqueue_style( 'cmb-styles', trailingslashit( CMB_URL ) . "css/dist/cmb$suffix.css" );
 		else
 			wp_enqueue_style( 'cmb-styles', trailingslashit( CMB_URL ) . 'css/legacy.css' );

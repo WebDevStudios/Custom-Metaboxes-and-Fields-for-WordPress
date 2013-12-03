@@ -168,5 +168,5 @@ function cmb_fix_meta_query_order($query) {
 
 }
 
-if ( version_compare( get_bloginfo( 'version' ), '3.7', '<=' ) )
+if ( version_compare( get_bloginfo( 'version' ), '3.7.1', '<=' ) )
 	add_filter( 'query', 'cmb_fix_meta_query_order', 1 ); 
