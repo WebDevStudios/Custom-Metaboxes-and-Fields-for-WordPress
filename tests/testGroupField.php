@@ -5,8 +5,8 @@ class GroupFieldTestCase extends WP_UnitTestCase {
 	function testAddField() {
 
 		$group  = new CMB_Group_Field( 'group', 'Group Title', array() );
-		$field1 = new CMB_Text_Field( 'foo', 'Title', array( 1, 2 ) );
-		$field2 = new CMB_Text_Field( 'bar', 'Title', array( 3, 4 ) );
+		$field1 = new CMB_Text_Field( 'foo', 'Title', array( 1 ) );
+		$field2 = new CMB_Text_Field( 'bar', 'Title', array( 2, 3 ), array( 'repeatable' => true ) );
 
 		$group->add_field( $field1 );
 		$group->add_field( $field2 );
@@ -39,22 +39,29 @@ class GroupFieldTestCase extends WP_UnitTestCase {
 	function testParseSaveValues() {
 
 		$group  = new CMB_Group_Field( 'group', 'Group Title', array() );
-		$field1 = new CMB_Text_Field( 'foo', 'Title', array( 1, 2 ) );
-		$field2 = new CMB_Text_Field( 'bar', 'Title', array( 3, 4 ) );
+		$field1 = new CMB_Text_Field( 'foo', 'Title', array( 1 ) );
+		$field2 = new CMB_Text_Field( 'bar', 'Title', array( 2, 3 ), array( 'repeatable' => true ) );
 	
 		$group->add_field( $field1 );
 		$group->add_field( $field2 );
 		
-		$group->set_values( $values = array( 
+		$group->set_values( array( 
 			'group' => array( 
-				'foo' => array( 1, 2 ) ,
-				'bar' => array( 1, 2 ) 
+				'foo' => array( 1 ),
+				'bar' => array( 2, 3 ) 
 			),
 		) );
 
+		$expected = array( 
+			'group' => array( 
+				'foo' => 1,
+				'bar' => array( 2, 3 ) 
+			)
+		);
+
 		$group->parse_save_values();
 
-		$this->assertEquals( $group->get_values(), $values );
+		$this->assertEquals( $group->get_values(), $expected );
 
 	}
 
