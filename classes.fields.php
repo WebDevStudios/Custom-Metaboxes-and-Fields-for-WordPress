@@ -1323,8 +1323,14 @@ class CMB_Group_Field extends CMB_Field {
 		$this->title();
 		$this->description();
 
+		// if there are no values and it's not repeateble, we want to do one with empty string
+		if ( ! $this->get_values() && ! $this->args['repeatable'] )
+			$values = array( '' );
+		else
+			$values = $this->get_values();
+
 		$i = 0;
-		foreach ( $this->get_values() as $value ) {
+		foreach ( $values as $value ) {
 
 			$this->field_index = $i;
 			$this->value = $value; 	
