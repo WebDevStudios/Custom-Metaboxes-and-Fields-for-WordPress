@@ -41,8 +41,37 @@
 	height: 22px;
 	line-height: 20px;
 	font-size: 11px;
+	z-index: 1;
 }
 
 .cmb_metabox .CMB_Group_Field.repeatable > .field-item > .cmb-delete-field .cmb-delete-field-icon { 
 	left: 12px;
+}
+
+
+.CMB_Group_Field.cmb-sortable > .field-item { 
+	position: relative; 
+	padding-top: 30px; 
+}
+
+.CMB_Group_Field.cmb-sortable > .field-item > .cmb-handle { 
+	top: -1px; 
+	left: -1px; 
+	right: -1px; 
+	height: 34px; 
+	width: auto; 
+	border: none;
+	border-bottom: 1px solid #DDDDDD;
+}
+
+.CMB_Group_Field.cmb-sortable > .field-item.ui-sortable-helper > .cmb-handle { 
+	padding: 0 5px;
+}
+
+.cmb_metabox .CMB_Group_Field.repeatable.cmb-sortable > .field-item:before {
+	display: none !important;
+}
+
+.CMB_Group_Field.cmb-sortable > .ui-sortable-placeholder { 
+	margin-bottom: 16px !important;
 }

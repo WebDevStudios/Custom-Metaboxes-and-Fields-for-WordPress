@@ -137,38 +137,36 @@ function _cmb_field_class_for_type( $type ) {
  * For the order of repeatable fields to be guaranteed, orderby meta_id needs to be set. 
  * Note usermeta has a different meta_id column name.
  * 
- * TODO
- * This is far from ideal as we are doing this on EVERY SINGLE QUERY.
- * But... no other way to modify this query, or re-order in PHP.
- * There is a trac ticket + patch that will fix this. http://core.trac.wordpress.org/ticket/25511
+ * Only do this for older versions as meta is now ordered by ID (since 3.8)
+ * See http://core.trac.wordpress.org/ticket/25511
  * 
  * @param  string $query
  * @return string $query
  */
 function cmb_fix_meta_query_order($query) {
 
-	$pattern = '/^SELECT (post_id|user_id), meta_key, meta_value FROM \w* WHERE post_id IN \([\d|,]*\)$/';
-	
-	if ( 
-		0 === strpos( $query, "SELECT post_id, meta_key, meta_value" ) &&  
-		preg_match( $pattern, $query, $matches ) 
-	) {
-			
-		if ( isset( $matches[1] ) && 'user_id' == $matches[1] )
-			$meta_id_column = 'umeta_id';
-		else
-			$meta_id_column = 'meta_id';
+        $pattern = '/^SELECT (post_id|user_id), meta_key, meta_value FROM \w* WHERE post_id IN \([\d|,]*\)$/';
+        
+        if ( 
+                0 === strpos( $query, "SELECT post_id, meta_key, meta_value" ) &&  
+                preg_match( $pattern, $query, $matches ) 
+        ) {        
+                
+                if ( isset( $matches[1] ) && 'user_id' == $matches[1] )
+                        $meta_id_column = 'umeta_id';
+                else
+                        $meta_id_column = 'meta_id';
 
-		$meta_query_orderby = ' ORDER BY ' . $meta_id_column;
+                $meta_query_orderby = ' ORDER BY ' . $meta_id_column;
 
-		if ( false === strpos( $query, $meta_query_orderby ) )
-			$query .= $meta_query_orderby;
-	
-	}
-	
-	return $query;
+                if ( false === strpos( $query, $meta_query_orderby ) )
+                        $query .= $meta_query_orderby;
+        
+        }
+        
+        return $query;
 
 }
 
-if ( version_compare( get_bloginfo( 'version' ), '3.7', '<=' ) )
-	add_filter( 'query', 'cmb_fix_meta_query_order', 1 );     
+if ( version_compare( get_bloginfo( 'version' ), '3.7.1', '<=' ) )
+	add_filter( 'query', 'cmb_fix_meta_query_order', 1 ); 

@@ -67,6 +67,10 @@ abstract class CMB_Field {
 	 * @uses wp_enqueue_script()
 	 */
 	public function enqueue_scripts() {
+
+		if ( isset( $this->args['sortable'] ) && $this->args['sortable'] )
+			wp_enqueue_script( 'jquery-ui-sortable' );
+
 	}
 
 	/**
@@ -1358,7 +1362,7 @@ class CMB_Group_Field extends CMB_Field {
 
 				</div>
 
-				<button class="button repeat-field"><?php esc_html_e( 'Add New', 'cmb' ); ?></button>
+				<button class="button repeat-field"><?php esc_html_e( 'Add New Group', 'cmb' ); ?></button>
 
 		<?php }
 
