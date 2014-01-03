@@ -240,27 +240,24 @@ class CMB_Meta_Box {
 
 				$current_colspan += $field->args['cols'];
 
-				$classes = array('field');
-
+				$classes = array( 'field', get_class($field) );
+					
 				if ( ! empty( $field->args['repeatable'] ) )
 					$classes[] = 'repeatable';
 
-				$classes[] = get_class($field);
-
-				$classes = 'class="' . esc_attr( implode(' ', array_map( 'sanitize_html_class', $classes ) ) ) . '"';
-
-				$attrs = array();
-
+				$attrs = array(
+					sprintf( 'class="%s"', esc_attr( implode(' ', array_map( 'sanitize_html_class', $classes ) ) ) )
+				);
+				
+				// Field Repeatable Max.
 				if ( isset( $field->args['repeatable_max']  ) )
-					$attrs[] = 'data-rep-max="' . intval( $field->args['repeatable_max'] ) . '"';
-
-				$attrs = implode( ' ', $attrs );
+					$attrs[] = sprintf( 'data-rep-max="%s"', intval( $field->args['repeatable_max'] ) );
 
 				?>
 
 				<div class="cmb-cell-<?php echo intval( $field->args['cols'] ); ?>">
 					
-						<div <?php echo $classes; ?> <?php echo $attrs; ?>>
+						<div <?php echo implode( ' ', $attrs ); ?>>
 							<?php $field->display(); ?>
 						</div>
 
