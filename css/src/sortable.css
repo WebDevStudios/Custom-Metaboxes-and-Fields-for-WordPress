@@ -1,0 +1,40 @@
+
+.cmb-sortable > .field-item { 
+	padding-left: 15px; 
+}
+
+.cmb-sortable .cmb-handle { 
+	height: 100%; 
+	width: 3px; 
+	position: absolute; 
+	top: 0; 
+	left: 0; 
+	background: transparent; 
+	cursor: move; 
+	border-left: 3px solid #DFDFDF; 
+	border-right: 3px solid #DFDFDF; 
+}
+
+.cmb-sortable .ui-sortable-helper { 
+	opacity: 0.75;
+}
+
+.cmb-sortable .ui-sortable-helper:before { 
+	content: ' ';
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	top: -6px;
+	left: -6px;
+	background-color: #F8F8F8; 
+	border: 1px solid #DEDEDE;
+	padding: 5px; 
+	z-index: -1;
+}
+
+.cmb-sortable > .ui-sortable-placeholder { 
+	border: 1px dashed #DDD !important;
+	background: transparent !important; 
+	visibility: visible !important; 
+	margin-bottom: 8px !important;
+}

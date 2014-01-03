@@ -16,7 +16,15 @@ module.exports = function(grunt) {
           banner: '<%= banner %>'
         },
         files: {
-          'css/dist/cmb.min.css': [ 'css/src/layout.css', 'css/src/generic.css', 'css/src/repeatable.css', 'css/src/group.css', 'css/src/file.css', 'css/src/misc-fields.css' ]
+          'css/dist/cmb.min.css': [ 
+            'css/src/layout.css', 
+            'css/src/generic.css', 
+            'css/src/repeatable.css', 
+            'css/src/sortable.css', 
+            'css/src/group.css', 
+            'css/src/file.css', 
+            'css/src/misc-fields.css' 
+          ]
         }
       }
     }
