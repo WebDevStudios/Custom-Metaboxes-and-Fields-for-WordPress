@@ -20,7 +20,6 @@
 	// Move CMB functionality to an object
 	window.CMB = {
 		formfield : '',
-		iterator: 0,
 		file_frames: {},
 
 		init: function() {
@@ -34,23 +33,15 @@
 			/**
 			 * Initialize timepicker (this will be moved inline in a future release)
 			 */
-			$('.cmb_timepicker').each( function() {
-				$('#' + jQuery(this).attr('id')).timePicker({
-					startTime: "07:00",
-					endTime: "22:00",
-					show24Hours: false,
-					separator: ':',
-					step: 30
-				});
+			$('.cmb_timepicker:not(.empty-row .cmb_timepicker)').each( function() {
+				CMB.initTimePicker(this);
 			});
 
 			/**
 			 * Initialize jQuery UI datepicker (this will be moved inline in a future release)
 			 */
-			$('.cmb_datepicker').each( function() {
-				$('#' + jQuery(this).attr('id')).datepicker();
-				// $('#' + jQuery(this).attr('id')).datepicker({ dateFormat: 'yy-mm-dd' });
-				// For more options see http://jqueryui.com/demos/datepicker/#option-dateFormat
+			$('.cmb_datepicker:not(.empty-row .cmb_datepicker)').each( function() {
+				CMB.initDatePicker(this);
 			});
 			// Wrap date picker in class to narrow the scope of jQuery UI CSS and prevent conflicts
 			$("#ui-datepicker-div").wrap('<div class="cmb_element" />');
@@ -75,13 +66,19 @@
 
 
 			/**
+			 * Remove empty-row repeatable fields when form is submitted
+			 * @todo This is one easy way, but better solution might be adding disabled property initially
+			 */
+			 $('form#post').on( 'submit', function() {
+				$('tr.empty-row', '.cmb_metabox').remove();
+			 });
+
+			/**
 			 * File and image upload handling
 			 */
-
-
 			$('.cmb_metabox')
 			.on( 'change', '.cmb_upload_file', function() {
-				CMB.formfield = $(this).attr('name');
+				CMB.formfield = $(this).attr('id');
 				$('#' + CMB.formfield + '_id').val("");
 			})
 			.on( 'click', '.cmb_upload_button', function(event) {
@@ -89,7 +86,7 @@
 				event.preventDefault();
 
 				var $self = $(this);
-				CMB.formfield = $self.prev('input').attr('name');
+				CMB.formfield = $self.prev('input').attr('id');
 				var $formfield = $('#'+CMB.formfield);
 				var uploadStatus = true;
 				var attachment = true;
@@ -202,18 +199,27 @@
 
 				var tableselector = '#'+ self.data('selector');
 				var $table = $(tableselector);
-				var row = $('.empty-row', $table).clone(true);
+				var $emptyrow = $('.empty-row', $table);
+
+				var row = $emptyrow.clone(true);
 				row.removeClass('empty-row').addClass('repeat-row');
 				row.insertBefore( tableselector +' tbody>tr:last' );
-				var input = $('input.cmb_datepicker',row);
-				var id = input.attr('id');
-				input.attr('id', id + CMB.iterator );
-				CMB.iterator++;
 
-				// @todo Make a colorpicker field repeatable
-				// row.find('.wp-color-result').remove();
-				// row.find('input:text.cmb_colorpicker').wpColorPicker();
+				var inputselector = tableselector.slice(1,tableselector.lastIndexOf('repeat'));
+				$('[id*="'+inputselector+'"]',$emptyrow).each(function() {
+					var id = $(this).attr('id');
+					var idNumber = parseInt( id.slice( id.lastIndexOf("_") + 1, id.length ) );
+					$(this).attr('id', inputselector + (idNumber+1) );
+				});
 
+				// Init new timepicker and datepicker entries
+				row.find('.cmb_timepicker').each(function() {
+					CMB.initTimePicker(this);
+				});
+
+				row.find('.cmb_datepicker').each(function() {
+					CMB.initDatePicker(this);
+				});
 			})
 			.on( 'click', '.remove-row-button', function(e) {
 				e.preventDefault();
@@ -256,6 +262,22 @@
 			// and on window resize
 			$(window).on( 'resize', CMB.resizeoEmbeds );
 
+		},
+
+		initTimePicker: function(target) {
+			$('#' + $(target).attr('id')).timePicker({
+				startTime: "07:00",
+				endTime: "22:00",
+				show24Hours: false,
+				separator: ':',
+				step: 30
+			});
+		},
+
+		initDatePicker: function(target) {
+			$('#' + $(target).attr('id')).datepicker();
+			// $('#' + jQuery(this).attr('id')).datepicker({ dateFormat: 'yy-mm-dd' });
+			// For more options see http://jqueryui.com/demos/datepicker/#option-dateFormat
 		},
 
 		/**
