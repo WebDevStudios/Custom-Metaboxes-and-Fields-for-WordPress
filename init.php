@@ -870,7 +870,7 @@ class cmb_Meta_Box {
 	 * @param  array $field      Field config array
 	 * @return mixed             Possibly validated meta value
 	 */
-	public function sanitization_cb( $meta_value, $is_saving = false, $field = array() ) {
+	public static function sanitization_cb( $meta_value, $is_saving = false, $field = array() ) {
 		if ( empty( $meta_value ) )
 			return $meta_value;
 
