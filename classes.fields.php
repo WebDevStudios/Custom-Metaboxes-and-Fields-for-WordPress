@@ -543,7 +543,7 @@ class CMB_Image_Field extends CMB_File_Field {
 
 		// Handle default WP size format. 
 		if ( is_array( $size ) && isset( $size[0] ) && isset( $size[1] ) )
-			$size = array( 'width' => $size[0], 'height' => $size[0] );
+			$size = array( 'width' => $size[0], 'height' => $size[1] );
 
 		return wp_parse_args( $size, array(
 			'width'  => get_option( 'thumbnail_size_w' ),
