@@ -429,7 +429,11 @@ class cmb_Meta_Box {
 
 			echo empty( $field['before'] ) ? '' : $field['before'];
 
-			call_user_func( array( $types, $field['type'] ), $field, $meta, $object_id, $object_type );
+			if ( true == $field['repeatable'] ) {
+				call_user_func( array( $types, 'render_repeatable_field' ), $field, $meta, $object_id, $object_type );
+			} else {
+				call_user_func( array( $types, $field['type'] ), $field, $meta, $object_id, $object_type );
+			}
 
 			echo empty( $field['after'] ) ? '' : $field['after'];
 
