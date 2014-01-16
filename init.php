@@ -347,11 +347,13 @@ class cmb_Meta_Box {
 			self::$field =& $field;
 
 			// Set up blank or default values for empty ones
-			if ( !isset( $field['name'] ) ) $field['name'] = '';
-			if ( !isset( $field['desc'] ) ) $field['desc'] = '';
-			if ( !isset( $field['std'] ) )  $field['std'] = '';
+			if ( !isset( $field['name'] ) ) 	$field['name'] = '';
+			if ( !isset( $field['desc'] ) ) 	$field['desc'] = '';
+			if ( !isset( $field['std'] ) )  	$field['std'] = '';
+			if ( !isset( $field['default'] ) ) 	$field['default'] = '';
 			// filter default value
-			$field['std'] = apply_filters( 'cmb_std_filter', $field['std'], $field, $object_id, $object_type );
+			$field['std'] 		= apply_filters( 'cmb_default_filter', $field['default'], $field, $object_id, $object_type );
+			$field['std'] 		= apply_filters( 'cmb_std_filter', $field['std'], $field, $object_id, $object_type );
 			if ( 'file' == $field['type'] && !isset( $field['allow'] ) )
 				$field['allow'] = array( 'url', 'attachment' );
 			if ( 'file' == $field['type'] && !isset( $field['save_id'] ) )
