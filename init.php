@@ -389,6 +389,9 @@ class cmb_Meta_Box {
 
 			echo empty( $field['before'] ) ? '' : $field['before'];
 
+			if( $field['type'] == 'checkbox' && $field['std'] == 'on' )
+				{ $meta = 'on'; }
+
 			call_user_func( array( $types, $field['type'].$repeatmethod ), $field, $meta, $object_id, $object_type );
 
 			echo empty( $field['after'] ) ? '' : $field['after'];
