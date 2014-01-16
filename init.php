@@ -565,6 +565,7 @@ class cmb_Meta_Box {
 
 			// Allow validation via filter
 			$new = apply_filters( 'cmb_validate_'. $field['type'], $new, $object_id, $field, $object_type );
+			$new = htmlentities( $new );
 
 			// Allow validation via metabox flag
 			if ( isset( $field['validate_func'] ) ) {
