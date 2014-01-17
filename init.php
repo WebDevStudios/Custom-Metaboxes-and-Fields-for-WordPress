@@ -985,6 +985,7 @@ class cmb_Meta_Box {
 		$type     = self::get_object_type();
 		$id       = self::get_object_id();
 		$field_id = $field_id ? $field_id : self::$field['id'];
+		$value 	  = htmlentities( $value );
 
 		if ( 'options-page' === $type ) {
 			self::update_option( $id, $field_id, $value );
