@@ -97,14 +97,6 @@ function cmb_sample_metaboxes( array $meta_boxes ) {
 				'id'   => $prefix . 'test_datetime_timestamp',
 				'type' => 'text_datetime_timestamp',
 			),
-			// This text_datetime_timestamp_timezone field type
-			// is only compatible with PHP versions 5.3 or above.
-			array(
-				'name' => __( 'Test Date/Time Picker/Time zone Combo (serialized DateTime object)', 'cmb' ),
-				'desc' => __( 'field description (optional)', 'cmb' ),
-				'id'   => $prefix . 'test_datetime_timestamp_timezone',
-				'type' => 'text_datetime_timestamp_timezone',
-			),
 			array(
 				'name' => __( 'Test Money', 'cmb' ),
 				'desc' => __( 'field description (optional)', 'cmb' ),
@@ -245,6 +237,30 @@ function cmb_sample_metaboxes( array $meta_boxes ) {
 			),
 		),
 	);
+
+	// example fields that require a minimum of PHP 5.3
+	// are ONLY displayed on systems running at least PHP 5.3
+	if(version_compare(PHP_VERSION, '5.3', '>=')) {
+		$meta_boxes['test_metabox_min_php53'] = array(
+			'id'         => 'test_metabox_min_php53',
+			'title'      => __( 'Test Metabox for Fields Requiring a minimum of PHP 5.3', 'cmb' ),
+			'pages'      => array( 'page', ), // Post type
+			'context'    => 'normal',
+			'priority'   => 'high',
+			'show_names' => true, // Show field names on the left
+			// 'cmb_styles' => true, // Enqueue the CMB stylesheet on the frontend
+			'fields'     => array(
+				// This text_datetime_timestamp_timezone field type
+				// is only compatible with PHP versions 5.3 or above.
+				array(
+					'name' => __( 'Test Date/Time Picker/Time zone Combo (serialized DateTime object)', 'cmb' ),
+					'desc' => __( 'field description (optional)', 'cmb' ),
+					'id'   => $prefix . 'test_datetime_timestamp_timezone',
+					'type' => 'text_datetime_timestamp_timezone',
+				),
+			),
+		);
+	}
 
 	$meta_boxes['about_page_metabox'] = array(
 		'id'         => 'about_page_metabox',
