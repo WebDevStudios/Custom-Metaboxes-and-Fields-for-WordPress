@@ -412,7 +412,7 @@ class cmb_Meta_Box_types {
 	}
 
 	public static function wysiwyg( $field, $meta ) {
-		wp_editor( self::esc( $meta, 'esc_textarea' ), $field['id'], isset( $field['options'] ) ? $field['options'] : array() );
+		wp_editor( $meta ? $meta : $field['default'], $field['id'], isset( $field['options'] ) ? $field['options'] : array() );
 		echo self::desc( true );
 	}
 
