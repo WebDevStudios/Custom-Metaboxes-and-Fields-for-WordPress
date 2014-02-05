@@ -460,6 +460,7 @@ class cmb_Meta_Box {
 		)
 			return $post_id;
 
+		self::set_object_id( $post_id );
 		self::save_fields( $this->_meta_box, $post_id, 'post' );
 	}
 
