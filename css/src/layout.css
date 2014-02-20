@@ -1,6 +1,7 @@
 /** CMB Layout **/
 
 .cmb_metabox .field { 
+    overflow: hidden;
 	padding: 16px 0;
 	border-bottom: 1px solid #DFDFDF;
 }

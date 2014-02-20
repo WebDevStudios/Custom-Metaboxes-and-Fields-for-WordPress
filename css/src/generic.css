@@ -12,6 +12,7 @@
 .cmb_metabox textarea, 
 .cmb_metabox select { 
 	width: 100%;
+	margin: 0;
 }
 
 .cmb_metabox input.cmb_text_small { 
