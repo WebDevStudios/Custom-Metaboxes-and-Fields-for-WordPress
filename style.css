@@ -23,10 +23,23 @@ table.cmb_metabox th label {
 	display:block
 }
 
+.form-table td {
+	padding: 0;
+}
+
+.cmb-form .button-primary {
+	margin: 48px 0 0 8px;
+}
+
+.cmb_metabox_title {
+	margin-bottom: 5px;
+}
+
 p.cmb_metabox_description {
 	color: #AAA;
 	font-style: italic;
-	margin: 2px 0 !important
+	margin: 2px 0 !important;
+	padding-bottom: 15px
 }
 
 span.cmb_metabox_description {
