@@ -31,13 +31,13 @@ class DateFieldsAssetsTestCase extends WP_UnitTestCase {
 		$styles_output = get_echo( 'wp_print_styles' );
 
 		// Scripts
-		$this->assertContains( CMB_URL . '/js/field.datetime.js', $scripts_output );
-		$this->assertContains( CMB_URL . '/js/cmb.js', $scripts_output );
+		$this->assertContains( '/js/field.datetime.js', $scripts_output );
+		$this->assertContains( '/js/cmb.js', $scripts_output );
 		$this->assertContains( site_url() . '/wp-includes/js/jquery/ui/jquery.ui.core.min.js', $scripts_output );
 		$this->assertContains( site_url() . '/wp-includes/js/jquery/ui/jquery.ui.datepicker.min.js', $scripts_output );
 		
 		// Styles
-		$this->assertContains( CMB_URL . '/css/jquery-ui.css', $styles_output );
+		$this->assertContains( 'css/vendor/jquery-ui/jquery-ui.css', $styles_output );
 		
 	}
 

@@ -1,0 +1,77 @@
+* Group **/
+
+.cmb_metabox .CMB_Group_Field > .field-title { 
+	font-size: 1.5em;
+	clear: left;
+	color: #464646;
+	font-family: "HelveticaNeue-Light","Helvetica Neue Light","Helvetica Neue",sans-serif;
+	font-weight: lighter;
+}
+
+.cmb_metabox .CMB_Group_Field > .field-title h2 { 
+	margin: 8px 5px !important; 
+}
+
+.cmb_metabox .CMB_Group_Field.repeatable > .field-item { 
+	padding: 30px 10px 0; 
+	margin-bottom: 16px; 
+	border: 1px solid #DDD; 
+	background: #FAFAFA; 
+	position: relative;
+}
+
+.cmb_metabox .CMB_Group_Field.repeatable > .field-item:before {
+	content: ' ';
+	display: block;
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	height: 33px;
+	border-bottom: 1px solid #DDDDDD;	
+}
+
+.cmb_metabox .CMB_Group_Field.repeatable > .field-item > .cmb-delete-field { 
+	top: 5px;
+	right: 5px;
+	width: auto;
+	text-indent: 0;
+	padding-left: 24px;
+	padding-right: 8px;
+	height: 22px;
+	line-height: 20px;
+	font-size: 11px;
+	z-index: 1;
+}
+
+.cmb_metabox .CMB_Group_Field.repeatable > .field-item > .cmb-delete-field .cmb-delete-field-icon { 
+	left: 12px;
+}
+
+
+.CMB_Group_Field.cmb-sortable > .field-item { 
+	position: relative; 
+	padding-top: 30px; 
+}
+
+.CMB_Group_Field.cmb-sortable > .field-item > .cmb-handle { 
+	top: -1px; 
+	left: -1px; 
+	right: -1px; 
+	height: 34px; 
+	width: auto; 
+	border: none;
+	border-bottom: 1px solid #DDDDDD;
+}
+
+.CMB_Group_Field.cmb-sortable > .field-item.ui-sortable-helper > .cmb-handle { 
+	padding: 0 5px;
+}
+
+.cmb_metabox .CMB_Group_Field.repeatable.cmb-sortable > .field-item:before {
+	display: none !important;
+}
+
+.CMB_Group_Field.cmb-sortable > .ui-sortable-placeholder { 
+	margin-bottom: 16px !important;
+}
