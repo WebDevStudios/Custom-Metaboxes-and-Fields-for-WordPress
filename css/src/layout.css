@@ -1,7 +1,7 @@
 /** CMB Layout **/
 
 .cmb_metabox .field { 
-    overflow: hidden;
+	overflow: hidden;
 	padding: 16px 0;
 	border-bottom: 1px solid #DFDFDF;
 }
@@ -23,11 +23,11 @@
 
 .cmb_metabox .cmb-row:before,
 .cmb_metabox .cmb-row:after {
-    content: "";
-    display: table;
+	content: "";
+	display: table;
 } 
 .cmb_metabox .cmb-row:after {
-    clear: both;
+	clear: both;
 }
 
 .cmb_metabox [class*="cmb-cell-"] { 
