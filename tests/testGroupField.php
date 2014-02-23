@@ -92,6 +92,15 @@ class GroupFieldTestCase extends WP_UnitTestCase {
 		$this->assertEquals( $id_attr, 'group[cmb-group-0][foo][cmb-field-1]' );
 		$field1->field_index = 0; // Unset
 
+		// Test more than 10 fields
+		// See https://github.com/humanmade/Custom-Meta-Boxes/pull/164
+		$group->field_index = 12;
+		$id_attr = $field1->get_the_name_attr();
+		$this->assertEquals( $id_attr, 'group[cmb-group-12][foo][cmb-field-0]' );
+		$group->field_index = 0; // Unset
+
+
+
 	}
 
 	function testFieldIdAttrValue() {
