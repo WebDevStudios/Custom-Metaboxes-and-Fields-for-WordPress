@@ -153,7 +153,7 @@ abstract class CMB_Field {
 		$name = str_replace( '[]', '', $this->name );
 
 		if ( isset( $this->parent ) ) {
-			$parent_name = preg_replace( '/cmb\-field\-(\d|x)+/', 'cmb-group-$1', $this->parent->get_the_name_attr() );
+			$parent_name = preg_replace( '/cmb\-field\-(\d+|x)/', 'cmb-group-$1', $this->parent->get_the_name_attr() );
 			$name = $parent_name . '[' . $name . ']';
 		}
 
