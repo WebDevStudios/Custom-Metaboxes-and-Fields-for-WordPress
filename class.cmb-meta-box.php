@@ -78,8 +78,9 @@ class CMB_Meta_Box {
 			elseif ( $post_id )
 				$values = (array) get_post_meta( $post_id, $field['id'], false );
 
-
-			$this->fields[] = new $class( $field['id'], $field['name'], (array) $values, $field );
+			if ( class_exists( $class ) ) {
+				$this->fields[] = new $class( $field['id'], $field['name'], (array) $values, $field );
+			}
 
 		}
 
