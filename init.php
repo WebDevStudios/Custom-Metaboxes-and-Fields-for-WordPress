@@ -36,10 +36,16 @@ Version: 		1.0.1
 // Autoload helper classes
 spl_autoload_register('cmb_Meta_Box::autoload_helpers');
 
-$meta_boxes = array();
-$meta_boxes = apply_filters( 'cmb_meta_boxes', $meta_boxes );
-foreach ( $meta_boxes as $meta_box ) {
-	$my_box = new cmb_Meta_Box( $meta_box );
+// Setup metaboxes after WordPress is fully loaded
+add_action('wp_loaded', 'cmb_setup_metaboxes');
+if ( ! function_exists('cmb_setup_metaboxes') ) {
+	function cmb_setup_metaboxes() {
+		$meta_boxes = array();
+		$meta_boxes = apply_filters( 'cmb_meta_boxes', $meta_boxes );
+		foreach ( $meta_boxes as $meta_box ) {
+			$my_box = new cmb_Meta_Box( $meta_box );
+		}
+	}
 }
 
 define( 'CMB_META_BOX_URL', cmb_Meta_Box::get_meta_box_url() );
