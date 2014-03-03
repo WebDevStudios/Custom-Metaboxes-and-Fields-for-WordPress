@@ -83,27 +83,27 @@ abstract class CMB_Field {
 
 	/**
 	 * Output the field input ID attribute.
-	 * 
-	 * If multiple inputs are required for a single field, 
+	 *
+	 * If multiple inputs are required for a single field,
 	 * use the append parameter to add unique identifier.
-	 * 
+	 *
 	 * @param  string $append
 	 * @return null
 	 */
 	public function id_attr( $append = null ) {
 
 		printf( 'id="%s"', esc_attr( $this->get_the_id_attr( $append ) ) );
-		
+
 	}
-	
+
 	/**
 	 * Output the for attribute for the field.
 	 *
-	 * 
-	 * 
-	 * If multiple inputs are required for a single field, 
+	 *
+	 *
+	 * If multiple inputs are required for a single field,
 	 * use the append parameter to add unique identifier.
-	 * 
+	 *
 	 * @param  string $append
 	 * @return null
 	 */
@@ -153,7 +153,7 @@ abstract class CMB_Field {
 		$name = str_replace( '[]', '', $this->name );
 
 		if ( isset( $this->parent ) ) {
-			$parent_name = preg_replace( '/cmb\-field\-(\d|x)+/', 'cmb-group-$1', $this->parent->get_the_name_attr() );
+			$parent_name = preg_replace( '/cmb\-field\-(\d+|x)/', 'cmb-group-$1', $this->parent->get_the_name_attr() );
 			$name = $parent_name . '[' . $name . ']';
 		}
 
