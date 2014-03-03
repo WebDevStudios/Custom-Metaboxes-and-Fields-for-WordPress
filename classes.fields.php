@@ -1042,6 +1042,10 @@ class CMB_Taxonomy extends CMB_Select {
 
 		$terms = $this->get_terms();
 
+		if ( is_wp_error( $terms ) ) { 
+			return array(); 
+		}
+
 		$term_options = array();
 
 		foreach ( $terms as $term )
