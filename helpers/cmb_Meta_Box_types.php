@@ -739,7 +739,7 @@ class cmb_Meta_Box_types {
 
 		// If there is no ID saved yet, try to get it from the url
 		if ( $meta_value && ! $_id_value ) {
-			$_id_value = cmb_Meta_Box::image_id_from_url( esc_url_raw( $meta_value ) );
+			$_id_value = cmb_Meta_Box::save_group( esc_url_raw( $meta_value ) );
 		}
 
 		echo $this->input( array(
