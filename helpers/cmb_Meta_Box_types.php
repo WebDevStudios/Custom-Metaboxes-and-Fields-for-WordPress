@@ -444,7 +444,8 @@ class cmb_Meta_Box_types {
 
 	public function text_date_timestamp() {
 		$meta_value = $this->field->escaped_value();
-		$value = ! empty( $meta_value ) ? date( 'm\/d\/Y', $meta_value ) : '';
+		$date_format = ($this->field->args( 'date_format' ) ? $this->field->args( 'date_format' ) : 'm\/d\/Y');
+		$value = ! empty( $meta_value ) ? date( $date_format, $meta_value ) : '';
 		return $this->input( array( 'class' => 'cmb_text_small cmb_datepicker', 'value' => $value ) );
 	}
 
@@ -459,20 +460,22 @@ class cmb_Meta_Box_types {
 			}
 			$desc = $this->_desc();
 		}
+		$date_format = ($this->field->args( 'date_format' ) ? $this->field->args( 'date_format' ) : 'm\/d\/Y');
+		$time_format = ($this->field->args( 'time_format' ) ? $this->field->args( 'time_format' ) : 'h:i A');
 
 		$inputs = array(
 			$this->input( array(
 				'class' => 'cmb_text_small cmb_datepicker',
 				'name'  => $this->_name( '[date]' ),
 				'id'    => $this->_id( '_date' ),
-				'value' => ! empty( $meta_value ) ? date( 'm\/d\/Y', $meta_value ) : '',
+				'value' => ! empty( $meta_value ) ? date( $date_format, $meta_value ) : '',
 				'desc'  => '',
 			) ),
 			$this->input( array(
 				'class' => 'cmb_timepicker text_time',
 				'name'  => $this->_name( '[time]' ),
 				'id'    => $this->_id( '_time' ),
-				'value' => ! empty( $meta_value ) ? date( 'h:i A', $meta_value ) : '',
+				'value' => ! empty( $meta_value ) ? date( $time_format, $meta_value ) : '',
 				'desc'  => $desc,
 			) )
 		);
