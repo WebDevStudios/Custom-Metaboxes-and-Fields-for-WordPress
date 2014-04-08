@@ -30,6 +30,7 @@ function cmb_sample_metaboxes( array $meta_boxes ) {
 		'context'    => 'normal',
 		'priority'   => 'high',
 		'show_names' => true, // Show field names on the left
+		// 'capabilities' => array( 'manage_options' ), // Only show to users with given capabilities
 		// 'cmb_styles' => true, // Enqueue the CMB stylesheet on the frontend
 		'fields'     => array(
 			array(
