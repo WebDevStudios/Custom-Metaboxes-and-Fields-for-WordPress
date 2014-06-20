@@ -462,8 +462,9 @@ class cmb_Meta_Box {
 		$group_val       = (array) $field_group->value();
 		$nrows           = count( $group_val );
 		$remove_disabled = $nrows <= 1 ? 'disabled="disabled" ' : '';
+		$repeatable_class	= $field_group->args( 'repeatable' ) ? 'repeatable-group' : 'group';
 
-		echo '<tr><td colspan="2"><table id="', $field_group->id(), '_repeat" class="repeatable-group'. $sortable .'" style="width:100%;">';
+		echo '<tr><td colspan="2"><table id="', $field_group->id(), '_repeat" class="' . $repeatable_class . ' '. $sortable .'" style="width:100%;">';
 		if ( $desc || $label ) {
 			echo '<tr><th>';
 				if ( $label )
@@ -473,7 +474,7 @@ class cmb_Meta_Box {
 			echo '</th></tr>';
 		}
 
-		if ( ! empty( $group_val ) ) {
+		if ( ! empty( $group_val ) && $field_group->args( 'repeatable' )  ) {
 
 			foreach ( $group_val as $iterator => $field_id ) {
 				self::render_group_row( $field_group, $remove_disabled );
@@ -482,7 +483,9 @@ class cmb_Meta_Box {
 			self::render_group_row( $field_group, $remove_disabled );
 		}
 
-		echo '<tr><td><p class="add-row"><button data-selector="', $field_group->id() ,'_repeat" data-grouptitle="', $field_group->options( 'group_title' ) ,'" class="add-group-row button">'. $field_group->options( 'add_button' ) .'</button></p></td></tr>';
+		if( $field_group->args( 'repeatable' ) ) {
+			echo '<tr><td><p class="add-row"><button data-selector="', $field_group->id() ,'_repeat" data-grouptitle="', $field_group->options( 'group_title' ) ,'" class="add-group-row button">'. $field_group->options( 'add_button' ) .'</button></p></td></tr>';
+		}
 
 		echo '</table></td></tr>';
 
@@ -510,12 +513,19 @@ class cmb_Meta_Box {
 					$field = new cmb_Meta_Box_field( $field_args, $field_group );
 					$field->render_field();
 				}
-				echo '
+
+				// Only show the remove group button if the group is repeatable
+				if( $field_group->args( 'repeatable' ) ) {
+					echo '
 					<tr>
 						<td class="remove-row" colspan="2">
 							<button '. $remove_disabled .'data-selector="'. $field_group->id() .'_repeat" class="button remove-group-row alignright">'. $field_group->options( 'remove_button' ) .'</button>
 						</td>
 					</tr>
+					';
+				}
+
+				echo '
 				</table>
 			</td>
 		</tr>

@@ -449,7 +449,6 @@ class cmb_Meta_Box_field {
 		$args['save_id']    = 'file' == $args['type'] && ! ( isset( $args['save_id'] ) && ! $args['save_id'] );
 		// $args['multiple']   = isset( $args['multiple'] ) ? $args['multiple'] : ( 'multicheck' == $args['type'] ? true : false );
 		$args['multiple']   = isset( $args['multiple'] ) ? $args['multiple'] : false;
-		$args['repeatable'] = isset( $args['repeatable'] ) && $args['repeatable'] && ! $this->repeatable_exception( $args['type'] );
 		$args['inline']     = isset( $args['inline'] ) && $args['inline'] || false !== stripos( $args['type'], '_inline' );
 		$args['on_front']   = ! ( isset( $args['on_front'] ) && ! $args['on_front'] );
 		$args['attributes'] = isset( $args['attributes'] ) && is_array( $args['attributes'] ) ? $args['attributes'] : array();
@@ -471,6 +470,12 @@ class cmb_Meta_Box_field {
 		if ( 'wysiwyg' == $args['type'] ) {
 			$args['id'] = strtolower( str_ireplace( '-', '_', $args['id'] ) );
 			$args['options']['textarea_name'] = $args['_name'];
+		}
+
+		if ( 'group' == $args['type'] ) {
+			$args['repeatable'] = isset( $args['repeatable'] ) ? $args['repeatable'] : true;
+		} else {
+			$args['repeatable'] = isset( $args['repeatable'] ) && $args['repeatable'] && ! $this->repeatable_exception( $args['type'] );
 		}
 
 		$option_types = apply_filters( 'cmb_all_or_nothing_types', array( 'taxonomy_select', 'taxonomy_radio', 'taxonomy_radio_inline' ) );
