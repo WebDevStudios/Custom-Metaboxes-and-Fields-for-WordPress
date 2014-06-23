@@ -585,10 +585,12 @@ class cmb_Meta_Box_types {
 	public function checkbox() {
 		$meta_value = $this->field->escaped_value();
 		$args = array( 'type' => 'checkbox', 'class' => 'cmb_option cmb_list', 'value' => 'on', 'desc' => '' );
-		if ( ! empty( $meta_value ) ) {
+
+		if ( 'on' == $meta_value ) {
 			$args['checked'] = 'checked';
 		}
-		return sprintf( '%s <label for="%s">%s</label>', $this->input( $args ), $this->_id(), $this->_desc() );
+
+		return sprintf( '<input type="hidden" name="%s" value="off">%s <label for="%s">%s</label>', $this->_name(), $this->input( $args ), $this->_id(), $this->_desc() );
 	}
 
 	public function taxonomy_radio() {
