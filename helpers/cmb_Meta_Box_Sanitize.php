@@ -96,11 +96,11 @@ class cmb_Meta_Box_Sanitize {
 	/**
 	 * Simple checkbox validation
 	 * @since  1.0.1
-	 * @param  mixed  $val 'on' or false
-	 * @return mixed         'on' or false
+	 * @param  mixed  $val 'on', 'off', or false
+	 * @return mixed       'on', 'off', or false
 	 */
 	public function checkbox( $value ) {
-		return $value === 'on' ? 'on' : false;
+		return $value === 'on' || $value === 'off' ? $value : false;
 	}
 
 	/**
