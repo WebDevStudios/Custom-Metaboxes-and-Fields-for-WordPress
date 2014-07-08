@@ -1,4 +1,4 @@
-# Custom Metaboxes and Fields for WordPress
+# Custom Metaboxes and Fields for WordPress [![Build Status](https://travis-ci.org/WebDevStudios/Custom-Metaboxes-and-Fields-for-WordPress.svg?branch=trunk)](https://travis-ci.org/WebDevStudios/Custom-Metaboxes-and-Fields-for-WordPress)
 
 **Contributors**:
 
@@ -8,7 +8,11 @@
 * Bill Erickson ( [@billerickson](http://twitter.com/billerickson ) / [billerickson.net](http://billerickson.net/) )
 * Andrew Norcross ( [@norcross](http://twitter.com/norcross ) / [andrewnorcross.com](http://andrewnorcross.com/) )
 
+<<<<<<< HEAD
 **Version**: 1.2.0 
+=======
+**Version**: 1.3.0 
+>>>>>>> trunk
 **Requires at least**: 3.5  
 **Tested up to**: 3.9  
 **License**: GPLv2  
@@ -95,6 +99,17 @@ All contributions welcome. If you would like to submit a pull request, please ch
 
 ## Changelog
 
+<<<<<<< HEAD
+=======
+### 1.3.0
+
+**Enhancements**
+ 
+* Localize Date, Time, and Color picker defaults so that they can be overridden via the `cmb_localized_data` filter. ([#528](https://github.com/WebDevStudios/Custom-Metaboxes-and-Fields-for-WordPress/issues/528))
+* Change third parameter for 'cmb_metabox_form' to be an args array. Optional arguments include `echo`, `form_format`, and `save_button`.
+* Add support for `show_option_none` argument for `taxonomy_select` and `taxonomy_radio` field types. Also adds the following filters: `cmb_all_or_nothing_types`, `cmb_taxonomy_select_default_value`, `cmb_taxonomy_select_{$this->_id()}_default_value`, `cmb_taxonomy_radio_{$this->_id()}_default_value`, `cmb_taxonomy_radio_default_value`. Props [@pmgarman](https://github.com/pmgarman), ([#569](https://github.com/WebDevStudios/Custom-Metaboxes-and-Fields-for-WordPress/pull/569)).
+
+>>>>>>> trunk
 ### 1.2.0
 
 **Enhancements**

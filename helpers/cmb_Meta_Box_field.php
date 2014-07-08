@@ -29,7 +29,7 @@ class cmb_Meta_Box_field {
 
 	/**
 	 * Field group object
-	 * @var   mixed
+	 * @var   array
 	 * @since 1.1.0
 	 */
 	public $group;
@@ -473,12 +473,11 @@ class cmb_Meta_Box_field {
 			$args['options']['textarea_name'] = $args['_name'];
 		}
 
-		$option_types = array( 'taxonomy_select', 'taxonomy_radio', 'taxonomy_radio_inline' );
+		$option_types = apply_filters( 'cmb_all_or_nothing_types', array( 'taxonomy_select', 'taxonomy_radio', 'taxonomy_radio_inline' ) );
 		if ( in_array( $args['type'], $option_types, true ) ) {
 
-			// @todo implemention
-			$args['show_option_all'] = isset( $args['show_option_all'] ) && ! $args['show_option_all'] ? false : true;
-			$args['show_option_none'] = isset( $args['show_option_none'] ) && ! $args['show_option_none'] ? false : true;
+			$args['show_option_none'] = isset( $args['show_option_none'] ) ? $args['show_option_none'] : 'None';
+			$args['show_option_all'] = isset( $args['show_option_all'] ) ? $args['show_option_all'] : 'All'; // @todo: implementation
 
 		}
 
