@@ -59,11 +59,7 @@ class cmb_Meta_Box {
 	 * @var   string
 	 * @since 1.0.0
 	 */
-<<<<<<< HEAD
 	const CMB_VERSION = '1.2.0';
-=======
-	const CMB_VERSION = '1.3.0';
->>>>>>> trunk
 
 	/**
 	 * Metabox Config array
