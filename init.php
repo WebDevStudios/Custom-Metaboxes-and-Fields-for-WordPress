@@ -7,7 +7,11 @@ Contributors: WebDevStudios (@webdevstudios / webdevstudios.com)
               Bill Erickson (@billerickson / billerickson.net)
               Andrew Norcross (@norcross / andrewnorcross.com)
 Description:  This will create metaboxes with custom fields that will blow your mind.
+<<<<<<< HEAD
 Version:      1.2.0
+=======
+Version:      1.3.0
+>>>>>>> trunk
 */
 
 /**
@@ -274,21 +278,32 @@ class cmb_Meta_Box {
 
 		wp_localize_script( 'cmb-scripts', 'cmb_l10', apply_filters( 'cmb_localized_data', array(
 			'ajax_nonce'      => wp_create_nonce( 'ajax_nonce' ),
+			'ajaxurl'         => admin_url( '/admin-ajax.php' ),
 			'script_debug'    => defined('SCRIPT_DEBUG') && SCRIPT_DEBUG,
 			'new_admin_style' => version_compare( $wp_version, '3.7', '>' ),
 			'object_type'     => self::get_object_type(),
-			'upload_file'     => 'Use this file',
-			'remove_image'    => 'Remove Image',
-			'remove_file'     => 'Remove',
-			'file'            => 'File:',
-			'download'        => 'Download',
-			'ajaxurl'         => admin_url( '/admin-ajax.php' ),
-			'up_arrow'        => '[ ↑ ]&nbsp;',
-			'down_arrow'      => '&nbsp;[ ↓ ]',
+			'upload_file'     => __( 'Use this file', 'cmb' ),
+			'remove_image'    => __( 'Remove Image', 'cmb' ),
+			'remove_file'     => __( 'Remove', 'cmb' ),
+			'file'            => __( 'File:', 'cmb' ),
+			'download'        => __( 'Download', 'cmb' ),
+			'up_arrow'        => __( '[ ↑ ]&nbsp;', 'cmb' ),
+			'down_arrow'      => __( '&nbsp;[ ↓ ]', 'cmb' ),
 			'check_toggle'    => __( 'Select / Deselect All', 'cmb' ),
+			'defaults'        => array(
+				'date_picker'  => false,
+				'color_picker' => false,
+				'time_picker'  => array(
+					'startTime'   => '00:00',
+					'endTime'     => '23:59',
+					'show24Hours' => false,
+					'separator'   => ':',
+					'step'        => 30
+				),
+			),
 		) ) );
 
-		wp_register_style( 'cmb-styles', CMB_META_BOX_URL . 'style'. $min .'.css', $styles );
+		wp_register_style( 'cmb-styles', CMB_META_BOX_URL . 'css/style'. $min .'.css', $styles );
 
 		// Ok, we've enqueued our scripts/styles
 		self::$is_enqueued = true;
@@ -385,12 +400,21 @@ class cmb_Meta_Box {
 
 		// Add nonce only once per page.
 		if ( ! self::$nonce_added ) {
+			// Use nonce for verification
 			wp_nonce_field( self::nonce(), 'wp_meta_box_nonce', false, true );
 			self::$nonce_added = true;
 		}
 
-		// Use nonce for verification
 		echo "\n<!-- Begin CMB Fields -->\n";
+		/**
+		 * Hook before form table begins
+		 *
+		 * @param array  $meta_box    Metabox config array
+		 * @param int    $object_id   The ID of the current object
+		 * @param string $object_type The type of object you are working with.
+		 *	                           Usually `post` (this applies to all post-types).
+		 *	                           Could also be `comment`, `user` or `options-page`.
+		 */
 		do_action( 'cmb_before_table', $meta_box, $object_id, $object_type );
 		echo '<table class="form-table cmb_metabox">';
 
@@ -413,6 +437,15 @@ class cmb_Meta_Box {
 			}
 		}
 		echo '</table>';
+		/**
+		 * Hook after form table has been rendered
+		 *
+		 * @param array  $meta_box    Metabox config array
+		 * @param int    $object_id   The ID of the current object
+		 * @param string $object_type The type of object you are working with.
+		 *	                           Usually `post` (this applies to all post-types).
+		 *	                           Could also be `comment`, `user` or `options-page`.
+		 */
 		do_action( 'cmb_after_table', $meta_box, $object_id, $object_type );
 		echo "\n<!-- End CMB Fields -->\n";
 
@@ -572,9 +605,23 @@ class cmb_Meta_Box {
 		}
 
 		// If options page, save the updated options
-		if ( $object_type == 'options-page' )
+		if ( $object_type == 'options-page' ) {
 			self::save_option( $object_id );
+		}
 
+		/**
+		 * Fires after all fields have been saved.
+		 *
+		 * The dynamic portion of the hook name, $object_type, refers to the metabox/form's object type
+		 * 	Usually `post` (this applies to all post-types).
+		 *  	Could also be `comment`, `user` or `options-page`.
+		 *
+		 * @param int    $object_id   The ID of the current object
+		 * @param array  $meta_box_id Metabox's id parameter
+		 * @param string $updated     All fields that were updated.
+		 *                            Will only include fields that had values change.
+		 * @param string $meta_box    The metabox config array.
+		 */
 		do_action( "cmb_save_{$object_type}_fields", $object_id, $meta_box['id'], self::$updated, $meta_box );
 
 	}
@@ -666,7 +713,7 @@ class cmb_Meta_Box {
 		// 		}
 		// 	}
 		// } else
-		if ( ! empty( $new_value ) && $new_value != $old  ) {
+		if ( ! empty( $new_value ) && $new_value !== $old  ) {
 			self::$updated[] = $name;
 			return $field->update_data( $new_value );
 		} elseif ( empty( $new_value ) ) {
@@ -850,7 +897,12 @@ class cmb_Meta_Box {
 			);
 		}
 
-		return trailingslashit( apply_filters('cmb_meta_box_url', $cmb_url ) );
+		/**
+		 * Filter the CMB location url
+		 *
+		 * @param string $cmb_url Currently registered url
+		 */
+		return trailingslashit( apply_filters( 'cmb_meta_box_url', $cmb_url ) );
 	}
 
 	/**
@@ -921,7 +973,7 @@ class cmb_Meta_Box {
 
 	/**
 	 * Retrieve option value based on name of option.
-	 * @uses apply_filters() Calls 'cmb_override_option_get_$option_key' hook to allow
+	 * @uses apply_filters() Calls 'cmb_override_option_get_{$option_key}' hook to allow
 	 * 	overwriting the option value to be retrieved.
 	 *
 	 * @since  1.0.1
@@ -931,7 +983,7 @@ class cmb_Meta_Box {
 	 */
 	public static function _get_option( $option_key, $default = false ) {
 
-		$test_get = apply_filters( "cmb_override_option_get_$option_key", 'cmb_no_override_option_get', $default );
+		$test_get = apply_filters( "cmb_override_option_get_{$option_key}", 'cmb_no_override_option_get', $default );
 
 		if ( $test_get !== 'cmb_no_override_option_get' )
 			return $test_get;
@@ -943,7 +995,7 @@ class cmb_Meta_Box {
 	/**
 	 * Saves the option array
 	 * Needs to be run after finished using remove/update_option
-	 * @uses apply_filters() Calls 'cmb_override_option_save_$option_key' hook to allow
+	 * @uses apply_filters() Calls 'cmb_override_option_save_{$option_key}' hook to allow
 	 * 	overwriting the option value to be stored.
 	 *
 	 * @since  1.0.1
@@ -954,7 +1006,7 @@ class cmb_Meta_Box {
 
 		$to_save = self::get_option( $option_key );
 
-		$test_save = apply_filters( "cmb_override_option_save_$option_key", 'cmb_no_override_option_save', $to_save );
+		$test_save = apply_filters( "cmb_override_option_save_{$option_key}", 'cmb_no_override_option_save', $to_save );
 
 		if ( $test_save !== 'cmb_no_override_option_save' )
 			return $test_save;
@@ -1139,10 +1191,22 @@ function cmb_save_metabox_fields( $meta_box, $object_id ) {
  * @since  1.0.0
  * @param  array   $meta_box  Metabox config array
  * @param  int     $object_id Object ID
+ * @param  array   $args      Optional arguments array
  * @param  boolean $return    Whether to return or echo form
  * @return string             CMB html form markup
  */
-function cmb_metabox_form( $meta_box, $object_id, $echo = true ) {
+function cmb_metabox_form( $meta_box, $object_id, $args = array() ) {
+
+	// Backwards compatibility
+	if ( is_bool( $args ) ) {
+		$args = array( 'echo' => $args );
+	}
+
+	$args = wp_parse_args( $args, array(
+		'echo'        => true,
+		'form_format' => '<form class="cmb-form" method="post" id="%s" enctype="multipart/form-data" encoding="multipart/form-data"><input type="hidden" name="object_id" value="%s">%s<input type="submit" name="submit-cmb" value="%s" class="button-primary"></form>',
+		'save_button' => __( 'Save' ),
+	) );
 
 	$meta_box = cmb_Meta_Box::set_mb_defaults( $meta_box );
 
@@ -1172,11 +1236,11 @@ function cmb_metabox_form( $meta_box, $object_id, $echo = true ) {
 	$form = ob_get_contents();
 	ob_end_clean();
 
-	$form_format = apply_filters( 'cmb_frontend_form_format', '<form class="cmb-form" method="post" id="%s" enctype="multipart/form-data" encoding="multipart/form-data"><input type="hidden" name="object_id" value="%s">%s<input type="submit" name="submit-cmb" value="%s" class="button-primary"></form>', $object_id, $meta_box, $form );
+	$form_format = apply_filters( 'cmb_frontend_form_format', $args['form_format'], $object_id, $meta_box, $form );
 
-	$form = sprintf( $form_format, $meta_box['id'], $object_id, $form, __( 'Save' ) );
+	$form = sprintf( $form_format, $meta_box['id'], $object_id, $form, $args['save_button'] );
 
-	if ( $echo )
+	if ( $args['echo'] )
 		echo $form;
 
 	return $form;

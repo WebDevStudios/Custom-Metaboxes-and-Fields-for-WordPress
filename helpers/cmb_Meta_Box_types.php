@@ -36,7 +36,22 @@ class cmb_Meta_Box_types {
 	 * @param  array  $arguments All arguments passed to the method
 	 */
 	public function __call( $name, $arguments ) {
-		// When a non-registered field is called, send it through an action.
+		/**
+		 * Pass non-existent field types through an action
+		 *
+		 * The dynamic portion of the hook name, $name, refers to the field type.
+		 *
+		 * @param array  $field_args         The passed in field arguments augmented with defaults
+		 * @param mixed  $escaped_value      The value of this field escaped.
+		 *                                   It defaults to `sanitize_text_field`.
+		 *                                   If you need the unescaped value, you can access it
+		 *                                   via `$field_type_object->value()`
+		 * @param int    $object_id          The ID of the current object
+		 * @param string $object_type        The type of object you are working with.
+		 *                                   Most commonly, `post` (this applies to all post-types),
+		 *                                   but could also be `comment`, `user` or `options-page`.
+		 * @param object $field_type_object  This `cmb_Meta_Box_types` object
+		 */
 		do_action( "cmb_render_$name", $this->field->args(), $this->field->escaped_value(), $this->field->object_id, $this->field->object_type, $this );
 	}
 
@@ -138,8 +153,9 @@ class cmb_Meta_Box_types {
 	public function concat_attrs( $attrs, $attr_exclude = array() ) {
 		$attributes = '';
 		foreach ( $attrs as $attr => $val ) {
-			if ( ! in_array( $attr, (array) $attr_exclude, true ) )
+			if ( ! in_array( $attr, (array) $attr_exclude, true ) ) {
 				$attributes .= sprintf( ' %s="%s"', $attr, $val );
+			}
 		}
 		return $attributes;
 	}
@@ -287,7 +303,7 @@ class cmb_Meta_Box_types {
 		// Then add an empty row
 		$this->field->escaped_value = '';
 		$this->iterator = $this->iterator ? $this->iterator : 1;
-		$this->repeat_row( 'empty-row' );
+		$this->repeat_row( 'empty-row hidden' );
 	}
 
 	/**
@@ -552,6 +568,13 @@ class cmb_Meta_Box_types {
 		$terms      = get_terms( $this->field->args( 'taxonomy' ), 'hide_empty=0' );
 		$options    = '';
 
+		$option_none  = $this->field->args( 'show_option_none' );
+		if( ! empty( $option_none ) ) {
+			$option_none_value = apply_filters( "cmb_taxonomy_select_{$this->_id()}_default_value", apply_filters( 'cmb_taxonomy_select_default_value', '' ) );
+			$selected = $saved_term == $option_none_value;
+			$options .= $this->option( $option_none, $option_none_value, $selected );
+		}
+
 		foreach ( $terms as $term ) {
 			$selected = $saved_term == $term->slug;
 			$options .= $this->option( $term->name, $term->slug, $selected );
@@ -600,6 +623,20 @@ class cmb_Meta_Box_types {
 		if ( ! $terms ) {
 			$options .= '<li><label>'. __( 'No terms', 'cmb' ) .'</label></li>';
 		} else {
+			$option_none  = $this->field->args( 'show_option_none' );
+			if( ! empty( $option_none ) ) {
+				$option_none_value = apply_filters( "cmb_taxonomy_radio_{$this->_id()}_default_value", apply_filters( 'cmb_taxonomy_radio_default_value', '' ) );
+				$args = array(
+					'value' => $option_none_value,
+					'label' => $option_none,
+				);
+				if( $saved_term == $option_none_value ) {
+					$args['checked'] = 'checked';
+				}
+				$options .= $this->list_input( $args, $i );
+				$i++;
+			}
+
 			foreach ( $terms as $term ) {
 				$args = array(
 					'value' => $term->slug,
@@ -623,13 +660,13 @@ class cmb_Meta_Box_types {
 
 	public function taxonomy_multicheck() {
 
-		$names   = $this->get_object_terms();
-		$saved_terms   = is_wp_error( $names ) || empty( $names )
+		$names       = $this->get_object_terms();
+		$saved_terms = is_wp_error( $names ) || empty( $names )
 			? $this->field->args( 'default' )
 			: wp_list_pluck( $names, 'slug' );
-		$terms   = get_terms( $this->field->args( 'taxonomy' ), 'hide_empty=0' );
-		$name    = $this->_name() .'[]';
-		$options = ''; $i = 1;
+		$terms       = get_terms( $this->field->args( 'taxonomy' ), 'hide_empty=0' );
+		$name        = $this->_name() .'[]';
+		$options     = ''; $i = 1;
 
 		if ( ! $terms ) {
 			$options .= '<li><label>'. __( 'No terms', 'cmb' ) .'</label></li>';
@@ -711,6 +748,12 @@ class cmb_Meta_Box_types {
 		}
 
 		echo '</ul>';
+		echo '<script>
+			jQuery(document).ready(function($) {
+				$( "#', $this->_id( '_status' ) ,'" ).sortable({ cursor: "move" });
+				$( "#', $this->_id( '_status' ) ,'" ).disableSelection();
+			});
+		      </script>';
 	}
 
 	public function file() {
