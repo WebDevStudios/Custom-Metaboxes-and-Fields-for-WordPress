@@ -1,9 +1,13 @@
 <?php
 
-class CMB_Core_Test extends WP_UnitTestCase {
+if (!class_exists('CMB_Core_Test')) {
 
-	public function test_cmb_has_version_number() {
-		$this->assertNotNull( cmb_Meta_Box::CMB_VERSION );
+	class CMB_Core_Test extends WP_UnitTestCase {
+
+		public function test_cmb_has_version_number() {
+			$this->assertNotNull( cmb_Meta_Box::CMB_VERSION );
+		}
+
 	}
 
 }
