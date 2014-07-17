@@ -447,6 +447,28 @@ class cmb_Meta_Box {
 		 *	                           Could also be `comment`, `user` or `options-page`.
 		 */
 		do_action( 'cmb_after_table', $meta_box, $object_id, $object_type );
+		if ( isset( $meta_box['show_on']['key'] ) && 'show-hide' === $meta_box['show_on']['key'] ) {
+			$templates = 'pageTemplate === \'';
+			$templates .= implode('\' || pageTemplate === \'', $meta_box['show_on']['value'] );
+			$templates .= '\'';
+			echo "<script>
+				jQuery(document).ready(function($) {
+					$(document).ready(function() {
+						toggleFields();
+						$('#page_template').change(function() { toggleFields(); });
+ 
+					});
+					function toggleFields()
+					{
+						var pageTemplate = $('#page_template').val();
+						if (".$templates.")
+							$('#".$meta_box['id']."').show();
+						else
+							$('#".$meta_box['id']."').hide();
+					}
+				});
+			  </script>";
+		}
 		echo "\n<!-- End CMB Fields -->\n";
 
 	}
