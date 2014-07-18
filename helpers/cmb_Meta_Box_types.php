@@ -583,6 +583,27 @@ class cmb_Meta_Box_types {
 		return $this->select( array( 'options' => $options ) );
 	}
 
+	public function post_select() {
+	
+		$saved_value = $this->field->escaped_value();
+		$posts = get_posts( array('post_type' => $this->field->args( 'post_type' ), 'posts_per_page' => -1) );
+		$options    = '';
+
+		$option_none  = $this->field->args( 'show_option_none' );
+		if( ! empty( $option_none ) ) {
+			$option_none_value = apply_filters( "cmb_post_select_{$this->_id()}_default_value", apply_filters( 'cmb_post_select_default_value', '' ) );
+			$selected = $saved_value == $option_none_value;
+			$options .= $this->option( $option_none, $option_none_value, $selected );
+		}
+
+		foreach ( $posts as $post ) {
+			$selected = $saved_value == $post->ID;
+			$options .= $this->option( $post->post_title, $post->ID, $selected );
+		}
+
+		return $this->select( array( 'options' => $options ) );
+	}
+
 	public function radio( $args = array(), $type = 'radio' ) {
 		extract( $this->parse_args( $args, $type, array(
 			'class'   => 'cmb_radio_list cmb_list',
@@ -658,6 +679,49 @@ class cmb_Meta_Box_types {
 		$this->taxonomy_radio();
 	}
 
+	public function post_radio() {
+		$saved_value = $this->field->escaped_value();
+		$posts = get_posts( array('post_type' => $this->field->args( 'post_type' ), 'posts_per_page' => -1) );
+		$options    = ''; $i = 1;
+
+		if ( ! $posts ) {
+			$options .= '<li><label>'. __( 'No posts', 'cmb' ) .'</label></li>';
+		} else {
+			$option_none  = $this->field->args( 'show_option_none' );
+			if( ! empty( $option_none ) ) {
+				$option_none_value = apply_filters( "cmb_post_radio_{$this->_id()}_default_value", apply_filters( 'cmb_taxonomy_post_default_value', '' ) );
+				$args = array(
+					'value' => $option_none_value,
+					'label' => $option_none,
+				);
+				if( $saved_value == $option_none_value ) {
+					$args['checked'] = 'checked';
+				}
+				$options .= $this->list_input( $args, $i );
+				$i++;
+			}
+
+			foreach ( $posts as $post ) {
+				$args = array(
+					'value' => $post->ID,
+					'label' => $post->post_title,
+				);
+
+				if ( $saved_value == $post->ID ) {
+					$args['checked'] = 'checked';
+				}
+				$options .= $this->list_input( $args, $i );
+				$i++;
+			}
+		}
+
+		return $this->radio( array( 'options' => $options ), 'post_radio' );
+	}
+
+	public function post_radio_inline() {
+		$this->post_radio();
+	}
+
 	public function taxonomy_multicheck() {
 
 		$names       = $this->get_object_terms();
@@ -693,6 +757,40 @@ class cmb_Meta_Box_types {
 
 	public function taxonomy_multicheck_inline() {
 		$this->taxonomy_multicheck();
+	}
+
+	public function post_multicheck() {
+
+		$saved_value = $this->field->escaped_value();
+		$posts = get_posts( array('post_type' => $this->field->args( 'post_type' ), 'posts_per_page' => -1) );
+		$name        = $this->_name() .'[]';
+		$options     = ''; $i = 1;
+
+		if ( ! $posts ) {
+			$options .= '<li><label>'. __( 'No terms', 'cmb' ) .'</label></li>';
+		} else {
+
+			foreach ( $posts as $post ) {
+				$args = array(
+					'value' => $post->ID,
+					'label' => $post->post_title,
+					'type' => 'checkbox',
+					'name' => $name,
+				);
+
+				if ( is_array( $saved_value ) && in_array( $post->ID, $saved_value ) ) {
+					$args['checked'] = 'checked';
+				}
+				$options .= $this->list_input( $args, $i );
+				$i++;
+			}
+		}
+
+		return $this->radio( array( 'class' => 'cmb_checkbox_list cmb_list', 'options' => $options ), 'post_multicheck' );
+	}
+
+	public function post_multicheck_inline() {
+		$this->post_multicheck();
 	}
 
 	public function file_list() {

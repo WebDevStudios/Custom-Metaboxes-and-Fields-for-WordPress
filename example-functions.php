@@ -208,6 +208,29 @@ function cmb_sample_metaboxes( array $meta_boxes ) {
 				// 'inline'  => true, // Toggles display to inline
 			),
 			array(
+				'name'     => __( 'Test Post Type Radio', 'cmb' ),
+				'desc'     => __( 'field description (optional)', 'cmb' ),
+				'id'       => $prefix . 'text_post_radio',
+				'type'     => 'post_radio',
+				'post_type' => 'post', // Post type Slug
+				// 'inline'  => true, // Toggles display to inline
+			),
+			array(
+				'name'     => __( 'Test Post Type Select', 'cmb' ),
+				'desc'     => __( 'field description (optional)', 'cmb' ),
+				'id'       => $prefix . 'text_post_select',
+				'type'     => 'post_select',
+				'post_type' => 'page', // Post type Slug
+			),
+			array(
+				'name'     => __( 'Test Post Type Multi Checkbox', 'cmb' ),
+				'desc'     => __( 'field description (optional)', 'cmb' ),
+				'id'       => $prefix . 'test_multipost',
+				'type'     => 'post_multicheck',
+				'post_type' => 'post', // Post type Slug
+				// 'inline'  => true, // Toggles display to inline
+			),
+			array(
 				'name' => __( 'Test Checkbox', 'cmb' ),
 				'desc' => __( 'field description (optional)', 'cmb' ),
 				'id'   => $prefix . 'test_checkbox',
