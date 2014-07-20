@@ -232,6 +232,26 @@ class cmb_Meta_Box_types {
 	}
 
 	/**
+	 * Generates html for list item image for the radio_image type
+	 * @since  1.2.0
+	 * @param  array  $args Override arguments
+	 * @param  int    $i    Iterator value
+	 * @return string       Gnerated list image html
+	 */
+	public function list_image( $args = array(), $i ) {
+		$args = $this->parse_args( $args, 'list_input', array(
+			'type'  => 'radio',
+			'class' => 'cmb_option list_image',
+			'name'  => $this->_name(),
+			'id'    => $this->_id( $i ),
+			'value' => $this->field->escaped_value(),
+			'label' => array(),
+		) );
+
+		return sprintf( "\t".'<li><input%s/> <label for="%s">%s</label><img src="%s" onClick="document.getElementById(\'%s\').checked = true;" title="%s" /></li>'."\n", $this->concat_attrs( $args, 'label' ), $args['id'], $args['label'][0], $args['label'][1], $args['id'], $args['label'][0] );
+	}
+
+	/**
 	 * Generates html for list item with checkbox input
 	 * @since  1.1.0
 	 * @param  array  $args Override arguments
@@ -626,9 +646,10 @@ class cmb_Meta_Box_types {
 	public function taxonomy_multiselect( $args = array() ) {
 
 		$names      = $this->get_object_terms();
-		$saved_term = is_wp_error( $names ) || empty( $names ) ? $this->field->args( 'default' ) : $names[0]->slug;
+		$saved_terms = is_wp_error( $names ) || empty( $names ) ? $this->field->args( 'default' ) : $names[0]->slug;
 		$terms      = get_terms( $this->field->args( 'taxonomy' ), 'hide_empty=0' );
 		$options    = '';
+		$i = 1;
 
 		$option_none  = $this->field->args( 'show_option_none' );
 		if( ! empty( $option_none ) ) {
@@ -682,6 +703,7 @@ class cmb_Meta_Box_types {
 		$saved_value = $this->field->escaped_value();
 		$posts = get_posts( array('post_type' => $this->field->args( 'post_type' ), 'posts_per_page' => -1) );
 		$options    = '';
+		$i = 1;
 
 		$option_none  = $this->field->args( 'show_option_none' );
 		if( ! empty( $option_none ) ) {
@@ -715,6 +737,29 @@ class cmb_Meta_Box_types {
 		) ) );
 
 		return sprintf( '<ul class="%s">%s</ul>%s', $class, $options, $desc );
+	}
+
+	public function radio_image( $args = array(), $type = 'radio' ) {
+		extract( $this->parse_args( $args, $type, array(
+			'class'   => 'cmb_radio_list cmb_list cmb_radio_image',
+			'options' => $this->concat_options( array( 'label' => 'test' ), 'list_image' ),
+			'desc'    => $this->_desc( true ),
+		) ) );
+		$id = $this->field->args( 'id' );
+		$desc .=	"<script>
+						jQuery(document).ready(function($) {
+							var selected = $( '#".$id." li input[type=radio]:checked' ).parent();
+							$( 'img', selected ).addClass( 'cmb-selected' );
+							$( '#".$id." li img' ).click( function() {
+		
+								$( '#".$id." li img' ).removeClass( 'cmb-selected' );
+								$( this ).addClass( 'cmb-selected' );
+
+							});
+						});
+					</script>";
+					
+		return sprintf( '<ul id="%s" class="%s">%s</ul>%s', $id, $class, $options, $desc );
 	}
 
 	public function radio_inline() {

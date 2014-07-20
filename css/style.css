@@ -152,11 +152,9 @@ table.cmb_metabox select {
   font-size: 14px;
   margin-top: 3px;
 }
-table.cmb_metabox select.cmb_multiselect.chosen,
-table.cmb_metabox select.cmb_taxonomy_multiselect.chosen,
-table.cmb_metabox select.cmb_post_multiselect.chosen 
-{
-  width:50%;
+
+table.cmb_metabox select.cmb_multiselect.chosen, table.cmb_metabox select.cmb_taxonomy_multiselect.chosen, table.cmb_metabox select.cmb_post_multiselect.chosen {
+  width:50%
 }
 /* line 149, style.scss */
 table.cmb_metabox input:focus, table.cmb_metabox textarea:focus {
@@ -185,10 +183,27 @@ table.cmb_metabox input:focus, table.cmb_metabox textarea:focus {
   padding-right: 18px;
 }
 
+.cmb-inline .cmb_radio_image li { 
+  padding-right: 0;
+}
+
+table.cmb_metabox .cmb_radio_image input[type="radio"], table.cmb_metabox .cmb_radio_image label {
+  display: none;
+}
+
 /* line 172, style.scss */
 table.cmb_metabox input[type="radio"] {
   margin: 0 5px 0 0;
   padding: 0;
+}
+
+table.cmb_metabox .cmb_radio_image img {
+  border:3px solid transparent;
+  padding:1px
+}
+
+table.cmb_metabox .cmb_radio_image img.cmb-selected {
+  border:3px solid green;
 }
 
 /* line 177, style.scss */

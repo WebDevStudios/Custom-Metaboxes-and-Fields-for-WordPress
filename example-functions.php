@@ -232,6 +232,18 @@ function cmb_sample_metaboxes( array $meta_boxes ) {
 				),
 			),
 			array(
+				'name'    => __( 'Test Image Radio', 'cmb' ),
+				'desc'    => __( 'field description (optional)', 'cmb' ),
+				'id'      => $prefix . 'test_image_radio',
+				'type'    => 'radio_image',
+				'options' => array(
+					'option1' => array( __( 'Option One', 'cmb' ), cmb_Meta_Box::get_meta_box_url() . 'images/placeholder.png' ),
+					'option2' => array( __( 'Option Two', 'cmb' ), cmb_Meta_Box::get_meta_box_url() . 'images/placeholder.png' ),
+					'option3' => array( __( 'Option Three', 'cmb' ), cmb_Meta_Box::get_meta_box_url() . 'images/placeholder.png' ),
+				),
+				'inline'  => true, // Toggles display to inline
+			),
+			array(
 				'name'     => __( 'Test Taxonomy Radio', 'cmb' ),
 				'desc'     => __( 'field description (optional)', 'cmb' ),
 				'id'       => $prefix . 'text_taxonomy_radio',
