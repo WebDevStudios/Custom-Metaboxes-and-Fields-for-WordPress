@@ -20,10 +20,15 @@ window.CMB = (function(window, document, $, undefined){
 
 	// CMB functionality object
 	var cmb = {
-		formfield   : '',
-		idNumber    : false,
-		file_frames : {},
-		repeatEls   : 'input:not([type="button"]),select,textarea,.cmb_media_status'
+		formfield          : '',
+		idNumber           : false,
+		file_frames        : {},
+		repeatEls          : 'input:not([type="button"]),select,textarea,.cmb_media_status',
+		defaults : {
+			timePicker  : l10n.defaults.time_picker,
+			datePicker  : l10n.defaults.date_picker,
+			colorPicker : l10n.defaults.color_picker || {},
+		}
 	};
 
 	cmb.metabox = function() {
@@ -282,7 +287,7 @@ window.CMB = (function(window, document, $, undefined){
 		$inputs.filter(':checked').removeAttr( 'checked' );
 		$inputs.filter(':selected').removeAttr( 'selected' );
 
-		if ( $self.find('.cmb-group-title') ) {
+		if ( $self.find('.cmb-group-title').length ) {
 			$self.find( '.cmb-group-title h4' ).text( $self.data( 'title' ).replace( '{#}', ( cmb.idNumber + 1 ) ) );
 		}
 
@@ -470,7 +475,7 @@ window.CMB = (function(window, document, $, undefined){
 
 		$row.newRowHousekeeping().cleanRow( prevNum );
 
-		$emptyrow.removeClass('empty-row').addClass('repeat-row');
+		$emptyrow.removeClass('empty-row hidden').addClass('repeat-row');
 		$emptyrow.after( $row );
 
 		cmb.afterRowInsert( $row );
@@ -506,7 +511,7 @@ window.CMB = (function(window, document, $, undefined){
 
 		// cmb.log( 'number of tbodys', $table.length );
 		// cmb.log( 'number of trs', $('tr', $table).length );
-		if ( $table.find('tr').length > 1 ) {
+		if ( $table.find('tr').length > 2 ) {
 			if ( $parent.hasClass('empty-row') ) {
 				$parent.prev().addClass( 'empty-row' ).removeClass('repeat-row');
 			}
@@ -577,9 +582,6 @@ window.CMB = (function(window, document, $, undefined){
 		});
 	};
 
-	/**
-	 * @todo make work, always
-	 */
 	cmb.initPickers = function( $timePickers, $datePickers, $colorPickers ) {
 		// Initialize timepicker
 		cmb.initTimePickers( $timePickers );
@@ -596,13 +598,7 @@ window.CMB = (function(window, document, $, undefined){
 			return;
 		}
 
-		$selector.timePicker({
-			startTime: "00:00",
-			endTime: "23:59",
-			show24Hours: false,
-			separator: ':',
-			step: 30
-		});
+		$selector.timePicker( cmb.defaults.timePicker );
 	};
 
 	cmb.initDatePickers = function( $selector ) {
@@ -612,6 +608,11 @@ window.CMB = (function(window, document, $, undefined){
 
 		$selector.datepicker( "destroy" );
 		$selector.datepicker();
+
+		// Set the defaults if we have any
+		if ( cmb.defaults.datePicker && ! $.isEmptyObject( cmb.defaults.datePicker ) ) {
+			$.datepicker.setDefaults( cmb.defaults.datePicker );
+		}
 	};
 
 	cmb.initColorPickers = function( $selector ) {
@@ -620,7 +621,7 @@ window.CMB = (function(window, document, $, undefined){
 		}
 		if (typeof jQuery.wp === 'object' && typeof jQuery.wp.wpColorPicker === 'function') {
 
-			$selector.wpColorPicker();
+			$selector.wpColorPicker( cmb.defaults.colorPicker );
 
 		} else {
 			$selector.each( function(i) {
