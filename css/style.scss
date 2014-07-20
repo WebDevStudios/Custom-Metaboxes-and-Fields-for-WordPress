@@ -146,6 +146,15 @@ table.cmb_metabox {
 		margin-top: 3px
 	}
 
+	select {
+		font-size:14px;
+		margin-top: 3px
+	}
+	
+	select.cmb_multiselect.chosen, select.cmb_taxonomy_multiselect.chosen, select.cmb_post_multiselect.chosen {
+		width:50%;
+	}
+
 	input:focus, textarea:focus {
 		background: #fffff8
 	}

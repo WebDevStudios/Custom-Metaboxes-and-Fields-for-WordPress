@@ -163,6 +163,53 @@ function cmb_sample_metaboxes( array $meta_boxes ) {
 				),
 			),
 			array(
+				'name'    => __( 'Test Multiple Select', 'cmb' ),
+				'desc'    => __( 'field description (optional)', 'cmb' ),
+				'id'      => $prefix . 'test_multiple_select',
+				'type'    => 'multiselect', // It is reccomended to use the field
+											// type 'test_multicheckbox' instead of this.
+											// The main purpose of this field type is
+											// to be passed to the 'chosen' field type.
+				'options' => array(
+					'standard'   => __( 'Option One', 'cmb' ),
+					'custom'     => __( 'Option Two', 'cmb' ),
+					'none'       => __( 'Option Three', 'cmb' ),
+					'additional' => __( 'Option Four', 'cmb' ),
+					'extra'      => __( 'Option Five', 'cmb' ),
+				),
+			),
+			array(
+				'name'    => __( 'Test Chosen Select', 'cmb' ),
+				'desc'    => __( 'field description (optional)', 'cmb' ),
+				'id'      => $prefix . 'test_chosen',
+				'type'    => 'chosen', 	 // Creates an optimized version of any available
+									   	 // select fields with chosen.js. http://harvesthq.github.io/chosen/
+				'select'    => 'select', // the 'select' argument will take any of the select field 'type's.
+										 // including: 'select', 'multiselect', 'taxonomy_select',
+										 // 'taxonomy_multiselect', 'post_select', and 'post_multiselect'.
+				'options' => array(	
+					'standard'   => __( 'Option One', 'cmb' ),
+					'custom'     => __( 'Option Two', 'cmb' ),
+					'none'       => __( 'Option Three', 'cmb' ),
+					'additional' => __( 'Option Four', 'cmb' ),
+					'extra'      => __( 'Option Five', 'cmb' ),
+				),
+			),
+			array(
+				'name'    => __( 'Test Chosen Multiple Select', 'cmb' ),
+				'desc'    => __( 'field description (optional)', 'cmb' ),
+				'id'      => $prefix . 'test_tax_chosen',
+				'type'    => 'chosen', 	 // Creates an optimized version of any available
+									   	 // select fields with chosen.js. http://harvesthq.github.io/chosen/
+				'select'    => 'taxonomy_multiselect',// the 'select' argument will take any of the select field 'type's.
+										 			  // including: 'select', 'multiselect', 'taxonomy_select',
+										 			  // 'taxonomy_multiselect', 'post_select', and 'post_multiselect'.
+				'taxonomy'    => 'category', // If 'taxonomy_select' or 'taxonomy_multiselect' are used you need to define
+											 // which taxonomy to use.
+				//'post_type'    => 'post',  // If 'post_select' or 'post_multiselect' are used you need to define
+											 // which post type to use.
+			),
+			array(
 				'name'    => __( 'Test Radio inline', 'cmb' ),
 				'desc'    => __( 'field description (optional)', 'cmb' ),
 				'id'      => $prefix . 'test_radio_inline',
@@ -200,6 +247,16 @@ function cmb_sample_metaboxes( array $meta_boxes ) {
 				'taxonomy' => 'category', // Taxonomy Slug
 			),
 			array(
+				'name'     => __( 'Test Taxonomy Multiple Select', 'cmb' ),
+				'desc'     => __( 'field description (optional)', 'cmb' ),
+				'id'       => $prefix . 'text_taxonomy_multiselect',
+				'type'     => 'taxonomy_multiselect', // It is reccomended to use the field
+													  // type 'taxonomy_multicheck' instead of this.
+													  // The main purpose of this field type is
+													  // to be passed to the 'chosen' field type.
+				'taxonomy' => 'category', // Taxonomy Slug
+			),
+			array(
 				'name'     => __( 'Test Taxonomy Multi Checkbox', 'cmb' ),
 				'desc'     => __( 'field description (optional)', 'cmb' ),
 				'id'       => $prefix . 'test_multitaxonomy',
@@ -212,8 +269,21 @@ function cmb_sample_metaboxes( array $meta_boxes ) {
 				'desc'     => __( 'field description (optional)', 'cmb' ),
 				'id'       => $prefix . 'text_post_radio',
 				'type'     => 'post_radio',
-				'post_type' => 'post', // Post type Slug
+				'post_type' => 'post', // Post type Slug i.e. 'page', 'post', or any custom 
+									   // post type like 'product'. Returns values of post IDs
 				// 'inline'  => true, // Toggles display to inline
+			),
+			array(
+				'name'     => __( 'Test Post Type Multiple Select', 'cmb' ),
+				'desc'     => __( 'field description (optional)', 'cmb' ),
+				'id'       => $prefix . 'text_post_multiselect',
+				'type'     => 'post_multiselect', // It is reccomended to use the field
+												  // type 'post_multicheck' instead of this.
+												  // The main purpose of this field type is
+												  // to be passed to the 'chosen' field type.
+												  
+				'post_type' => 'page', // Post type Slug i.e. 'page', 'post', or any custom 
+									   // post type like 'product'. Returns values of post IDs
 			),
 			array(
 				'name'     => __( 'Test Post Type Select', 'cmb' ),
@@ -227,7 +297,8 @@ function cmb_sample_metaboxes( array $meta_boxes ) {
 				'desc'     => __( 'field description (optional)', 'cmb' ),
 				'id'       => $prefix . 'test_multipost',
 				'type'     => 'post_multicheck',
-				'post_type' => 'post', // Post type Slug
+				'post_type' => 'post', // Post type Slug i.e. 'page', 'post', or any custom 
+									   // post type like 'product'. Returns values of post IDs
 				// 'inline'  => true, // Toggles display to inline
 			),
 			array(

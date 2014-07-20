@@ -259,6 +259,7 @@ class cmb_Meta_Box_field {
 		return in_array( $this->type(), array(
 			'file_list',
 			'multicheck',
+			'multiselect',
 			'text_datetime_timestamp_timezone',
 		) );
 	}

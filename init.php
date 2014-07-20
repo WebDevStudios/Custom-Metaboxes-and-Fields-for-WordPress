@@ -246,9 +246,9 @@ class cmb_Meta_Box {
 		$min = defined('SCRIPT_DEBUG') && SCRIPT_DEBUG ? '' : '.min';
 
 		// scripts required for cmb
-		$scripts = array( 'jquery', 'jquery-ui-core', 'cmb-datepicker', /*'media-upload', */'cmb-timepicker' );
+		$scripts = array( 'jquery', 'jquery-ui-core', 'cmb-datepicker', /*'media-upload', */'cmb-timepicker', 'cmb-chosen' );
 		// styles required for cmb
-		$styles = array();
+		$styles = array('cmb-chosen-styles');
 
 		// if we're 3.5 or later, user wp-color-picker
 		if ( 3.5 <= $wp_version ) {
@@ -272,6 +272,7 @@ class cmb_Meta_Box {
 		}
 		wp_register_script( 'cmb-datepicker', CMB_META_BOX_URL . 'js/jquery.datePicker.min.js' );
 		wp_register_script( 'cmb-timepicker', CMB_META_BOX_URL . 'js/jquery.timePicker.min.js' );
+		wp_register_script( 'cmb-chosen', CMB_META_BOX_URL . 'js/chosen.jquery.min.js' );
 		wp_register_script( 'cmb-scripts', CMB_META_BOX_URL .'js/cmb'. $min .'.js', $scripts, self::CMB_VERSION );
 
 		wp_enqueue_media();
@@ -304,6 +305,7 @@ class cmb_Meta_Box {
 		) ) );
 
 		wp_register_style( 'cmb-styles', CMB_META_BOX_URL . 'css/style'. $min .'.css', $styles );
+		wp_register_style( 'cmb-chosen-styles', CMB_META_BOX_URL . 'css/chosen.min.css' );
 
 		// Ok, we've enqueued our scripts/styles
 		self::$is_enqueued = true;
