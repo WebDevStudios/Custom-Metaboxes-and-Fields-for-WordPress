@@ -1,5 +1,4 @@
-# CMB Test Suite
-
+# CMB Test Suite [![Build Status](https://travis-ci.org/WebDevStudios/Custom-Metaboxes-and-Fields-for-WordPress.svg?branch=trunk)](https://travis-ci.org/WebDevStudios/Custom-Metaboxes-and-Fields-for-WordPress)
 
 The CMB Test Suite uses PHPUnit to help us maintain the best possible code quality.
 
@@ -26,8 +25,13 @@ If you haven't already installed the WordPress testing library, we have a helpfu
 
 Note: you'll need to already have `svn`, `wget`, and `mysql` available.
 
+Change to the CMB directory:
 ```bash
-./tests/bin/install-wp-tests.sh wordpress_test root '' localhost latest
+cd Custom-Metaboxes-and-Fields-for-WordPress
+```
+
+```bash
+bash tests/bin/install-wp-tests.sh wordpress_test root '' localhost latest
 ```
 * `wordpress_test` is the name of the test database (**all data will be deleted!**)
 * `root` is the MySQL user name
