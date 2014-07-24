@@ -159,7 +159,8 @@ class cmb_Meta_Box {
 	 */
 	protected static $new_values = array();
 
-	/** Get started
+	/**
+	 * Get started
 	 */
 	function __construct( $meta_box ) {
 
