@@ -432,7 +432,7 @@ class cmb_Meta_Box_types {
 	}
 
 	public function wysiwyg( $args = array() ) {
-		extract( $this->parse_args( $args, 'input', array(
+		extract( $this->parse_args( $args, 'wysiwyg', array(
 			'id'      => $this->_id(),
 			'value'   => $this->field->escaped_value( 'stripslashes' ),
 			'desc'    => $this->_desc( true ),
