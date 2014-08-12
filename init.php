@@ -1,5 +1,4 @@
 <?php
-defined( 'ABSPATH' ) || exit;
 /*
 Script Name:  Custom Metaboxes and Fields
 Contributors: WebDevStudios (@webdevstudios / webdevstudios.com)
@@ -39,7 +38,8 @@ Version:      1.3.0
 spl_autoload_register('cmb_Meta_Box::autoload_helpers');
 
 //  Define path
-define( 'CMB_META_BOX_URL', cmb_Meta_Box::get_meta_box_url() );
+if (!defined('CMB_META_BOX_URL' ))
+	define( 'CMB_META_BOX_URL', cmb_Meta_Box::get_meta_box_url() );
 
 // Load Translation
 load_textdomain('cmb', CMB_META_BOX_URL . get_locale() . '.mo');
