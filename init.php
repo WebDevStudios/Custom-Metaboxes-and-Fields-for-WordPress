@@ -256,13 +256,13 @@ class cmb_Meta_Box {
 			$styles[] = 'wp-color-picker';
 			if ( ! is_admin() ) {
 				// we need to register colorpicker on the front-end
-			   wp_register_script( 'iris', admin_url( 'js/iris.min.js' ), array( 'jquery-ui-draggable', 'jquery-ui-slider', 'jquery-touch-punch' ), self::CMB_VERSION );
-		   	wp_register_script( 'wp-color-picker', admin_url( 'js/color-picker.min.js' ), array( 'iris' ), self::CMB_VERSION );
+			   	wp_register_script( 'iris', admin_url( 'js/iris.min.js' ), array( 'jquery-ui-draggable', 'jquery-ui-slider', 'jquery-touch-punch' ), self::CMB_VERSION );
+		   		wp_register_script( 'wp-color-picker', admin_url( 'js/color-picker.min.js' ), array( 'iris' ), self::CMB_VERSION );
 				wp_localize_script( 'wp-color-picker', 'wpColorPickerL10n', array(
-					'clear'         => __( 'Clear' ),
-					'defaultString' => __( 'Default' ),
-					'pick'          => __( 'Select Color' ),
-					'current'       => __( 'Current Color' ),
+					'clear'         => __( 'Clear', 'cmb' ),
+					'defaultString' => __( 'Default', 'cmb' ),
+					'pick'          => __( 'Select Color', 'cmb' ),
+					'current'       => __( 'Current Color', 'cmb' ),
 				) );
 			}
 		} else {
