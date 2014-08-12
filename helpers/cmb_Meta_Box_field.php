@@ -382,21 +382,25 @@ class cmb_Meta_Box_field {
 
 		printf( "<tr class=\"%s\">\n", $classes );
 
-		if ( 'title' == $this->type() || ! $this->args( 'show_names' ) || $is_side ) {
-			echo "\t<td colspan=\"2\">\n";
-
-			if ( ! $this->args( 'show_names' ) || $is_side ) {
-				$style = ! $is_side || 'title' == $this->type() ? ' style="display:none;"' : '';
-				printf( "\n<label%s for=\"%s\">%s</label>\n", $style, $this->id(), $this->args( 'name' ) );
-			}
+		if ($this->type() === 'hidden') {
+			echo '';
 		} else {
+			if ( 'title' == $this->type() || ! $this->args( 'show_names' ) || $is_side ) {
+				echo "\t<td colspan=\"2\">\n";
 
-			$style = 'post' == $this->object_type ? ' style="width:18%"' : '';
-			// $tag   = 'side' !== $this->args( 'context' ) ? 'th' : 'p';
-			$tag   = 'th';
-			printf( '<%1$s%2$s><label for="%3$s">%4$s</label></%1$s>', $tag, $style, $this->id(), $this->args( 'name' ) );
+				if ( ! $this->args( 'show_names' ) || $is_side ) {
+					$style = ! $is_side || 'title' == $this->type() ? ' style="display:none;"' : '';
+					printf( "\n<label%s for=\"%s\">%s</label>\n", $style, $this->id(), $this->args( 'name' ) );
+				}
+			} else {
 
-			echo "\n\t<td>\n";
+				$style = 'post' == $this->object_type ? ' style="width:18%"' : '';
+				// $tag   = 'side' !== $this->args( 'context' ) ? 'th' : 'p';
+				$tag   = 'th';
+				printf( '<%1$s%2$s><label for="%3$s">%4$s</label></%1$s>', $tag, $style, $this->id(), $this->args( 'name' ) );
+
+				echo "\n\t<td>\n";
+			}
 		}
 
 		echo $this->args( 'before' );
