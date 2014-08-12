@@ -1214,7 +1214,7 @@ function cmb_metabox_form( $meta_box, $object_id, $args = array() ) {
 	$args = wp_parse_args( $args, array(
 		'echo'        => true,
 		'form_format' => '<form class="cmb-form" method="post" id="%s" enctype="multipart/form-data" encoding="multipart/form-data"><input type="hidden" name="object_id" value="%s">%s<input type="submit" name="submit-cmb" value="%s" class="button-primary"></form>',
-		'save_button' => __( 'Save' ),
+		'save_button' => __( 'Save', 'cmb' ),
 	) );
 
 	$meta_box = cmb_Meta_Box::set_mb_defaults( $meta_box );
