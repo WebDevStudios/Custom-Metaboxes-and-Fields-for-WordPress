@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Custom Metaboxes and Fields for WordPress\n"
-"POT-Creation-Date: 2014-08-11 17:42-0300\n"
-"PO-Revision-Date: 2014-08-11 17:42-0300\n"
+"POT-Creation-Date: 2014-08-12 16:49-0300\n"
+"PO-Revision-Date: 2014-08-12 17:53-0300\n"
 "Last-Translator: Filipe Ferreira Kalicki <filipe@spirallab.com.br>\n"
 "Language-Team: Spirallab <hello@spirallab.com.br>\n"
 "Language: en_US\n"
@@ -13,8 +13,8 @@ msgstr ""
 "X-Poedit-KeywordsList: _;gettext;gettext_noop;__;_e\n"
 "X-Poedit-Basepath: .\n"
 "X-Poedit-SourceCharset: UTF-8\n"
-"X-Poedit-SearchPath-0: /home/kalicki/workspace/concursosevoce/lib/Custom-"
-"Metaboxes-and-Fields-for-WordPress\n"
+"X-Poedit-SearchPath-0: /home/kalicki/workspace/Custom-Metaboxes-and-Fields-"
+"for-WordPress\n"
 
 #: /home/kalicki/workspace/concursosevoce/lib/Custom-Metaboxes-and-Fields-for-WordPress/example-functions.php:28
 msgid "Test Metabox"
@@ -282,115 +282,122 @@ msgstr "Metabox opções do tema"
 msgid "Site Background Color"
 msgstr "Cor de Fundo"
 
-#: /home/kalicki/workspace/concursosevoce/lib/Custom-Metaboxes-and-Fields-for-WordPress/init.php:262
-#: /home/kalicki/workspace/concursosevoce/lib/Custom-Metaboxes-and-Fields-for-WordPress/init.php:285
+#: /home/kalicki/workspace/concursosevoce/lib/Custom-Metaboxes-and-Fields-for-WordPress/init.php:263
+#: /home/kalicki/workspace/concursosevoce/lib/Custom-Metaboxes-and-Fields-for-WordPress/init.php:313
 msgid "Clear"
 msgstr "Limpar"
 
-#: /home/kalicki/workspace/concursosevoce/lib/Custom-Metaboxes-and-Fields-for-WordPress/init.php:263
+#: /home/kalicki/workspace/concursosevoce/lib/Custom-Metaboxes-and-Fields-for-WordPress/init.php:264
 msgid "Default"
 msgstr "Padrão"
 
-#: /home/kalicki/workspace/concursosevoce/lib/Custom-Metaboxes-and-Fields-for-WordPress/init.php:264
+#: /home/kalicki/workspace/concursosevoce/lib/Custom-Metaboxes-and-Fields-for-WordPress/init.php:265
 msgid "Select Color"
 msgstr "Selecionar Cor"
 
-#: /home/kalicki/workspace/concursosevoce/lib/Custom-Metaboxes-and-Fields-for-WordPress/init.php:265
+#: /home/kalicki/workspace/concursosevoce/lib/Custom-Metaboxes-and-Fields-for-WordPress/init.php:266
 msgid "Current Color"
 msgstr "Cor Atual"
 
-#: /home/kalicki/workspace/concursosevoce/lib/Custom-Metaboxes-and-Fields-for-WordPress/init.php:275
+#: /home/kalicki/workspace/concursosevoce/lib/Custom-Metaboxes-and-Fields-for-WordPress/init.php:284
+msgid "Use this file"
+msgstr "Usar este arquivo"
+
+#: /home/kalicki/workspace/concursosevoce/lib/Custom-Metaboxes-and-Fields-for-WordPress/init.php:285
+#: /home/kalicki/workspace/concursosevoce/lib/Custom-Metaboxes-and-Fields-for-WordPress/helpers/cmb_Meta_Box_types.php:736
+#: /home/kalicki/workspace/concursosevoce/lib/Custom-Metaboxes-and-Fields-for-WordPress/helpers/cmb_Meta_Box_types.php:801
+msgid "Remove Image"
+msgstr "Remover Imagem"
+
+#: /home/kalicki/workspace/concursosevoce/lib/Custom-Metaboxes-and-Fields-for-WordPress/init.php:286
+#: /home/kalicki/workspace/concursosevoce/lib/Custom-Metaboxes-and-Fields-for-WordPress/helpers/cmb_Meta_Box_types.php:322
+#: /home/kalicki/workspace/concursosevoce/lib/Custom-Metaboxes-and-Fields-for-WordPress/helpers/cmb_Meta_Box_types.php:747
+#: /home/kalicki/workspace/concursosevoce/lib/Custom-Metaboxes-and-Fields-for-WordPress/helpers/cmb_Meta_Box_types.php:809
+msgid "Remove"
+msgstr "Remover"
+
+#: /home/kalicki/workspace/concursosevoce/lib/Custom-Metaboxes-and-Fields-for-WordPress/init.php:287
+#: /home/kalicki/workspace/concursosevoce/lib/Custom-Metaboxes-and-Fields-for-WordPress/helpers/cmb_Meta_Box_types.php:747
+#: /home/kalicki/workspace/concursosevoce/lib/Custom-Metaboxes-and-Fields-for-WordPress/helpers/cmb_Meta_Box_types.php:809
+msgid "File:"
+msgstr "Arquivo:"
+
+#: /home/kalicki/workspace/concursosevoce/lib/Custom-Metaboxes-and-Fields-for-WordPress/init.php:288
+#: /home/kalicki/workspace/concursosevoce/lib/Custom-Metaboxes-and-Fields-for-WordPress/helpers/cmb_Meta_Box_types.php:747
+#: /home/kalicki/workspace/concursosevoce/lib/Custom-Metaboxes-and-Fields-for-WordPress/helpers/cmb_Meta_Box_types.php:809
+msgid "Download"
+msgstr "Baixar"
+
+#: /home/kalicki/workspace/concursosevoce/lib/Custom-Metaboxes-and-Fields-for-WordPress/init.php:289
+msgid "[ ↑ ]&nbsp;"
+msgstr ""
+
+#: /home/kalicki/workspace/concursosevoce/lib/Custom-Metaboxes-and-Fields-for-WordPress/init.php:290
+msgid "&nbsp;[ ↓ ]"
+msgstr ""
+
+#: /home/kalicki/workspace/concursosevoce/lib/Custom-Metaboxes-and-Fields-for-WordPress/init.php:291
+msgid "Select / Deselect All"
+msgstr "Selecionar / Deselecionar Tudo"
+
+#: /home/kalicki/workspace/concursosevoce/lib/Custom-Metaboxes-and-Fields-for-WordPress/init.php:303
 msgid "yy-mm-dd"
 msgstr "yy-mm-dd"
 
-#: /home/kalicki/workspace/concursosevoce/lib/Custom-Metaboxes-and-Fields-for-WordPress/init.php:276
+#: /home/kalicki/workspace/concursosevoce/lib/Custom-Metaboxes-and-Fields-for-WordPress/init.php:304
 msgid "'Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'"
 msgstr "'Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'"
 
-#: /home/kalicki/workspace/concursosevoce/lib/Custom-Metaboxes-and-Fields-for-WordPress/init.php:277
+#: /home/kalicki/workspace/concursosevoce/lib/Custom-Metaboxes-and-Fields-for-WordPress/init.php:305
 msgid "'Su','Mo','Tu','We','Th','Fr','Sa'"
 msgstr "'Do','Se','Te','Qua','Qui','Se','Sá'"
 
-#: /home/kalicki/workspace/concursosevoce/lib/Custom-Metaboxes-and-Fields-for-WordPress/init.php:278
+#: /home/kalicki/workspace/concursosevoce/lib/Custom-Metaboxes-and-Fields-for-WordPress/init.php:306
 msgid "'Sun','Mon','Tue','Wed','Thu','Fri','Sat'"
 msgstr "'Dom','Seg','Ter','Qua','Qui','Sex','Sáb'"
 
-#: /home/kalicki/workspace/concursosevoce/lib/Custom-Metaboxes-and-Fields-for-WordPress/init.php:279
-msgid ""
-"'January','February','March','April','May','June', "
-"'July','August','September','October','November','December'"
+#: /home/kalicki/workspace/concursosevoce/lib/Custom-Metaboxes-and-Fields-for-WordPress/init.php:307
+#, fuzzy
+msgid "'January','February','March','April','May','June','July','August','September','October','November','December'"
 msgstr ""
 "'Janeiro','Fevereiro','Março','Abril','Maio','Junho', "
 "'Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'"
 
-#: /home/kalicki/workspace/concursosevoce/lib/Custom-Metaboxes-and-Fields-for-WordPress/init.php:280
+#: /home/kalicki/workspace/concursosevoce/lib/Custom-Metaboxes-and-Fields-for-WordPress/init.php:308
 msgid "'Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'"
 msgstr "'Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'"
 
-#: /home/kalicki/workspace/concursosevoce/lib/Custom-Metaboxes-and-Fields-for-WordPress/init.php:281
+#: /home/kalicki/workspace/concursosevoce/lib/Custom-Metaboxes-and-Fields-for-WordPress/init.php:309
 msgid "Next"
 msgstr "Próximo"
 
-#: /home/kalicki/workspace/concursosevoce/lib/Custom-Metaboxes-and-Fields-for-WordPress/init.php:282
+#: /home/kalicki/workspace/concursosevoce/lib/Custom-Metaboxes-and-Fields-for-WordPress/init.php:310
 msgid "Prev"
 msgstr "Anterior"
 
-#: /home/kalicki/workspace/concursosevoce/lib/Custom-Metaboxes-and-Fields-for-WordPress/init.php:283
+#: /home/kalicki/workspace/concursosevoce/lib/Custom-Metaboxes-and-Fields-for-WordPress/init.php:311
 msgid "Today"
 msgstr "Hoje"
 
-#: /home/kalicki/workspace/concursosevoce/lib/Custom-Metaboxes-and-Fields-for-WordPress/init.php:284
+#: /home/kalicki/workspace/concursosevoce/lib/Custom-Metaboxes-and-Fields-for-WordPress/init.php:312
 msgid "Done"
 msgstr "Fechar"
 
-#: /home/kalicki/workspace/concursosevoce/lib/Custom-Metaboxes-and-Fields-for-WordPress/init.php:298
-msgid "Use this file"
-msgstr "Usar este arquivo"
-
-#: /home/kalicki/workspace/concursosevoce/lib/Custom-Metaboxes-and-Fields-for-WordPress/init.php:299
-#: /home/kalicki/workspace/concursosevoce/lib/Custom-Metaboxes-and-Fields-for-WordPress/helpers/cmb_Meta_Box_types.php:699
-#: /home/kalicki/workspace/concursosevoce/lib/Custom-Metaboxes-and-Fields-for-WordPress/helpers/cmb_Meta_Box_types.php:764
-msgid "Remove Image"
-msgstr "Remover Imagem"
-
-#: /home/kalicki/workspace/concursosevoce/lib/Custom-Metaboxes-and-Fields-for-WordPress/init.php:300
-#: /home/kalicki/workspace/concursosevoce/lib/Custom-Metaboxes-and-Fields-for-WordPress/helpers/cmb_Meta_Box_types.php:306
-#: /home/kalicki/workspace/concursosevoce/lib/Custom-Metaboxes-and-Fields-for-WordPress/helpers/cmb_Meta_Box_types.php:710
-#: /home/kalicki/workspace/concursosevoce/lib/Custom-Metaboxes-and-Fields-for-WordPress/helpers/cmb_Meta_Box_types.php:772
-msgid "Remove"
-msgstr "Remover"
-
-#: /home/kalicki/workspace/concursosevoce/lib/Custom-Metaboxes-and-Fields-for-WordPress/init.php:301
-#: /home/kalicki/workspace/concursosevoce/lib/Custom-Metaboxes-and-Fields-for-WordPress/helpers/cmb_Meta_Box_types.php:710
-#: /home/kalicki/workspace/concursosevoce/lib/Custom-Metaboxes-and-Fields-for-WordPress/helpers/cmb_Meta_Box_types.php:772
-msgid "File:"
-msgstr "Arquivo:"
-
-#: /home/kalicki/workspace/concursosevoce/lib/Custom-Metaboxes-and-Fields-for-WordPress/init.php:302
-#: /home/kalicki/workspace/concursosevoce/lib/Custom-Metaboxes-and-Fields-for-WordPress/helpers/cmb_Meta_Box_types.php:710
-#: /home/kalicki/workspace/concursosevoce/lib/Custom-Metaboxes-and-Fields-for-WordPress/helpers/cmb_Meta_Box_types.php:772
-msgid "Download"
-msgstr "Baixar"
-
-#: /home/kalicki/workspace/concursosevoce/lib/Custom-Metaboxes-and-Fields-for-WordPress/init.php:306
-msgid "Select / Deselect All"
-msgstr "Marcar / Desmarcar Tudo"
-
-#: /home/kalicki/workspace/concursosevoce/lib/Custom-Metaboxes-and-Fields-for-WordPress/init.php:1195
+#: /home/kalicki/workspace/concursosevoce/lib/Custom-Metaboxes-and-Fields-for-WordPress/init.php:1218
 msgid "Save"
 msgstr "Salvar"
 
-#: /home/kalicki/workspace/concursosevoce/lib/Custom-Metaboxes-and-Fields-for-WordPress/helpers/cmb_Meta_Box_types.php:250
+#: /home/kalicki/workspace/concursosevoce/lib/Custom-Metaboxes-and-Fields-for-WordPress/helpers/cmb_Meta_Box_types.php:266
 msgid "Add Row"
 msgstr "Adicionar linha"
 
-#: /home/kalicki/workspace/concursosevoce/lib/Custom-Metaboxes-and-Fields-for-WordPress/helpers/cmb_Meta_Box_types.php:605
-#: /home/kalicki/workspace/concursosevoce/lib/Custom-Metaboxes-and-Fields-for-WordPress/helpers/cmb_Meta_Box_types.php:639
+#: /home/kalicki/workspace/concursosevoce/lib/Custom-Metaboxes-and-Fields-for-WordPress/helpers/cmb_Meta_Box_types.php:628
+#: /home/kalicki/workspace/concursosevoce/lib/Custom-Metaboxes-and-Fields-for-WordPress/helpers/cmb_Meta_Box_types.php:676
 msgid "No terms"
 msgstr "Sem termos"
 
-#: /home/kalicki/workspace/concursosevoce/lib/Custom-Metaboxes-and-Fields-for-WordPress/helpers/cmb_Meta_Box_types.php:678
-#: /home/kalicki/workspace/concursosevoce/lib/Custom-Metaboxes-and-Fields-for-WordPress/helpers/cmb_Meta_Box_types.php:732
+#: /home/kalicki/workspace/concursosevoce/lib/Custom-Metaboxes-and-Fields-for-WordPress/helpers/cmb_Meta_Box_types.php:715
+#: /home/kalicki/workspace/concursosevoce/lib/Custom-Metaboxes-and-Fields-for-WordPress/helpers/cmb_Meta_Box_types.php:769
 msgid "Add or Upload File"
 msgstr "Adicionar ou Enviar Arquivo"
 
@@ -407,10 +414,10 @@ msgstr "Remover Embed"
 msgid "No oEmbed Results Found for %s. View more info at"
 msgstr "Não encontrados oEmbed para %s. Ver os mais informações em"
 
-#: /home/kalicki/workspace/concursosevoce/lib/Custom-Metaboxes-and-Fields-for-WordPress/helpers/cmb_Meta_Box_field.php:462
+#: /home/kalicki/workspace/concursosevoce/lib/Custom-Metaboxes-and-Fields-for-WordPress/helpers/cmb_Meta_Box_field.php:463
 msgid "Add Group"
 msgstr "Adicionar Grupo"
 
-#: /home/kalicki/workspace/concursosevoce/lib/Custom-Metaboxes-and-Fields-for-WordPress/helpers/cmb_Meta_Box_field.php:463
+#: /home/kalicki/workspace/concursosevoce/lib/Custom-Metaboxes-and-Fields-for-WordPress/helpers/cmb_Meta_Box_field.php:464
 msgid "Remove Group"
 msgstr "Remover Grupo"
