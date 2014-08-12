@@ -37,13 +37,17 @@ Version:      1.3.0
 // Autoload helper classes
 spl_autoload_register('cmb_Meta_Box::autoload_helpers');
 
+//  Define path
+define( 'CMB_META_BOX_URL', cmb_Meta_Box::get_meta_box_url() );
+
+// Load Translation
+load_textdomain('cmb', CMB_META_BOX_URL . get_locale() . '.mo');
+
 $meta_boxes = array();
 $meta_boxes = apply_filters( 'cmb_meta_boxes', $meta_boxes );
 foreach ( $meta_boxes as $meta_box ) {
 	$my_box = new cmb_Meta_Box( $meta_box );
 }
-
-define( 'CMB_META_BOX_URL', cmb_Meta_Box::get_meta_box_url() );
 
 /**
  * Create meta boxes
