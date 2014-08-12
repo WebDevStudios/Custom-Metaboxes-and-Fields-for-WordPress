@@ -26,24 +26,12 @@ window.CMB = (function(window, document, $, undefined){
 		repeatEls          : 'input:not([type="button"]),select,textarea,.cmb_media_status',
 		defaults : {
 			timePicker  : l10n.defaults.time_picker,
-			datePicker  : {
-				showAnimType: 'fadeIn',
-		        showButtonPanel: true,
-		        dateFormat: l10n.dateFormat,
-		        dayNames: eval('[' + l10n.dayNames + ']'),
-		        dayNamesMin: eval('[' + l10n.dayNamesMin + ']'),
-		        dayNamesShort: eval('[' + l10n.dayNamesShort + ']'),
-		        monthNames: eval('[' + l10n.monthNames + ']'),
-		        monthNamesShort: eval('[' + l10n.monthNamesShort + ']'),
-		        nextText: l10n.nextText,
-		        prevText: l10n.prevText,
-		        currentText: l10n.currentText,
-		        closeText: l10n.closeText,
-		        clearText: l10n.clearText
-			},
+			datePicker  : l10n.defaults.date_picker,
 			colorPicker : l10n.defaults.color_picker || {},
 		}
 	};
+
+	console.log(cmb.defaults.datePicker);
 
 	cmb.metabox = function() {
 		if ( cmb.$metabox ) {

@@ -42,7 +42,7 @@ if (!defined('CMB_META_BOX_URL' ))
 	define( 'CMB_META_BOX_URL', cmb_Meta_Box::get_meta_box_url() );
 
 // Load Translation
-load_textdomain('cmb', CMB_META_BOX_URL . get_locale() . '.mo');
+load_textdomain('cmb', CMB_META_BOX_URL .'lang/'. get_locale() . '.mo');
 
 $meta_boxes = array();
 $meta_boxes = apply_filters( 'cmb_meta_boxes', $meta_boxes );
@@ -290,7 +290,19 @@ class cmb_Meta_Box {
 			'down_arrow'      => __( '&nbsp;[ ↓ ]', 'cmb' ),
 			'check_toggle'    => __( 'Select / Deselect All', 'cmb' ),
 			'defaults'        => array(
-				'date_picker'  => false,
+				'date_picker'  => array(
+				 	'dateFormat'  => __( 'yy-mm-dd', 'cmb' ),
+					'dayNames' => __( "'Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'",'cmb' ),
+					'dayNamesMin' => __("'Su','Mo','Tu','We','Th','Fr','Sa'", 'cmb'),
+					'dayNamesShort' => __("'Sun','Mon','Tue','Wed','Thu','Fri','Sat'", 'cmb'),
+					'monthNames' => __("'January','February','March','April','May','June','July','August','September','October','November','December'", 'cmb'),
+					'monthNamesShort' => __("'Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'", 'cmb'),
+					'nextText' => __("Next", 'cmb'),
+					'prevText' => __("Prev", 'cmb'),
+					'currentText' => __('Today', 'cmb'),
+					'closeText' => __('Done', 'cmb'),
+					'clearText' => __('Clear', 'cmb'),
+				),
 				'color_picker' => false,
 				'time_picker'  => array(
 					'startTime'   => '00:00',
@@ -300,17 +312,6 @@ class cmb_Meta_Box {
 					'step'        => 30
 				),
 			),
-		    'dateFormat'  => __( 'yy-mm-dd', 'cmb' ),
-		    'dayNames' => __( "'Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'",'cmb' ),
-		    'dayNamesMin' => __("'Su','Mo','Tu','We','Th','Fr','Sa'", 'cmb'),
-		    'dayNamesShort' => __("'Sun','Mon','Tue','Wed','Thu','Fri','Sat'", 'cmb'),
-		    'monthNames' => __("'January','February','March','April','May','June','July','August','September','October','November','December'", 'cmb'),
-		    'monthNamesShort' => __("'Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'", 'cmb'),
-		    'nextText' => __("Next", 'cmb'),
-		    'prevText' => __("Prev", 'cmb'),
-		    'currentText' => __('Today', 'cmb'),
-		    'closeText' => __('Done', 'cmb'),
-		    'clearText' => __('Clear', 'cmb')
 		) ) );
 
 		wp_register_style( 'cmb-styles', CMB_META_BOX_URL . 'css/style'. $min .'.css', $styles );
