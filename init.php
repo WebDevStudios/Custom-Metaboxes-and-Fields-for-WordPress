@@ -246,7 +246,7 @@ class cmb_Meta_Box {
 		$min = defined('SCRIPT_DEBUG') && SCRIPT_DEBUG ? '' : '.min';
 
 		// scripts required for cmb
-		$scripts = array( 'jquery', 'jquery-ui-core', 'cmb-datepicker', /*'media-upload', */'cmb-timepicker' );
+		$scripts = array( 'jquery', 'jquery-ui-core', /*'media-upload', */'cmb-timepicker' );
 		// styles required for cmb
 		$styles = array();
 
@@ -270,12 +270,10 @@ class cmb_Meta_Box {
 			$scripts[] = 'farbtastic';
 			$styles[] = 'farbtastic';
 		}
-		wp_register_script( 'cmb-datepicker', CMB_META_BOX_URL . 'js/jquery.datePicker.min.js' );
+		wp_enqueue_media();
+		wp_enqueue_script( 'jquery-ui-datepicker');
 		wp_register_script( 'cmb-timepicker', CMB_META_BOX_URL . 'js/jquery.timePicker.min.js' );
 		wp_register_script( 'cmb-scripts', CMB_META_BOX_URL .'js/cmb'. $min .'.js', $scripts, self::CMB_VERSION );
-
-		wp_enqueue_media();
-
 		wp_localize_script( 'cmb-scripts', 'cmb_l10', apply_filters( 'cmb_localized_data', array(
 			'ajax_nonce'      => wp_create_nonce( 'ajax_nonce' ),
 			'ajaxurl'         => admin_url( '/admin-ajax.php' ),
@@ -301,6 +299,17 @@ class cmb_Meta_Box {
 					'step'        => 30
 				),
 			),
+		    'dateFormat'  => __( 'yy-mm-dd', 'cmb' ),
+		    'dayNames' => __( "'Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'",'cmb' ),
+		    'dayNamesMin' => __("'Su','Mo','Tu','We','Th','Fr','Sa'", 'cmb'),
+		    'dayNamesShort' => __("'Sun','Mon','Tue','Wed','Thu','Fri','Sat'", 'cmb'),
+		    'monthNames' => __("'January','February','March','April','May','June','July','August','September','October','November','December'", 'cmb'),
+		    'monthNamesShort' => __("'Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'", 'cmb'),
+		    'nextText' => __("Next", 'cmb'),
+		    'prevText' => __("Prev", 'cmb'),
+		    'currentText' => __('Today', 'cmb'),
+		    'closeText' => __('Done', 'cmb'),
+		    'clearText' => __('Clear', 'cmb')
 		) ) );
 
 		wp_register_style( 'cmb-styles', CMB_META_BOX_URL . 'css/style'. $min .'.css', $styles );
