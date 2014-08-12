@@ -1,4 +1,5 @@
 <?php
+defined( 'ABSPATH' ) || exit;
 /*
 Script Name:  Custom Metaboxes and Fields
 Contributors: WebDevStudios (@webdevstudios / webdevstudios.com)
@@ -899,7 +900,7 @@ class cmb_Meta_Box {
 			$cmb_url = str_replace( DIRECTORY_SEPARATOR, '/', $content_url );
 
 		} else {
-		  $cmb_url = str_replace(
+		  	$cmb_url = str_replace(
 				array(WP_CONTENT_DIR, WP_PLUGIN_DIR),
 				array(WP_CONTENT_URL, WP_PLUGIN_URL),
 				dirname( __FILE__ )
