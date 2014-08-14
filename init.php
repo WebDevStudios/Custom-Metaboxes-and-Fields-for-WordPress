@@ -37,12 +37,16 @@ Version:      1.3.0
 // Autoload helper classes
 spl_autoload_register('cmb_Meta_Box::autoload_helpers');
 
-//  Define path
+//  Define path DIR
+if (!defined('CMB_META_BOX_DIR' ))
+	define( 'CMB_META_BOX_DIR', cmb_Meta_Box::get_meta_box_url() );
+
+//  Define path URL
 if (!defined('CMB_META_BOX_URL' ))
-	define( 'CMB_META_BOX_URL', cmb_Meta_Box::get_meta_box_url() );
+	define( 'CMB_META_BOX_URL', trailingslashit( get_stylesheet_directory_uri() . '/lib/Custom-Metaboxes-and-Fields-for-WordPress' ) );
 
 // Load Translation
-load_textdomain('cmb', CMB_META_BOX_URL .'lang/'. get_locale() . '.mo');
+load_textdomain('cmb', CMB_META_BOX_DIR .'lang/'. get_locale() . '.mo');
 
 $meta_boxes = array();
 $meta_boxes = apply_filters( 'cmb_meta_boxes', $meta_boxes );
