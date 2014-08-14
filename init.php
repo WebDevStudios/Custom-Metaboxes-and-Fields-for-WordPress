@@ -37,13 +37,22 @@ Version:      1.3.0
 // Autoload helper classes
 spl_autoload_register('cmb_Meta_Box::autoload_helpers');
 
+//  Define path DIR
+if (!defined('CMB_META_BOX_DIR' ))
+	define( 'CMB_META_BOX_DIR', cmb_Meta_Box::get_meta_box_url() );
+
+//  Define path URL
+if (!defined('CMB_META_BOX_URL' ))
+	define( 'CMB_META_BOX_URL', trailingslashit( get_stylesheet_directory_uri() . '/lib/Custom-Metaboxes-and-Fields-for-WordPress' ) );
+
+// Load Translation
+load_textdomain('cmb', CMB_META_BOX_DIR .'lang/'. get_locale() . '.mo');
+
 $meta_boxes = array();
 $meta_boxes = apply_filters( 'cmb_meta_boxes', $meta_boxes );
 foreach ( $meta_boxes as $meta_box ) {
 	$my_box = new cmb_Meta_Box( $meta_box );
 }
-
-define( 'CMB_META_BOX_URL', cmb_Meta_Box::get_meta_box_url() );
 
 /**
  * Create meta boxes
@@ -244,7 +253,7 @@ class cmb_Meta_Box {
 		$min = defined('SCRIPT_DEBUG') && SCRIPT_DEBUG ? '' : '.min';
 
 		// scripts required for cmb
-		$scripts = array( 'jquery', 'jquery-ui-core', 'cmb-datepicker', /*'media-upload', */'cmb-timepicker' );
+		$scripts = array( 'jquery', 'jquery-ui-core', /*'media-upload', */'cmb-timepicker' );
 		// styles required for cmb
 		$styles = array();
 
@@ -254,13 +263,13 @@ class cmb_Meta_Box {
 			$styles[] = 'wp-color-picker';
 			if ( ! is_admin() ) {
 				// we need to register colorpicker on the front-end
-			   wp_register_script( 'iris', admin_url( 'js/iris.min.js' ), array( 'jquery-ui-draggable', 'jquery-ui-slider', 'jquery-touch-punch' ), self::CMB_VERSION );
-		   	wp_register_script( 'wp-color-picker', admin_url( 'js/color-picker.min.js' ), array( 'iris' ), self::CMB_VERSION );
+			   	wp_register_script( 'iris', admin_url( 'js/iris.min.js' ), array( 'jquery-ui-draggable', 'jquery-ui-slider', 'jquery-touch-punch' ), self::CMB_VERSION );
+		   		wp_register_script( 'wp-color-picker', admin_url( 'js/color-picker.min.js' ), array( 'iris' ), self::CMB_VERSION );
 				wp_localize_script( 'wp-color-picker', 'wpColorPickerL10n', array(
-					'clear'         => __( 'Clear' ),
-					'defaultString' => __( 'Default' ),
-					'pick'          => __( 'Select Color' ),
-					'current'       => __( 'Current Color' ),
+					'clear'         => __( 'Clear', 'cmb' ),
+					'defaultString' => __( 'Default', 'cmb' ),
+					'pick'          => __( 'Select Color', 'cmb' ),
+					'current'       => __( 'Current Color', 'cmb' ),
 				) );
 			}
 		} else {
@@ -268,12 +277,10 @@ class cmb_Meta_Box {
 			$scripts[] = 'farbtastic';
 			$styles[] = 'farbtastic';
 		}
-		wp_register_script( 'cmb-datepicker', CMB_META_BOX_URL . 'js/jquery.datePicker.min.js' );
+		wp_enqueue_media();
+		wp_enqueue_script( 'jquery-ui-datepicker');
 		wp_register_script( 'cmb-timepicker', CMB_META_BOX_URL . 'js/jquery.timePicker.min.js' );
 		wp_register_script( 'cmb-scripts', CMB_META_BOX_URL .'js/cmb'. $min .'.js', $scripts, self::CMB_VERSION );
-
-		wp_enqueue_media();
-
 		wp_localize_script( 'cmb-scripts', 'cmb_l10', apply_filters( 'cmb_localized_data', array(
 			'ajax_nonce'      => wp_create_nonce( 'ajax_nonce' ),
 			'ajaxurl'         => admin_url( '/admin-ajax.php' ),
@@ -289,7 +296,22 @@ class cmb_Meta_Box {
 			'down_arrow'      => __( '&nbsp;[ ↓ ]', 'cmb' ),
 			'check_toggle'    => __( 'Select / Deselect All', 'cmb' ),
 			'defaults'        => array(
-				'date_picker'  => false,
+				'date_picker'  => array(
+					'changeMonth' => true,
+					'changeYear' => true,
+					'showButtonPanel' => true,
+				 	'dateFormat'  => __("yy-mm-dd", 'cmb' ),
+					'dayNames' => explode(',', __("Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday", 'cmb')),
+					'dayNamesMin' => explode(',', __("Su, Mo, Tu, We, Th, Fr, Sa", 'cmb')),
+					'dayNamesShort' => explode(',', __("Sun, Mon, Tue, Wed, Thu, Fri, Sat", 'cmb')),
+					'monthNames' => explode(',', __("January, February, March, April, May, June, July, August, September, October, November, December", 'cmb')),
+					'monthNamesShort' => explode(',', __("Jan, Feb, Mar, Apr, May, Jun, Jul, Aug, Sep, Oct, Nov, Dec", 'cmb')),
+					'nextText' => __("Next", 'cmb'),
+					'prevText' => __("Prev", 'cmb'),
+					'currentText' => __("Today", 'cmb'),
+					'closeText' => __("Done", 'cmb'),
+					'clearText' => __("Clear", 'cmb'),
+				),
 				'color_picker' => false,
 				'time_picker'  => array(
 					'startTime'   => '00:00',
@@ -889,7 +911,7 @@ class cmb_Meta_Box {
 			$cmb_url = str_replace( DIRECTORY_SEPARATOR, '/', $content_url );
 
 		} else {
-		  $cmb_url = str_replace(
+		  	$cmb_url = str_replace(
 				array(WP_CONTENT_DIR, WP_PLUGIN_DIR),
 				array(WP_CONTENT_URL, WP_PLUGIN_URL),
 				dirname( __FILE__ )
@@ -1204,7 +1226,7 @@ function cmb_metabox_form( $meta_box, $object_id, $args = array() ) {
 	$args = wp_parse_args( $args, array(
 		'echo'        => true,
 		'form_format' => '<form class="cmb-form" method="post" id="%s" enctype="multipart/form-data" encoding="multipart/form-data"><input type="hidden" name="object_id" value="%s">%s<input type="submit" name="submit-cmb" value="%s" class="button-primary"></form>',
-		'save_button' => __( 'Save' ),
+		'save_button' => __( 'Save', 'cmb' ),
 	) );
 
 	$meta_box = cmb_Meta_Box::set_mb_defaults( $meta_box );
