@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Custom Metaboxes and Fields for WordPress\n"
-"POT-Creation-Date: 2014-08-14 13:48-0300\n"
-"PO-Revision-Date: 2014-08-14 13:52-0300\n"
+"POT-Creation-Date: 2014-08-14 16:04-0300\n"
+"PO-Revision-Date: 2014-08-14 16:18-0300\n"
 "Last-Translator: Filipe Ferreira Kalicki <filipe@spirallab.com.br>\n"
 "Language-Team: Spirallab <hello@spirallab.com.br>\n"
 "Language: en_US\n"
@@ -282,108 +282,109 @@ msgstr "Metabox opções do tema"
 msgid "Site Background Color"
 msgstr "Cor de Fundo"
 
-#: /home/kalicki/workspace/Custom-Metaboxes-and-Fields-for-WordPress/init.php:263
-#: /home/kalicki/workspace/Custom-Metaboxes-and-Fields-for-WordPress/init.php:304
+#: /home/kalicki/workspace/Custom-Metaboxes-and-Fields-for-WordPress/init.php:267
+#: /home/kalicki/workspace/Custom-Metaboxes-and-Fields-for-WordPress/init.php:311
 msgid "Clear"
 msgstr "Limpar"
 
-#: /home/kalicki/workspace/Custom-Metaboxes-and-Fields-for-WordPress/init.php:264
+#: /home/kalicki/workspace/Custom-Metaboxes-and-Fields-for-WordPress/init.php:268
 msgid "Default"
 msgstr "Padrão"
 
-#: /home/kalicki/workspace/Custom-Metaboxes-and-Fields-for-WordPress/init.php:265
+#: /home/kalicki/workspace/Custom-Metaboxes-and-Fields-for-WordPress/init.php:269
 msgid "Select Color"
 msgstr "Selecionar Cor"
 
-#: /home/kalicki/workspace/Custom-Metaboxes-and-Fields-for-WordPress/init.php:266
+#: /home/kalicki/workspace/Custom-Metaboxes-and-Fields-for-WordPress/init.php:270
 msgid "Current Color"
 msgstr "Cor Atual"
 
-#: /home/kalicki/workspace/Custom-Metaboxes-and-Fields-for-WordPress/init.php:284
+#: /home/kalicki/workspace/Custom-Metaboxes-and-Fields-for-WordPress/init.php:288
 msgid "Use this file"
 msgstr "Usar este arquivo"
 
-#: /home/kalicki/workspace/Custom-Metaboxes-and-Fields-for-WordPress/init.php:285
+#: /home/kalicki/workspace/Custom-Metaboxes-and-Fields-for-WordPress/init.php:289
 #: /home/kalicki/workspace/Custom-Metaboxes-and-Fields-for-WordPress/helpers/cmb_Meta_Box_types.php:736
 #: /home/kalicki/workspace/Custom-Metaboxes-and-Fields-for-WordPress/helpers/cmb_Meta_Box_types.php:801
 msgid "Remove Image"
 msgstr "Remover Imagem"
 
-#: /home/kalicki/workspace/Custom-Metaboxes-and-Fields-for-WordPress/init.php:286
+#: /home/kalicki/workspace/Custom-Metaboxes-and-Fields-for-WordPress/init.php:290
 #: /home/kalicki/workspace/Custom-Metaboxes-and-Fields-for-WordPress/helpers/cmb_Meta_Box_types.php:322
 #: /home/kalicki/workspace/Custom-Metaboxes-and-Fields-for-WordPress/helpers/cmb_Meta_Box_types.php:747
 #: /home/kalicki/workspace/Custom-Metaboxes-and-Fields-for-WordPress/helpers/cmb_Meta_Box_types.php:809
 msgid "Remove"
 msgstr "Remover"
 
-#: /home/kalicki/workspace/Custom-Metaboxes-and-Fields-for-WordPress/init.php:287
+#: /home/kalicki/workspace/Custom-Metaboxes-and-Fields-for-WordPress/init.php:291
 #: /home/kalicki/workspace/Custom-Metaboxes-and-Fields-for-WordPress/helpers/cmb_Meta_Box_types.php:747
 #: /home/kalicki/workspace/Custom-Metaboxes-and-Fields-for-WordPress/helpers/cmb_Meta_Box_types.php:809
 msgid "File:"
 msgstr "Arquivo:"
 
-#: /home/kalicki/workspace/Custom-Metaboxes-and-Fields-for-WordPress/init.php:288
+#: /home/kalicki/workspace/Custom-Metaboxes-and-Fields-for-WordPress/init.php:292
 #: /home/kalicki/workspace/Custom-Metaboxes-and-Fields-for-WordPress/helpers/cmb_Meta_Box_types.php:747
 #: /home/kalicki/workspace/Custom-Metaboxes-and-Fields-for-WordPress/helpers/cmb_Meta_Box_types.php:809
 msgid "Download"
 msgstr "Baixar"
 
-#: /home/kalicki/workspace/Custom-Metaboxes-and-Fields-for-WordPress/init.php:289
+#: /home/kalicki/workspace/Custom-Metaboxes-and-Fields-for-WordPress/init.php:293
 msgid "[ ↑ ]&nbsp;"
 msgstr ""
 
-#: /home/kalicki/workspace/Custom-Metaboxes-and-Fields-for-WordPress/init.php:290
+#: /home/kalicki/workspace/Custom-Metaboxes-and-Fields-for-WordPress/init.php:294
 msgid "&nbsp;[ ↓ ]"
 msgstr ""
 
-#: /home/kalicki/workspace/Custom-Metaboxes-and-Fields-for-WordPress/init.php:291
+#: /home/kalicki/workspace/Custom-Metaboxes-and-Fields-for-WordPress/init.php:295
 msgid "Select / Deselect All"
 msgstr "Selecionar / Deselecionar Tudo"
 
-#: /home/kalicki/workspace/Custom-Metaboxes-and-Fields-for-WordPress/init.php:294
+#: /home/kalicki/workspace/Custom-Metaboxes-and-Fields-for-WordPress/init.php:301
 msgid "yy-mm-dd"
 msgstr "yy-mm-dd"
 
-#: /home/kalicki/workspace/Custom-Metaboxes-and-Fields-for-WordPress/init.php:295
-msgid "'Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'"
-msgstr "'Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'"
+#: /home/kalicki/workspace/Custom-Metaboxes-and-Fields-for-WordPress/init.php:302
+msgid "Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday"
+msgstr "Domingo, Segunda, Terça, Quarta, Quinta, Sexta, Sábado"
 
-#: /home/kalicki/workspace/Custom-Metaboxes-and-Fields-for-WordPress/init.php:296
-msgid "'Su','Mo','Tu','We','Th','Fr','Sa'"
-msgstr "'Do','Se','Te','Qua','Qui','Se','Sá'"
+#: /home/kalicki/workspace/Custom-Metaboxes-and-Fields-for-WordPress/init.php:303
+msgid "Su, Mo, Tu, We, Th, Fr, Sa"
+msgstr "Do, Se, Te, Qua, Qui, Se, Sá,"
 
-#: /home/kalicki/workspace/Custom-Metaboxes-and-Fields-for-WordPress/init.php:297
-msgid "'Sun','Mon','Tue','Wed','Thu','Fri','Sat'"
-msgstr "'Dom','Seg','Ter','Qua','Qui','Sex','Sáb'"
+#: /home/kalicki/workspace/Custom-Metaboxes-and-Fields-for-WordPress/init.php:304
+msgid "Sun, Mon, Tue, Wed, Thu, Fri, Sat"
+msgstr "Dom, Seg, Ter, Qua, Qui, Sex, Sáb"
 
-#: /home/kalicki/workspace/Custom-Metaboxes-and-Fields-for-WordPress/init.php:298
-#, fuzzy
-msgid "'January','February','March','April','May','June','July','August','September','October','November','December'"
+#: /home/kalicki/workspace/Custom-Metaboxes-and-Fields-for-WordPress/init.php:305
+msgid ""
+"January, February, March, April, May, June, July, August, September, "
+"October, November, December"
 msgstr ""
-"'Janeiro','Fevereiro','Março','Abril','Maio','Junho', "
-"'Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'"
+"Janeiro, Fevereiro, Março, Abril, Maio, Junho, Julho, Agosto, Setembro, "
+"Outubro, Novembro, Dezembro"
 
-#: /home/kalicki/workspace/Custom-Metaboxes-and-Fields-for-WordPress/init.php:299
-msgid "'Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'"
-msgstr "'Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'"
+#: /home/kalicki/workspace/Custom-Metaboxes-and-Fields-for-WordPress/init.php:306
+msgid "Jan, Feb, Mar, Apr, May, Jun, Jul, Aug, Sep, Oct, Nov, Dec"
+msgstr "Jan, Fev, Mar, Abr, Mai, Jun, Jul, Ago, Set, Out, Nov, Dez"
 
-#: /home/kalicki/workspace/Custom-Metaboxes-and-Fields-for-WordPress/init.php:300
+#: /home/kalicki/workspace/Custom-Metaboxes-and-Fields-for-WordPress/init.php:307
 msgid "Next"
 msgstr "Próximo"
 
-#: /home/kalicki/workspace/Custom-Metaboxes-and-Fields-for-WordPress/init.php:301
+#: /home/kalicki/workspace/Custom-Metaboxes-and-Fields-for-WordPress/init.php:308
 msgid "Prev"
 msgstr "Anterior"
 
-#: /home/kalicki/workspace/Custom-Metaboxes-and-Fields-for-WordPress/init.php:302
+#: /home/kalicki/workspace/Custom-Metaboxes-and-Fields-for-WordPress/init.php:309
 msgid "Today"
 msgstr "Hoje"
 
-#: /home/kalicki/workspace/Custom-Metaboxes-and-Fields-for-WordPress/init.php:303
+#: /home/kalicki/workspace/Custom-Metaboxes-and-Fields-for-WordPress/init.php:310
 msgid "Done"
 msgstr "Fechar"
 
-#: /home/kalicki/workspace/Custom-Metaboxes-and-Fields-for-WordPress/init.php:1219
+#: /home/kalicki/workspace/Custom-Metaboxes-and-Fields-for-WordPress/init.php:1226
 msgid "Save"
 msgstr "Salvar"
 
@@ -421,3 +422,12 @@ msgstr "Adicionar Grupo"
 #: /home/kalicki/workspace/Custom-Metaboxes-and-Fields-for-WordPress/helpers/cmb_Meta_Box_field.php:464
 msgid "Remove Group"
 msgstr "Remover Grupo"
+
+#~ msgid "'Su','Mo','Tu','We','Th','Fr','Sa'"
+#~ msgstr "'Do','Se','Te','Qua','Qui','Se','Sá'"
+
+#~ msgid "'Sun','Mon','Tue','Wed','Thu','Fri','Sat'"
+#~ msgstr "'Dom','Seg','Ter','Qua','Qui','Sex','Sáb'"
+
+#~ msgid "'Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'"
+#~ msgstr "'Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'"
