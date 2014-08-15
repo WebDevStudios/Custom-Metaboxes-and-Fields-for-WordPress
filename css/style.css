@@ -33,7 +33,7 @@ table.cmb_metabox tbody > tr:first-of-type > th,
 }
 
 /* line 33, style.scss */
-.empty-row.hidden {
+.empty-row.hidden, .cmb_hidden {
   display: none;
 }
 
