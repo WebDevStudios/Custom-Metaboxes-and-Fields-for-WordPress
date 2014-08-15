@@ -294,7 +294,22 @@ class cmb_Meta_Box {
 			'down_arrow'      => __( '&nbsp;[ ↓ ]', 'cmb' ),
 			'check_toggle'    => __( 'Select / Deselect All', 'cmb' ),
 			'defaults'        => array(
-				'date_picker'  => false,
+				'date_picker'  => array(
+					'changeMonth' 		=> true,
+					'changeYear' 		=> true,
+					'showButtonPanel' 	=> true,
+				 	'dateFormat'  		=> __( 'yy-mm-dd', 'cmb' ),
+					'dayNames' 			=> explode(',', __( 'Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday', 'cmb' )),
+					'dayNamesMin' 		=> explode(',', __( 'Su, Mo, Tu, We, Th, Fr, Sa', 'cmb' ) ),
+					'dayNamesShort' 	=> explode(',', __( 'Sun, Mon, Tue, Wed, Thu, Fri, Sat', 'cmb' ) ),
+					'monthNames' 		=> explode(',', __( 'January, February, March, April, May, June, July, August, September, October, November, December', 'cmb' ) ),
+					'monthNamesShort' 	=> explode(',', __( 'Jan, Feb, Mar, Apr, May, Jun, Jul, Aug, Sep, Oct, Nov, Dec', 'cmb') ),
+					'nextText'			=> __( 'Next', 'cmb' ),
+					'prevText' 			=> __( 'Prev', 'cmb' ),
+					'currentText' 		=> __( 'Today', 'cmb' ),
+					'closeText' 		=> __( 'Done', 'cmb' ),
+					'clearText' 		=> __( 'Clear', 'cmb' ),
+				),
 				'color_picker' => false,
 				'time_picker'  => array(
 					'startTime'   => '00:00',
