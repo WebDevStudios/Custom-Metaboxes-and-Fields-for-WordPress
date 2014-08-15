@@ -41,9 +41,6 @@ spl_autoload_register('cmb_Meta_Box::autoload_helpers');
 if ( ! defined( 'CMB_META_BOX_URL' ) )
 	define( 'CMB_META_BOX_URL', cmb_Meta_Box::get_meta_box_url() );
 
-// Load translation
-load_textdomain( 'cmb', trailingslashit( dirname(__FILE__) . '/lang' ) . get_locale() . '.mo' );
-
 $meta_boxes = array();
 $meta_boxes = apply_filters( 'cmb_meta_boxes', $meta_boxes );
 foreach ( $meta_boxes as $meta_box ) {
