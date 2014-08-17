@@ -30,7 +30,7 @@ table.cmb_metabox tbody > tr:first-of-type > th,
 	border-top: 1px solid #E9E9E9;
 }
 
-.empty-row.hidden {
+.empty-row.hidden, .cmb_hidden {
 	display: none;
 }
 
@@ -230,6 +230,10 @@ table.cmb_metabox .cmb_media_status .img_status img, table.cmb_metabox .cmb_medi
 table.cmb_metabox .cmb_media_status .embed_status {
 	float: left;
 	max-width:800px
+
+	iframe {
+		max-width: 100%;
+	}
 }
 
 table.cmb_metabox .cmb_media_status .img_status .cmb_remove_file_button, table.cmb_metabox .cmb_media_status .embed_status .cmb_remove_file_button {

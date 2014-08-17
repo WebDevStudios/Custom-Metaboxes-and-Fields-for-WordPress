@@ -37,13 +37,18 @@ Version:      1.3.0
 // Autoload helper classes
 spl_autoload_register('cmb_Meta_Box::autoload_helpers');
 
+// Define URL path
+if ( ! defined( 'CMB_META_BOX_URL' ) )
+	define( 'CMB_META_BOX_URL', cmb_Meta_Box::get_meta_box_url() );
+
+// Load translation
+load_textdomain( 'cmb', trailingslashit( dirname(__FILE__) . '/lang' ) . get_locale() . '.mo' );
+
 $meta_boxes = array();
 $meta_boxes = apply_filters( 'cmb_meta_boxes', $meta_boxes );
 foreach ( $meta_boxes as $meta_box ) {
 	$my_box = new cmb_Meta_Box( $meta_box );
 }
-
-define( 'CMB_META_BOX_URL', cmb_Meta_Box::get_meta_box_url() );
 
 /**
  * Create meta boxes
@@ -244,7 +249,7 @@ class cmb_Meta_Box {
 		$min = defined('SCRIPT_DEBUG') && SCRIPT_DEBUG ? '' : '.min';
 
 		// scripts required for cmb
-		$scripts = array( 'jquery', 'jquery-ui-core', 'cmb-datepicker', /*'media-upload', */'cmb-timepicker' );
+		$scripts = array( 'jquery', 'jquery-ui-core', /* 'cmb-datepicker', 'media-upload', */'cmb-timepicker' );
 		// styles required for cmb
 		$styles = array();
 
@@ -268,7 +273,7 @@ class cmb_Meta_Box {
 			$scripts[] = 'farbtastic';
 			$styles[] = 'farbtastic';
 		}
-		wp_register_script( 'cmb-datepicker', CMB_META_BOX_URL . 'js/jquery.datePicker.min.js' );
+		wp_enqueue_script( 'jquery-ui-datepicker' );
 		wp_register_script( 'cmb-timepicker', CMB_META_BOX_URL . 'js/jquery.timePicker.min.js' );
 		wp_register_script( 'cmb-scripts', CMB_META_BOX_URL .'js/cmb'. $min .'.js', $scripts, self::CMB_VERSION );
 
@@ -289,7 +294,22 @@ class cmb_Meta_Box {
 			'down_arrow'      => __( '&nbsp;[ ↓ ]', 'cmb' ),
 			'check_toggle'    => __( 'Select / Deselect All', 'cmb' ),
 			'defaults'        => array(
-				'date_picker'  => false,
+				'date_picker'  => array(
+					'changeMonth' 		=> true,
+					'changeYear' 		=> true,
+					'showButtonPanel' 	=> true,
+				 	'dateFormat'  		=> __( 'yy-mm-dd', 'cmb' ),
+					'dayNames' 			=> explode(',', __( 'Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday', 'cmb' )),
+					'dayNamesMin' 		=> explode(',', __( 'Su, Mo, Tu, We, Th, Fr, Sa', 'cmb' ) ),
+					'dayNamesShort' 	=> explode(',', __( 'Sun, Mon, Tue, Wed, Thu, Fri, Sat', 'cmb' ) ),
+					'monthNames' 		=> explode(',', __( 'January, February, March, April, May, June, July, August, September, October, November, December', 'cmb' ) ),
+					'monthNamesShort' 	=> explode(',', __( 'Jan, Feb, Mar, Apr, May, Jun, Jul, Aug, Sep, Oct, Nov, Dec', 'cmb') ),
+					'nextText'			=> __( 'Next', 'cmb' ),
+					'prevText' 			=> __( 'Prev', 'cmb' ),
+					'currentText' 		=> __( 'Today', 'cmb' ),
+					'closeText' 		=> __( 'Done', 'cmb' ),
+					'clearText' 		=> __( 'Clear', 'cmb' ),
+				),
 				'color_picker' => false,
 				'time_picker'  => array(
 					'startTime'   => '00:00',

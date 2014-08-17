@@ -411,6 +411,10 @@ class cmb_Meta_Box_types {
 		return $this->input();
 	}
 
+	public function hidden() {
+		return $this->input( array( 'class' => 'cmb_hidden', 'type' => 'hidden' ) );
+	}
+
 	public function text_small() {
 		return $this->input( array( 'class' => 'cmb_text_small', 'desc' => $this->_desc() ) );
 	}
