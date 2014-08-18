@@ -4,7 +4,7 @@
  * CMB field class
  * @since  1.1.0
  */
-class cmb_Meta_Box_field {
+class CMB2_Field {
 
 	/**
 	 * Metabox object id
@@ -29,7 +29,7 @@ class cmb_Meta_Box_field {
 
 	/**
 	 * Field group object
-	 * @var   mixed
+	 * @var   array
 	 * @since 1.1.0
 	 */
 	public $group;
@@ -44,21 +44,28 @@ class cmb_Meta_Box_field {
 	/**
 	 * Constructs our field object
 	 * @since 1.1.0
-	 * @param array $field_args  Field arguments
-	 * @param array $group_field (optional) Group field object
+	 * @param array $args  Field arguments
 	 */
-	public function __construct( $field_args, $group_field = null ) {
-		$this->object_id   = cmb_Meta_Box::get_object_id();
-		$this->object_type = cmb_Meta_Box::get_object_type();
-		$this->group       = ! empty( $group_field ) ? $group_field : false;
-		$this->args        = $this->_set_field_defaults( $field_args );
+	public function __construct( $args ) {
+
+		$this->args = $this->_set_field_defaults( $args['field_args'] );
+
+		if ( ! empty( $args['group_field'] ) ) {
+			$this->group       = $args['group_field'];
+			$this->object_id   = $this->group->object_id;
+			$this->object_type = $this->group->object_type;
+		} else {
+			$this->object_id   = $args['object_id'];
+			$this->object_type = $args['object_type'];
+			$this->group       = false;
+		}
 
 		// Allow an override for the field's value
-		// (assuming no one would want to save 'cmb_no_override_val' as a value)
-		$this->value = apply_filters( 'cmb_override_meta_value', 'cmb_no_override_val', $this->object_id, $this->args(), $this->object_type, $this );
+		// (assuming no one would want to save 'cmb2_field_no_override_val' as a value)
+		$this->value = apply_filters( 'cmb2_override_meta_value', 'cmb2_field_no_override_val', $this->object_id, $this->args(), $this->object_type, $this );
 
 		// If no override, get our meta
-		$this->value = 'cmb_no_override_val' === $this->value
+		$this->value = 'cmb2_field_no_override_val' === $this->value
 			? $this->get_data()
 			: $this->value;
 	}
@@ -138,11 +145,12 @@ class cmb_Meta_Box_field {
 		} else if ( $this->group ) {
 			$args['field_id'] = $this->group->id();
 		}
-		extract( $this->data_args( $args ) );
 
-		$data = 'options-page' === $type
-			? cmb_Meta_Box::get_option( $id, $field_id )
-			: get_metadata( $type, $id, $field_id, ( $single || $repeat ) /* If multicheck this can be multiple values */ );
+		$a = $this->data_args( $args );
+
+		$data = 'options-page' === $a['type']
+			? cmb2_options( $a['id'] )->get( $a['field_id'] )
+			: get_metadata( $a['type'], $a['id'], $a['field_id'], ( $a['single'] || $a['repeat'] ) );
 
 		if ( $this->group && $data ) {
 			$data = isset( $data[ $this->group->args( 'count' ) ][ $this->args( '_id' ) ] )
@@ -159,17 +167,19 @@ class cmb_Meta_Box_field {
 	 * @param  bool  $single Whether data is an array (add_metadata)
 	 */
 	public function update_data( $new_value, $single = true ) {
-		extract( $this->data_args( array( 'new_value' => $new_value, 'single' => $single ) ) );
+		$a = $this->data_args( array( 'single' => $single ) );
 
-		$new_value = $repeat ? array_values( $new_value ) : $new_value;
+		$new_value = $a['repeat'] ? array_values( $new_value ) : $new_value;
 
-		if ( 'options-page' === $type )
-			return cmb_Meta_Box::update_option( $id, $field_id, $new_value, $single );
+		if ( 'options-page' === $a['type'] ) {
+			return cmb2_options( $a['id'] )->update( $a['field_id'], $new_value, false, $a['single'] );
+		}
 
-		if ( ! $single )
-			return add_metadata( $type, $id, $field_id, $new_value, false );
+		if ( ! $a['single'] ) {
+			return add_metadata( $a['type'], $a['id'], $a['field_id'], $new_value, false );
+		}
 
-		return update_metadata( $type, $id, $field_id, $new_value );
+		return update_metadata( $a['type'], $a['id'], $a['field_id'], $new_value );
 	}
 
 	/**
@@ -178,11 +188,11 @@ class cmb_Meta_Box_field {
 	 * @param  string $old Old value
 	 */
 	public function remove_data( $old = '' ) {
-		extract( $this->data_args() );
+		$a = $this->data_args();
 
-		return 'options-page' === $type
-			? cmb_Meta_Box::remove_option( $id, $field_id )
-			: delete_metadata( $type, $id, $field_id, $old );
+		return 'options-page' === $a['type']
+			? cmb2_options( $a['id'] )->remove( $a['field_id'] )
+			: delete_metadata( $a['type'], $a['id'], $a['field_id'], $old );
 	}
 
 	/**
@@ -203,28 +213,69 @@ class cmb_Meta_Box_field {
 	}
 
 	/**
-	 * Checks if field has a registered validation callback
+	 * Checks if field has a registered sanitization callback
 	 * @since  1.0.1
 	 * @param  mixed $meta_value Meta value
 	 * @return mixed             Possibly validated meta value
 	 */
 	public function sanitization_cb( $meta_value ) {
-		if ( empty( $meta_value ) )
-			return $meta_value;
+
+		if ( $this->args( 'repeatable' ) && is_array( $meta_value ) ) {
+			// Remove empties
+			$meta_value = array_filter( $meta_value );
+		}
 
 		// Check if the field has a registered validation callback
 		$cb = $this->maybe_callback( 'sanitization_cb' );
 		if ( false === $cb ) {
-			// If requestion NO validation, return meta value
+			// If requesting NO validation, return meta value
 			return $meta_value;
 		} elseif ( $cb ) {
 			// Ok, callback is good, let's run it.
 			return call_user_func( $cb, $meta_value, $this->args(), $this );
 		}
 
-		$clean = new cmb_Meta_Box_Sanitize( $this, $meta_value );
-		// Validation via 'cmb_Meta_Box_Sanitize' (with fallback filter)
+		if ( empty( $meta_value ) ) {
+			return $meta_value;
+		}
+
+		$clean = new CMB2_Sanitize( $this, $meta_value );
+		// Validation via 'CMB2_Sanitize' (with fallback filter)
 		return $clean->{$this->type()}( $meta_value );
+	}
+
+	/**
+	 * Process $_POST data to save this field's value
+	 * @since  2.0.0
+	 * @param  array $data_to_save $_POST data to check
+	 * @return bool                Result of save
+	 */
+	public function save_field( $data_to_save ) {
+
+		$meta_value = isset( $data_to_save[ $this->id( true ) ] )
+			? $data_to_save[ $this->id( true ) ]
+			: null;
+
+		$new_value = $this->sanitization_cb( $meta_value );
+		$name      = $this->id();
+		$old       = $this->get_data();
+		// if ( $this->args( 'multiple' ) && ! $this->args( 'repeatable' ) && ! $this->group ) {
+		// 	$this->remove_data();
+		// 	if ( ! empty( $new_value ) ) {
+		// 		foreach ( $new_value as $add_new ) {
+		// 			$this->updated[] = $name;
+		// 			$this->update_data( $add_new, $name, false );
+		// 		}
+		// 	}
+		// } else
+		if ( ! empty( $new_value ) && $new_value !== $old  ) {
+			$this->updated[] = $name;
+			return $this->update_data( $new_value );
+		} elseif ( empty( $new_value ) ) {
+			if ( ! empty( $old ) )
+				$this->updated[] = $name;
+			return $this->remove_data();
+		}
 	}
 
 	/**
@@ -235,18 +286,21 @@ class cmb_Meta_Box_field {
 	 */
 	public function maybe_callback( $cb ) {
 		$field_args = $this->args();
-		if ( ! isset( $field_args[ $cb ] ) )
+		if ( ! isset( $field_args[ $cb ] ) ) {
 			return;
+		}
 
 		// Check if metabox is requesting NO validation
 		$cb = false !== $field_args[ $cb ] && 'false' !== $field_args[ $cb ] ? $field_args[ $cb ] : false;
 
 		// If requestion NO validation, return false
-		if ( ! $cb )
+		if ( ! $cb ) {
 			return false;
+		}
 
-		if ( is_callable( $cb ) )
+		if ( is_callable( $cb ) ) {
 			return $cb;
+		}
 	}
 
 	/**
@@ -310,7 +364,7 @@ class cmb_Meta_Box_field {
 		}
 
 		// Or custom escaping filter can be used
-		$esc = apply_filters( 'cmb_types_esc_'. $this->type(), null, $meta_value, $this->args(), $this );
+		$esc = apply_filters( 'cmb2_types_esc_'. $this->type(), null, $meta_value, $this->args(), $this );
 		if ( null !== $esc ) {
 			return $esc;
 		}
@@ -337,7 +391,7 @@ class cmb_Meta_Box_field {
 	 * @return string Offset time string
 	 */
 	public function field_timezone_offset() {
-		return cmb_Meta_Box::timezone_offset( $this->field_timezone() );
+		return cmb2_utils()->timezone_offset( $this->field_timezone() );
 	}
 
 	/**
@@ -366,47 +420,46 @@ class cmb_Meta_Box_field {
 	public function render_field() {
 
 		// If field is requesting to not be shown on the front-end
-		if ( ! is_admin() && ! $this->args( 'on_front' ) )
+		if ( ! is_admin() && ! $this->args( 'on_front' ) ) {
 			return;
+		}
 
 		// If field is requesting to be conditionally shown
-		if ( is_callable( $this->args( 'show_on_cb' ) ) && ! call_user_func( $this->args( 'show_on_cb' ), $this ) )
+		if ( is_callable( $this->args( 'show_on_cb' ) ) && ! call_user_func( $this->args( 'show_on_cb' ), $this ) ) {
 			return;
+		}
 
 		$classes    = 'cmb-type-'. sanitize_html_class( $this->type() );
-		$classes   .= ' cmb_id_'. sanitize_html_class( $this->id() );
+		$classes   .= ' cmb2_id_'. sanitize_html_class( $this->id() );
 		$classes   .= $this->args( 'repeatable' ) ? ' cmb-repeat' : '';
+		$classes   .= $this->group ? ' cmb-repeat-group-field' : '';
 		// 'inline' flag, or _inline in the field type, set to true
 		$classes   .= $this->args( 'inline' ) ? ' cmb-inline' : '';
-		$is_side    = 'side' === $this->args( 'context' );
 
-		printf( "<tr class=\"%s\">\n", $classes );
+		printf( "<li class=\"cmb-row %s\">\n", $classes );
 
-		if ( 'title' == $this->type() || ! $this->args( 'show_names' ) || $is_side ) {
-			echo "\t<td colspan=\"2\">\n";
+		if ( 'title' == $this->type() || ! $this->args( 'show_names' ) ) {
+			echo "\t<div class=\"cmb-td\">\n";
 
-			if ( ! $this->args( 'show_names' ) || $is_side ) {
-				$style = ! $is_side || 'title' == $this->type() ? ' style="display:none;"' : '';
+			if ( ! $this->args( 'show_names' ) ) {
+				$style = 'title' == $this->type() ? ' style="display:none;"' : '';
 				printf( "\n<label%s for=\"%s\">%s</label>\n", $style, $this->id(), $this->args( 'name' ) );
 			}
 		} else {
 
-			$style = 'post' == $this->object_type ? ' style="width:18%"' : '';
-			// $tag   = 'side' !== $this->args( 'context' ) ? 'th' : 'p';
-			$tag   = 'th';
-			printf( '<%1$s%2$s><label for="%3$s">%4$s</label></%1$s>', $tag, $style, $this->id(), $this->args( 'name' ) );
+			printf( '<div class="cmb-th"><label for="%1$s">%2$s</label></div>', $this->id(), $this->args( 'name' ) );
 
-			echo "\n\t<td>\n";
+			echo "\n\t<div class=\"cmb-td\">\n";
 		}
 
 		echo $this->args( 'before' );
 
-		$this_type = new cmb_Meta_Box_types( $this );
+		$this_type = new CMB2_Types( $this );
 		$this_type->render();
 
 		echo $this->args( 'after' );
 
-		echo "\n\t</td>\n</tr>";
+		echo "\n\t</div>\n</li>";
 	}
 
 	/**
@@ -433,18 +486,15 @@ class cmb_Meta_Box_field {
 		if ( ! isset( $args['before'] ) ) $args['before'] = '';
 		if ( ! isset( $args['after'] ) ) $args['after'] = '';
 		if ( ! isset( $args['protocols'] ) ) $args['protocols'] = null;
+		if ( ! isset( $args['default'] ) ) $args['default'] = null;
 		if ( ! isset( $args['description'] ) ) {
 			$args['description'] = isset( $args['desc'] ) ? $args['desc'] : '';
-		}
-		if ( ! isset( $args['default'] ) ) {
-			// Phase out 'std', and use 'default' instead
-			$args['default'] = isset( $args['std'] ) ? $args['std'] : '';
 		}
 		if ( ! isset( $args['preview_size'] ) ) $args['preview_size'] = array( 50, 50 );
 		if ( ! isset( $args['date_format'] ) ) $args['date_format'] = 'm\/d\/Y';
 		if ( ! isset( $args['time_format'] ) ) $args['time_format'] = 'h:i A';
 		// Allow a filter override of the default value
-		$args['default']    = apply_filters( 'cmb_default_filter', $args['default'], $args, $this->object_type, $this->object_type );
+		$args['default']    = apply_filters( 'cmb2_default_filter', $args['default'], $this );
 		$args['allow']      = 'file' == $args['type'] && ! isset( $args['allow'] ) ? array( 'url', 'attachment' ) : array();
 		$args['save_id']    = 'file' == $args['type'] && ! ( isset( $args['save_id'] ) && ! $args['save_id'] );
 		// $args['multiple']   = isset( $args['multiple'] ) ? $args['multiple'] : ( 'multicheck' == $args['type'] ? true : false );
@@ -456,8 +506,8 @@ class cmb_Meta_Box_field {
 		$args['options']    = isset( $args['options'] ) && is_array( $args['options'] ) ? $args['options'] : array();
 
 		$args['options']    = 'group' == $args['type'] ? wp_parse_args( $args['options'], array(
-			'add_button'    => __( 'Add Group', 'cmb' ),
-			'remove_button' => __( 'Remove Group', 'cmb' ),
+			'add_button'    => __( 'Add Group', 'cmb2' ),
+			'remove_button' => __( 'Remove Group', 'cmb2' ),
 		) ) : $args['options'];
 
 		$args['_id']        = $args['id'];
@@ -473,12 +523,12 @@ class cmb_Meta_Box_field {
 			$args['options']['textarea_name'] = $args['_name'];
 		}
 
-		$option_types = array( 'taxonomy_select', 'taxonomy_radio', 'taxonomy_radio_inline' );
+		$option_types = apply_filters( 'cmb2_all_or_nothing_types', array( 'taxonomy_select', 'taxonomy_radio', 'taxonomy_radio_inline' ), $this );
+
 		if ( in_array( $args['type'], $option_types, true ) ) {
 
-			// @todo implemention
-			$args['show_option_all'] = isset( $args['show_option_all'] ) && ! $args['show_option_all'] ? false : true;
-			$args['show_option_none'] = isset( $args['show_option_none'] ) && ! $args['show_option_none'] ? false : true;
+			$args['show_option_none'] = isset( $args['show_option_none'] ) ? $args['show_option_none'] : 'None';
+			$args['show_option_all'] = isset( $args['show_option_all'] ) ? $args['show_option_all'] : 'All'; // @todo: implementation
 
 		}
 

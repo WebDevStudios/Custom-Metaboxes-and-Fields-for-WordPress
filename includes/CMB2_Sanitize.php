@@ -4,11 +4,11 @@
  * CMB field validation
  * @since  0.0.4
  */
-class cmb_Meta_Box_Sanitize {
+class CMB2_Sanitize {
 
 	/**
 	 * A CMB field object
-	 * @var cmb_Meta_Box_field object
+	 * @var CMB2_Field object
 	 */
 	public $field;
 
@@ -24,11 +24,9 @@ class cmb_Meta_Box_Sanitize {
 	 * @param object $field A CMB field object
 	 * @param mixed  $value Field value
 	 */
-	public function __construct( $field, $value ) {
-		$this->field       = $field;
-		$this->value       = $value;
-		$this->object_id   = cmb_Meta_Box::get_object_id();
-		$this->object_type = cmb_Meta_Box::get_object_type();
+	public function __construct( CMB2_Field $field, $value ) {
+		$this->field = $field;
+		$this->value = $value;
 	}
 
 	/**
@@ -49,11 +47,26 @@ class cmb_Meta_Box_Sanitize {
 	 */
 	public function default_sanitization( $value ) {
 
-		// Allow field type validation via filter
-		$updated = apply_filters( 'cmb_validate_'. $this->field->type(), null, $value, $this->object_id, $this->field->args(), $this );
+		/**
+		 * Filter the value before it is saved.
+		 *
+		 * The dynamic portion of the hook name, $this->field->type(), refers to the field type.
+		 *
+		 * Passing a non-null value to the filter will short-circuit saving
+		 * the field value, saving the passed value instead.
+		 *
+		 * @param bool|mixed $override_value Sanitization/Validation override value to return.
+		 *                                   Default false to skip it.
+		 * @param mixed      $value      The value to be saved to this field.
+		 * @param int        $object_id  The ID of the object where the value will be saved
+		 * @param array      $field_args The current field's arguments
+		 * @param object     $sanitizer  This `CMB2_Sanitize` object
+		 */
+		$override_value = apply_filters( 'cmb2_validate_'. $this->field->type(), null, $value, $this->field->object_id, $this->field->args(), $this );
 
-		if ( null !== $updated )
+		if ( null !== $override_value ) {
 			return $updated;
+		}
 
 		switch ( $this->field->type() ) {
 			case 'wysiwyg':
@@ -65,7 +78,7 @@ class cmb_Meta_Box_Sanitize {
 			case 'taxonomy_radio':
 			case 'taxonomy_multicheck':
 				if ( $this->field->args( 'taxonomy' ) ) {
-					return wp_set_object_terms( $this->object_id, $value, $this->field->args( 'taxonomy' ) );
+					return wp_set_object_terms( $this->field->object_id, $value, $this->field->args( 'taxonomy' ) );
 				}
 			case 'multicheck':
 			case 'file_list':
@@ -190,16 +203,19 @@ class cmb_Meta_Box_Sanitize {
 	public function text_datetime_timestamp( $value, $repeat = false ) {
 
 		$test = is_array( $value ) ? array_filter( $value ) : '';
-		if ( empty( $test ) )
+		if ( empty( $test ) ) {
 			return '';
+		}
 
-		if ( $repeat_value = $this->_check_repeat( $value, __FUNCTION__, $repeat ) )
+		if ( $repeat_value = $this->_check_repeat( $value, __FUNCTION__, $repeat ) ) {
 			return $repeat_value;
+		}
 
 		$value = strtotime( $value['date'] .' '. $value['time'] );
 
-		if ( $tz_offset = $this->field->field_timezone_offset() )
+		if ( $tz_offset = $this->field->field_timezone_offset() ) {
 			$value += $tz_offset;
+		}
 
 		return $value;
 	}
@@ -213,24 +229,29 @@ class cmb_Meta_Box_Sanitize {
 	public function text_datetime_timestamp_timezone( $value, $repeat = false ) {
 
 		$test = is_array( $value ) ? array_filter( $value ) : '';
-		if ( empty( $test ) )
+		if ( empty( $test ) ) {
 			return '';
+		}
 
-		if ( $repeat_value = $this->_check_repeat( $value, __FUNCTION__, $repeat ) )
+		if ( $repeat_value = $this->_check_repeat( $value, __FUNCTION__, $repeat ) ) {
 			return $repeat_value;
+		}
 
 		$tzstring = null;
 
-		if ( is_array( $value ) && array_key_exists( 'timezone', $value ) )
+		if ( is_array( $value ) && array_key_exists( 'timezone', $value ) ) {
 			$tzstring = $value['timezone'];
+		}
 
-		if ( empty( $tzstring ) )
-			$tzstring = cmb_Meta_Box::timezone_string();
+		if ( empty( $tzstring ) ) {
+			$tzstring = cmb2_utils()->timezone_string();
+		}
 
-		$offset = cmb_Meta_Box::timezone_offset( $tzstring, true );
+		$offset = cmb2_utils()->timezone_offset( $tzstring, true );
 
-		if ( substr( $tzstring, 0, 3 ) === 'UTC' )
+		if ( substr( $tzstring, 0, 3 ) === 'UTC' ) {
 			$tzstring = timezone_name_from_abbr( '', $offset, 0 );
+		}
 
 		$value = new DateTime( $value['date'] .' '. $value['time'], new DateTimeZone( $tzstring ) );
 		$value = serialize( $value );
@@ -273,7 +294,12 @@ class cmb_Meta_Box_Sanitize {
 
 		unset( $args['_id'], $args['_name'] );
 		// And get new field object
-		$field      = new cmb_Meta_Box_field( $args, $group );
+		$field      = new CMB2_Field( array(
+			'field_args'  => $args,
+			'group_field' => $group,
+			'object_id'   => $this->field->object_id,
+			'object_type' => $this->field->object_type,
+		) );
 		$id_key     = $field->_id();
 		$id_val_old = $field->escaped_value( 'absint' );
 
@@ -291,7 +317,7 @@ class cmb_Meta_Box_Sanitize {
 
 		// If there is no ID saved yet, try to get it from the url
 		if ( $value && ! $id_val ) {
-			$id_val = cmb_Meta_Box::image_id_from_url( $value );
+			$id_val = cmb2_utils()->image_id_from_url( $value );
 		}
 
 		if ( $group ) {
@@ -334,8 +360,9 @@ class cmb_Meta_Box_Sanitize {
 	 * @return mixed          Sanitized value
 	 */
 	public function _check_repeat( $value, $method, $repeat ) {
-		if ( $repeat || ! $this->field->args( 'repeatable' ) )
+		if ( $repeat || ! $this->field->args( 'repeatable' ) ) {
 			return;
+		}
 		$new_value = array();
 		foreach ( $value as $iterator => $val ) {
 			$new_value[] = $this->$method( $val, true );
