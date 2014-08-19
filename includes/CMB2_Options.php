@@ -4,12 +4,15 @@
  * Retrieves an instance of CMB2_Option based on the option key
  */
 class CMB2_Options {
+
+
 	/**
 	 * Array of all CMB2_Option instances
 	 * @var   array
 	 * @since 1.0.0
 	 */
 	protected static $option_sets = array();
+
 
 	public static function get( $option_key ) {
 
@@ -21,17 +24,20 @@ class CMB2_Options {
 	}
 }
 
+
 /**
  * Handles getting/setting of values to an option array
  * for a specific option key
  */
 class CMB2_Option {
 
+
 	/**
 	 * Options array
 	 * @var array
 	 */
 	protected $options = array();
+
 
 	/**
 	 * Initiate option object
@@ -40,6 +46,7 @@ class CMB2_Option {
 	public function __construct( $option_key ) {
 		$this->key = $option_key;
 	}
+
 
 	/**
 	 * Delete the option from the db
@@ -50,6 +57,7 @@ class CMB2_Option {
 		$this->options = delete_option( $this->key );
 		return $this->options;
 	}
+
 
 	/**
 	 * Removes an option from an option array
@@ -72,6 +80,7 @@ class CMB2_Option {
 		return $this->options;
 	}
 
+
 	/**
 	 * Retrieves an option from an option array
 	 * @since  1.0.1
@@ -80,6 +89,7 @@ class CMB2_Option {
 	 * @return array             Requested field or default
 	 */
 	function get( $field_id, $default = false ) {
+
 		$opts = $this->get_options();
 
 		if ( $field_id == 'all' ) {
@@ -91,6 +101,7 @@ class CMB2_Option {
 		return $default;
 	}
 
+
 	/**
 	 * Updates Option data
 	 * @since  1.0.1
@@ -101,6 +112,7 @@ class CMB2_Option {
 	 * @return array               Modified options
 	 */
 	function update( $field_id, $value = '', $resave = false, $single = true ) {
+
 		$this->get_options();
 
 		if ( $field_id !== true ) {
@@ -119,6 +131,7 @@ class CMB2_Option {
 		}
 	}
 
+
 	/**
 	 * Saves the option array
 	 * Needs to be run after finished using remove/update_option
@@ -129,6 +142,7 @@ class CMB2_Option {
 	 * @return boolean             Success/Failure
 	 */
 	function set( $options = false ) {
+
 		$this->options = $options ? $options : $this->options;
 
 		$test_save = apply_filters( "cmb2_override_option_save_{$this->key}", 'cmb2_no_override_option_save', $this->options, $this );
@@ -141,6 +155,7 @@ class CMB2_Option {
 		return update_option( $this->key, $this->options );
 	}
 
+
 	/**
 	 * Retrieve option value based on name of option.
 	 * @uses apply_filters() Calls 'cmb2_override_option_get_{$this->key}' hook to allow
@@ -152,6 +167,7 @@ class CMB2_Option {
 	 * @return mixed           Value set for the option.
 	 */
 	function get_options( $default = null ) {
+
 		if ( empty( $this->options ) ) {
 
 			$test_get = apply_filters( "cmb2_override_option_get_{$this->key}", 'cmb2_no_override_option_get', $default, $this );

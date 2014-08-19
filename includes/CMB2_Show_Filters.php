@@ -11,6 +11,7 @@
  */
 class CMB2_Show_Filters {
 
+
 	/**
 	 * Add metaboxes for an specific ID
 	 * @since  1.0.0
@@ -26,12 +27,14 @@ class CMB2_Show_Filters {
 
 		$object_id = is_admin() ? $cmb->object_id() : @get_the_id();
 
-		if ( ! $object_id )
+		if ( ! $object_id ) {
 			return false;
+		}
 
 		// If current page id is in the included array, display the metabox
 		return in_array( $object_id, (array) $meta_box_args['show_on']['value'] );
 	}
+
 
 	/**
 	 * Add metaboxes for an specific Page Template
@@ -63,6 +66,7 @@ class CMB2_Show_Filters {
 		return false;
 	}
 
+
 	/**
 	 * Only show options-page metaboxes on their options page (but only enforce on the admin side)
 	 * @since  1.0.0
@@ -72,7 +76,7 @@ class CMB2_Show_Filters {
 	 */
 	public static function check_admin_page( $display, $meta_box_args ) {
 
-		// check if this is a 'options-page' metabox
+		// Check if this is a 'options-page' metabox
 		if ( ! isset( $meta_box_args['show_on']['key'] ) || 'options-page' !== $meta_box_args['show_on']['key'] ) {
 			return $display;
 		}
@@ -92,13 +96,17 @@ class CMB2_Show_Filters {
 			$pages = $meta_box_args['show_on']['value'];
 
 			if ( is_array( $pages ) ) {
+
 				foreach ( $pages as $page ) {
 					if ( $_GET['page'] == $page )
 						return true;
 				}
+
 			} else {
-				if ( $_GET['page'] == $pages )
+
+				if ( $_GET['page'] == $pages ) {
 					return true;
+				}
 			}
 
 			return false;
@@ -108,5 +116,4 @@ class CMB2_Show_Filters {
 		// Allow options-page metaboxes to be displayed anywhere on the front-end
 		return true;
 	}
-
 }

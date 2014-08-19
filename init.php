@@ -46,12 +46,14 @@ if ( ! class_exists( 'cmb2_bootstrap_200' ) ) {
 	 */
 	class cmb2_bootstrap_200 {
 
+
 		/**
 		 * Current version number
 		 * @var   string
 		 * @since 1.0.0
 		 */
 		const VERSION = '2.0.0';
+
 
 		/**
 		 * Current version hook priority
@@ -62,7 +64,9 @@ if ( ! class_exists( 'cmb2_bootstrap_200' ) ) {
 		 */
 		const PRIORITY = 9999;
 
+
 		public static $single = null;
+
 
 		public static function go() {
 			if ( null === self::$single ) {
@@ -71,19 +75,26 @@ if ( ! class_exists( 'cmb2_bootstrap_200' ) ) {
 			return self::$single;
 		}
 
+
 		private function __construct() {
 			add_action( 'init', array( $this, 'include_cmb' ), self::PRIORITY );
 		}
 
+
 		public function include_cmb() {
+
 			if ( ! class_exists( 'CMB2' ) ) {
+
 				if ( ! defined( 'CMB2_VERSION' ) ) {
 					define( 'CMB2_VERSION', self::VERSION );
 				}
+
 				$this->l10ni18n();
+
 				require_once 'CMB2.php';
 			}
 		}
+
 
 		/**
 		 * Load CMB text domain
@@ -96,6 +107,7 @@ if ( ! class_exists( 'cmb2_bootstrap_200' ) ) {
 		}
 
 	}
+
 	cmb2_bootstrap_200::go();
 
 } // class exists check

@@ -6,12 +6,14 @@
  */
 class CMB2_Utils {
 
+
 	/**
 	 * The url which is used to load local resources.
 	 * @var   string
 	 * @since 2.0.0
 	 */
 	protected $url = '';
+
 
 	/**
 	 * Utility method that attempts to get an attachment's ID by it's url
@@ -20,9 +22,11 @@ class CMB2_Utils {
 	 * @return mixed            Attachment ID or false
 	 */
 	public function image_id_from_url( $img_url ) {
+
 		global $wpdb;
 
 		$img_url = esc_url_raw( $img_url );
+
 		// Get just the file name
 		if ( false !== strpos( $img_url, '/' ) ) {
 			$explode = explode( '/', $img_url );
@@ -41,6 +45,7 @@ class CMB2_Utils {
 		return false;
 	}
 
+
 	/**
 	 * Utility method that returns time string offset by timezone
 	 * @since  1.0.0
@@ -48,7 +53,9 @@ class CMB2_Utils {
 	 * @return string           Offset time string
 	 */
 	public function timezone_offset( $tzstring ) {
+
 		if ( ! empty( $tzstring ) && is_string( $tzstring ) ) {
+
 			if ( substr( $tzstring, 0, 3 ) === 'UTC' ) {
 				$tzstring = str_replace( array( ':15',':30',':45' ), array( '.25','.5','.75' ), $tzstring );
 				return intval( floatval( substr( $tzstring, 3 ) ) * HOUR_IN_SECONDS );
@@ -63,6 +70,7 @@ class CMB2_Utils {
 		return 0;
 	}
 
+
 	/**
 	 * Utility method that returns a timezone string representing the default timezone for the site.
 	 *
@@ -75,10 +83,12 @@ class CMB2_Utils {
 	 * @return string Timezone string
 	 */
 	public function timezone_string() {
+
 		$current_offset = get_option( 'gmt_offset' );
 		$tzstring       = get_option( 'timezone_string' );
 
 		if ( empty( $tzstring ) ) { // Create a UTC+- zone if no timezone string exists
+
 			if ( 0 == $current_offset ) {
 				$tzstring = 'UTC+0';
 			} elseif ( $current_offset < 0 ) {
@@ -86,10 +96,12 @@ class CMB2_Utils {
 			} else {
 				$tzstring = 'UTC+' . $current_offset;
 			}
+
 		}
 
 		return $tzstring;
 	}
+
 
 	/**
 	 * Defines the url which is used to load local resources.
@@ -99,6 +111,7 @@ class CMB2_Utils {
 	 * @return string URL to CMB resources
 	 */
 	public function url( $path = '' ) {
+
 		if ( $this->url ) {
 			return $this->url . $path;
 		}
