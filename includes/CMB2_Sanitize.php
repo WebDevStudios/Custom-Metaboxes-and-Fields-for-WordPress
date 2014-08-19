@@ -6,17 +6,20 @@
  */
 class CMB2_Sanitize {
 
+
 	/**
 	 * A CMB field object
 	 * @var CMB2_Field object
 	 */
 	public $field;
 
+
 	/**
 	 * Field's $_POST value
 	 * @var mixed
 	 */
 	public $value;
+
 
 	/**
 	 * Setup our class vars
@@ -29,6 +32,7 @@ class CMB2_Sanitize {
 		$this->value = $value;
 	}
 
+
 	/**
 	 * Catchall method if field's 'sanitization_cb' is NOT defined, or field type does not have a corresponding validation method
 	 * @since  1.0.0
@@ -39,6 +43,7 @@ class CMB2_Sanitize {
 		list( $value ) = $arguments;
 		return $this->default_sanitization( $value );
 	}
+
 
 	/**
 	 * Default fallback sanitization method. Applies filters.
@@ -92,6 +97,7 @@ class CMB2_Sanitize {
 		}
 	}
 
+
 	/**
 	 * Simple checkbox validation
 	 * @since  1.0.1
@@ -102,6 +108,7 @@ class CMB2_Sanitize {
 		return $value === 'on' ? 'on' : false;
 	}
 
+
 	/**
 	 * Validate url in a meta value
 	 * @since  1.0.1
@@ -109,12 +116,16 @@ class CMB2_Sanitize {
 	 * @return string        Empty string or escaped url
 	 */
 	public function text_url( $value ) {
+
 		$protocols = $this->field->args( 'protocols' );
-		// for repeatable
+
+		// For repeatable
 		if ( is_array( $value ) ) {
+
 			foreach ( $value as $key => $val ) {
 				$value[ $key ] = $val ? esc_url_raw( $val, $protocols ) : $this->field->args( 'default' );
 			}
+
 		} else {
 			$value = $value ? esc_url_raw( $value, $protocols ) : $this->field->args( 'default' );
 		}
@@ -122,21 +133,29 @@ class CMB2_Sanitize {
 		return $value;
 	}
 
+
 	public function colorpicker( $value ) {
-		// for repeatable
+
+		// For repeatable
 		if ( is_array( $value ) ) {
+
 			$check = $value;
 			$value = array();
+
 			foreach ( $check as $key => $val ) {
+
 				if ( $val && '#' != $val ) {
 					$value[ $key ] = esc_attr( $val );
 				}
 			}
+
 		} else {
 			$value = ! $value || '#' == $value ? '' : esc_attr( $value );
 		}
+
 		return $value;
 	}
+
 
 	/**
 	 * Validate email in a meta value
@@ -145,12 +164,15 @@ class CMB2_Sanitize {
 	 * @return string       Empty string or validated email
 	 */
 	public function text_email( $value ) {
-		// for repeatable
+
+		// For repeatable
 		if ( is_array( $value ) ) {
+
 			foreach ( $value as $key => $val ) {
 				$val = trim( $val );
 				$value[ $key ] = is_email( $val ) ? $val : '';
 			}
+
 		} else {
 			$value = trim( $value );
 			$value = is_email( $value ) ? $value : '';
@@ -158,6 +180,7 @@ class CMB2_Sanitize {
 
 		return $value;
 	}
+
 
 	/**
 	 * Validate money in a meta value
@@ -172,17 +195,20 @@ class CMB2_Sanitize {
 		$search = array( $wp_locale->number_format['thousands_sep'], $wp_locale->number_format['decimal_point'] );
 		$replace = array( '', '.' );
 
-		// for repeatable
+		// For repeatable
 		if ( is_array( $value ) ) {
+
 			foreach ( $value as $key => $val ) {
 				$value[ $key ] = number_format_i18n( (float) str_ireplace( $search, $replace, $val ), 2 );
 			}
+
 		} else {
 			$value = number_format_i18n( (float) str_ireplace( $search, $replace, $value ), 2 );
 		}
 
 		return $value;
 	}
+
 
 	/**
 	 * Converts text date to timestamp
@@ -194,6 +220,7 @@ class CMB2_Sanitize {
 		return is_array( $value ) ? array_map( 'strtotime', $value ) : strtotime( $value );
 	}
 
+
 	/**
 	 * Datetime to timestamp
 	 * @since  1.0.1
@@ -203,6 +230,7 @@ class CMB2_Sanitize {
 	public function text_datetime_timestamp( $value, $repeat = false ) {
 
 		$test = is_array( $value ) ? array_filter( $value ) : '';
+
 		if ( empty( $test ) ) {
 			return '';
 		}
@@ -220,6 +248,7 @@ class CMB2_Sanitize {
 		return $value;
 	}
 
+
 	/**
 	 * Datetime to imestamp with timezone
 	 * @since  1.0.1
@@ -229,6 +258,7 @@ class CMB2_Sanitize {
 	public function text_datetime_timestamp_timezone( $value, $repeat = false ) {
 
 		$test = is_array( $value ) ? array_filter( $value ) : '';
+
 		if ( empty( $test ) ) {
 			return '';
 		}
@@ -259,6 +289,7 @@ class CMB2_Sanitize {
 		return $value;
 	}
 
+
 	/**
 	 * Sanitize textareas and wysiwyg fields
 	 * @since  1.0.1
@@ -269,6 +300,7 @@ class CMB2_Sanitize {
 		return is_array( $value ) ? array_map( 'wp_kses_post', $value ) : wp_kses_post( $value );
 	}
 
+
 	/**
 	 * Sanitize code textareas
 	 * @since  1.0.2
@@ -276,11 +308,14 @@ class CMB2_Sanitize {
 	 * @return string       Sanitized data
 	 */
 	public function textarea_code( $value, $repeat = false ) {
-		if ( $repeat_value = $this->_check_repeat( $value, __FUNCTION__, $repeat ) )
+
+		if ( $repeat_value = $this->_check_repeat( $value, __FUNCTION__, $repeat ) ) {
 			return $repeat_value;
+		}
 
 		return htmlspecialchars_decode( stripslashes( $value ) );
 	}
+
 
 	/**
 	 * Peforms saving of `file` attachement's ID
@@ -288,11 +323,13 @@ class CMB2_Sanitize {
 	 * @param  string $value File url
 	 */
 	public function _save_file_id( $value ) {
+
 		$group      = $this->field->group;
 		$args       = $this->field->args();
 		$args['id'] = $args['_id'] . '_id';
 
 		unset( $args['_id'], $args['_name'] );
+
 		// And get new field object
 		$field      = new CMB2_Field( array(
 			'field_args'  => $args,
@@ -300,6 +337,7 @@ class CMB2_Sanitize {
 			'object_id'   => $this->field->object_id,
 			'object_type' => $this->field->object_type,
 		) );
+
 		$id_key     = $field->_id();
 		$id_val_old = $field->escaped_value( 'absint' );
 
@@ -334,6 +372,7 @@ class CMB2_Sanitize {
 		}
 	}
 
+
 	/**
 	 * Handles saving of attachment post ID and sanitizing file url
 	 * @since  1.1.0
@@ -341,15 +380,18 @@ class CMB2_Sanitize {
 	 * @return string        Sanitized url
 	 */
 	public function file( $value ) {
+
 		// If NOT specified to NOT save the file ID
 		if ( $this->field->args( 'save_id' ) ) {
 			$id_value = $this->_save_file_id( $value );
 		}
+
 		$clean = $this->text_url( $value );
 
 		// Return an array with url/id if saving a group field
 		return $this->field->group ? array_merge( array( 'url' => $clean), $id_value ) : $clean;
 	}
+
 
 	/**
 	 * If repeating, loop through and re-apply sanitization method
@@ -360,14 +402,17 @@ class CMB2_Sanitize {
 	 * @return mixed          Sanitized value
 	 */
 	public function _check_repeat( $value, $method, $repeat ) {
+
 		if ( $repeat || ! $this->field->args( 'repeatable' ) ) {
 			return;
 		}
+
 		$new_value = array();
+
 		foreach ( $value as $iterator => $val ) {
 			$new_value[] = $this->$method( $val, true );
 		}
+
 		return $new_value;
 	}
-
 }
