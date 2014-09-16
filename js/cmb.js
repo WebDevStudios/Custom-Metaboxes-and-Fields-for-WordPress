@@ -289,6 +289,8 @@ window.CMB = (function(window, document, $, undefined){
 		$inputs.each( function(){
 			var $newInput = $(this);
 			var isEditor  = $newInput.hasClass( 'wp-editor-area' );
+			// src: http://stackoverflow.com/questions/17084839/check-if-any-parent-grand-parent-great-grand-parent-has-a-class-using-jquery
+			var isMulticheck = ( $newInput.closest( '.cmb-type-multicheck' ).length )
 			var oldFor    = $newInput.attr( 'for' );
 			// var $next     = $newInput.next();
 			var attrs     = {};
@@ -299,6 +301,7 @@ window.CMB = (function(window, document, $, undefined){
 				var oldName = $newInput.attr( 'name' );
 				// Replace 'name' attribute key
 				var newName = oldName ? oldName.replace( '['+ prevNum +']', '['+ cmb.idNumber +']' ) : '';
+				var oldValue 	= $newInput.attr( 'value' );
 				oldID       = $newInput.attr( 'id' );
 				newID       = oldID ? oldID.replace( '_'+ prevNum, '_'+ cmb.idNumber ) : '';
 				attrs       = {
@@ -307,12 +310,18 @@ window.CMB = (function(window, document, $, undefined){
 					// value: '',
 					'data-iterator': cmb.idNumber,
 				};
-			}
-
+			}		
+			
 			$newInput
 				.removeClass( 'hasDatepicker' )
 				.attr( attrs ).val('');
-
+				
+			// multicheck field
+			if ( isMulticheck ) {
+				// Replace old values for Multicheck boxes
+				$newInput.attr( 'value', oldValue )
+			}	
+				
 			// wysiwyg field
 			if ( isEditor ) {
 				// Get new wysiwyg ID
