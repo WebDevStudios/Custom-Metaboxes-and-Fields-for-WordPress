@@ -850,6 +850,8 @@ class cmb_Meta_Box {
 			);
 		}
 
+		$cmb_url = set_url_scheme( $cmb_url );
+
 		return trailingslashit( apply_filters('cmb_meta_box_url', $cmb_url ) );
 	}
 
