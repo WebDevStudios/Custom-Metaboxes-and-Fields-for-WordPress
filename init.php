@@ -148,14 +148,14 @@ class cmb_Meta_Box {
 	/**
 	 * List of old values of fields that are changed/updated on save
 	 * @var   array
-	 * @since TODO
+	 * @since 1.3.0
 	 */
 	protected static $old_values = array();
 
 	/**
 	 * List of the new values of fields that are changed/updated on save
 	 * @var   array
-	 * @since 1.1.0
+	 * @since 1.3.0
 	 */
 	protected static $new_values = array();
 
@@ -614,9 +614,6 @@ class cmb_Meta_Box {
 				// Save default fields
 				$field = new cmb_Meta_Box_field( $field_args );
 				self::save_field( self::sanitize_field( $field ), $field );
-				// Once the field is saved, get it's new value
-				// That's because the value could change during save, or can have $single = false
-				self::$new_values[ $field->id() ] = $field->get_data();
 			}
 
 		}
@@ -657,6 +654,9 @@ class cmb_Meta_Box {
 		$saved              = array();
 		$is_updated         = false;
 		$field_group->index = 0;
+
+		// Store the old value
+		self::$old_values[ $base_id ] = $old;
 
 		// $group_vals[0]['color'] = '333';
 		foreach ( array_values( $field_group->fields() ) as $field_args ) {
@@ -700,6 +700,9 @@ class cmb_Meta_Box {
 		$saved = array_filter( $saved );
 
 		$field_group->update_data( $saved, true );
+
+		// Once the field is saved, get it's new value
+		self::$new_values[ $base_id ] = $field_group->get_data();
 	}
 
 	public static function sanitize_field( $field, $new_value = null ) {
@@ -730,15 +733,32 @@ class cmb_Meta_Box {
 		// 		}
 		// 	}
 		// } else
+
 		// Store the old value
 		self::$old_values[ $field->id() ] = $old;
+
 		if ( ! empty( $new_value ) && $new_value !== $old  ) {
 			self::$updated[] = $name;
-			return $field->update_data( $new_value );
+			$result = $field->update_data( $new_value );
+
+			// Once the field is saved, get it's new value
+			// That's because the value could change during save, or can have $single = false
+			self::$new_values[ $field->id() ] = $field->get_data();
+
+			return $result;
+
 		} elseif ( empty( $new_value ) ) {
-			if ( ! empty( $old ) )
+			$result = $field->remove_data();
+
+			if ( ! empty( $old ) ) {
 				self::$updated[] = $name;
-			return $field->remove_data();
+
+				// Once the field is saved, get it's new value
+				// That's because the value could change during save, or can have $single = false
+				self::$new_values[ $field->id() ] = $field->get_data();
+			}
+
+			return $result;
 		}
 	}
 
