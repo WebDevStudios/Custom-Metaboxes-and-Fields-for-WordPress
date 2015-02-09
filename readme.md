@@ -1,6 +1,6 @@
 # Custom Metaboxes and Fields for WordPress
 
-**Note: all future development will continue on [CMB2](https://github.com/WebDevStudios/CMB2). It is currently in beta testing, so use at your own risk. Backwards compatibility is not guaranteed.**
+**Note: all future development will continue on [CMB2](https://github.com/WebDevStudios/CMB2).**
 
 **Contributors**:
 
