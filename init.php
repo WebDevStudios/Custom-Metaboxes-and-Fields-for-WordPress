@@ -270,7 +270,7 @@ class cmb_Meta_Box {
 		wp_register_script( 'cmb-timepicker', CMB_META_BOX_URL . 'js/jquery.timePicker.min.js' );
 		wp_register_script( 'cmb-scripts', CMB_META_BOX_URL .'js/cmb'. $min .'.js', $scripts, self::CMB_VERSION );
 
-		wp_enqueue_media();
+		if( function_exists('wp_enqueue_media') ) wp_enqueue_media();
 
 		wp_localize_script( 'cmb-scripts', 'cmb_l10', apply_filters( 'cmb_localized_data', array(
 			'ajax_nonce'      => wp_create_nonce( 'ajax_nonce' ),
