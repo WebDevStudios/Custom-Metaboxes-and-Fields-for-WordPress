@@ -146,6 +146,20 @@ class cmb_Meta_Box {
 	protected static $updated = array();
 
 	/**
+	 * List of old values of fields that are changed/updated on save
+	 * @var   array
+	 * @since TODO
+	 */
+	protected static $old_values = array();
+
+	/**
+	 * List of the new values of fields that are changed/updated on save
+	 * @var   array
+	 * @since 1.1.0
+	 */
+	protected static $new_values = array();
+
+	/**
 	 * Get started
 	 */
 	function __construct( $meta_box ) {
@@ -558,6 +572,8 @@ class cmb_Meta_Box {
 
 		// save field ids of those that are updated
 		self::$updated = array();
+		self::$old_values = array();
+		self::$new_values = array();
 
 		foreach ( $meta_box['fields'] as $field_args ) {
 
@@ -567,6 +583,9 @@ class cmb_Meta_Box {
 				// Save default fields
 				$field = new cmb_Meta_Box_field( $field_args );
 				self::save_field( self::sanitize_field( $field ), $field );
+				// Once the field is saved, get it's new value
+				// That's because the value could change during save, or can have $single = false
+				self::$new_values[ $field->id() ] = $field->get_data();
 			}
 
 		}
@@ -575,7 +594,7 @@ class cmb_Meta_Box {
 		if ( $object_type == 'options-page' )
 			self::save_option( $object_id );
 
-		do_action( "cmb_save_{$object_type}_fields", $object_id, $meta_box['id'], self::$updated, $meta_box );
+		do_action( "cmb_save_{$object_type}_fields", $object_id, $meta_box['id'], self::$updated, $meta_box, self::$old_values, self::$new_values );
 
 	}
 
@@ -666,6 +685,8 @@ class cmb_Meta_Box {
 		// 		}
 		// 	}
 		// } else
+		// Store the old value
+		self::$old_values[ $field->id() ] = $old;
 		if ( ! empty( $new_value ) && $new_value != $old  ) {
 			self::$updated[] = $name;
 			return $field->update_data( $new_value );
