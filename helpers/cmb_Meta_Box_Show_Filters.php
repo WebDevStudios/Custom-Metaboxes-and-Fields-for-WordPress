@@ -102,4 +102,33 @@ class cmb_Meta_Box_Show_Filters {
 		return true;
 	}
 
+	/**
+	 * Filter metaboxes if capability is required
+	 * @since  1.1.3
+	 * @param  bool  $display  To display or not
+	 * @param  array $meta_box Metabox config array
+	 * @return bool            Whether to display this metabox on the current page.
+	 */
+	public static function check_capabilities( $display, $meta_box ) {
+
+		// Check if capabilities are required
+		if ( ! isset( $meta_box['capabilities'] ) )
+			return $display;
+
+		$capabilities = $meta_box['capabilities'];
+		$has_cap = false;
+
+		// Check if the user has any of the given capabilities
+		foreach ( $capabilities as $capability ){
+			if ( current_user_can( $capability ) )
+				$has_cap = true;
+		}
+
+		// Don't display metaboxes if user does not have given capabilities
+		if ( ! $has_cap )
+			return false;
+
+		return $display;
+	}
+
 }
