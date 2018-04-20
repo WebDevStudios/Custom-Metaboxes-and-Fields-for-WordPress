@@ -266,6 +266,7 @@ class cmb_Meta_Box {
 			$scripts[] = 'farbtastic';
 			$styles[] = 'farbtastic';
 		}
+		wp_register_script( 'cmb-checktype', CMB_META_BOX_URL . 'js/checktype.js' );
 		wp_register_script( 'cmb-datepicker', CMB_META_BOX_URL . 'js/jquery.datePicker.min.js' );
 		wp_register_script( 'cmb-timepicker', CMB_META_BOX_URL . 'js/jquery.timePicker.min.js' );
 		wp_register_script( 'cmb-scripts', CMB_META_BOX_URL .'js/cmb'. $min .'.js', $scripts, self::CMB_VERSION );
@@ -302,6 +303,7 @@ class cmb_Meta_Box {
 		// only enqueue our scripts/styles on the proper pages
 		if ( $hook == 'post.php' || $hook == 'post-new.php' || $hook == 'page-new.php' || $hook == 'page.php' ) {
 			wp_enqueue_script( 'cmb-scripts' );
+			wp_enqueue_script( 'cmb-checktype' );
 
 			// default is to show cmb styles on post pages
 			if ( $this->_meta_box['cmb_styles'] )
