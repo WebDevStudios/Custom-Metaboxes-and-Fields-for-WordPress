@@ -146,6 +146,9 @@ class cmb_Meta_Box_types {
 
 	/**
 	 * Generates html for an option element
+	 * 
+	 * LINEUPBOEKENMEDIA:  Added escaping of output
+	 * 
 	 * @since  1.1.0
 	 * @param  string  $opt_label Option label
 	 * @param  string  $opt_value Option value
@@ -153,7 +156,7 @@ class cmb_Meta_Box_types {
 	 * @return string             Generated option element html
 	 */
 	public function option( $opt_label, $opt_value, $selected ) {
-		return sprintf( "\t".'<option value="%s" %s>%s</option>', $opt_value, selected( $selected, true, false ), $opt_label )."\n";
+		return sprintf( "\t".'<option value="%s" %s>%s</option>', esc_attr($opt_value), selected( $selected, true, false ), esc_html($opt_label) )."\n";
 	}
 
 	/**
